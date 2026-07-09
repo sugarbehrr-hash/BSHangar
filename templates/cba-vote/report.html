@@ -25,6 +25,11 @@
     .fm-body { padding: 22px 44px 30px; flex: 1 1 auto; }
     .fm-foot { margin-top: auto; display: flex; justify-content: space-between; gap: 12px; padding: 12px 44px; font-family: var(--font-heading); font-weight: 700; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-300); border-top: 1.5px solid var(--cream-300); }
     .fm-page.cover-page { padding: 0; }
+    /* The shared change-card component (card-render.js) makes its right rail
+       sticky for the continuous web scroll — meaningless here since this report
+       is pre-paginated into fixed .fm-page sheets, and sticky positioning here
+       just makes that rail drift/overlap between pages on screen and in print. */
+    .fm-body [style*="position:sticky"] { position: static !important; top: auto !important; }
 
     /* Printer-friendly ("ink-saver") mode — toggled on the page, NOT via @media,
        so a plain Save-as-PDF keeps the navy while a paper print can be lightened.
@@ -49,7 +54,7 @@
 <div class="no-print" style="max-width:816px; margin:18px auto 0; background:var(--cream-200); border:1.5px solid var(--cream-300); border-radius:12px; padding:12px 18px; display:flex; align-items:center; gap:14px; font-size:13px; flex-wrap:wrap;">
   <i class="ph-fill ph-printer" style="font-size:20px; color:var(--navy-900);"></i>
   <span style="flex:1; min-width:220px;">Long-form technical report, paginated for print and sharing the website's card design. Press <b>Ctrl/Cmd&nbsp;+&nbsp;P</b> to save as PDF. The short version is the <a href="index.html">website guide</a>.</span>
-  <button onclick="{{ toggleInk }}" style="cursor:pointer; border:1.5px solid var(--navy-900); background:var(--white); color:var(--navy-900); font-family:var(--font-heading); font-weight:800; font-size:11px; letter-spacing:0.04em; text-transform:uppercase; padding:8px 13px; border-radius:8px; display:inline-flex; align-items:center; gap:6px;"><i class="ph-fill ph-drop-half"></i> {{ inkLabel }}</button>
+  <button onclick="{{ toggleInk }}" style="cursor:pointer; border:1.5px solid var(--navy-900); background:var(--white); color:var(--navy-900); font-family:var(--font-heading); font-weight:800; font-size:11px; letter-spacing:0.04em; text-transform:uppercase; padding:8px 13px; border-radius:8px; display:inline-flex; align-items:center; gap:6px;"><i class="ph-fill ph-drop-half"></i> <span id="ink-toggle-label">{{ inkLabel }}</span></button>
 </div>
 
 <div class="sheet">
@@ -112,6 +117,8 @@ class Component extends DCLogic {
       toggleInk: () => {
         const on = !this.state.ink;
         document.body.classList.toggle("ink-saver", on);
+        const label = document.getElementById("ink-toggle-label");
+        if (label) label.textContent = on ? "Navy (for PDF)" : "Printer-friendly";
         this.setState({ ink: on });
       }
     };
