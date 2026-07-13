@@ -1,0 +1,36 @@
+/* ============================================================
+   Blue Streak Hangar — Spacing & Layout
+   ------------------------------------------------------------
+   4px base grid. Document-friendly page widths and generous
+   touch targets (44px minimum) so taps land for everyone.
+   ============================================================ */
+
+:root {
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+  --space-12: 96px;
+
+  /* ---- Touch targets ---- */
+  --tap-min: 44px;        /* never smaller — accessibility floor */
+  --tap-comfortable: 52px;
+
+  /* ---- Document page sizes (print-friendly) ---- */
+  --page-flyer-w: 1080px;     /* square social / flyer width */
+  --page-poster-w: 1080px;
+  --page-poster-h: 1350px;    /* 4:5 portrait social */
+  --page-letter-w: 816px;     /* 8.5in @ 96dpi */
+  --page-letter-h: 1056px;    /* 11in @ 96dpi */
+  --content-max: 720px;       /* readable measure */
+
+  --gutter: var(--space-7);
+}

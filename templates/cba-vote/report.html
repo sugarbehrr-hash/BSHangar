@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @dsCard group="Documents" viewport="900x1300" name="TA Vote Guide — Full Report (PDF)" subtitle="Long-form print companion — shares the web guide's card design (card-render.js), honors page_order, real Letter-page pagination" -->
+<helmet>
+  <script src="./ds-base.js"></script>
+  <script src="./assessment.data.js"></script>
+  <script src="./assessment-charts.js"></script>
+  <script src="./card-render.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <style>
+    html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { margin: 0; background: #d9d3c4; font-family: var(--font-body); color: var(--ink-700); }
+    a { color: var(--sky-700); }
+    a:hover { color: var(--navy-900); }
+    .sheet { margin: 0 auto; padding: 28px 0 60px; }
+    .fm-page { width: 816px; min-height: 1056px; margin: 0 auto 28px; background: var(--white); box-shadow: 0 8px 30px rgba(15,30,61,0.16); display: flex; flex-direction: column; position: relative; }
+    .fm-run { display: flex; justify-content: space-between; gap: 12px; padding: 14px 44px; font-family: var(--font-heading); font-weight: 800; font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-500); border-bottom: 1.5px solid var(--cream-300); }
+    .fm-body { padding: 22px 44px 30px; flex: 1 1 auto; }
+    .fm-foot { margin-top: auto; display: flex; justify-content: space-between; gap: 12px; padding: 12px 44px; font-family: var(--font-heading); font-weight: 700; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-300); border-top: 1.5px solid var(--cream-300); }
+    .fm-page.cover-page { padding: 0; }
+    /* The shared change-card component (card-render.js) makes its right rail
+       sticky for the continuous web scroll — meaningless here since this report
+       is pre-paginated into fixed .fm-page sheets, and sticky positioning here
+       just makes that rail drift/overlap between pages on screen and in print. */
+    .fm-body [style*="position:sticky"] { position: static !important; top: auto !important; }
+
+    /* Printer-friendly ("ink-saver") mode — toggled on the page, NOT via @media,
+       so a plain Save-as-PDF keeps the navy while a paper print can be lightened.
+       The cover stays navy by design. */
+    body.ink-saver .ink-navy { background: var(--white) !important; border: 1.5px solid var(--cream-300) !important; border-top: 5px solid var(--gold-500) !important; }
+    body.ink-saver .ink-gold { color: var(--gold-600) !important; }
+    body.ink-saver .ink-onnavy { color: var(--ink-700) !important; }
+    body.ink-saver .ink-navy [style*="rgba(255,255,255"] { border-color: var(--cream-300) !important; }
+
+    @media print {
+      @page { size: letter portrait; margin: 0; }
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      .sheet { margin: 0; padding: 0; }
+      .fm-page { box-shadow: none; margin: 0; width: auto; min-height: 100vh; page-break-after: always; break-after: page; }
+      .fm-page:last-child { page-break-after: avoid; break-after: avoid; }
+      [style*="break-inside:avoid"] { page-break-inside: avoid; }
+    }
+  </style>
+</helmet>
+
+<div class="no-print" style="max-width:816px; margin:18px auto 0; background:var(--cream-200); border:1.5px solid var(--cream-300); border-radius:12px; padding:12px 18px; display:flex; align-items:center; gap:14px; font-size:13px; flex-wrap:wrap;">
+  <i class="ph-fill ph-printer" style="font-size:20px; color:var(--navy-900);"></i>
+  <span style="flex:1; min-width:220px;">Long-form technical report, paginated for print and sharing the website's card design. Press <b>Ctrl/Cmd&nbsp;+&nbsp;P</b> to save as PDF. The short version is the <a href="index.html">website guide</a>.</span>
+  <button onclick="{{ toggleInk }}" style="cursor:pointer; border:1.5px solid var(--navy-900); background:var(--white); color:var(--navy-900); font-family:var(--font-heading); font-weight:800; font-size:11px; letter-spacing:0.04em; text-transform:uppercase; padding:8px 13px; border-radius:8px; display:inline-flex; align-items:center; gap:6px;"><i class="ph-fill ph-drop-half"></i> <span id="ink-toggle-label">{{ inkLabel }}</span></button>
+</div>
+
+<div class="sheet">
+
+  <!-- ============ COVER ============ -->
+  <div class="fm-page cover-page" data-screen-label="Cover">
+    <div style="background:var(--navy-900); flex:1; padding:70px 52px; display:flex; flex-direction:column;">
+      <div style="font-family:var(--font-heading); font-weight:800; font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold-500); margin-bottom:16px;">{{ contract }} · Report v{{ version }}</div>
+      <h1 style="font-family:var(--font-display); text-transform:uppercase; font-size:44px; line-height:1.02; color:#fff; margin:0 0 18px;">{{ pdfCoverTitle }}</h1>
+      <p style="font-size:14.5px; line-height:1.65; margin:0 0 14px; color:var(--sky-100); max-width:600px;">{{ pageSubtitle }}</p>
+      <p style="font-size:12px; line-height:1.6; color:var(--sky-300); margin:0 0 6px;"><b style="color:#fff;">Baseline:</b> {{ baseline }}</p>
+      <p style="font-size:12px; line-height:1.6; color:var(--sky-300); margin:0;"><b style="color:#fff;">Standpoint:</b> {{ standpoint }}</p>
+      <div style="margin-top:auto; font-family:var(--font-heading); font-weight:800; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-500);">{{ generator }}</div>
+    </div>
+  </div>
+
+  <!-- JS injects the flowing, paginated body pages here (built from page_order) -->
+  <div id="rv-flow"></div>
+</div>
+
+<!-- offscreen measuring stage -->
+<div id="rv-stage" style="position:absolute; left:-99999px; top:0; width:728px;"></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:1300}}">
+const A = window.ASSESSMENT || {};
+const META = A.meta || {};
+const SEC = A.sections || {};
+const LEGEND = A.legend || {};
+const SB = A.scoreboard || {};
+const HTR = A.howToRead || {};
+const PREFACE = A.preface || {};
+const TABLES = A.tables || [];
+const GROUP_SHORT = { nh: "New Hire", mc: "Mid-Career", sr: "Senior" };
+const VC = window.VoteCard || {};
+
+function verdictColors(v, pol) { return (VC.verdictColors ? VC.verdictColors(v, pol) : { bg: "var(--cream-300)", fg: "var(--ink-700)" }); }
+function ratingClsByWeight(w) {
+  if (w == null) return "dep";
+  if (w >= 3) return "MG"; if (w >= 2) return "SG"; if (w >= 1) return "sg"; if (w > 0) return "tk";
+  if (w === 0) return "nc"; if (w <= -3) return "XC"; if (w <= -2) return "RC"; return "sc";
+}
+
+class Component extends DCLogic {
+  state = { ink: false };
+
+  componentDidMount() {
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => this.paginate());
+    } else {
+      setTimeout(() => this.paginate(), 300);
+    }
+  }
+
+  renderVals() {
+    return {
+      contract: META.contract || "", version: META.version || "", generator: META.generator || "",
+      pdfCoverTitle: META.pdfCoverTitle || "", pageSubtitle: META.pageSubtitle || "",
+      baseline: META.baseline || "", standpoint: META.standpoint || "",
+      inkLabel: this.state.ink ? "Navy (for PDF)" : "Printer-friendly",
+      toggleInk: () => {
+        const on = !this.state.ink;
+        document.body.classList.toggle("ink-saver", on);
+        const label = document.getElementById("ink-toggle-label");
+        if (label) label.textContent = on ? "Navy (for PDF)" : "Printer-friendly";
+        this.setState({ ink: on });
+      }
+    };
+  }
+
+  // —— section snippet helpers ————————————————————————————————————————
+  secHeader(title, intro) {
+    return '<div style="border-bottom:3px solid var(--navy-900); padding-bottom:9px; margin:0 0 15px;">'
+      + '<h2 style="font-family:var(--font-display); text-transform:uppercase; font-size:25px; line-height:1; color:var(--navy-900); margin:0;">' + (title || "") + '</h2>'
+      + (intro ? '<p style="font-size:12.5px; color:var(--ink-500); margin:8px 0 0; line-height:1.5;">' + intro + '</p>' : '')
+      + '</div>';
+  }
+  para(text, extra) {
+    return '<p style="font-size:13px; line-height:1.62; margin:0 0 12px; ' + (extra || "") + '">' + text + '</p>';
+  }
+  subhead(text) {
+    return '<h3 style="font-family:var(--font-heading); font-weight:800; font-size:11.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--navy-900); margin:2px 0 7px;">' + text + '</h3>';
+  }
+
+  // —— build the ordered block list from page_order ————————————————————
+  buildBlocks() {
+    const blocks = [];
+    const push = (b) => blocks.push(b);
+    const order = HTR.page_order || [];
+
+    const sbByTopic = {}; (SB.rows || []).forEach(r => { sbByTopic[r.topic] = r; });
+    const topics = A.topics || [];
+    const total = topics.length;
+
+    order.forEach((key) => {
+      switch (key) {
+
+        case "what_this_is":
+          push({ section: key, header: "Introduction", newPageBefore: true, kind: "prose",
+            html: this.secHeader((SEC.what_this_is || {}).title, "") + this.para(HTR.what_this_is || "") });
+          break;
+
+        case "preface": {
+          let h = this.secHeader((SEC.preface || {}).title, (SEC.preface || {}).intro);
+          push({ section: key, header: "First Principles", kind: "prose", html: h });
+          [["The pay cycle", PREFACE.cycle], ["Forward protection", PREFACE.forward_protection], ["Whose interest is talking", PREFACE.incentives], ["It cuts both ways", PREFACE.fair_both_ways]].forEach(([lbl, txt]) => {
+            if (txt) push({ section: key, header: "First Principles", kind: "prose",
+              html: '<div style="margin:0 0 13px; background:var(--cream-100); border:1.5px solid var(--cream-300); border-left:5px solid var(--gold-500); border-radius:0 12px 12px 0; padding:12px 16px; break-inside:avoid;">' + this.subhead(lbl) + this.para(txt, "margin:0;") + '</div>' });
+          });
+          break;
+        }
+
+        case "deal_in_one_paragraph":
+          push({ section: key, header: "Introduction", kind: "prose",
+            html: this.secHeader((SEC.deal_in_one_paragraph || {}).title, "")
+              + this.para(HTR.deal_in_one_paragraph || "", "background:var(--cream-100); border-left:5px solid var(--gold-500); border-radius:0 12px 12px 0; padding:13px 17px;") });
+          break;
+
+        case "how_to_use":
+          push({ section: key, header: "Introduction", kind: "prose",
+            html: this.secHeader((SEC.how_to_use || {}).title, "") + this.para(HTR.how_to_use || "") });
+          break;
+
+        case "anchors": {
+          const meth = META.methodology || {};
+          let h = this.secHeader((SEC.anchors || {}).title, (SEC.anchors || {}).intro);
+          h += '<div style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:18px 22px; break-inside:avoid;">'
+            + '<h3 style="font-family:var(--font-heading); font-weight:800; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy-900); margin:0 0 8px; display:flex; align-items:center; gap:7px;"><i class="ph-fill ph-scales"></i> ' + (meth.title || "") + '</h3>'
+            + (meth.intro ? '<p style="margin:0 0 14px; font-size:12.5px; line-height:1.6;">' + meth.intro + '</p>' : "")
+            + (meth.anchorsIntro ? this.subhead(meth.anchorsIntro) : "")
+            + '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px 22px; margin-top:8px;">'
+            + (meth.anchors || []).map(a => '<p style="margin:0; font-size:12px; line-height:1.5; padding-left:12px; border-left:3px solid var(--gold-500);"><b style="color:var(--navy-900); font-family:var(--font-heading);">' + a.label + ':</b> ' + a.text + '</p>').join('')
+            + '</div></div>';
+          push({ section: key, header: "How We Judge", kind: "prose", html: h });
+          break;
+        }
+
+        case "scoreboard":
+          push({ section: key, header: "Executive Summary", newPageBefore: true, kind: "scoreboard",
+            html: this.scoreboardHtml(sbByTopic) });
+          break;
+
+        case "topics":
+          topics.forEach((t, ti) => {
+            const row = sbByTopic[t.anchor] || {};
+            const groups = ["nh", "mc", "sr"].map(k => {
+              const c = row[k] || {};
+              return { groupLabel: GROUP_SHORT[k], verdict: c.verdict || "", polarity: c.polarity, score: (c.score >= 0 ? "+" : "") + c.score };
+            });
+            push({ section: "topics", header: t.title, newPageBefore: true, kind: "band",
+              html: (VC.topicBand ? VC.topicBand({
+                num: ti + 1, total, title: t.title, topicNote: t.topicNote || "", groups
+              }, { allGroups: true }) : "") });
+            push({ section: "topics", header: t.title, kind: "bottomline",
+              html: '<div style="background:var(--white); border:1.5px solid var(--cream-300); border-left:5px solid var(--gold-500); color:var(--ink-700); font-size:13px; line-height:1.6; padding:14px 18px; border-radius:12px; margin:16px 0 16px; break-inside:avoid;"><b style="color:var(--navy-900); font-family:var(--font-heading);">Bottom line:</b> ' + (t.netNote || "") + '</div>' });
+            (t.changes || []).forEach(c => {
+              push({ section: "topics", header: t.title, kind: "card",
+                html: (VC.changeCard ? VC.changeCard(c, { detail: "long", group: "", noCharts: true }) : "") });
+              // charts flow as their own page-sized figure blocks in print
+              const cids = c.chart ? (Array.isArray(c.chart) ? c.chart : [c.chart]) : [];
+              cids.map(id => (A.charts || []).find(s => s.id === id)).filter(Boolean).forEach(spec => {
+                push({ section: "topics", header: t.title, kind: "figure", html: (VC.chartFigure ? VC.chartFigure(spec, {}) : "") });
+              });
+            });
+            // orphan charts placed in this topic but not on a change
+            const used = {}; (t.changes || []).forEach(c => { const ids = c.chart ? (Array.isArray(c.chart) ? c.chart : [c.chart]) : []; ids.forEach(id => used[id] = true); });
+            (A.charts || []).filter(s => (VC.normPlacement ? VC.normPlacement(s.placement) : s.placement) === t.anchor && !used[s.id]).forEach(spec => {
+              push({ section: "topics", header: t.title, kind: "figure", html: (VC.chartFigure ? VC.chartFigure(spec, {}) : "") });
+            });
+            // PDF tables for this topic
+            TABLES.filter(tb => (VC.normPlacement ? VC.normPlacement(tb.placement) : tb.placement) === t.anchor && (tb.register === "pdf" || tb.register === "both")).forEach(tb => {
+              push({ section: "topics", header: t.title, kind: "table", html: (VC.dataTable ? VC.dataTable(tb) : "") });
+            });
+          });
+          break;
+
+        case "market_reality": {
+          const mr = (SEC.market_reality || {});
+          push({ section: key, header: "Market Reality", kind: "prose",
+            html: '<div class="ink-navy" style="background:var(--navy-900); border-radius:16px; padding:18px 24px; break-inside:avoid;">'
+              + '<h2 style="font-family:var(--font-display); text-transform:uppercase; font-size:22px; color:#fff; margin:0 0 4px;">' + (mr.title || "") + '</h2>'
+              + (mr.intro ? '<p class="ink-onnavy" style="font-size:11.5px; color:var(--sky-300); margin:0;">' + mr.intro + '</p>' : '')
+              + '</div>' });
+          (A.marketCards || []).forEach(m => {
+            push({ section: key, header: "Market Reality", kind: "prose",
+              html: '<div class="ink-navy" style="background:var(--navy-900); border-radius:14px; padding:14px 20px; margin-top:8px; break-inside:avoid;">'
+                + '<div class="ink-gold" style="font-family:var(--font-heading); font-weight:800; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-500); margin-bottom:5px;">' + m.title + '</div>'
+                + '<p class="ink-onnavy" style="margin:0; font-size:12.5px; line-height:1.6; color:var(--cream-100);">' + m.body + '</p></div>' });
+          });
+          break;
+        }
+
+        case "accountability": {
+          const acct = (A.charts || []).find(c => (VC.normPlacement ? VC.normPlacement(c.placement) : c.placement) === "accountability");
+          let h = this.secHeader((SEC.accountability || {}).title, (SEC.accountability || {}).intro);
+          push({ section: key, header: "Accountability", kind: "prose", html: h });
+          if (acct) push({ section: key, header: "Accountability", kind: "figure", html: (VC.chartFigure ? VC.chartFigure(acct, {}) : "") });
+          break;
+        }
+
+        case "key":
+          this.keyBlocks().forEach((b, i) => push(Object.assign({ section: "key", header: "The Key", newPageBefore: i === 0 }, b)));
+          break;
+
+        case "glossary": {
+          const gl = (A.glossary || []).map(g => ({ term: g[0], def: g[1] }));
+          const PER = 30;
+          for (let i = 0; i < Math.max(gl.length, 1); i += PER) {
+            const chunk = gl.slice(i, i + PER);
+            let h = i === 0 ? this.secHeader((SEC.glossary || {}).title, (SEC.glossary || {}).intro) : "";
+            h += '<div style="column-count:2; column-gap:30px;">' + chunk.map(g => '<p style="margin:0 0 8px; font-size:11.5px; line-height:1.5; break-inside:avoid;"><b style="color:var(--navy-900); font-family:var(--font-heading);">' + g.term + '</b> — ' + g.def + '</p>').join('') + '</div>';
+            push({ section: "glossary", header: "Glossary", newPageBefore: i === 0, kind: "prose", html: h });
+          }
+          break;
+        }
+      }
+    });
+
+    return blocks;
+  }
+
+  scoreboardHtml(sbByTopic) {
+    const heads = ["nh", "mc", "sr"].map(k => GROUP_SHORT[k]);
+    const perGroup = (A.execSummary || {}).perGroup || {};
+    const COL_ACCENT = ["var(--gold-500)", "var(--sky-700)", "var(--success-600)"];
+    const COL_TINT = ["rgba(212,163,58,0.07)", "rgba(58,110,165,0.06)", "rgba(58,140,100,0.06)"];
+    let rows = (SB.rows || []).map((row, ri) => {
+      const cells = ["nh", "mc", "sr"].map((k, ci) => {
+        const c = row[k] || {};
+        const vc = verdictColors(c.verdict || "", c.polarity);
+        return '<div style="text-align:center; padding:10px ' + (ci === 2 ? '14px' : '6px') + ' 10px 6px; background:' + COL_TINT[ci] + '; ' + (ci > 0 ? 'border-left:1px solid var(--cream-300);' : '') + '">'
+          + '<div style="display:block; font-family:var(--font-heading); font-weight:800; font-size:11px; padding:5px 10px; border-radius:8px 8px 0 0; background:' + vc.bg + '; color:' + vc.fg + '; white-space:nowrap;">' + (c.verdict || "") + '</div>'
+          + '<div style="font-family:var(--font-heading); font-weight:800; font-size:13px; padding:4px 10px 6px; border-radius:0 0 8px 8px; background:' + vc.bg + '; color:' + vc.fg + '; opacity:0.85;">' + (c.score >= 0 ? "+" : "") + c.score + '</div>'
+          + '<div style="font-size:9.5px; color:var(--ink-300); font-weight:600; margin-top:6px;">' + (c.tally || "") + '</div></div>';
+      }).join('');
+      return '<div style="display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; align-items:center; border-bottom:1px solid var(--cream-300); background:' + (ri % 2 ? "var(--cream-100)" : "var(--white)") + ';">'
+        + '<span style="font-family:var(--font-heading); font-weight:800; font-size:12.5px; color:var(--navy-900); padding:10px 10px 10px 14px;">' + row.topicTitle + '</span>' + cells + '</div>';
+    }).join('');
+    const GROUP_LABEL = { nh: "New Hire", mc: "Mid-Career", sr: "Senior" };
+    const perGroupCards = ["nh", "mc", "sr"].map((k, i) => {
+      const border = ["var(--gold-500)", "var(--sky-700)", "var(--success-600)"][i];
+      const labelColor = ["var(--gold-500)", "var(--sky-300)", "#7fd9a8"][i];
+      return '<div class="ink-navy" style="background:var(--navy-900); border-radius:12px; padding:13px 15px; border-top:4px solid ' + border + ';">'
+        + '<div class="ink-gold" style="font-family:var(--font-heading); font-weight:800; font-size:9.5px; letter-spacing:0.09em; text-transform:uppercase; color:' + labelColor + '; margin-bottom:5px;">' + GROUP_LABEL[k] + '</div>'
+        + '<p class="ink-onnavy" style="margin:0; font-size:12px; line-height:1.55; color:var(--cream-100);">' + (perGroup[k] || "") + '</p></div>';
+    }).join('');
+    const headCells = heads.map((h, ci) => '<div style="text-align:center; padding:6px ' + (ci === 2 ? '14px' : '6px') + ' 9px 6px; background:' + COL_TINT[ci] + '; ' + (ci > 0 ? 'border-left:1px solid var(--cream-300);' : '') + ' border-top:3px solid ' + COL_ACCENT[ci] + '; border-bottom:2px solid var(--cream-300);"><span style="font-family:var(--font-heading); font-weight:800; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--navy-900);">' + h + '</span></div>').join('');
+    return this.secHeader((SEC.scoreboard || {}).title, (A.execSummary || {}).matrixNote || (SEC.scoreboard || {}).intro)
+      + '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:0 0 16px;">' + perGroupCards + '</div>'
+      + '<div style="border:1.5px solid var(--cream-300); border-radius:14px; overflow:hidden;">'
+      + '<div style="display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr;">'
+      + '<div style="align-self:end; padding:6px 10px 9px 14px; border-bottom:2px solid var(--cream-300);"><span style="font-family:var(--font-heading); font-weight:800; font-size:9.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-300);">Category</span></div>'
+      + headCells
+      + '</div>' + rows
+      + '<p style="font-size:9.5px; color:var(--ink-500); margin:0; padding:10px 18px; line-height:1.5;">' + (SB.note_on_dep || "") + '</p></div>';
+  }
+
+  keyBlocks() {
+    const out = [];
+    const RLABELS = (A.ratingSystem || {}).labels || {};
+    // rating scale from ratingPill
+    const pills = (LEGEND.ratingPill || []).map(p => ({
+      label: p.label, def: p.blurb, code: ratingClsByWeight(p.weight),
+      weight: p.weight == null ? "wildcard" : (p.weight > 0 ? "+" + p.weight : "" + p.weight)
+    }));
+    const cols = [
+      { title: "Gains", items: pills.filter(r => (r.weight + "").indexOf("+") === 0) },
+      { title: "Neutral", items: pills.filter(r => r.weight === "0" || r.weight === "wildcard") },
+      { title: "Costs", items: pills.filter(r => (r.weight + "").indexOf("-") === 0) }
+    ];
+    const pill = (r) => {
+      const c = (VC.RATING || {})[r.code] || {};
+      return '<span style="display:inline-flex; align-items:baseline; justify-content:space-between; gap:6px; padding:5px 11px; border-radius:999px; font-family:var(--font-heading); font-weight:800; font-size:11px; background:' + (c.bg || "var(--cream-200)") + '; color:' + (c.fg || "var(--ink-700)") + '; border:1.5px solid ' + (c.bd || "transparent") + ';" title="' + r.def + '">' + r.label + ' <span style="font-size:9.5px; font-weight:700; opacity:0.7;">' + r.weight + '</span></span>';
+    };
+    let h = this.secHeader((SEC.key || {}).title, (SEC.key || {}).intro);
+    h += '<div style="margin:0 0 6px;"><div style="font-family:var(--font-heading); font-weight:700; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-300); margin:0 0 9px; padding-bottom:5px; border-bottom:1px solid var(--cream-300);">Rating scale</div>'
+      + '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 22px;">'
+      + cols.map(col => '<div><div style="font-size:10px; font-weight:700; color:var(--ink-300); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px;">' + col.title + '</div><div style="display:flex; flex-direction:column; gap:6px;">' + col.items.map(pill).join('') + '</div></div>').join('')
+      + '</div></div>';
+    // why-we-weigh note
+    const dp = LEGEND.details_pdf_only || {};
+    if (dp.small_vs_real || dp.same_yardstick) {
+      h += '<div style="margin:14px 0 0; background:var(--cream-100); border-left:4px solid var(--gold-500); border-radius:0 10px 10px 0; padding:10px 14px;">'
+        + (dp.small_vs_real ? '<p style="margin:0 0 7px; font-size:11.5px; line-height:1.55;">' + dp.small_vs_real + '</p>' : '')
+        + (dp.same_yardstick ? '<p style="margin:0; font-size:11.5px; line-height:1.55;">' + dp.same_yardstick + '</p>' : '')
+        + '</div>';
+    }
+    out.push({ kind: "prose", html: h });
+
+    // tag groups
+    const tagVisual = (term) => {
+      if (term === "NEW") return { t: "type", code: "NEW" };
+      if (term === "KEPT") return { t: "type", code: "CODIFY" };
+      if (term === "RESTORED") return { t: "type", code: "RESTORE" };
+      if (term === "Automatic rule") return { t: "dlv", d: "automatic" };
+      if (term === "Delayed rule") return { t: "dlv", d: "delayed" };
+      if (term === "Implementation promise") return { t: "dlv", d: "promise" };
+      if (term.indexOf("Market:") === 0) return { t: "mkt", label: term.replace("Market: ", "") };
+      if (/^if /.test(term)) return { t: "cond", label: term };
+      return { t: "plain" };
+    };
+    const TYPE = VC.TYPE || {}; const DLV = VC.DLV || {};
+    const chipFor = (v) => {
+      if (v.t === "type") { const c = TYPE[v.code] || {}; return '<span style="padding:3px 9px; border-radius:6px; font-size:9.5px; font-weight:800; letter-spacing:0.07em; font-family:var(--font-heading); text-transform:uppercase; background:' + c.bg + '; color:' + c.fg + ';">'; }
+      return "";
+    };
+    const verdictObjs = (LEGEND.verdicts || []).map(p => ({ term: p[0], def: p[1], pol: p[2] }));
+    const tagObjs = (LEGEND.tags || []).map(p => ({ term: p[0], def: p[1], v: tagVisual(p[0]) }));
+    const groupDefs = [
+      { title: "Category verdicts", items: verdictObjs, verdict: true },
+      { title: "Change type", items: tagObjs.filter(t => t.v.t === "type") },
+      { title: "How sure is it", items: tagObjs.filter(t => t.v.t === "dlv") },
+      { title: "Market position", items: tagObjs.filter(t => t.v.t === "mkt") },
+      { title: "Who it covers", items: tagObjs.filter(t => t.v.t === "cond") }
+    ].filter(g => g.items.length);
+
+    groupDefs.forEach(g => {
+      let rows = g.items.map(it => {
+        let chip;
+        if (g.verdict) { const vc = verdictColors(it.term, it.pol); chip = '<span style="justify-self:start; display:inline-flex; align-items:center; padding:4px 11px; border-radius:999px; font-family:var(--font-heading); font-weight:800; font-size:10.5px; white-space:nowrap; background:' + vc.bg + '; color:' + vc.fg + ';">' + it.term + '</span>'; }
+        else if (it.v.t === "type") { const c = TYPE[it.v.code] || {}; chip = '<span style="justify-self:start; padding:3px 9px; border-radius:6px; font-size:9.5px; font-weight:800; letter-spacing:0.07em; font-family:var(--font-heading); text-transform:uppercase; background:' + c.bg + '; color:' + c.fg + ';">' + it.term + '</span>'; }
+        else if (it.v.t === "dlv") { const d = DLV[it.v.d] || {}; chip = '<span style="justify-self:start; display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:6px; font-family:var(--font-heading); font-weight:800; font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase; background:' + d.bg + '; color:' + d.fg + '; border:1.5px solid ' + d.bd + '; white-space:nowrap;"><i class="ph-fill ' + d.icon + '"></i> ' + it.term + '</span>'; }
+        else if (it.v.t === "mkt") chip = '<span style="justify-self:start; display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:6px; border:1.5px solid var(--navy-900); background:var(--white); font-family:var(--font-heading); font-weight:800; font-size:9.5px; letter-spacing:0.04em; text-transform:uppercase; color:var(--navy-900); white-space:nowrap;"><i class="ph-fill ph-chart-bar"></i> ' + it.v.label + '</span>';
+        else chip = '<span style="justify-self:start; padding:3px 9px; border-radius:6px; font-family:var(--font-heading); font-weight:800; font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase; border:1.5px dashed var(--gold-500); color:var(--gold-600); white-space:nowrap;">' + it.v.label + '</span>';
+        return chip + '<span style="font-size:11.5px; line-height:1.5;">' + it.def + '</span>';
+      }).join('');
+      out.push({ kind: "prose", html: '<div style="margin:0 0 4px; break-inside:avoid;"><div style="font-family:var(--font-heading); font-weight:700; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-300); margin:0 0 8px; padding-bottom:5px; border-bottom:1px solid var(--cream-300);">' + g.title + '</div><div style="display:grid; grid-template-columns:180px 1fr; row-gap:8px; column-gap:14px; align-items:center;">' + rows + '</div></div>' });
+    });
+
+    return out;
+  }
+
+  // —— measure + greedily pack blocks into Letter pages ————————————————
+  paginate() {
+    const stage = document.getElementById("rv-stage");
+    const flow = document.getElementById("rv-flow");
+    if (!stage || !flow || !VC.changeCard) return;
+
+    const blocks = this.buildBlocks();
+    stage.innerHTML = "";
+    blocks.forEach(b => {
+      const d = document.createElement("div");
+      d.style.display = "flow-root"; // contain child margins so measured height includes them
+      d.innerHTML = b.html;
+      stage.appendChild(d);
+      b._h = d.getBoundingClientRect().height;
+      // A block taller than a full page (e.g. an unusually long change-card) can
+      // never fit intact — letting print's native "avoid" rule apply to it would
+      // just force it onto its own page and still overflow. Strip break-inside:avoid
+      // from oversized blocks only, so the print engine flows/splits it naturally
+      // across a physical page boundary instead of clipping or leaving a gap.
+      if (b._h > 930) b.html = b.html.split("break-inside:avoid;").join("");
+    });
+
+    const USABLE = 930, GAP = 2;
+    const pages = [];
+    let cur = null;
+    const start = (header) => { cur = { header, html: "", used: 0 }; pages.push(cur); };
+    blocks.forEach(b => {
+      const h = b._h + GAP;
+      if (!cur || b.newPageBefore) start(b.header);
+      else if (cur.used + h > USABLE) start(b.header);
+      cur.html += b.html;
+      cur.used += h;
+    });
+
+    const contract = META.contract || "", version = META.version || "";
+    flow.innerHTML = pages.map((p, i) =>
+      '<div class="fm-page">'
+      + '<div class="fm-run"><span>' + p.header + '</span><span>' + contract + ' · Report v' + version + '</span></div>'
+      + '<div class="fm-body">' + p.html + '</div>'
+      + '<div class="fm-foot"><span>' + p.header + '</span><span>Page ' + (i + 1) + ' of ' + pages.length + '</span></div>'
+      + '</div>'
+    ).join("");
+
+    stage.innerHTML = "";
+  }
+}
+</script>
+</body>
+</html>
