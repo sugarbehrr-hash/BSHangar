@@ -2308,7 +2308,7 @@ window.ASSESSMENT = {
         },
         {
           "name": "Prices (cost of living)",
-          "role": "subject",
+          "role": "reference",
           "values": [
             100.0,
             103.0,
@@ -2338,8 +2338,8 @@ window.ASSESSMENT = {
       "freezeStartYear": 2023,
       "shadeGap": {
         "between": [
-          "Your base pay",
-          "Prices (cost of living)"
+          "Prices (cost of living)",
+          "Your base pay"
         ],
         "label": "THE GAP - buying power you never get back"
       },
@@ -2416,7 +2416,7 @@ window.ASSESSMENT = {
       "series": [
         {
           "name": "Defended structure: old ladder re-anchored to $29.77",
-          "role": "subject",
+          "role": "defended",
           "values": [
             29.77,
             31.34,
