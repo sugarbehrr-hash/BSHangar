@@ -1,100 +1,58 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import InfoCard from '../components/InfoCard.astro';
-import Callout from '../components/Callout.astro';
-import RichText from '../components/RichText.astro';
+import GuideBody from '../components/GuideBody.astro';
 import { UNION_REP_PHONE } from '../data/site';
-import {
-  commuterProgram,
-  commuteFailure,
-  freeFlying,
-  gateGuide,
-  commutingCallouts,
-} from '../data/commuting';
+import { commutingGuide as guide } from '../data/guides/commuting';
+
+/**
+ * The full Commuting Guide, not a summary.
+ *
+ * This page previously rendered a ~420-word précis while the export's actual
+ * guide was ~2,450 words across 7 sheets. Same data as
+ * /print/commuting-guide/ — the printable is this content set for paper.
+ */
 ---
 
 <BaseLayout
   title="Commuting & Non-Rev Guide"
-  description="How PSA flight attendants list, fly and report on time: the commuter program, what to do when a commute fails, listing by airline, and non-rev dress guidelines."
+  description="How PSA flight attendants list, fly and report on time: the Commuter Program, your options when a commute fails, boarding-pass documentation, listing by airline, dress guidelines, and a day-of checklist."
 >
   <div class="pagehead">
     <div class="wrap">
       <div class="ph-eyebrow">Non-Rev · List · Fly · Check In</div>
-      <h1 class="ph-title">Commuting Guide</h1>
-      <p class="ph-sub">
-        Everything you need to list, fly, and report on time — plus your protections when a
-        commute falls apart. List early. Document everything. Arrive on time.
-      </p>
+      <h1 class="ph-title">{guide.title}</h1>
+      <p class="ph-sub">{guide.intro}</p>
     </div>
   </div>
 
   <section class="band cream">
     <div class="wrap">
-      <div class="callout reveal">
+      <div class="callout reveal" style="margin-top:0;">
         <Icon name="ph-warning" />
         <div class="ct">
-          <RichText text={commutingCallouts.disclaimer} /> Union Rep Assistance:
+          <b>This guide assists you and doesn't carry protections.</b> It's plain-language
+          reference from the CBA &amp; Commuting Policy. Always confirm current terms with your
+          Inflight Supervisor or a union rep. Union Rep Assistance:
           <a href={UNION_REP_PHONE.href}><b>{UNION_REP_PHONE.display}</b></a>.
         </div>
       </div>
 
-      <div class="reveal" style="margin-top:40px;">
-        <span class="kicker">Every commuting day</span>
-        <h2 class="h2">The Commuter Program.</h2>
-        <p class="sectlead">Follow these four steps every time so you stay covered under the program.</p>
-      </div>
-
-      <div class="steprow">
-        {
-          commuterProgram.map((step, i) => (
-            <div class="stepc reveal">
-              <div class="n">{i + 1}</div>
-              <h4>{step.title}</h4>
-              <RichText as="p" text={step.body} />
-            </div>
-          ))
-        }
-      </div>
-
-      <div class="cols2">
-        <InfoCard {...commuteFailure} />
-        <InfoCard {...freeFlying} />
-      </div>
-
-      <Callout tone="tip" icon="ph-info" text={commutingCallouts.idTravel} />
-
-      <div class="reveal" style="margin-top:40px;">
-        <span class="kicker">Grab-and-go</span>
-        <h2 class="h2">Getting to your gate.</h2>
-      </div>
-
-      <div class="cols3">
-        {gateGuide.map((card) => <InfoCard {...card} />)}
-      </div>
-
       <div class="dlbar reveal">
-        <span
-          class="mark"
-          style="width:52px;height:52px;border-radius:50%;background:var(--sky-700);display:flex;align-items:center;justify-content:center;flex:none;"
-        >
-          <Icon name="ph-file-pdf" class="dlmark" />
-        </span>
         <div class="txt">
-          <b>Prefer a printable version?</b>
-          <span>The same commuting guide as a poster you can save or print for your bag.</span>
+          <b>Prefer it on paper?</b>
+          <span>The same guide as a printable you can save or keep in your bag.</span>
         </div>
         <a class="btn btn-gold" href="/print/commuting-guide/">
           <Icon name="ph-printer" /> Printable
         </a>
       </div>
+
+      <GuideBody guide={guide} />
+
+      <p style="font-size:13px;color:var(--ink-500);max-width:720px;">
+        {guide.meta.translates}. {guide.meta.revised}.
+      </p>
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  .dlmark {
-    font-size: 28px;
-    color: #fff;
-  }
-</style>

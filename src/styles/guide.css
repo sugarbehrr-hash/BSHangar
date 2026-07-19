@@ -202,3 +202,80 @@
 .fm-page .gd-stat-caption { font-size: 11.5px; }
 .fm-page .gd-section { margin-bottom: 22px; }
 .fm-page .gd-band-ref { font-size: 19px; }
+
+/* ---------- Checklist ---------- */
+.gd-checklist { display: flex; flex-direction: column; gap: 14px; }
+
+.gd-cl-group {
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  break-inside: avoid;
+}
+.gd-cl-group.alert { background: var(--red-100); border-color: #f4b8c0; }
+
+.gd-cl-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.gd-cl-marker {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--navy-900);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gd-cl-group.alert .gd-cl-marker { background: var(--red-600); }
+.gd-cl-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--navy-900);
+}
+.gd-cl-when {
+  margin-left: auto;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+
+.gd-cl-items { list-style: none; margin: 0; padding: 0; }
+.gd-cl-items li {
+  position: relative;
+  padding: 5px 0 5px 26px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-700);
+}
+/* An empty square, so it reads as something you physically tick on paper. */
+.gd-cl-items li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--ink-300);
+  border-radius: 3px;
+  background: var(--white);
+}
+.gd-cl-items li strong { color: var(--navy-900); }
+
+.fm-page .gd-cl-items li { font-size: 11.5px; padding: 3px 0 3px 22px; }
+.fm-page .gd-cl-items li::before { top: 6px; width: 10px; height: 10px; }
+.fm-page .gd-cl-title { font-size: 12.5px; }
+.fm-page .gd-cl-marker { width: 22px; height: 22px; font-size: 12px; }
+.fm-page .gd-cl-group { padding: 9px 11px; }
+.fm-page .gd-checklist { gap: 10px; }

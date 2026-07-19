@@ -61,13 +61,29 @@ export interface StatBlock {
   caption: string;
 }
 
+/** Grouped tick-boxes, e.g. the commuting day-of checklist. */
+export interface ChecklistBlock {
+  kind: 'checklist';
+  groups: {
+    /** Group number shown in the marker, e.g. "1" or "!". */
+    marker: string;
+    title: string;
+    /** Right-aligned qualifier, e.g. "Before you leave". */
+    when?: string;
+    /** Set for the "if it goes wrong" group so it reads as a warning. */
+    alert?: boolean;
+    items: string[];
+  }[];
+}
+
 export type GuideBlock =
   | ListBlock
   | NoteBlock
   | StepsBlock
   | TableBlock
   | ProseBlock
-  | StatBlock;
+  | StatBlock
+  | ChecklistBlock;
 
 export interface GuideSection {
   title: string;

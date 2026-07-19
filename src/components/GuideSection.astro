@@ -72,6 +72,27 @@ const { section } = Astro.props;
         );
       }
 
+      if (block.kind === 'checklist') {
+        return (
+          <div class="gd-checklist">
+            {block.groups.map((group) => (
+              <div class:list={['gd-cl-group', group.alert && 'alert']}>
+                <div class="gd-cl-head">
+                  <span class="gd-cl-marker">{group.marker}</span>
+                  <span class="gd-cl-title">{group.title}</span>
+                  {group.when && <span class="gd-cl-when">{group.when}</span>}
+                </div>
+                <ul class="gd-cl-items">
+                  {group.items.map((item) => (
+                    <li set:html={richText(item)} />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
       if (block.kind === 'table') {
         return (
           <div class="gd-block">
