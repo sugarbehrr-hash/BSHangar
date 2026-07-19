@@ -1,14 +1,18 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import PrintLayout from '../../../layouts/PrintLayout.astro';
-import { bases, venueCount } from '../../../data/bases';
+import PrintSheet from '../../../components/PrintSheet.astro';
+import { bases, venueCount, type Zone } from '../../../data/bases';
 
 /**
  * Printable crew-discount flyer, one per base category.
  *
- * The export shipped 11 hand-built flyer templates whose content duplicated
- * siteData.js. These render from bases.ts, so the flyer and the web explorer
- * cannot disagree about a price.
+ * The export shipped 11 hand-built flyer templates duplicating siteData.js.
+ * These render from bases.ts, so a flyer and the web explorer cannot disagree
+ * about a price.
+ *
+ * Zones are chunked across sheets rather than flowing, so a terminal's listing
+ * is never split across a page break.
  */
 export const getStaticPaths = (() =>
   bases.flatMap((base) =>
@@ -20,34 +24,73 @@ export const getStaticPaths = (() =>
 
 const { base, category } = Astro.props;
 const total = venueCount(category);
+
+/**
+ * Rough sheet packing. A Letter body fits roughly 44 rows in two columns; a
+ * zone costs its venues plus ~2 rows of heading. Chunk on that budget so zones
+ * stay intact.
+ */
+const ROWS_PER_SHEET = 46;
+const sheets: Zone[][] = [];
+let current: Zone[] = [];
+let budget = ROWS_PER_SHEET;
+
+for (const zone of category.zones) {
+  const cost = zone.venues.length + 2;
+  if (current.length > 0 && cost > budget) {
+    sheets.push(current);
+    current = [];
+    budget = ROWS_PER_SHEET;
+  }
+  current.push(zone);
+  budget -= cost;
+}
+if (current.length > 0) sheets.push(current);
+
+const runningHead = `${base.code} ${category.label}`;
 ---
 
 <PrintLayout
   title={`${base.code} ${category.label}`}
-  eyebrow={`Crew Discounts · ${base.name}`}
-  intro={`${total} spots across ${category.zones.length} areas. Show your AA badge and ask — rates are not posted at every register.`}
-  runningHead={`${base.code} ${category.label}`}
+  description={`${total} crew discount spots at ${base.code}, listed by terminal.`}
 >
-  <div class="fm-cols">
-    {
-      category.zones.map((zone) => (
-        <section class="fm-zone">
-          <div class="fm-zone-head">
-            <span class="fm-zone-badge">{zone.badge}</span>
-            <span class="fm-zone-name">{zone.name}</span>
-            {zone.note && <span class="fm-zone-note">{zone.note}</span>}
+  {
+    sheets.map((zones, i) => (
+      <PrintSheet runningHead={runningHead} page={i + 1} total={sheets.length}>
+        {i === 0 && (
+          <div class="fm-mast">
+            <div class="eyebrow">Crew Discounts · {base.name}</div>
+            <h1>
+              {base.code} {category.label}
+            </h1>
+            <p>
+              {total} spots across {category.zones.length} areas. Show your AA badge and ask —
+              rates are not posted at every register.
+            </p>
           </div>
-          {zone.venues.map((venue) => (
-            <div class="fm-row">
-              <span class="fm-name">
-                {venue.name}
-                <span class="fm-detail">{venue.detail}</span>
-              </span>
-              <span class="fm-highlight">{venue.highlight}</span>
-            </div>
+        )}
+
+        <div class="fm-cols">
+          {zones.map((zone) => (
+            <section class="fm-zone">
+              <div class="fm-zone-head">
+                <span class="fm-zone-badge">{zone.badge}</span>
+                <span class="fm-zone-name">{zone.name}</span>
+                {zone.note && <span class="fm-zone-note">{zone.note}</span>}
+              </div>
+              {zone.venues.map((venue) => (
+                <div class="fm-row">
+                  <span class="fm-name">
+                    {venue.name}
+                    <span class="fm-detail">{venue.detail}</span>
+                  </span>
+                  <span class="fm-highlight">{venue.highlight}</span>
+                </div>
+              ))}
+            </section>
           ))}
-        </section>
-      ))
-    }
-  </div>
+        </div>
+      </PrintSheet>
+    ))
+  }
 </PrintLayout>

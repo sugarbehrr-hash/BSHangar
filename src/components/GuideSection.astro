@@ -1,0 +1,119 @@
+---
+import { richText } from '../lib/rich-text';
+import type { GuideSection } from '../data/guides/types';
+
+/**
+ * One guide section. Extracted from GuideBody so a printable sheet can render
+ * exactly one section per page while the web page renders them in sequence.
+ */
+interface Props {
+  section: GuideSection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class="gd-section">
+  <div class="gd-band">
+    {section.ref && <span class="gd-band-ref">{section.ref}</span>}
+    {section.refLabel && <span class="gd-band-label">{section.refLabel}</span>}
+  </div>
+
+  <h2 class="gd-h2">{section.title}</h2>
+  {section.lead && <p class="gd-lead" set:html={richText(section.lead)} />}
+
+  {
+    section.blocks.map((block) => {
+      if (block.kind === 'stat') {
+        return (
+          <div class="gd-stat">
+            <span class="gd-stat-value">{block.value}</span>
+            <span class="gd-stat-unit">{block.unit}</span>
+            <span class="gd-stat-caption" set:html={richText(block.caption)} />
+          </div>
+        );
+      }
+
+      if (block.kind === 'note') {
+        return <div class:list={['gd-note', block.tone ?? 'info']} set:html={richText(block.text)} />;
+      }
+
+      if (block.kind === 'prose') {
+        return (
+          <div class="gd-block">
+            {block.title && (
+              <h3 class="gd-h3">
+                {block.title}
+                {block.ref && <span class="gd-ref">{block.ref}</span>}
+              </h3>
+            )}
+            <p class="gd-p" set:html={richText(block.text)} />
+          </div>
+        );
+      }
+
+      if (block.kind === 'steps') {
+        return (
+          <div class="gd-block">
+            <h3 class="gd-h3">
+              {block.title}
+              {block.ref && <span class="gd-ref">{block.ref}</span>}
+            </h3>
+            {block.lead && <p class="gd-p" set:html={richText(block.lead)} />}
+            <ol class="gd-steps">
+              {block.steps.map((step) => (
+                <li>
+                  <span class="gd-step-label">{step.label}</span>
+                  <span class="gd-step-body" set:html={richText(step.body)} />
+                </li>
+              ))}
+            </ol>
+          </div>
+        );
+      }
+
+      if (block.kind === 'table') {
+        return (
+          <div class="gd-block">
+            <h3 class="gd-h3">
+              {block.title}
+              {block.ref && <span class="gd-ref">{block.ref}</span>}
+            </h3>
+            {block.lead && <p class="gd-p" set:html={richText(block.lead)} />}
+            <table class="gd-table">
+              <thead>
+                <tr>
+                  <th>{block.head[0]}</th>
+                  <th>{block.head[1]}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {block.rows.map((row) => (
+                  <tr>
+                    <td set:html={richText(row[0])} />
+                    <td set:html={richText(row[1])} />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+
+      return (
+        <div class="gd-block">
+          <h3 class="gd-h3">
+            {block.title}
+            {block.ref && <span class="gd-ref">{block.ref}</span>}
+          </h3>
+          {block.lead && <p class="gd-p" set:html={richText(block.lead)} />}
+          <ul class="gd-list">
+            {block.items.map((item) => (
+              <li set:html={richText(item)} />
+            ))}
+          </ul>
+        </div>
+      );
+    })
+  }
+</section>

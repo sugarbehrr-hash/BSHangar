@@ -1,0 +1,17 @@
+---
+import GuideSection from './GuideSection.astro';
+import type { Guide } from '../data/guides/types';
+
+/**
+ * All of a guide's sections in sequence, for the continuous web page.
+ * The printable equivalent is GuideSheets, which paginates the same sections
+ * one per Letter sheet. Both render GuideSection, so they cannot drift.
+ */
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+---
+
+{guide.sections.map((section) => <GuideSection section={section} />)}

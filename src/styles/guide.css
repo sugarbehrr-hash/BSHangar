@@ -1,0 +1,204 @@
+/* ============================================================
+   Field guide blocks
+   ------------------------------------------------------------
+   Shared by the web guide pages and the printable sheets. Sizes
+   step down inside .fm-page so the same markup reads correctly at
+   document density without a second stylesheet.
+   ============================================================ */
+
+.gd-section { margin-bottom: 34px; break-inside: auto; }
+
+.gd-band {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 2.5px solid var(--navy-700);
+  margin-bottom: 14px;
+}
+.gd-band-ref {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1;
+  color: var(--red-600);
+}
+.gd-band-label {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+
+.gd-h2 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 34px;
+  line-height: 0.95;
+  color: var(--navy-900);
+  margin: 0 0 10px;
+  break-after: avoid;
+}
+.gd-lead { font-size: 16px; line-height: 1.55; color: var(--ink-700); margin: 0 0 20px; }
+
+.gd-block { margin-bottom: 20px; break-inside: avoid; }
+.gd-h3 {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--navy-900);
+  margin: 0 0 8px;
+  break-after: avoid;
+}
+.gd-ref {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+.gd-p { font-size: 15px; line-height: 1.55; color: var(--ink-700); margin: 0 0 10px; }
+
+.gd-list { list-style: none; margin: 0; padding: 0; }
+.gd-list li {
+  position: relative;
+  padding: 6px 0 6px 20px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-700);
+  border-top: 1px solid var(--cream-200);
+}
+.gd-list li:first-child { border-top: none; }
+.gd-list li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 13px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red-600);
+}
+.gd-list li strong { color: var(--navy-900); font-weight: 700; }
+
+.gd-steps { list-style: none; counter-reset: gd; margin: 0; padding: 0; }
+.gd-steps li {
+  counter-increment: gd;
+  position: relative;
+  padding: 10px 0 10px 42px;
+  border-top: 1px solid var(--cream-200);
+}
+.gd-steps li:first-child { border-top: none; }
+.gd-steps li::before {
+  content: counter(gd);
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--navy-900);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gd-step-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--navy-900);
+  margin-bottom: 2px;
+}
+.gd-step-body { display: block; font-size: 14.5px; line-height: 1.5; color: var(--ink-700); }
+.gd-step-body strong { color: var(--navy-900); }
+
+.gd-table { width: 100%; border-collapse: collapse; margin: 4px 0 0; }
+.gd-table th {
+  text-align: left;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 10.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  padding: 6px 10px 6px 0;
+  border-bottom: 1.5px solid var(--navy-700);
+}
+.gd-table td {
+  padding: 8px 10px 8px 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ink-700);
+  border-bottom: 1px solid var(--cream-200);
+  vertical-align: top;
+}
+.gd-table td:first-child { font-weight: 600; color: var(--navy-900); width: 34%; }
+.gd-table td strong { color: var(--navy-900); }
+
+.gd-note {
+  background: var(--sky-100);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ink-900);
+  margin: 0 0 16px;
+  break-inside: avoid;
+}
+.gd-note.warn { background: var(--gold-100); }
+.gd-note.ok { background: var(--success-100); }
+.gd-note strong { color: var(--navy-900); }
+
+.gd-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--navy-900);
+  color: var(--cream-100);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 0 0 16px;
+  break-inside: avoid;
+}
+.gd-stat-value { font-family: var(--font-display); font-size: 46px; line-height: 1; color: var(--gold-500); }
+.gd-stat-unit {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sky-300);
+}
+.gd-stat-caption { flex: 1 1 260px; font-size: 14px; line-height: 1.45; color: var(--cream-100); }
+.gd-stat-caption strong { color: #fff; }
+
+/* ---------- Document density inside a printable sheet ---------- */
+.fm-page .gd-h2 { font-size: 26px; }
+.fm-page .gd-lead { font-size: 13px; margin-bottom: 14px; }
+.fm-page .gd-h3 { font-size: 14px; }
+.fm-page .gd-p,
+.fm-page .gd-list li,
+.fm-page .gd-step-body { font-size: 11.5px; line-height: 1.42; }
+.fm-page .gd-list li { padding: 4px 0 4px 16px; }
+.fm-page .gd-list li::before { top: 10px; width: 5px; height: 5px; }
+.fm-page .gd-step-label { font-size: 12.5px; }
+.fm-page .gd-steps li { padding: 7px 0 7px 34px; }
+.fm-page .gd-steps li::before { width: 23px; height: 23px; font-size: 12px; top: 7px; }
+.fm-page .gd-table td { font-size: 11.5px; padding: 5px 8px 5px 0; }
+.fm-page .gd-note { font-size: 11.5px; padding: 9px 12px; margin-bottom: 12px; }
+.fm-page .gd-stat { padding: 12px 16px; }
+.fm-page .gd-stat-value { font-size: 34px; }
+.fm-page .gd-stat-caption { font-size: 11.5px; }
+.fm-page .gd-section { margin-bottom: 22px; }
+.fm-page .gd-band-ref { font-size: 19px; }

@@ -1,41 +1,60 @@
 ---
 import PrintLayout from '../../layouts/PrintLayout.astro';
+import PrintSheet from '../../components/PrintSheet.astro';
 import { richText } from '../../lib/rich-text';
 import { UNION_REP_PHONE, DISCLAIMER } from '../../data/site';
 import { contractCards, contractCallouts } from '../../data/contract';
 
-/** Same data as /contract/. */
+/**
+ * NOTE: this renders the same summary content as /contract/.
+ *
+ * The export's ContractualKnowledge template is an 11-sheet, ~3,450-word
+ * section-by-section reference — substantially more than the six summary cards
+ * here. That full content has NOT been ported into src/data yet; this document
+ * is the summary until it is. Tracked so it is not forgotten.
+ */
+const runningHead = 'CBA Field Manual';
 ---
 
 <PrintLayout
   title="CBA Field Manual"
-  eyebrow="Collective Bargaining Agreement"
-  intro="The provisions that come up most on the line — duty, rest, pay, scheduling and reserve — translated so you can catch an error and stand your ground."
-  runningHead="CBA Field Manual"
+  description="Duty, rest, pay, scheduling and reserve rights, each sourced to its CBA section."
 >
-  <div class="fm-note" set:html={richText(contractCallouts.sectionKey)} />
-  <p class="fm-lead">
-    Union Rep Assistance: <strong>{UNION_REP_PHONE.display}</strong>
-  </p>
+  <PrintSheet runningHead={runningHead} page={1} total={2} cover>
+    <div class="fm-mast">
+      <div class="eyebrow">Collective Bargaining Agreement</div>
+      <h1>CBA Field Manual</h1>
+      <p class="fm-mast-sub">Know your rights. Use them. Protect each other.</p>
+    </div>
+    <div class="fm-cover-body">
+      <p class="fm-cover-intro">
+        The provisions that come up most on the line — duty, rest, pay, scheduling and reserve —
+        translated so you can catch an error and stand your ground.
+      </p>
+      <div class="gd-note" set:html={richText(contractCallouts.sectionKey)} />
+      <p class="gd-p">
+        Union Rep Assistance: <strong>{UNION_REP_PHONE.display}</strong>
+      </p>
+    </div>
+  </PrintSheet>
 
-  <div class="fm-cols">
-    {
-      contractCards.map((card) => (
-        <div class="fm-card" style={`--accent: ${card.accent};`}>
-          <h3>{card.title}</h3>
-          <div class="ref">{card.ref}</div>
-          <ul>
-            {card.points.map((point) => (
-              <li set:html={richText(point)} />
-            ))}
-          </ul>
-        </div>
-      ))
-    }
-  </div>
-
-  <div class="fm-note" set:html={richText(contractCallouts.investigatory)} />
-  <p class="fm-lead" style="font-size:11px;color:var(--ink-500);margin-top:14px;">
-    {DISCLAIMER.contract}
-  </p>
+  <PrintSheet runningHead={runningHead} page={2} total={2}>
+    <div class="fm-cols">
+      {
+        contractCards.map((card) => (
+          <div class="fm-card" style={`--accent: ${card.accent};`}>
+            <h3>{card.title}</h3>
+            <div class="ref">{card.ref}</div>
+            <ul>
+              {card.points.map((point) => (
+                <li set:html={richText(point)} />
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+    <div class="gd-note ok" set:html={richText(contractCallouts.investigatory)} />
+    <p class="gd-p" style="font-size:11px;color:var(--ink-500);">{DISCLAIMER.contract}</p>
+  </PrintSheet>
 </PrintLayout>

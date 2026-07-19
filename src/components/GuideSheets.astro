@@ -1,0 +1,105 @@
+---
+import PrintSheet from './PrintSheet.astro';
+import GuideSection from './GuideSection.astro';
+import type { Guide } from '../data/guides/types';
+
+/**
+ * Paginates a Guide into sheets: a cover, then one sheet per section.
+ * Mirrors the export's .fm-page structure (Reserve was 3 sheets, Commuting 7,
+ * Contractual 11) so sections never break across a page boundary.
+ */
+interface Props {
+  guide: Guide;
+  runningHead: string;
+}
+
+const { guide, runningHead } = Astro.props;
+
+/** Cover + one per section. */
+const total = guide.sections.length + 1;
+---
+
+<PrintSheet runningHead={runningHead} page={1} total={total} cover>
+  <div class="fm-mast">
+    <div class="eyebrow">{guide.eyebrow}</div>
+    <h1>{guide.title}</h1>
+    <p class="fm-mast-sub">{guide.subtitle}</p>
+  </div>
+
+  <div class="fm-cover-body">
+    <p class="fm-cover-intro">{guide.intro}</p>
+
+    <div class="fm-contents">
+      <span class="fm-contents-head">What's Inside</span>
+      {
+        guide.contents.map((item) => (
+          <span class="fm-contents-item">
+            {item.label}
+            {item.ref && <em>{item.ref}</em>}
+          </span>
+        ))
+      }
+    </div>
+
+    <div class="fm-provenance">
+      {guide.meta.translates && <span>{guide.meta.translates}</span>}
+      {guide.meta.revised && <span>{guide.meta.revised}</span>}
+    </div>
+  </div>
+</PrintSheet>
+
+{
+  guide.sections.map((section, i) => (
+    <PrintSheet runningHead={runningHead} page={i + 2} total={total}>
+      <GuideSection section={section} />
+    </PrintSheet>
+  ))
+}
+
+<style is:global>
+  .fm-mast-sub {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--gold-500);
+    margin: 6px 0 0;
+  }
+  .fm-cover-body { padding: 26px 0 0; }
+  .fm-cover-intro { font-size: 14px; line-height: 1.6; color: var(--ink-700); margin: 0 0 20px; }
+
+  .fm-contents {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    align-items: baseline;
+    padding: 14px 16px;
+    background: var(--cream-100);
+    border: 1px solid var(--cream-300);
+    border-radius: var(--radius-sm);
+  }
+  .fm-contents-head {
+    width: 100%;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .fm-contents-item {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--navy-900);
+  }
+  .fm-contents-item em { font-style: normal; color: var(--ink-500); margin-left: 6px; }
+
+  .fm-provenance {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 18px;
+    font-size: 10.5px;
+    color: var(--ink-300);
+  }
+</style>

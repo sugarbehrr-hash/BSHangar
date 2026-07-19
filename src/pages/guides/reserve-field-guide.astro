@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GuideBody from '../../components/GuideBody.astro';
+import Icon from '../../components/Icon.astro';
+import { reserveGuide as guide } from '../../data/guides/reserve';
+
+/**
+ * Web version of the Reserve Field Guide.
+ *
+ * The export only ever shipped this as a print artifact, which meant ~1,560
+ * words of contract reference were invisible to search entirely. Same data as
+ * /print/reserve-field-guide/ — the printable is the same content set for paper.
+ */
+---
+
+<BaseLayout
+  title="Reserve Field Guide"
+  description="Short-call reserve in plain language for PSA flight attendants: your SCR window, callout obligations, when the 14-hour duty clock actually starts, the 15-hour extension, and rest between duties. Sourced to CBA §7 and §9."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">{guide.eyebrow}</div>
+      <h1 class="ph-title">{guide.title}</h1>
+      <p class="ph-sub">{guide.intro}</p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="dlbar reveal" style="margin-top:0;">
+        <div class="txt">
+          <b>Prefer it on paper?</b>
+          <span>The same guide as a printable sheet you can save or keep in your bag.</span>
+        </div>
+        <a class="btn btn-gold" href="/print/reserve-field-guide/">
+          <Icon name="ph-printer" /> Printable
+        </a>
+      </div>
+
+      <GuideBody guide={guide} />
+
+      <p style="font-size:13px;color:var(--ink-500);max-width:720px;">
+        {guide.meta.translates}. {guide.meta.revised}. This is a plain-language summary to help you
+        and does not carry protections. Always confirm current terms with your Inflight Supervisor
+        or LEC officers.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,46 @@
+---
+import { SITE, UNION_REP_PHONE } from '../data/site';
+
+/**
+ * One Letter sheet.
+ *
+ * The export paginated its documents into discrete .fm-page sheets (Reserve is
+ * 3, Commuting 7, Contractual 11) with a running head and foot on each. A
+ * document rendered as one continuous sheet breaks across page boundaries
+ * wherever the paper happens to end, which is exactly what a field reference
+ * must not do.
+ */
+interface Props {
+  /** Running-head label for this sheet. */
+  runningHead: string;
+  /** 1-based sheet number and total, printed in the foot. */
+  page: number;
+  total: number;
+  /** Cover sheets drop the running head and lay out edge to edge. */
+  cover?: boolean;
+}
+
+const { runningHead, page, total, cover = false } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<div class:list={['fm-page', cover && 'cover']}>
+  {
+    !cover && (
+      <div class="fm-run">
+        <span>{runningHead}</span>
+        <span>{SITE.name}</span>
+      </div>
+    )
+  }
+
+  <div class:list={['fm-body', cover && 'fm-body-cover']}>
+    <slot />
+  </div>
+
+  <div class="fm-foot">
+    <span>© {year} {SITE.legalName}</span>
+    <span>Union Rep {UNION_REP_PHONE.display}</span>
+    <span>Page {page} of {total}</span>
+  </div>
+</div>

@@ -56,14 +56,21 @@ export const contractResources: Resource[] = [
       },
     ],
   },
-  // TODO Reserve Field Guide — deliberately NOT listed yet.
-  //
-  // Its content lives in the export's scr-reserve template (28KB of long-form
-  // prose on short-call reserve, SCR, the duty clock and rest rules) and has
-  // not been ported into src/data. Listing the card now would either dead-end
-  // on a 404 or point at a stub pretending to be the guide, and a page that
-  // looks like a contract reference but isn't one is worse than an absent link.
-  // Restore this entry in the same commit that lands the content.
+  {
+    id: 'reserve-field-guide',
+    title: 'Reserve Field Guide',
+    format: 'Web guide + printable',
+    blurb:
+      'Short-call reserve, SCR, the duty clock and rest rules — the plain-language ' +
+      '§7 & §9 reference for reserve life.',
+    icon: 'ph-phone-call',
+    accent: 'var(--sky-700)',
+    kind: 'generated',
+    links: [
+      { label: 'Read', href: '/guides/reserve-field-guide/', variant: 'navy', icon: 'ph-book-open' },
+      { label: 'Print', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-printer' },
+    ],
+  },
   {
     id: 'ta-vote-guide',
     title: '2026 TA Vote Guide',

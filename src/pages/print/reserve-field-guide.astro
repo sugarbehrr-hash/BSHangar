@@ -1,0 +1,9 @@
+---
+import PrintLayout from '../../layouts/PrintLayout.astro';
+import GuideSheets from '../../components/GuideSheets.astro';
+import { reserveGuide as guide } from '../../data/guides/reserve';
+---
+
+<PrintLayout title={guide.title} description={guide.intro}>
+  <GuideSheets guide={guide} runningHead="SCR & Duty Clock · §7 & §9" />
+</PrintLayout>
