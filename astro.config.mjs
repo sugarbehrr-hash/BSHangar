@@ -14,4 +14,18 @@ export default defineConfig({
   site: 'https://bluestreakhangar.com',
   trailingSlash: 'always',
   build: { format: 'directory' },
+
+  // The TA vote guide was served from the site root and shared to the Facebook
+  // group at those URLs. Moving it to a real route would dead-end every link
+  // already posted, so the old paths redirect.
+  //
+  // Only DIRECTORY-style paths belong here. With trailingSlash 'always' and
+  // format 'directory', a redirect key ending in .html makes Astro emit a
+  // *directory* named "report.html" containing index.html — so the real file
+  // path /report.html stops resolving, and Pagefind then chokes trying to read
+  // it as a file. The .html redirect stubs are literal files in public/
+  // instead, which are copied verbatim.
+  redirects: {
+    '/templates/cba-vote/': '/contract/2026-ta-vote-guide/',
+  },
 });
