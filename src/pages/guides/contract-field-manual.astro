@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GuideBody from '../../components/GuideBody.astro';
+import Icon from '../../components/Icon.astro';
+import { UNION_REP_PHONE, DISCLAIMER } from '../../data/site';
+import { contractGuide as guide } from '../../data/guides/contract';
+
+/**
+ * Web version of the CBA Field Manual.
+ *
+ * /contract/ stays the scannable hub (TA banner, six summary cards, resource
+ * list). This is the full section-by-section reference behind it — ~3,450 words
+ * the export only ever shipped as a print artifact, invisible to search.
+ */
+---
+
+<BaseLayout
+  title="CBA Field Manual"
+  description="The PSA AFA contract section by section: duty and rest limits, scheduling and bidding, pay protections, reserve rights, sick leave and vacation, grievance deadlines, personnel-file rights, and the 2022-2023 Letters of Agreement."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Collective Bargaining Agreement</div>
+      <h1 class="ph-title">{guide.title}</h1>
+      <p class="ph-sub">{guide.intro}</p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="callout tip reveal" style="margin-top:0;">
+        <Icon name="ph-scroll" />
+        <div class="ct">
+          <b>"§" means Section of the CBA.</b> For example, <b>§7.D.5</b> is Section 7, paragraph D,
+          subpart 5, so you can look it up or cite it directly. Union Rep Assistance:
+          <a href={UNION_REP_PHONE.href}><b>{UNION_REP_PHONE.display}</b></a>.
+        </div>
+      </div>
+
+      <div class="dlbar reveal">
+        <div class="txt">
+          <b>Prefer it on paper?</b>
+          <span>The same manual as a printable you can save or keep in your bag.</span>
+        </div>
+        <a class="btn btn-gold" href="/print/contract-field-manual/">
+          <Icon name="ph-printer" /> Printable
+        </a>
+      </div>
+
+      <GuideBody guide={guide} />
+
+      <p style="font-size:13px;color:var(--ink-500);max-width:720px;">
+        {guide.meta.translates}. {guide.meta.revised}. {DISCLAIMER.contract}
+      </p>
+    </div>
+  </section>
+</BaseLayout>

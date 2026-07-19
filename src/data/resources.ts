@@ -40,20 +40,21 @@ export const contractResources: Resource[] = [
   {
     id: 'cba-field-manual',
     title: 'CBA Field Manual',
-    format: 'Field manual · print / PDF',
+    format: 'Web guide + printable',
     blurb:
       'The full section-by-section reference — duty & rest, pay, scheduling, ' +
-      'reserve and grievances, each sourced to the CBA.',
+      'reserve, grievances and the LOAs, each sourced to the CBA.',
     icon: 'ph-scroll',
     accent: 'var(--navy-700)',
     kind: 'generated',
     links: [
       {
-        label: 'Open manual',
-        href: '/print/contract-field-manual/',
+        label: 'Read',
+        href: '/guides/contract-field-manual/',
         variant: 'navy',
         icon: 'ph-book-open',
       },
+      { label: 'Print', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-printer' },
     ],
   },
   {
