@@ -1,0 +1,87 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { SITE } from '../data/site';
+import '../styles/global.css';
+
+/**
+ * The single page shell.
+ *
+ * `title` and `description` are REQUIRED, not optional with a fallback. Every
+ * route has to state its own, which is the whole point: the export had one
+ * <title> for the entire site and no description anywhere, because six pages
+ * shared one document.
+ */
+interface Props {
+  title: string;
+  description: string;
+  /** Appended to the site name. Pass false for the homepage. */
+  suffix?: boolean;
+}
+
+const { title, description, suffix = true } = Astro.props;
+
+const fullTitle = suffix ? `${title} — ${SITE.name}` : title;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- TODO Phase 9: replace the Phosphor CDN webfont with a self-hosted SVG
+         sprite of only the icons this site uses, and self-host the four
+         Google families that tokens/fonts.css currently @imports. Both are
+         render-blocking third-party requests today. -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" is:inline></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="site">
+      <SiteHeader path={path} />
+      <main id="main">
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
+
+    <script>
+      // Scroll reveal. Mirrors the export's behaviour, including its
+      // reduced-motion guard: motion.css only defines the hidden start state
+      // inside prefers-reduced-motion:no-preference, so when motion is reduced
+      // there is nothing to reveal and no observer is created.
+      const wantsMotion = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+      if (wantsMotion && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+        for (const el of document.querySelectorAll('.reveal')) io.observe(el);
+      }
+    </script>
+  </body>
+</html>

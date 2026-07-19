@@ -1,0 +1,17 @@
+---
+import { richText } from '../lib/rich-text';
+
+/**
+ * Renders a copy string from src/data, converting **bold** to <strong>.
+ * Defaults to a <span> so it can sit inline; pass `as` for block contexts.
+ */
+interface Props {
+  text: string;
+  as?: string;
+  class?: string;
+}
+
+const { text, as: Tag = 'span', class: className } = Astro.props;
+---
+
+<Tag class={className} set:html={richText(text)} />

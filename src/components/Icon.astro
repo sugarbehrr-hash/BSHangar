@@ -1,0 +1,22 @@
+---
+/**
+ * Phosphor icon.
+ *
+ * Wraps the icon markup in one place so Phase 9 can swap the CDN webfont for a
+ * self-hosted SVG sprite of only the ~79 icons this site actually uses, without
+ * touching a single call site.
+ *
+ * Icons are decorative: every one in this design sits beside a text label, so
+ * they are aria-hidden and contribute nothing to the accessibility tree.
+ */
+interface Props {
+  /** Full Phosphor name including prefix, e.g. "ph-clock". */
+  name: string;
+  weight?: 'fill' | 'bold' | 'regular';
+  class?: string;
+}
+
+const { name, weight = 'fill', class: className } = Astro.props;
+---
+
+<i class:list={[`ph-${weight}`, name, className]} aria-hidden="true"></i>
