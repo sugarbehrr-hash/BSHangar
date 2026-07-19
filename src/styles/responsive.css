@@ -20,7 +20,6 @@
 
   .hero-a .inner { grid-template-columns: 1fr; gap: 30px; }
   .hero-a h1 { font-size: 56px; }
-  .hero-b h1 { font-size: 62px; }
 
   .catgrid, .cols3, .prodgrid, .reslist { grid-template-columns: 1fr 1fr; }
   .steprow { grid-template-columns: 1fr 1fr; }
@@ -43,6 +42,4 @@
   .ph-title { font-size: 44px; }
   .h2 { font-size: 34px; }
   .hero-a h1 { font-size: 46px; }
-  .hero-b h1 { font-size: 48px; }
-  .hero-b .script { font-size: 34px; }
 }
