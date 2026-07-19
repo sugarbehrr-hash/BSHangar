@@ -1,0 +1,13 @@
+/* ============================================================
+   Blue Streak Hangar — Webfonts
+   ------------------------------------------------------------
+   Loaded from Google Fonts. The @import pulls in the @font-face
+   rules the compiler ships to consumers.
+
+   Anton          — big, bold, condensed display headlines (UPPERCASE)
+   Archivo        — confident subheads + UI labels (600–800)
+   Libre Franklin — body + long-form copy, highly legible
+   Caveat         — friendly handwritten accent, used sparingly
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=Libre+Franklin:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap');

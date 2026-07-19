@@ -1,0 +1,24 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": [
+    "dist",
+    "public",
+    "scripts",
+
+    // Vendored artifacts of the live TA vote guide, still at the repo root
+    // because Pages currently serves main's root directly. Phase 6 relocates
+    // them under public/ (which is already excluded above); until then they
+    // are listed explicitly. They are generated output from the design-system
+    // export and the contract-vote-analyzer pipeline, not source we typecheck.
+    "_ds_bundle.js",
+    "support.js",
+    "ds-base.js",
+    "card-render.js",
+    "assessment.data.js",
+    "assessment-charts.js",
+    "templates",
+    "preview",
+    "tokens"
+  ]
+}

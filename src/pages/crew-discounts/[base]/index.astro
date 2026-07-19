@@ -1,0 +1,38 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DiscountExplorer from '../../../components/DiscountExplorer.astro';
+import { bases, venueCount } from '../../../data/bases';
+
+/** One route per base, showing that base's first category. */
+export const getStaticPaths = (() =>
+  bases.map((base) => ({
+    params: { base: base.key },
+    props: { base },
+  }))) satisfies GetStaticPaths;
+
+const { base } = Astro.props;
+const category = base.categories[0]!;
+const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
+---
+
+<BaseLayout
+  title={`${base.code} Crew Discounts`}
+  description={`${total} crew discounts at ${base.code}, ${base.name}: ${base.categories
+    .map((c) => c.label.toLowerCase())
+    .join(' and ')}, listed by terminal. ${base.blurb}`}
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Crew Discounts</div>
+      <h1 class="ph-title">{base.code}</h1>
+      <p class="ph-sub">{base.name} · {base.sub}</p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <DiscountExplorer base={base} category={category} />
+    </div>
+  </section>
+</BaseLayout>

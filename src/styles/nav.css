@@ -1,0 +1,56 @@
+/* ============================================================
+   Nav — sticky header, brand, links, search, mobile burger
+   ------------------------------------------------------------
+   Ported verbatim. One change: active-state selectors move from
+   `.site[data-route="x"] a[href="#x"]` (hash router) to
+   `a[aria-current="page"]`, which is the real-routes equivalent
+   and carries the accessibility semantics the export lacked.
+   ============================================================ */
+
+.nav { position: sticky; top: 0; z-index: 60; background: var(--navy-900); color: var(--cream-100);
+       display: flex; align-items: center; gap: 20px; padding: 12px 28px; box-shadow: 0 2px 14px rgba(15,30,61,0.28); }
+
+.brand { display: flex; align-items: center; gap: 12px; flex: none; }
+.brand .mark { width: 44px; height: 44px; border-radius: 50%; background: var(--red-600); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(200,16,46,0.4); transition: transform .25s var(--ease-out); }
+.brand:hover .mark { transform: rotate(-12deg) scale(1.06); }
+.brand .mark i { font-size: 26px; color: #fff; }
+.brand .wm { font-family: var(--font-display); text-transform: uppercase; font-size: 21px; line-height: .82; color: var(--cream-100); letter-spacing: .01em; }
+.brand .wm small { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 8.5px; letter-spacing: .2em; color: var(--gold-500); margin-top: 3px; }
+
+.navlinks { display: flex; align-items: center; gap: 4px; margin-left: 8px; }
+.navlinks a { font-family: var(--font-heading); font-weight: 700; font-size: 13px; letter-spacing: .02em; color: var(--sky-300); padding: 9px 13px; border-radius: var(--radius-pill); transition: background .18s, color .18s; white-space: nowrap; }
+.navlinks a:hover { background: rgba(159,208,240,0.14); color: #fff; }
+.navlinks a[aria-current="page"] { background: var(--red-600); color: #fff; }
+
+.navtools { margin-left: auto; display: flex; align-items: center; gap: 12px; flex: none; }
+
+.search { position: relative; }
+.search input { width: 210px; height: 40px; border: none; border-radius: var(--radius-pill); background: rgba(255,255,255,0.12); color: #fff;
+                font-family: var(--font-body); font-size: 14px; padding: 0 14px 0 38px; outline: none; transition: background .2s, width .25s; }
+.search input::placeholder { color: rgba(228,242,252,0.7); }
+.search input:focus { background: rgba(255,255,255,0.2); width: 250px; }
+.search .si { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--sky-300); font-size: 17px; pointer-events: none; }
+
+.fbbtn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: var(--radius-pill);
+         background: var(--gold-500); color: var(--navy-900); font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: .02em;
+         transition: transform .12s, filter .18s; }
+.fbbtn:hover { filter: brightness(1.06); }
+.fbbtn:active { transform: scale(.96); }
+.fbbtn i { font-size: 17px; }
+
+.burger { display: none; width: 42px; height: 42px; border-radius: 10px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 22px; cursor: pointer; }
+
+/* ---------- SEARCH RESULTS PANEL ---------- */
+.searchpanel { position: fixed; top: 66px; right: 28px; width: 340px; max-width: calc(100vw - 40px); z-index: 70;
+               background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+               overflow: hidden; display: none; }
+.searchpanel[data-open="1"] { display: block; }
+.searchpanel .sphead { padding: 11px 16px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-500); border-bottom: 1px solid var(--cream-200); }
+.sres { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--cream-200); transition: background .14s; }
+.sres:first-child { border-top: none; }
+.sres:hover { background: var(--sky-100); }
+.sres .b { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; background: var(--navy-900); }
+.sres .b i { color: #fff; font-size: 18px; }
+.sres .t { font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--navy-900); line-height: 1.1; }
+.sres .d { font-size: 12px; color: var(--ink-500); line-height: 1.2; margin-top: 2px; }
+.snone { padding: 20px 16px; font-size: 13.5px; color: var(--ink-500); }

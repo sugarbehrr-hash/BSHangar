@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import RichText from './RichText.astro';
+
+/**
+ * The bordered card with an icon header and a bulleted list.
+ * Used by /contract/, /commuting/ and the print artifacts, so the markup lives
+ * in one place rather than being retyped per page as it was in the export.
+ */
+interface Props {
+  title: string;
+  ref?: string;
+  icon: string;
+  accent: string;
+  points: string[];
+}
+
+const { title, ref, icon, accent, points } = Astro.props;
+---
+
+<div class="infocard reveal" style={`--accent: ${accent};`}>
+  <div class="ih">
+    <span class="b"><Icon name={icon} /></span>
+    <div>
+      <h3>{title}</h3>
+      {ref && <div class="ref">{ref}</div>}
+    </div>
+  </div>
+  <ul class="flist" style={`--accent: ${accent};`}>
+    {points.map((point) => <RichText as="li" text={point} />)}
+  </ul>
+</div>

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Callout from '../../components/Callout.astro';
+import { bases, venueCount } from '../../data/bases';
+import { FACEBOOK_GROUP } from '../../data/site';
+
+const accents = ['var(--red-600)', 'var(--sky-700)', 'var(--gold-600)', 'var(--navy-700)'];
+---
+
+<BaseLayout
+  title="Crew Discounts by Base"
+  description="Crew meals, shops and percentage discounts at CLT, DCA, DFW and PHL. Where to show your AA badge and what it gets you, terminal by terminal."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">CLT · DCA · DFW · PHL</div>
+      <h1 class="ph-title">Crew Discounts</h1>
+      <p class="ph-sub">
+        Your badge is a discount card. Meals, shops and perks at all four bases, sorted by
+        terminal so you can find something in the time you actually have.
+      </p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="kicker">Pick your base</span>
+        <h2 class="h2">Where are you flying?</h2>
+      </div>
+
+      <div class="catgrid">
+        {
+          bases.map((base, i) => {
+            const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
+            return (
+              <a
+                class="catcard reveal"
+                href={`/crew-discounts/${base.key}/`}
+                style={`--accent: ${accents[i % accents.length]};`}
+              >
+                <span class="cb"><Icon name="ph-airplane-tilt" /></span>
+                <h3>{base.code} — {base.name}</h3>
+                <p>{base.blurb}</p>
+                <span class="go">
+                  {total} spots <Icon name="ph-arrow-right" />
+                </span>
+              </a>
+            );
+          })
+        }
+      </div>
+
+      <Callout
+        tone="tip"
+        icon="ph-hand-tap"
+        text={`**Ask before you pay.** Crew discounts aren't posted at every register — show your AA badge and ask. Spotted a new deal or a spot that's closed? Post it in the group and we'll keep the list current.`}
+      />
+
+      <p style="margin-top:16px;">
+        <a class="btn btn-gold" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <Icon name="ph-facebook-logo" /> Report a change in the group
+        </a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

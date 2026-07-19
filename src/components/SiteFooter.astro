@@ -1,0 +1,79 @@
+---
+import Icon from './Icon.astro';
+import {
+  BRAND,
+  SITE,
+  NAV,
+  FACEBOOK_GROUP,
+  EXTERNAL,
+  UNION_REP_PHONE,
+  DISCLAIMER,
+} from '../data/site';
+
+/**
+ * Facebook CTA band + footer.
+ *
+ * The export's footer listed "Union Rep · 844-423-2232" as a link to the
+ * contract page rather than a callable number. It is a tel: link now — most of
+ * this audience is on a phone when they need it.
+ */
+const year = new Date().getFullYear();
+
+/** Footer nav omits Home; the brand mark above already goes there. */
+const footerNav = NAV.filter((item) => item.href !== '/');
+---
+
+<section class="fbcta">
+  <div class="in">
+    <div class="script">Come say hi,</div>
+    <h2>You're not flying this alone.</h2>
+    <p>
+      Questions, tips, trade requests and the occasional galley meme. The hangar is
+      full of crew happy to help.
+    </p>
+    <a
+      class="btn btn-gold"
+      href={FACEBOOK_GROUP}
+      target="_blank"
+      rel="noopener"
+      style="height:56px;padding:0 30px;font-size:16px;"
+    >
+      <Icon name="ph-facebook-logo" />
+      Join the Facebook group
+    </a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footgrid">
+      <div class="fcol fabout">
+        <a href="/" class="brand">
+          <span class="mark"><Icon name="ph-airplane-tilt" /></span>
+          <span class="wm">{BRAND.line1}<small>{BRAND.line2}</small></span>
+        </a>
+        <p>{SITE.description}</p>
+      </div>
+
+      <div class="fcol">
+        <h5>The Hangar</h5>
+        {footerNav.map((item) => <a href={item.href}>{item.label}</a>)}
+      </div>
+
+      <div class="fcol">
+        <h5>Quick links</h5>
+        <a href={FACEBOOK_GROUP} target="_blank" rel="noopener">Facebook Group</a>
+        <a href="/commuting/">Non-Rev Loads (StaffTraveler)</a>
+        <a href={EXTERNAL.flyzed} target="_blank" rel="noopener">flyzed.info</a>
+        <a href={UNION_REP_PHONE.href}>Union Rep · {UNION_REP_PHONE.display}</a>
+      </div>
+    </div>
+
+    <div class="footbar">
+      <span>
+        © {year} {SITE.legalName} · A community group for PSA Airlines flight attendants.
+      </span>
+      <span>{DISCLAIMER.footer}</span>
+    </div>
+  </div>
+</footer>

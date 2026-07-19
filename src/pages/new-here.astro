@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { FACEBOOK_GROUP } from '../data/site';
+
+const nextStops = [
+  {
+    href: '/commuting/',
+    accent: 'var(--sky-700)',
+    icon: 'ph-airplane-takeoff',
+    title: 'Learn to non-rev',
+    body: 'The single most useful skill for a commuter. Listing, standby, and what to do when it fails.',
+    cta: 'Open the guide',
+  },
+  {
+    href: '/contract/',
+    accent: 'var(--navy-700)',
+    icon: 'ph-scroll',
+    title: 'Know your contract',
+    body: 'Your duty, rest, and pay protections — so you can catch errors and stand your ground.',
+    cta: 'Read the basics',
+  },
+  {
+    href: '/crew-discounts/',
+    accent: 'var(--gold-600)',
+    icon: 'ph-tag',
+    title: 'Save at your base',
+    body: 'Crew meals, shops and perks at CLT, DCA, DFW and PHL. Your badge is a discount card.',
+    cta: 'Find your base',
+  },
+];
+
+const hashtags = [
+  ['#FAQuestions', "anything you're unsure about, just ask."],
+  ['#nonREVtips', 'commuting, listing & standby wisdom.'],
+  ['#CrewDiscounts', 'deals, perks & where to save.'],
+  ['#ContractualKnowledge', 'your rights, sourced to the CBA.'],
+];
+---
+
+<BaseLayout
+  title="New Here?"
+  description="New to Blue Streak Hangar? How the group works, the four hashtags that run it, and the first three stops for every PSA flight attendant."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Start here</div>
+      <h1 class="ph-title">New to the Hangar?</h1>
+      <p class="ph-sub">
+        Welcome aboard. This is the all-in-one place PSA flight attendants turn to for the things
+        we need every day — commuting, contract, discounts, and community. Here's how to get the
+        most out of it.
+      </p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="cols2">
+        <div class="infocard reveal" style="--accent: var(--red-600);">
+          <div class="ih">
+            <span class="b"><Icon name="ph-users-three" /></span>
+            <div>
+              <h3>What this is</h3>
+              <div class="ref">A community group, run by crew</div>
+            </div>
+          </div>
+          <p style="font-size:15.5px;line-height:1.6;color:var(--ink-700);margin:0 0 12px;">
+            Blue Streak, Junior &amp; Senior Hangar is a warm, no-drama space for PSA Airlines
+            flight attendants. Whether you're brand new or a 20-year senior mama, you'll find
+            people happy to help.
+          </p>
+          <ul class="flist" style="--accent: var(--red-600);">
+            <li><b>Everyone's welcome</b> — new hires and seasoned crew alike.</li>
+            <li><b>Be kind &amp; respectful</b> — we lift each other up here.</li>
+            <li><b>Real answers</b> from FAs who've actually been there.</li>
+          </ul>
+        </div>
+
+        <div class="infocard reveal" style="--accent: var(--sky-700);">
+          <div class="ih">
+            <span class="b"><Icon name="ph-hash" /></span>
+            <div>
+              <h3>The four hashtags</h3>
+              <div class="ref">Post &amp; search by topic</div>
+            </div>
+          </div>
+          <ul class="flist" style="--accent: var(--sky-700);">
+            {hashtags.map(([tag, desc]) => <li><b>{tag}</b> — {desc}</li>)}
+          </ul>
+        </div>
+      </div>
+
+      <div class="reveal" style="margin-top:44px;">
+        <span class="kicker">Where to next</span>
+        <h2 class="h2">Your first three stops.</h2>
+      </div>
+
+      <div class="cols3">
+        {
+          nextStops.map((stop) => (
+            <a class="catcard reveal" href={stop.href} style={`--accent: ${stop.accent};`}>
+              <span class="cb"><Icon name={stop.icon} /></span>
+              <h3>{stop.title}</h3>
+              <p>{stop.body}</p>
+              <span class="go">{stop.cta} <Icon name="ph-arrow-right" /></span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="dlbar reveal">
+        <span
+          class="mark"
+          style="width:52px;height:52px;border-radius:50%;background:var(--red-600);display:flex;align-items:center;justify-content:center;flex:none;"
+        >
+          <Icon name="ph-facebook-logo" class="fbmark" />
+        </span>
+        <div class="txt">
+          <b>Join the conversation on Facebook</b>
+          <span>Questions, tips, and updates all live in the group. Come say hi.</span>
+        </div>
+        <a class="btn btn-gold" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <Icon name="ph-arrow-up-right" /> Open the group
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .fbmark {
+    font-size: 30px;
+    color: #fff;
+  }
+</style>

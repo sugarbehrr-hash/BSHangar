@@ -1,0 +1,45 @@
+/* ============================================================
+   Responsive — the export's two breakpoints, kept together
+   ------------------------------------------------------------
+   Deliberately NOT split per-component. Media-query rules carry the
+   same specificity as the base rules they override, so the cascade
+   depends on source order. Keeping both blocks here, loaded last,
+   reproduces the export's order exactly. Distributing them into the
+   component files would risk silent layout drift at breakpoints,
+   which is precisely the class of bug this port must not introduce.
+
+   Only removed: `.basewrap[data-base=...]` panel rules, which no
+   longer exist now that each base is its own route.
+   ============================================================ */
+
+@media (max-width: 960px) {
+  .navlinks { display: none; }
+  .burger { display: block; }
+  .site[data-menu="1"] .navlinks { display: flex; position: absolute; top: 66px; left: 0; right: 0; flex-direction: column; align-items: stretch; background: var(--navy-800); padding: 12px; gap: 4px; box-shadow: var(--shadow-lg); }
+  .site[data-menu="1"] .navlinks a { font-size: 16px; padding: 14px 16px; }
+
+  .hero-a .inner { grid-template-columns: 1fr; gap: 30px; }
+  .hero-a h1 { font-size: 56px; }
+
+  .catgrid, .cols3, .prodgrid, .reslist { grid-template-columns: 1fr 1fr; }
+  .steprow { grid-template-columns: 1fr 1fr; }
+  .footgrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .nav { padding: 10px 16px; gap: 10px; }
+  .search input { width: 44px; padding-right: 0; }
+  .search input:focus { width: 180px; }
+  .fbbtn span { display: none; }
+  .fbbtn { padding: 0 12px; }
+  .wrap { padding: 0 18px; }
+
+  .catgrid, .cols2, .cols3, .prodgrid, .steprow, .reslist { grid-template-columns: 1fr; }
+  .tabanner h3 { font-size: 32px; }
+  .dfilter { margin-left: 0; width: 100%; }
+  .dfilter input { width: 100%; }
+
+  .ph-title { font-size: 44px; }
+  .h2 { font-size: 34px; }
+  .hero-a h1 { font-size: 46px; }
+}

@@ -1,0 +1,22 @@
+/* ============================================================
+   Hero — navy split
+   ------------------------------------------------------------
+   The export shipped two variants behind a `heroVariant` prop so
+   the design could be toggled in the editor. A static site ships
+   one: variant A, the export's default. Variant B (the full-bleed
+   poster) was deleted rather than left as dead CSS.
+   ============================================================ */
+
+.hero-a { background: var(--navy-900); color: var(--cream-100); position: relative; overflow: hidden; }
+.hero-a .inner { max-width: 1140px; margin: 0 auto; padding: 62px 28px 68px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 44px; align-items: center; }
+.hero-a .kick { display: inline-flex; align-items: center; gap: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--navy-900); background: var(--gold-500); padding: 7px 14px; border-radius: var(--radius-pill); }
+.hero-a h1 { font-family: var(--font-display); text-transform: uppercase; font-size: 74px; line-height: .9; margin: 20px 0 0; color: var(--cream-100); }
+.hero-a h1 .r { color: var(--red-500); }
+.hero-a .lead { font-size: 20px; line-height: 1.55; color: var(--sky-300); max-width: 500px; margin: 20px 0 0; }
+.hero-a .cta { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+.hero-a .art { position: relative; }
+.hero-a .art .sun { position: absolute; inset: 6% 10% 22% 8%; border-radius: 50%; background: radial-gradient(circle at 50% 45%, var(--gold-500), var(--gold-600) 60%, transparent 72%); filter: blur(2px); opacity: .9; }
+/* Height comes from the media reset in base.css — see the note there; it is
+   load-bearing for this image specifically. */
+.hero-a .art img { position: relative; width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); display: block; }
+.hero-a .art .pill { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); background: var(--white); color: var(--navy-900); font-family: var(--font-heading); font-weight: 800; font-size: 13px; padding: 9px 18px; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); white-space: nowrap; }

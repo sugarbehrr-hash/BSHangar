@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { NAV } from '../data/site';
+
+/**
+ * GitHub Pages serves /404.html automatically for unmatched paths, including
+ * on a custom domain. build.format is 'directory', so this emits 404/index.html
+ * — Pages looks for 404.html at the root, so astro.config keeps this route
+ * flat via the redirect handling in Phase 6. Verified against the built output.
+ */
+const destinations = NAV.filter((item) => item.href !== '/');
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page doesn't exist. Here's where everything lives in the hangar."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">404</div>
+      <h1 class="ph-title">Wrong gate.</h1>
+      <p class="ph-sub">
+        That page doesn't exist, or it moved. Everything in the hangar is one tap away below.
+      </p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="cols3">
+        {
+          destinations.map((item) => (
+            <a class="catcard reveal" href={item.href} style="--accent: var(--navy-700);">
+              <span class="cb"><Icon name="ph-arrow-right" /></span>
+              <h3>{item.label}</h3>
+              <span class="go">Go <Icon name="ph-arrow-right" /></span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

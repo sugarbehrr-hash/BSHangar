@@ -1,0 +1,25 @@
+{
+  "name": "bshangar",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Blue Streak Hangar — crew hub for PSA Airlines flight attendants. Static, SEO-first.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/gen-og.mjs && pagefind --site dist && node scripts/check-links.mjs",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^7.1.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "pagefind": "^1.5.2",
+    "satori": "^0.28.0",
+    "typescript": "^6.0.3"
+  }
+}

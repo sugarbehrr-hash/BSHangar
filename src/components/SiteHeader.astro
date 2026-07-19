@@ -1,0 +1,224 @@
+---
+import Icon from './Icon.astro';
+import { BRAND, NAV, FACEBOOK_GROUP } from '../data/site';
+
+/**
+ * Sticky site header.
+ *
+ * The export drove nav active state with `.site[data-route=x] a[href="#x"]`
+ * selectors against a hash router. With real routes the active item is known at
+ * build time, so it is marked with aria-current="page" — which both styles the
+ * link and tells a screen reader which page you are on. The export conveyed
+ * that with colour alone.
+ */
+interface Props {
+  /** Pathname of the current page, e.g. "/commuting/". */
+  path: string;
+}
+
+const { path } = Astro.props;
+
+/** A nav item is current if it matches exactly, or owns the section. */
+function isCurrent(href: string): boolean {
+  if (href === '/') return path === '/';
+  return path === href || path.startsWith(href);
+}
+---
+
+<header class="nav">
+  <a href="/" class="brand" aria-label={`${BRAND.line1} home`}>
+    <span class="mark"><Icon name="ph-airplane-tilt" /></span>
+    <span class="wm">{BRAND.line1}<small>{BRAND.line2}</small></span>
+  </a>
+
+  <nav class="navlinks" id="navlinks" aria-label="Primary">
+    {
+      NAV.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="navtools">
+    <div class="search">
+      <Icon name="ph-magnifying-glass" class="si" />
+      <label class="sr-only" for="site-search">Search the hangar</label>
+      <input
+        type="search"
+        id="site-search"
+        name="q"
+        placeholder="Search the hangar…"
+        autocomplete="off"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="search-results"
+        aria-autocomplete="list"
+      />
+    </div>
+
+    <a class="fbbtn" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+      <Icon name="ph-facebook-logo" />
+      <span>Facebook Group</span>
+    </a>
+
+    <button class="burger" type="button" aria-expanded="false" aria-controls="navlinks">
+      <span class="sr-only">Menu</span>
+      <Icon name="ph-list" weight="bold" />
+    </button>
+  </div>
+</header>
+
+<div class="searchpanel" id="search-results" role="listbox" aria-label="Search results">
+  <div class="sphead" data-search-head>Search</div>
+  <div data-search-list></div>
+</div>
+
+<style>
+  /* Visually hidden but available to assistive tech. The export had no labels
+     on the search input or the burger at all. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<script>
+  // Mobile menu toggle. Replaces the export's React state with the smallest
+  // thing that works; the open state lives on .site so responsive.css can
+  // key off it exactly as it did before.
+  const burger = document.querySelector<HTMLButtonElement>('.burger');
+  const site = document.querySelector<HTMLElement>('.site');
+
+  burger?.addEventListener('click', () => {
+    const open = site?.dataset.menu === '1';
+    if (site) site.dataset.menu = open ? '' : '1';
+    burger.setAttribute('aria-expanded', String(!open));
+  });
+
+  // ---------------------------------------------------------------------
+  // Search, backed by Pagefind.
+  //
+  // The export hand-maintained a 24-entry keyword index inside the component,
+  // curated against copy that lived elsewhere. It had already drifted: it
+  // advertised "Golden Days" and "PBS" as findable terms when neither string
+  // appears anywhere in the rendered pages.
+  //
+  // Pagefind indexes the BUILT HTML at build time, so the index is derived
+  // from the copy rather than maintained alongside it. It cannot drift.
+  // ---------------------------------------------------------------------
+  const input = document.querySelector<HTMLInputElement>('#site-search');
+  const panel = document.querySelector<HTMLElement>('.searchpanel');
+  const list = document.querySelector<HTMLElement>('[data-search-list]');
+  const head = document.querySelector<HTMLElement>('[data-search-head]');
+
+  interface PagefindResult {
+    url: string;
+    excerpt: string;
+    meta: { title?: string };
+  }
+
+  interface PagefindApi {
+    search: (q: string) => Promise<{ results: { data: () => Promise<PagefindResult> }[] }>;
+  }
+
+  let pagefind: PagefindApi | null = null;
+  let loadFailed = false;
+
+  // The specifier is held in a variable on purpose. `pagefind --site dist`
+  // generates this module AFTER `astro build`, so it does not exist at
+  // typecheck time and a literal import path fails to resolve. Keeping it
+  // non-literal defeats static analysis without suppressing anything.
+  const PAGEFIND_MODULE = '/pagefind/pagefind.js';
+
+  async function ensurePagefind() {
+    if (pagefind || loadFailed) return;
+    try {
+      // Absent during `astro dev` too; failing softly keeps dev usable.
+      pagefind = (await import(/* @vite-ignore */ PAGEFIND_MODULE)) as PagefindApi;
+    } catch {
+      loadFailed = true;
+    }
+  }
+
+  function setOpen(open: boolean) {
+    panel?.setAttribute('data-open', open ? '1' : '');
+    input?.setAttribute('aria-expanded', String(open));
+  }
+
+  let token = 0;
+
+  async function run() {
+    const q = (input?.value ?? '').trim();
+    if (!q) {
+      setOpen(false);
+      return;
+    }
+
+    const mine = ++token;
+    await ensurePagefind();
+
+    if (!pagefind) {
+      if (head) head.textContent = 'Search unavailable';
+      if (list) list.innerHTML = '<div class="snone">Search index not built yet.</div>';
+      setOpen(true);
+      return;
+    }
+
+    const search = await pagefind.search(q);
+    const results = await Promise.all(search.results.slice(0, 8).map((r) => r.data()));
+
+    // A slower earlier query must not overwrite a newer one.
+    if (mine !== token) return;
+
+    if (head) {
+      head.textContent = results.length
+        ? `${results.length} result${results.length === 1 ? '' : 's'}`
+        : 'Search';
+    }
+
+    if (list) {
+      list.innerHTML = results.length
+        ? results
+            .map(
+              (r) =>
+                `<a class="sres" role="option" href="${r.url}">` +
+                `<span class="b"><i class="ph-fill ph-arrow-right" aria-hidden="true"></i></span>` +
+                `<span><span class="t">${r.meta.title ?? 'Untitled'}</span>` +
+                `<span class="d">${r.excerpt}</span></span></a>`
+            )
+            .join('')
+        : `<div class="snone">Nothing matched “${q}”. Try a shorter search.</div>`;
+    }
+
+    setOpen(true);
+  }
+
+  let debounce: number | undefined;
+  input?.addEventListener('input', () => {
+    window.clearTimeout(debounce);
+    debounce = window.setTimeout(run, 150);
+  });
+
+  input?.addEventListener('focus', ensurePagefind);
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Node;
+    if (!panel?.contains(target) && target !== input) setOpen(false);
+  });
+
+  input?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      setOpen(false);
+      input.blur();
+    }
+  });
+</script>

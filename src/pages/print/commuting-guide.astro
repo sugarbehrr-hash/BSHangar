@@ -1,0 +1,58 @@
+---
+import PrintLayout from '../../layouts/PrintLayout.astro';
+import { richText } from '../../lib/rich-text';
+import { UNION_REP_PHONE } from '../../data/site';
+import {
+  commuterProgram,
+  commuteFailure,
+  freeFlying,
+  gateGuide,
+  commutingCallouts,
+} from '../../data/commuting';
+
+/** Same data as /commuting/. The export kept these as two separate documents. */
+const cards = [commuteFailure, freeFlying, ...gateGuide];
+---
+
+<PrintLayout
+  title="Commuting Guide"
+  eyebrow="Non-Rev · List · Fly · Check In"
+  intro="List early. Document everything. Arrive on time."
+  runningHead="Commuting & Non-Rev"
+>
+  <div class="fm-note" set:html={richText(commutingCallouts.disclaimer)} />
+  <p class="fm-lead">
+    Union Rep Assistance: <strong>{UNION_REP_PHONE.display}</strong>
+  </p>
+
+  <h2 class="fm-h2">The Commuter Program</h2>
+  <p class="fm-lead">Follow these four steps every time so you stay covered under the program.</p>
+
+  {
+    commuterProgram.map((step, i) => (
+      <div class="fm-card" style="--accent: var(--navy-700);">
+        <h3>{i + 1}. {step.title}</h3>
+        <ul>
+          <li set:html={richText(step.body)} />
+        </ul>
+      </div>
+    ))
+  }
+
+  <h2 class="fm-h2">On the day</h2>
+  {
+    cards.map((card) => (
+      <div class="fm-card" style={`--accent: ${card.accent};`}>
+        <h3>{card.title}</h3>
+        {card.ref && <div class="ref">{card.ref}</div>}
+        <ul>
+          {card.points.map((point) => (
+            <li set:html={richText(point)} />
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+
+  <div class="fm-note" set:html={richText(commutingCallouts.idTravel)} />
+</PrintLayout>

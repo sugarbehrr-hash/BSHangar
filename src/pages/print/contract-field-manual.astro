@@ -1,0 +1,41 @@
+---
+import PrintLayout from '../../layouts/PrintLayout.astro';
+import { richText } from '../../lib/rich-text';
+import { UNION_REP_PHONE, DISCLAIMER } from '../../data/site';
+import { contractCards, contractCallouts } from '../../data/contract';
+
+/** Same data as /contract/. */
+---
+
+<PrintLayout
+  title="CBA Field Manual"
+  eyebrow="Collective Bargaining Agreement"
+  intro="The provisions that come up most on the line — duty, rest, pay, scheduling and reserve — translated so you can catch an error and stand your ground."
+  runningHead="CBA Field Manual"
+>
+  <div class="fm-note" set:html={richText(contractCallouts.sectionKey)} />
+  <p class="fm-lead">
+    Union Rep Assistance: <strong>{UNION_REP_PHONE.display}</strong>
+  </p>
+
+  <div class="fm-cols">
+    {
+      contractCards.map((card) => (
+        <div class="fm-card" style={`--accent: ${card.accent};`}>
+          <h3>{card.title}</h3>
+          <div class="ref">{card.ref}</div>
+          <ul>
+            {card.points.map((point) => (
+              <li set:html={richText(point)} />
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="fm-note" set:html={richText(contractCallouts.investigatory)} />
+  <p class="fm-lead" style="font-size:11px;color:var(--ink-500);margin-top:14px;">
+    {DISCLAIMER.contract}
+  </p>
+</PrintLayout>

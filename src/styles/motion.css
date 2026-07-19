@@ -1,0 +1,26 @@
+/* ============================================================
+   Motion — scroll reveal + float
+   ------------------------------------------------------------
+   Ported verbatim, including the export's reduced-motion guard:
+   the whole block sits inside prefers-reduced-motion:no-preference,
+   so users who ask for less motion get the fully-visible end state
+   with no transition and no observer work.
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .float { animation: float 6s ease-in-out infinite; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+/* Page-enter animation, used by the export on route change. Retained for the
+   base-panel swap inside the discounts explorer. */
+@keyframes pagein {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}

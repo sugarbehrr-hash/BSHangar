@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { DISCLAIMER } from '../data/site';
+import { products } from '../data/essentials';
+---
+
+<BaseLayout
+  title="Crew Essentials"
+  description="Gear that survives the schedule: rolling bags, compression socks, power banks, uniform care and layover sleep kits — vetted picks from PSA flight attendants."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Vetted by crew</div>
+      <h1 class="ph-title">Crew Essentials</h1>
+      <p class="ph-sub">
+        The bags, socks, chargers and care kit that survive the schedule. No sponsored fluff —
+        just the things that keep showing up in crew bags because they last.
+      </p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="prodgrid">
+        {
+          products.map((product) => (
+            <div class="prod reveal">
+              <div class="shot">
+                <span class="tagchip">{product.tag}</span>
+                <Icon name={product.icon} />
+              </div>
+              <div class="pbody">
+                <h3>{product.title}</h3>
+                <p>{product.blurb}</p>
+                <a class="amz" href={product.url} target="_blank" rel="noopener sponsored">
+                  <Icon name="ph-amazon-logo" /> View on Amazon
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="disclosure reveal">{DISCLAIMER.affiliate}</p>
+    </div>
+  </section>
+</BaseLayout>

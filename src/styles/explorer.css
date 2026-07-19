@@ -1,0 +1,83 @@
+/* ============================================================
+   Discount explorer — base tabs, category tabs, filter, zones
+   ------------------------------------------------------------
+   Ported from the design export with three structural changes,
+   all of which remove JavaScript rather than add it:
+
+   1. Base + category were client state (`.basewrap[data-base=x]`
+      toggling `.basepanel` visibility). They are real routes now,
+      so the panel show/hide rules are gone entirely and the active
+      tab is marked with aria-current="page".
+   2. Zone accordions were `.zone[data-open="1"]` driven by a React
+      state map. They are native <details>/<summary> now, so the
+      open/closed rules key off [open] and .zbody needs no
+      display toggle.
+   3. `.tab .nm` referenced var(--ink-600), which is not defined in
+      any token file — the declaration was invalid at computed-value
+      time, so the subtitle inherited near-black instead of rendering
+      muted. Corrected to --ink-500, which is what every sibling
+      muted-caption rule in the export uses. This is a deliberate
+      deviation from the original rendering.
+   ============================================================ */
+
+/* ---------- BASE TABS ---------- */
+.tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
+.tab { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: var(--radius-pill); background: var(--white); border: 1.5px solid var(--cream-300);
+       font-family: var(--font-heading); font-weight: 800; cursor: pointer; transition: all .16s; }
+.tab .code { font-family: var(--font-display); font-size: 20px; color: var(--navy-900); line-height: 1; }
+.tab .nm { font-size: 13px; color: var(--ink-500); }
+.tab:hover { border-color: var(--navy-700); }
+.tab[aria-current="page"] { background: var(--navy-900); border-color: var(--navy-900); }
+.tab[aria-current="page"] .code,
+.tab[aria-current="page"] .nm { color: #fff; }
+
+/* ---------- BASE INTRO ---------- */
+.baseintro { display: flex; align-items: center; gap: 18px; margin-top: 30px; padding: 24px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); }
+.baseintro .big { font-family: var(--font-display); font-size: 56px; color: var(--red-600); line-height: .9; flex: none; }
+.baseintro h3 { font-family: var(--font-heading); font-weight: 800; font-size: 22px; color: var(--navy-900); margin: 0 0 4px; }
+.baseintro h3 .bsub { font-family: var(--font-heading); font-weight: 700; font-size: 13px; color: var(--ink-500); margin-left: 8px; }
+.baseintro p { font-size: 15px; line-height: 1.5; color: var(--ink-700); margin: 0; }
+
+/* ---------- CATEGORY BAR + FILTER ---------- */
+.explorer { margin-top: 24px; }
+.catbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.cattab { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius-pill); border: 1.5px solid var(--cream-300); background: var(--white); font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--navy-900); cursor: pointer; transition: all .15s; }
+.cattab i { font-size: 17px; color: var(--sky-700); }
+.cattab .cc { font-size: 12px; color: var(--ink-500); font-weight: 700; }
+.cattab:hover { border-color: var(--navy-700); }
+.cattab[aria-current="page"] { background: var(--red-600); border-color: var(--red-600); color: #fff; }
+.cattab[aria-current="page"] i,
+.cattab[aria-current="page"] .cc { color: #fff; }
+
+.dfilter { position: relative; display: flex; align-items: center; margin-left: auto; }
+.dfilter > i { position: absolute; left: 14px; color: var(--ink-300); font-size: 16px; pointer-events: none; }
+.dfilter input { height: 44px; width: 250px; max-width: 100%; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); padding: 0 16px 0 38px; font-family: var(--font-body); font-size: 14px; color: var(--ink-900); outline: none; transition: border-color .15s; }
+.dfilter input:focus { border-color: var(--sky-500); }
+
+.expcta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.expcount { font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.exptools { display: flex; align-items: center; gap: 8px; }
+
+/* ---------- ZONES (native <details>) ---------- */
+.zone { border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--white); margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
+.zhead { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: none; border: none; cursor: pointer; text-align: left; transition: background .14s; list-style: none; }
+.zhead::-webkit-details-marker { display: none; }
+.zhead:hover { background: var(--cream-100); }
+.zbadge { flex: none; min-width: 48px; height: 30px; padding: 0 10px; border-radius: var(--radius-sm); background: var(--navy-900); color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.ztitle { flex: 1; min-width: 0; font-family: var(--font-heading); font-weight: 800; font-size: 17px; color: var(--navy-900); display: flex; flex-direction: column; gap: 2px; }
+.znote { font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.znote:empty { display: none; }
+.zcount { flex: none; font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: var(--ink-500); background: var(--cream-200); border-radius: var(--radius-pill); padding: 3px 11px; }
+.zchev { flex: none; color: var(--ink-300); font-size: 18px; transition: transform .2s; }
+.zone[open] .zchev { transform: rotate(180deg); color: var(--red-600); }
+.zbody { padding: 2px 18px 10px; }
+
+.zrow { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; padding: 10px 0; border-top: 1px solid var(--cream-200); }
+.zn { font-size: 15.5px; color: var(--ink-900); line-height: 1.35; display: flex; flex-direction: column; gap: 3px; }
+.zd { font-size: 12.5px; color: var(--ink-500); line-height: 1.45; }
+.zd:empty { display: none; }
+.zs { flex: none; font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--red-600); white-space: nowrap; }
+.zs:empty { display: none; }
+
+.znone { display: flex; align-items: center; gap: 10px; padding: 20px; background: var(--cream-100); border: 1px dashed var(--cream-300); border-radius: var(--radius-md); color: var(--ink-500); font-size: 14.5px; }
+.znone i { color: var(--ink-300); font-size: 18px; }
