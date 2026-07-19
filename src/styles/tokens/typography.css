@@ -1,0 +1,53 @@
+/* ============================================================
+   Blue Streak Hangar — Typography
+   ------------------------------------------------------------
+   Built for legibility first: our readers range 21–70 and many
+   read on phones in dim galleys. Big sizes, generous line-height,
+   strong contrast. Anton shouts the headline; Libre Franklin
+   does the patient explaining.
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;          /* big uppercase headlines */
+  --font-heading: 'Archivo', 'Helvetica Neue', sans-serif;      /* subheads + UI labels */
+  --font-body:    'Libre Franklin', 'Helvetica Neue', sans-serif; /* body copy */
+  --font-script:  'Caveat', 'Comic Sans MS', cursive;           /* warm handwritten accent */
+
+  /* ---- Weights ---- */
+  --fw-regular: 400;  /* @kind font */
+  --fw-medium:  500;  /* @kind font */
+  --fw-semibold:600;  /* @kind font */
+  --fw-bold:    700;  /* @kind font */
+  --fw-extra:   800;  /* @kind font */
+
+  /* ---- Type scale (flyer / document oriented) ---- */
+  --fs-display-xl: 72px;   /* poster hero */
+  --fs-display-lg: 54px;   /* flyer title */
+  --fs-display-md: 40px;   /* section poster */
+  --fs-h1: 34px;
+  --fs-h2: 26px;
+  --fs-h3: 21px;
+  --fs-lead: 19px;         /* intro / lead paragraph */
+  --fs-body: 17px;         /* default body — never smaller in print */
+  --fs-body-sm: 15px;
+  --fs-caption: 13px;
+  --fs-overline: 13px;
+
+  /* ---- Line heights ---- */
+  --lh-tight: 1.02;   /* @kind font */
+  --lh-snug: 1.18;    /* @kind font */
+  --lh-normal: 1.55;  /* @kind font */
+  --lh-relaxed: 1.7;  /* @kind font */
+
+  /* ---- Tracking ---- */
+  --ls-display: 0.01em;
+  --ls-overline: 0.16em;   /* uppercase eyebrows */
+  --ls-label: 0.04em;
+  --ls-body: 0.005em;
+}
+
+/* Base reset — ensures every consumer gets Libre Franklin by default */
+body {
+  font-family: var(--font-body);
+}

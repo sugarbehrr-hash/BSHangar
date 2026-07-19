@@ -1,0 +1,42 @@
+/* ============================================================
+   Base — reset, page shell, section shell, shared typography
+   ------------------------------------------------------------
+   Ported verbatim from the design export's <style> block
+   (BlueStreakHangar.dc.html). Values are unchanged; only the
+   `.site`/`.page` route-switching rules are dropped, since real
+   routes replace the client-side hash router.
+   ============================================================ */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--cream-200); }
+a { text-decoration: none; color: inherit; }
+
+.site { font-family: var(--font-body); color: var(--ink-900); min-height: 100vh; overflow-x: hidden; }
+
+/* ---------- LAYOUT SHELL ---------- */
+.wrap { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
+
+.pagehead { background: var(--navy-900); color: var(--cream-100); padding: 46px 0 40px; position: relative; overflow: hidden; }
+.pagehead::after { content: ""; position: absolute; right: -60px; top: -60px; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, rgba(232,163,61,0.22), transparent 70%); }
+.ph-eyebrow { font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-500); margin-bottom: 12px; }
+.ph-title { font-family: var(--font-display); text-transform: uppercase; font-size: 62px; line-height: .9; margin: 0; color: var(--cream-100); }
+.ph-sub { font-size: 18px; line-height: 1.55; color: var(--sky-300); max-width: 640px; margin: 16px 0 0; }
+
+/* ---------- SECTION SHELL ---------- */
+section.band { padding: 62px 0; }
+section.band.cream { background: var(--cream-200); }
+section.band.paper { background: var(--cream-100); }
+.kicker { font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--red-600); }
+.h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 44px; line-height: .95; color: var(--navy-900); margin: 10px 0 0; }
+.sectlead { font-size: 18px; line-height: 1.6; color: var(--ink-700); max-width: 720px; margin: 14px 0 0; }
+
+/* ---------- SKIP LINK (added — the export had no keyboard bypass) ---------- */
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 100; padding: 12px 20px; background: var(--gold-500); color: var(--navy-900);
+             font-family: var(--font-heading); font-weight: 800; font-size: 14px; border-radius: 0 0 var(--radius-sm) 0; }
+.skip-link:focus { left: 0; }
+
+/* ---------- FOCUS VISIBILITY ----------
+   The effects token file defines --focus-ring but nothing in the export ever
+   consumed it, so keyboard focus was invisible on every interactive element. */
+:where(a, button, input, summary):focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); }
