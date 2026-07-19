@@ -12,6 +12,25 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--cream-200); }
 a { text-decoration: none; color: inherit; }
 
+/* ---------- RESPONSIVE MEDIA ----------
+   Not cosmetic tidying. The export's raw <img> tags carried no dimension
+   attributes, so their heights were implicitly auto and the component CSS only
+   ever needed to set width. astro:assets emits real width/height attributes
+   from the source file, and an HTML height attribute is honoured whenever CSS
+   declares no height — which rendered the 1523x1074 hero image at its full
+   1074px inside a ~520px column, inflating the homepage hero by ~700px.
+
+   Fixing this on `.hero-a .art img` would patch the one image that happens to
+   exist today and leave the trap armed for every image added later, so it is
+   reset globally. Keeping the width/height attributes AND height:auto is the
+   correct pairing: browsers derive aspect-ratio from the attributes to reserve
+   layout space, so nothing shifts while the image loads.
+
+   Deliberately excludes <svg>: Phase 9 replaces the Phosphor webfont with an
+   inline SVG sprite whose icons are explicitly sized, and height:auto would
+   fight that. */
+img, video, canvas { max-width: 100%; height: auto; }
+
 .site { font-family: var(--font-body); color: var(--ink-900); min-height: 100vh; overflow-x: hidden; }
 
 /* ---------- LAYOUT SHELL ---------- */
