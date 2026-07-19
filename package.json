@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && node scripts/gen-og.mjs && pagefind --site dist",
     "preview": "astro preview",
     "check": "astro check"
   },
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "pagefind": "^1.5.2",
+    "satori": "^0.28.0",
     "typescript": "^6.0.3"
   }
 }
