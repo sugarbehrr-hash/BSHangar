@@ -126,16 +126,24 @@ function isCurrent(href: string): boolean {
     meta: { title?: string };
   }
 
-  let pagefind: { search: (q: string) => Promise<{ results: { data: () => Promise<PagefindResult> }[] }> } | null =
-    null;
+  interface PagefindApi {
+    search: (q: string) => Promise<{ results: { data: () => Promise<PagefindResult> }[] }>;
+  }
+
+  let pagefind: PagefindApi | null = null;
   let loadFailed = false;
+
+  // The specifier is held in a variable on purpose. `pagefind --site dist`
+  // generates this module AFTER `astro build`, so it does not exist at
+  // typecheck time and a literal import path fails to resolve. Keeping it
+  // non-literal defeats static analysis without suppressing anything.
+  const PAGEFIND_MODULE = '/pagefind/pagefind.js';
 
   async function ensurePagefind() {
     if (pagefind || loadFailed) return;
     try {
-      // Built by `pagefind --site dist` in the build script, so it does not
-      // exist during `astro dev`. Failing softly keeps dev usable.
-      pagefind = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
+      // Absent during `astro dev` too; failing softly keeps dev usable.
+      pagefind = (await import(/* @vite-ignore */ PAGEFIND_MODULE)) as PagefindApi;
     } catch {
       loadFailed = true;
     }
