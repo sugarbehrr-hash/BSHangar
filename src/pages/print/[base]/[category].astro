@@ -1,0 +1,53 @@
+---
+import type { GetStaticPaths } from 'astro';
+import PrintLayout from '../../../layouts/PrintLayout.astro';
+import { bases, venueCount } from '../../../data/bases';
+
+/**
+ * Printable crew-discount flyer, one per base category.
+ *
+ * The export shipped 11 hand-built flyer templates whose content duplicated
+ * siteData.js. These render from bases.ts, so the flyer and the web explorer
+ * cannot disagree about a price.
+ */
+export const getStaticPaths = (() =>
+  bases.flatMap((base) =>
+    base.categories.map((category) => ({
+      params: { base: base.key, category: category.key },
+      props: { base, category },
+    }))
+  )) satisfies GetStaticPaths;
+
+const { base, category } = Astro.props;
+const total = venueCount(category);
+---
+
+<PrintLayout
+  title={`${base.code} ${category.label}`}
+  eyebrow={`Crew Discounts · ${base.name}`}
+  intro={`${total} spots across ${category.zones.length} areas. Show your AA badge and ask — rates are not posted at every register.`}
+  runningHead={`${base.code} ${category.label}`}
+>
+  <div class="fm-cols">
+    {
+      category.zones.map((zone) => (
+        <section class="fm-zone">
+          <div class="fm-zone-head">
+            <span class="fm-zone-badge">{zone.badge}</span>
+            <span class="fm-zone-name">{zone.name}</span>
+            {zone.note && <span class="fm-zone-note">{zone.note}</span>}
+          </div>
+          {zone.venues.map((venue) => (
+            <div class="fm-row">
+              <span class="fm-name">
+                {venue.name}
+                <span class="fm-detail">{venue.detail}</span>
+              </span>
+              <span class="fm-highlight">{venue.highlight}</span>
+            </div>
+          ))}
+        </section>
+      ))
+    }
+  </div>
+</PrintLayout>
