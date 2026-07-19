@@ -1,0 +1,58 @@
+# Build the Astro site and publish it to GitHub Pages.
+#
+# This workflow is inert until the repo's Pages source is switched from
+# "Deploy from a branch" to "GitHub Actions" (Settings -> Pages -> Build and
+# deployment -> Source). That switch needs admin on the repo. Until it happens,
+# Pages keeps serving main's root as a plain static folder, which is what keeps
+# the live TA vote guide up while this rebuild is in progress.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Allow GITHUB_TOKEN to publish to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time. Don't cancel a running publish — a half-finished
+# Pages deploy is worse than a queued one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Runs `astro build` then `pagefind --site dist`, so the search index is
+      # built from the rendered HTML and can never drift from the page copy.
+      - run: npm run build
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
