@@ -59,7 +59,9 @@ const path = Astro.url.pathname;
 
     <div class="site">
       <SiteHeader path={path} />
-      <main id="main">
+      <!-- data-pagefind-body scopes the search index to real page content, so
+           the nav and footer (identical on every page) never become results. -->
+      <main id="main" data-pagefind-body>
         <slot />
       </main>
       <SiteFooter />
