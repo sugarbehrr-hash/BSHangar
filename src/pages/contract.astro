@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import InfoCard from '../components/InfoCard.astro';
+import Callout from '../components/Callout.astro';
+import RichText from '../components/RichText.astro';
+import { UNION_REP_PHONE, DISCLAIMER } from '../data/site';
+import { contractCards, taBanner, contractCallouts } from '../data/contract';
+import { contractResources, VOTE_GUIDE } from '../data/resources';
+---
+
+<BaseLayout
+  title="Your Contract"
+  description="The PSA AFA collective bargaining agreement in plain language: duty and rest, scheduling, pay protections, reserve rights, sick and vacation, and grievances — each sourced to its CBA section."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Collective Bargaining Agreement</div>
+      <h1 class="ph-title">Contractual Knowledge<br />Is Power</h1>
+      <p class="ph-sub">
+        A plain-language translation of the provisions that matter most — duty, rest, pay,
+        scheduling &amp; reserve. Know your rights. Use them. Protect each other.
+      </p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="tabanner reveal">
+        <div class="in">
+          <span class="flag"><Icon name="ph-scales" /> {taBanner.flag}</span>
+          <h3>{taBanner.headline}<br /><span class="r">{taBanner.headlineAccent}</span></h3>
+          <p>{taBanner.body}</p>
+          <div class="cta">
+            <a class="btn btn-red" href={VOTE_GUIDE.guide}>
+              <Icon name="ph-book-open" /> Read the vote guide
+            </a>
+            <a class="btn btn-gold" href={VOTE_GUIDE.report}>
+              <Icon name="ph-file-pdf" /> Full report (PDF)
+            </a>
+          </div>
+          <p class="note">{taBanner.note}</p>
+        </div>
+      </div>
+
+      <div class="callout tip reveal" style="margin-top:26px;">
+        <Icon name="ph-scroll" />
+        <div class="ct">
+          <RichText text={contractCallouts.sectionKey} /> Union Rep Assistance:
+          <a href={UNION_REP_PHONE.href}><b>{UNION_REP_PHONE.display}</b></a>.
+        </div>
+      </div>
+
+      <div class="reveal" style="margin-top:40px;">
+        <span class="kicker">Know your rights</span>
+        <h2 class="h2">Your contract, in plain language.</h2>
+        <p class="sectlead">
+          The provisions that come up most on the line — duty, rest, pay, scheduling and reserve —
+          translated so you can catch an error and stand your ground.
+        </p>
+      </div>
+
+      <div class="cols3" style="margin-top:30px;">
+        {contractCards.map((card) => <InfoCard {...card} />)}
+      </div>
+
+      <Callout tone="ok" icon="ph-shield-check" text={contractCallouts.investigatory} />
+
+      <div class="reveal" style="margin-top:46px;">
+        <span class="kicker">Read or download</span>
+        <h2 class="h2">The full references.</h2>
+        <p class="sectlead">
+          Each guide lives here two ways — a page you can read and search, and a printable,
+          PDF-style version you can save for your bag.
+        </p>
+      </div>
+
+      <div class="reslist">
+        {
+          contractResources.map((res) => (
+            <div class="rescard reveal" style={`--accent: ${res.accent};`}>
+              <div class="rh">
+                <span class="rb"><Icon name={res.icon} /></span>
+                <div>
+                  <h4>{res.title}</h4>
+                  <div class="fmt">{res.format}</div>
+                </div>
+              </div>
+              <p>{res.blurb}</p>
+              <div class="racts">
+                {res.links.map((link) => (
+                  <a class={`btn btn-${link.variant} btn-sm`} href={link.href}>
+                    <Icon name={link.icon} /> {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <p style="font-size:13px;color:var(--ink-500);margin-top:24px;max-width:720px;">
+        {DISCLAIMER.contract}
+      </p>
+    </div>
+  </section>
+</BaseLayout>

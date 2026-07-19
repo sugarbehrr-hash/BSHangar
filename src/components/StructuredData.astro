@@ -1,0 +1,77 @@
+---
+import { SITE, FACEBOOK_GROUP } from '../data/site';
+
+/**
+ * JSON-LD. Emitted on every page via BaseLayout.
+ *
+ * Organization + WebSite are site-wide. BreadcrumbList is generated from the
+ * current pathname, so any nested route gets one without the page having to
+ * declare it — including the base/category discount pages, which are the ones
+ * most likely to be a search entry point deep in the tree.
+ */
+interface Props {
+  path: string;
+  title: string;
+}
+
+const { path, title } = Astro.props;
+const origin = SITE.url.replace(/\/$/, '');
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE.legalName,
+  alternateName: SITE.name,
+  url: origin + '/',
+  description: SITE.description,
+  sameAs: [FACEBOOK_GROUP],
+};
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: origin + '/',
+};
+
+/** Build a crumb trail from the path, humanising each segment. */
+const segments = path.split('/').filter(Boolean);
+
+const LABELS: Record<string, string> = {
+  'new-here': 'New Here',
+  commuting: 'Commuting',
+  contract: 'Your Contract',
+  'crew-discounts': 'Crew Discounts',
+  'crew-essentials': 'Crew Essentials',
+  print: 'Printable Guides',
+};
+
+function labelFor(segment: string, index: number): string {
+  if (LABELS[segment]) return LABELS[segment];
+  // Base codes (clt, dca…) read better uppercased; deeper segments use the
+  // page title, which already names the category.
+  if (segment.length <= 4) return segment.toUpperCase();
+  return index === segments.length - 1 ? title : segment;
+}
+
+const breadcrumb =
+  segments.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: origin + '/' },
+          ...segments.map((segment, i) => ({
+            '@type': 'ListItem',
+            position: i + 2,
+            name: labelFor(segment, i),
+            item: `${origin}/${segments.slice(0, i + 1).join('/')}/`,
+          })),
+        ],
+      }
+    : null;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(organization)} />
+<script type="application/ld+json" set:html={JSON.stringify(website)} />
+{breadcrumb && <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />}

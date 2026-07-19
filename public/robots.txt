@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Internal review scaffolding, not site content. Temporary — deleted once the
+# vote-guide review wraps.
+Disallow: /preview/
+
+Sitemap: https://bluestreakhangar.com/sitemap.xml

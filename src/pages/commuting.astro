@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import InfoCard from '../components/InfoCard.astro';
+import Callout from '../components/Callout.astro';
+import RichText from '../components/RichText.astro';
+import { UNION_REP_PHONE } from '../data/site';
+import {
+  commuterProgram,
+  commuteFailure,
+  freeFlying,
+  gateGuide,
+  commutingCallouts,
+} from '../data/commuting';
+---
+
+<BaseLayout
+  title="Commuting & Non-Rev Guide"
+  description="How PSA flight attendants list, fly and report on time: the commuter program, what to do when a commute fails, listing by airline, and non-rev dress guidelines."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Non-Rev · List · Fly · Check In</div>
+      <h1 class="ph-title">Commuting Guide</h1>
+      <p class="ph-sub">
+        Everything you need to list, fly, and report on time — plus your protections when a
+        commute falls apart. List early. Document everything. Arrive on time.
+      </p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="callout reveal">
+        <Icon name="ph-warning" />
+        <div class="ct">
+          <RichText text={commutingCallouts.disclaimer} /> Union Rep Assistance:
+          <a href={UNION_REP_PHONE.href}><b>{UNION_REP_PHONE.display}</b></a>.
+        </div>
+      </div>
+
+      <div class="reveal" style="margin-top:40px;">
+        <span class="kicker">Every commuting day</span>
+        <h2 class="h2">The Commuter Program.</h2>
+        <p class="sectlead">Follow these four steps every time so you stay covered under the program.</p>
+      </div>
+
+      <div class="steprow">
+        {
+          commuterProgram.map((step, i) => (
+            <div class="stepc reveal">
+              <div class="n">{i + 1}</div>
+              <h4>{step.title}</h4>
+              <RichText as="p" text={step.body} />
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="cols2">
+        <InfoCard {...commuteFailure} />
+        <InfoCard {...freeFlying} />
+      </div>
+
+      <Callout tone="tip" icon="ph-info" text={commutingCallouts.idTravel} />
+
+      <div class="reveal" style="margin-top:40px;">
+        <span class="kicker">Grab-and-go</span>
+        <h2 class="h2">Getting to your gate.</h2>
+      </div>
+
+      <div class="cols3">
+        {gateGuide.map((card) => <InfoCard {...card} />)}
+      </div>
+
+      <div class="dlbar reveal">
+        <span
+          class="mark"
+          style="width:52px;height:52px;border-radius:50%;background:var(--sky-700);display:flex;align-items:center;justify-content:center;flex:none;"
+        >
+          <Icon name="ph-file-pdf" class="dlmark" />
+        </span>
+        <div class="txt">
+          <b>Prefer a printable version?</b>
+          <span>The same commuting guide as a poster you can save or print for your bag.</span>
+        </div>
+        <a class="btn btn-gold" href="/print/commuting-guide/">
+          <Icon name="ph-printer" /> Printable
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .dlmark {
+    font-size: 28px;
+    color: #fff;
+  }
+</style>

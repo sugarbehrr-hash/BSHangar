@@ -1,17 +1,165 @@
 ---
-// Placeholder — replaced by the real homepage in Phase 3.
-// Exists so Phase 0 can prove the toolchain builds and that public/CNAME +
-// public/.nojekyll survive into dist/ (they must, or the custom domain breaks).
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, FACEBOOK_GROUP } from '../data/site';
+import airportScene from '../assets/airport-scene.jpg';
+
+const cards = [
+  {
+    href: '/new-here/',
+    accent: 'var(--red-600)',
+    icon: 'ph-hand-waving',
+    title: 'New Here?',
+    body: 'Just joined? Start with how the group works, what to post where, and the four hashtags that run the hangar.',
+    cta: 'Get oriented',
+  },
+  {
+    href: '/commuting/',
+    accent: 'var(--sky-700)',
+    icon: 'ph-airplane-takeoff',
+    title: 'Commuting & Non-Rev',
+    body: 'List, fly, and report on time — plus your protections when a commute falls apart. The full field guide.',
+    cta: 'Learn to commute',
+  },
+  {
+    href: '/contract/',
+    accent: 'var(--navy-700)',
+    icon: 'ph-scroll',
+    title: 'Your Contract',
+    body: 'Duty, rest, pay, scheduling & reserve rights — the CBA translated into plain language you can actually use.',
+    cta: 'Know your rights',
+  },
+  {
+    href: '/crew-discounts/',
+    accent: 'var(--gold-600)',
+    icon: 'ph-tag',
+    title: 'Crew Discounts',
+    body: 'Meals, shops & perks by base — CLT, DCA, DFW & PHL. Flash your crew ID and save on the turn.',
+    cta: 'Browse by base',
+  },
+  {
+    href: '/crew-essentials/',
+    accent: 'var(--success-600)',
+    icon: 'ph-suitcase-rolling',
+    title: 'Crew Essentials',
+    body: 'The bags, socks, chargers & care kit that survive the schedule — vetted picks with links to buy.',
+    cta: 'See the gear',
+  },
+  {
+    href: FACEBOOK_GROUP,
+    external: true,
+    accent: 'var(--sky-500)',
+    icon: 'ph-chats-circle',
+    title: 'Ask the Group',
+    body: "Something not covered here? The hangar's full of senior FAs happy to help. Post it — we've got you.",
+    cta: 'Open Facebook',
+  },
+];
+
+const steps = [
+  { n: 1, title: 'We fly it first', body: 'Every guide comes from FAs living the schedule — not a policy binder.' },
+  { n: 2, title: 'We write it plain', body: 'Real examples over legalese. If it needs a translation, we translate it.' },
+  { n: 3, title: 'We keep it fresh', body: 'Spot something outdated? Post in the group and we update the master sheet.' },
+  { n: 4, title: 'You just show up', body: 'Bookmark this, search it before a trip, and land ready.' },
+];
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Blue Streak Hangar</title>
-  </head>
-  <body>
-    <h1>Blue Streak Hangar</h1>
-  </body>
-</html>
+<BaseLayout
+  title="Blue Streak Hangar — PSA Flight Attendant Crew Hub"
+  description={SITE.description}
+  suffix={false}
+>
+  <div class="hero">
+    <div class="hero-a">
+      <div class="inner">
+        <div>
+          <span class="kick"><Icon name="ph-airplane-tilt" /> {SITE.tagline}</span>
+          <h1>Your home base for <span class="r">everything crew.</span></h1>
+          <p class="lead">
+            Non-rev commuting, your contract in plain language, crew discounts by base, and the
+            gear that actually lasts — all in one place, from FAs who fly it every day.
+          </p>
+          <div class="cta">
+            <a class="btn btn-red" href="/new-here/"><Icon name="ph-hand-waving" /> Start here</a>
+            <a class="btn btn-ghost" href="/crew-discounts/"><Icon name="ph-tag" /> Crew discounts</a>
+          </div>
+        </div>
+        <div class="art">
+          <div class="sun float"></div>
+          <Image
+            src={airportScene}
+            alt="Flat illustration of a plane taking off at an airport"
+            widths={[480, 760, 1040]}
+            sizes="(max-width: 960px) 92vw, 500px"
+            loading="eager"
+          />
+          <span class="pill">✈ Straight from the galley, not the corporate memo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="kicker">Find what you need</span>
+        <h2 class="h2">Pick a hangar door.</h2>
+        <p class="sectlead">
+          Six shelves, everything labeled. Tap in — each one pulls from the guides we post in the
+          group, kept current so you don't have to dig through the feed.
+        </p>
+      </div>
+
+      <div class="catgrid">
+        {
+          cards.map((card) => (
+            <a
+              class="catcard reveal"
+              href={card.href}
+              style={`--accent: ${card.accent};`}
+              target={card.external ? '_blank' : undefined}
+              rel={card.external ? 'noopener' : undefined}
+            >
+              <span class="cb"><Icon name={card.icon} /></span>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+              <span class="go">
+                {card.cta} <Icon name={card.external ? 'ph-arrow-up-right' : 'ph-arrow-right'} />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band paper">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="kicker">How the hangar works</span>
+        <h2 class="h2">One place. Always current.</h2>
+      </div>
+
+      <div class="steprow">
+        {
+          steps.map((step) => (
+            <div class="stepc reveal">
+              <div class="n">{step.n}</div>
+              <h4>{step.title}</h4>
+              <p>{step.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="callout tip reveal">
+        <Icon name="ph-lightbulb" />
+        <div class="ct">
+          <b>Tip:</b> Use the search box up top to jump straight to a topic — try “non-rev”,
+          “reserve”, “CLT meals”, or “compression socks”.
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

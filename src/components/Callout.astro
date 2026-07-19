@@ -1,0 +1,24 @@
+---
+import Icon from './Icon.astro';
+import { richText } from '../lib/rich-text';
+
+/**
+ * Tinted callout. `tone` maps to the export's .callout variants.
+ */
+interface Props {
+  tone?: 'danger' | 'tip' | 'ok' | 'gold';
+  icon: string;
+  text: string;
+  style?: string;
+}
+
+const { tone = 'danger', icon, text, style } = Astro.props;
+
+/** 'danger' is the base .callout with no modifier class. */
+const toneClass = tone === 'danger' ? '' : tone;
+---
+
+<div class:list={['callout', toneClass, 'reveal']} style={style}>
+  <Icon name={icon} />
+  <div class="ct" set:html={richText(text)}></div>
+</div>

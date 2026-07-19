@@ -1,0 +1,205 @@
+---
+import Icon from './Icon.astro';
+import { bases, venueCount, type Base, type Category } from '../data/bases';
+import { baseFlyers } from '../data/resources';
+
+/**
+ * The crew-discount explorer.
+ *
+ * In the export this was entirely client state: base, category, filter text and
+ * a per-zone open/closed map all lived in React, so all four bases rendered
+ * into one hash route and none of it was linkable or indexable.
+ *
+ * Here base and category are the URL, zones are native <details>, and the only
+ * JavaScript is the text filter. Everything is in the HTML at build time.
+ */
+interface Props {
+  base: Base;
+  category: Category;
+}
+
+const { base, category } = Astro.props;
+
+const flyers = baseFlyers[base.key] ?? [];
+const totalVenues = venueCount(category);
+const categoryPath = (b: Base, c: Category) =>
+  c.key === b.categories[0]?.key ? `/crew-discounts/${b.key}/` : `/crew-discounts/${b.key}/${c.key}/`;
+---
+
+<div class="tabs">
+  {
+    bases.map((b) => (
+      <a
+        class:list={['tab', `tab-${b.key}`]}
+        href={`/crew-discounts/${b.key}/`}
+        aria-current={b.key === base.key ? 'page' : undefined}
+      >
+        <span class="code">{b.code}</span>
+        <span class="nm">{b.sub}</span>
+      </a>
+    ))
+  }
+</div>
+
+<div class="baseintro reveal">
+  <div class="big">{base.code}</div>
+  <div>
+    <h3>{base.name}<span class="bsub">{base.sub}</span></h3>
+    <p>{base.blurb}</p>
+  </div>
+</div>
+
+<div class="explorer" data-explorer>
+  <div class="catbar">
+    {
+      base.categories.map((c) => (
+        <a
+          class="cattab"
+          href={categoryPath(base, c)}
+          aria-current={c.key === category.key ? 'page' : undefined}
+        >
+          <Icon name={c.icon} />
+          {c.label}
+          <span class="cc">{venueCount(c)}</span>
+        </a>
+      ))
+    }
+
+    <div class="dfilter">
+      <Icon name="ph-magnifying-glass" />
+      <label class="sr-only" for="venue-filter">
+        Filter {base.code} {category.label.toLowerCase()}
+      </label>
+      <input
+        type="search"
+        id="venue-filter"
+        data-filter
+        placeholder={`Filter ${base.code} ${category.label.toLowerCase()}…`}
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="expcta">
+    <div class="expcount" data-count aria-live="polite">
+      {totalVenues} spots · {category.zones.length} areas
+    </div>
+    <div class="exptools">
+      <button class="txtbtn" type="button" data-open-all>Open all</button>
+      <span class="tdot">·</span>
+      <button class="txtbtn" type="button" data-close-all>Close all</button>
+      {
+        flyers.length > 0 && (
+          <>
+            <span class="tdot">·</span>
+            {flyers.map((f) => (
+              <a class="btn btn-gold btn-sm" href={f.href}>{f.label}</a>
+            ))}
+          </>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    category.zones.map((zone, i) => (
+      <details class="zone" data-zone open={i === 0}>
+        <summary class="zhead">
+          <span class="zbadge">{zone.badge}</span>
+          <span class="ztitle">
+            {zone.name}
+            <span class="znote">{zone.note}</span>
+          </span>
+          <span class="zcount" data-zone-count>{zone.venues.length}</span>
+          <Icon name="ph-caret-down" class="zchev" />
+        </summary>
+        <div class="zbody">
+          {zone.venues.map((v) => (
+            <div class="zrow" data-venue data-search={`${v.name} ${v.detail} ${v.highlight} ${zone.name}`.toLowerCase()}>
+              <span class="zn">
+                {v.name}
+                <span class="zd">{v.detail}</span>
+              </span>
+              <span class="zs">{v.highlight}</span>
+            </div>
+          ))}
+        </div>
+      </details>
+    ))
+  }
+
+  <div class="znone" data-empty hidden>
+    <Icon name="ph-magnifying-glass" />
+    <span>No spots match that search. Try a shorter term, or clear the filter.</span>
+  </div>
+</div>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<script>
+  // Text filter. The only JavaScript in the explorer; base, category and zone
+  // open/closed state are all handled by URLs and native <details>.
+  const root = document.querySelector<HTMLElement>('[data-explorer]');
+  if (root) {
+    const input = root.querySelector<HTMLInputElement>('[data-filter]');
+    const zones = [...root.querySelectorAll<HTMLDetailsElement>('[data-zone]')];
+    const countEl = root.querySelector<HTMLElement>('[data-count]');
+    const emptyEl = root.querySelector<HTMLElement>('[data-empty]');
+    const baseCount = countEl?.textContent ?? '';
+
+    const apply = () => {
+      const q = (input?.value ?? '').trim().toLowerCase();
+      let shown = 0;
+      let visibleZones = 0;
+
+      for (const zone of zones) {
+        const rows = [...zone.querySelectorAll<HTMLElement>('[data-venue]')];
+        let hits = 0;
+
+        for (const row of rows) {
+          const match = !q || (row.dataset.search ?? '').includes(q);
+          row.hidden = !match;
+          if (match) hits++;
+        }
+
+        zone.hidden = q !== '' && hits === 0;
+        if (!zone.hidden) visibleZones++;
+        shown += hits;
+
+        // A filter force-opens every matching zone, matching the export.
+        if (q) zone.open = hits > 0;
+
+        const badge = zone.querySelector<HTMLElement>('[data-zone-count]');
+        if (badge) badge.textContent = String(hits);
+      }
+
+      if (countEl) {
+        countEl.textContent = q
+          ? `${shown} match${shown === 1 ? '' : 'es'}`
+          : baseCount;
+      }
+      if (emptyEl) emptyEl.hidden = !(q && visibleZones === 0);
+    };
+
+    input?.addEventListener('input', apply);
+
+    root.querySelector('[data-open-all]')?.addEventListener('click', () => {
+      for (const z of zones) if (!z.hidden) z.open = true;
+    });
+    root.querySelector('[data-close-all]')?.addEventListener('click', () => {
+      for (const z of zones) z.open = false;
+    });
+  }
+</script>

@@ -1,0 +1,41 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DiscountExplorer from '../../../components/DiscountExplorer.astro';
+import { bases, venueCount } from '../../../data/bases';
+
+/**
+ * One route per base/category pair, EXCEPT the first category of each base —
+ * that lives at /crew-discounts/<base>/ so there is exactly one canonical URL
+ * per view and no duplicate-content pair for a crawler to reconcile.
+ */
+export const getStaticPaths = (() =>
+  bases.flatMap((base) =>
+    base.categories.slice(1).map((category) => ({
+      params: { base: base.key, category: category.key },
+      props: { base, category },
+    }))
+  )) satisfies GetStaticPaths;
+
+const { base, category } = Astro.props;
+const total = venueCount(category);
+---
+
+<BaseLayout
+  title={`${base.code} ${category.label}`}
+  description={`Crew ${category.label.toLowerCase()} at ${base.code} (${base.name}). ${total} spots listed by terminal, with gates and what your badge gets you.`}
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Crew Discounts · {base.code}</div>
+      <h1 class="ph-title">{category.label}</h1>
+      <p class="ph-sub">{base.name} · {base.sub}</p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <DiscountExplorer base={base} category={category} />
+    </div>
+  </section>
+</BaseLayout>

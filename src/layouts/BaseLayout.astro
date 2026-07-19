@@ -1,6 +1,7 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import StructuredData from '../components/StructuredData.astro';
 import { SITE } from '../data/site';
 import '../styles/global.css';
 
@@ -42,6 +43,9 @@ const path = Astro.url.pathname;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <StructuredData path={path} title={title} />
 
     <!-- TODO Phase 9: replace the Phosphor CDN webfont with a self-hosted SVG
          sprite of only the icons this site uses, and self-host the four
