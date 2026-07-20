@@ -1,0 +1,346 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Callout from '../components/Callout.astro';
+import {
+  EARNINGS,
+  DEDUCTIONS,
+  BRACKETS,
+  DEFAULTS,
+  bracketRange,
+  type CheckDay,
+} from '../data/paycheck';
+
+/**
+ * Crew Tools.
+ *
+ * The estimator's fields are server-rendered for the 5th (the default check)
+ * so the page is readable and indexable without JS; the client script takes
+ * over from there and re-renders the earnings list when the check changes.
+ */
+const shownOn = (on: CheckDay) => on === 'both' || on === 5;
+const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
+---
+
+<BaseLayout
+  title="Crew Tools"
+  description="Crew calculators built from the group's spreadsheets. The Paycheck Estimator shows what your PSA check should be before it lands — GTD, overages, per diem, 401(k), federal withholding and dues."
+>
+  <div class="pagehead">
+    <div class="wrap">
+      <div class="ph-eyebrow">Crew calculators &amp; utilities</div>
+      <h1 class="ph-title">Crew Tools</h1>
+      <p class="ph-sub">
+        Calculators built from the group's spreadsheets, so you can check the numbers yourself.
+        First on the bench: know what your paycheck should be before it lands.
+      </p>
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap toolwrap">
+      <div class="reveal">
+        <span class="kicker">Tool 01 · Pay</span>
+        <h2 class="h2">Paycheck Estimator.</h2>
+        <p class="sectlead">
+          Enter the numbers from your Time Summary and paystub, and see your expected net pay
+          before the check lands. Built from the Blue Streak pay-tracking spreadsheet.
+        </p>
+      </div>
+
+      <div class="esttoggle reveal" role="tablist" aria-label="Which check">
+        <button type="button" role="tab" data-check="5" aria-selected="true">
+          Check on the 5th<small>1 Half GTD</small>
+        </button>
+        <button type="button" role="tab" data-check="20" aria-selected="false">
+          Check on the 20th<small>2 Half GTD + overages</small>
+        </button>
+      </div>
+
+      <div class="toolcard reveal">
+        <div class="tc-head">
+          <h3>Earnings</h3>
+          <span class="hint">from your Time Summary</span>
+        </div>
+        <div class="tc-body" id="earnBody">
+          {
+            initialEarnings.map((f) => (
+              <div class="efield">
+                <label>
+                  {f.label}
+                  {f.note && <small>{f.note}</small>}
+                </label>
+                <div class="emoney">
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    inputmode="decimal"
+                    value={DEFAULTS[f.key]}
+                    data-k={f.key}
+                    aria-label={f.label}
+                  />
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="toolcard reveal">
+        <div class="tc-head">
+          <h3>Deductions</h3>
+          <span class="hint">from your paystub</span>
+        </div>
+        <div class="tc-body">
+          <div class="egrid" id="dedBody">
+            {
+              DEDUCTIONS.map((f) => (
+                <div class="efield">
+                  <label>
+                    {f.label}
+                    {f.note && <small>{f.note}</small>}
+                  </label>
+                  <div class:list={['emoney', f.percent && 'pct']}>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      inputmode="decimal"
+                      value={DEFAULTS[f.key]}
+                      data-k={f.key}
+                      aria-label={f.label}
+                    />
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+
+          <label class="echeck">
+            <input type="checkbox" id="ficaChk" checked />
+            <span>
+              <b>Estimate Social Security &amp; Medicare (7.65%)</b> — leave this on unless you've
+              already included FICA in your Post-Tax Deductions number.
+            </span>
+          </label>
+        </div>
+
+        <details class="esttable-wrap">
+          <summary>
+            <Icon name="ph-caret-right" /> Federal withholding table (tap to view or edit)
+          </summary>
+          <div class="tc-body" style="padding-top: 0;">
+            <div class="esttable-scroll">
+              <table class="esttable">
+                <thead>
+                  <tr>
+                    <th>Bracket (per check)</th>
+                    <th>Add (+)</th>
+                    <th>Multiply (×)</th>
+                    <th>Subtract (−)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    BRACKETS.map((b, i) => (
+                      <tr>
+                        <td>{bracketRange(b)}</td>
+                        {(['add', 'pct', 'sub'] as const).map((field) => (
+                          <td>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={b[field]}
+                              data-br={i}
+                              data-f={field}
+                              aria-label={`${bracketRange(b)} ${field}`}
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="efield" style="margin-top: 10px; border-top: none;">
+              <label>
+                Withholding allowance<small
+                  >Amount subtracted before finding your bracket ($179.38 = claiming "1")</small
+                >
+              </label>
+              <div class="emoney">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  inputmode="decimal"
+                  value={DEFAULTS.allow}
+                  data-k="allow"
+                  aria-label="Withholding allowance"
+                />
+              </div>
+            </div>
+
+            <Callout
+              tone="gold"
+              icon="ph-warning"
+              text="**The IRS updates these numbers every year.** This is the semimonthly percentage-method table from the Blue Streak spreadsheet — check the current Publication 15-T and edit the values above so your estimate stays accurate."
+              style="margin-top: 16px;"
+            />
+          </div>
+        </details>
+      </div>
+
+      <div class="estresult reveal" aria-live="polite">
+        <div class="gl"></div>
+        <div class="est-top">
+          <span class="est-lbl">Expected Net Income</span>
+          <span class="est-lbl alt" id="checkLbl">Check of the 5th</span>
+        </div>
+        <div class="est-net" id="netBig">$0.00</div>
+        <div class="est-sub">
+          What should hit your bank account. Compare it to your paystub — if it doesn't match,
+          something changed.
+        </div>
+        <div class="est-break" id="breakBody"></div>
+      </div>
+
+      <Callout
+        icon="ph-info"
+        text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
+      />
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { EARNINGS, BRACKETS, DEFAULTS, FICA_RATE } from '../data/paycheck';
+
+  const earnBody = document.getElementById('earnBody');
+  const dedBody = document.getElementById('dedBody');
+  const breakBody = document.getElementById('breakBody');
+  const netBig = document.getElementById('netBig');
+  const checkLbl = document.getElementById('checkLbl');
+  const ficaChk = document.getElementById('ficaChk') as HTMLInputElement | null;
+  const toggle = document.querySelector<HTMLElement>('.esttoggle');
+
+  if (earnBody && dedBody && breakBody && netBig && checkLbl && ficaChk && toggle) {
+    // Working copy of the numbers. Bracket edits mutate a clone so a reload
+    // always returns to the shipped table.
+    const values: Record<string, number> = { ...DEFAULTS };
+    const brackets = BRACKETS.map((b) => ({ ...b }));
+    let check: 5 | 20 = 5;
+    let fica = true;
+
+    const money = (n: number) =>
+      (n < 0 ? '-$' : '$') +
+      Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    /** Rebuild the earnings list — which fields apply depends on the check. */
+    function renderEarnings() {
+      const fields = EARNINGS.filter((f) => f.on === 'both' || f.on === check);
+      earnBody!.innerHTML = fields
+        .map(
+          (f) =>
+            `<div class="efield"><label>${f.label}` +
+            (f.note ? `<small>${f.note}</small>` : '') +
+            `</label><div class="emoney"><input type="number" step="0.01" min="0" ` +
+            `inputmode="decimal" value="${values[f.key]}" data-k="${f.key}" ` +
+            `aria-label="${f.label}"></div></div>`
+        )
+        .join('');
+    }
+
+    function calc() {
+      const on20 = check === 20;
+      const gtd = on20 ? values.gtd2 : values.gtd1;
+      const over = on20 ? values.over : 0;
+      const crew = on20 ? values.crew : 0;
+
+      const taxableEarn = gtd + over + values.pdtax + crew + values.misc;
+      const k401 = (gtd + over + values.pdtax) * (values.k401 / 100);
+      const fedTaxable = taxableEarn - values.pretax - k401 - values.allow;
+
+      let fedTax = 0;
+      if (fedTaxable > 0) {
+        const band = brackets.find((b) => fedTaxable >= b.lo && fedTaxable < b.hi);
+        if (band) fedTax = Math.max(0, band.add + (fedTaxable - band.sub) * (band.pct / 100));
+      }
+
+      const ficaAmt = fica ? Math.max(0, (taxableEarn - values.pretax) * FICA_RATE) : 0;
+      const net =
+        taxableEarn +
+        values.pdno -
+        values.pretax -
+        k401 -
+        values.posttax -
+        fedTax -
+        ficaAmt -
+        values.dues;
+
+      const rows: Array<[string, number, 'pos' | 'neg']> = [
+        ['Taxable earnings', taxableEarn, 'pos'],
+        ['Non-taxable per diem', values.pdno, 'pos'],
+        ['Pre-tax deductions', -values.pretax, 'neg'],
+        ['401(k) contribution', -k401, 'neg'],
+        ['Federal income tax', -fedTax, 'neg'],
+      ];
+      if (ficaAmt > 0) rows.push(['Social Security & Medicare', -ficaAmt, 'neg']);
+      rows.push(['Post-tax deductions', -values.posttax, 'neg'], ['Union dues', -values.dues, 'neg']);
+
+      netBig!.textContent = money(net);
+      breakBody!.innerHTML =
+        rows
+          .filter(([label, amount]) => amount !== 0 || label === 'Taxable earnings')
+          .map(
+            ([label, amount, tone]) =>
+              `<div class="est-brw"><span>${label}</span><span class="${tone}">${money(amount)}</span></div>`
+          )
+          .join('') +
+        `<div class="est-brw total"><span>Expected net</span><span>${money(net)}</span></div>`;
+    }
+
+    /** One delegated handler covers the server-rendered fields and the
+        re-rendered ones, so nothing has to be rebound after a toggle. */
+    function onInput(event: Event) {
+      const input = event.target as HTMLInputElement;
+      if (!input.matches('input[data-k], input[data-br]')) return;
+
+      const amount = parseFloat(input.value) || 0;
+      const key = input.dataset.k;
+      const brIndex = input.dataset.br;
+
+      if (key) values[key] = amount;
+      else if (brIndex !== undefined) {
+        const field = input.dataset.f as 'add' | 'pct' | 'sub';
+        brackets[Number(brIndex)][field] = amount;
+      }
+      calc();
+    }
+
+    document.addEventListener('input', onInput);
+
+    toggle.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-check]');
+      if (!button) return;
+
+      check = Number(button.dataset.check) === 20 ? 20 : 5;
+      for (const b of toggle.querySelectorAll<HTMLButtonElement>('button[data-check]')) {
+        b.setAttribute('aria-selected', String(b === button));
+      }
+      checkLbl!.textContent = check === 5 ? 'Check of the 5th' : 'Check of the 20th';
+      renderEarnings();
+      calc();
+    });
+
+    ficaChk.addEventListener('change', () => {
+      fica = ficaChk.checked;
+      calc();
+    });
+
+    calc();
+  }
+</script>

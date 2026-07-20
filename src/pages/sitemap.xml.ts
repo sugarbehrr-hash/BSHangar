@@ -26,6 +26,7 @@ function buildEntries(): Entry[] {
     { path: '/contract/', priority: 0.9, changefreq: 'weekly' },
     { path: '/crew-discounts/', priority: 0.9, changefreq: 'weekly' },
     { path: '/crew-essentials/', priority: 0.6, changefreq: 'monthly' },
+    { path: '/tools/', priority: 0.7, changefreq: 'monthly' },
   ];
 
   for (const base of bases) {

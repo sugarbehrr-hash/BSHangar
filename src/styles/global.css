@@ -26,6 +26,7 @@
 @import './products.css';
 @import './footer.css';
 @import './guide.css';
+@import './tools.css';
 @import './motion.css';
 
 /* --- Breakpoints (must stay last) --- */

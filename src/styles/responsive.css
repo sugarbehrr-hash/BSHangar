@@ -12,12 +12,20 @@
    longer exist now that each base is its own route.
    ============================================================ */
 
-@media (max-width: 960px) {
+/* The horizontal nav collapses on WIDTH IT ACTUALLY NEEDS, not the export's
+   960px. Seven links + search + the Facebook button lay out at 1320px, so
+   below ~1340 the bar overflowed and clipped the Facebook button off the
+   right edge. The export shipped this bug at six links (it needed 1267px and
+   still collapsed at 960), so every viewport from 961–1267px showed a cut-off
+   nav; adding Crew Tools widened that range and forced the fix. */
+@media (max-width: 1340px) {
   .navlinks { display: none; }
   .burger { display: block; }
   .site[data-menu="1"] .navlinks { display: flex; position: absolute; top: 66px; left: 0; right: 0; flex-direction: column; align-items: stretch; background: var(--navy-800); padding: 12px; gap: 4px; box-shadow: var(--shadow-lg); }
   .site[data-menu="1"] .navlinks a { font-size: 16px; padding: 14px 16px; }
+}
 
+@media (max-width: 960px) {
   .hero-a .inner { grid-template-columns: 1fr; gap: 30px; }
   .hero-a h1 { font-size: 56px; }
 
@@ -34,7 +42,15 @@
   .fbbtn { padding: 0 12px; }
   .wrap { padding: 0 18px; }
 
-  .catgrid, .cols2, .cols3, .prodgrid, .steprow, .reslist { grid-template-columns: 1fr; }
+  .catgrid, .cols2, .cols3, .prodgrid, .steprow, .reslist, .egrid { grid-template-columns: 1fr; }
+
+  /* Estimator: stack each label above its input so long field labels
+     stop squeezing the number box on a phone. */
+  .esttoggle { flex-direction: column; }
+  .efield { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .emoney { flex: 0 0 auto; width: 100%; }
+  .tc-head, .tc-body, .est-top, .est-net, .est-sub, .est-break { padding-left: 18px; padding-right: 18px; }
+  .esttable-wrap summary { padding-left: 18px; padding-right: 18px; }
   .tabanner h3 { font-size: 32px; }
   .dfilter { margin-left: 0; width: 100%; }
   .dfilter input { width: 100%; }

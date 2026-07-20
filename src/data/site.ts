@@ -56,6 +56,7 @@ export const NAV: NavItem[] = [
   { label: 'Your Contract', href: '/contract/' },
   { label: 'Crew Discounts', href: '/crew-discounts/' },
   { label: 'Crew Essentials', href: '/crew-essentials/' },
+  { label: 'Crew Tools', href: '/tools/' },
 ];
 
 /** Standing disclaimers. Carried verbatim from the export. */
