@@ -84,9 +84,9 @@ export function mapPayslip(slip: Payslip): MappedPayslip {
     claimed.add(line);
 
     if (rule.key === 'REGULAR') {
-      // The guarantee. Which field depends on which check this is.
-      if (check === 20) values.gtd2 = line.current;
-      else values.gtd1 = line.current;
+      // The guarantee. The 20th pays 1 Half GTD, the 5th pays 2 Half GTD.
+      if (check === 20) values.gtd1 = line.current;
+      else values.gtd2 = line.current;
     } else {
       values[rule.key] = (values[rule.key] ?? 0) + line.current;
     }

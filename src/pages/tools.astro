@@ -114,10 +114,10 @@ const money = (n: number) =>
 
       <div class="esttoggle reveal" role="tablist" aria-label="Which check">
         <button type="button" role="tab" data-check="5" aria-selected="true">
-          Check on the 5th<small>1 Half GTD</small>
+          Check on the 5th<small>2 Half GTD</small>
         </button>
         <button type="button" role="tab" data-check="20" aria-selected="false">
-          Check on the 20th<small>2 Half GTD + overages</small>
+          Check on the 20th<small>1 Half GTD + overages</small>
         </button>
       </div>
 
@@ -404,7 +404,8 @@ const money = (n: number) =>
      */
     function currentEstimate() {
       const on20 = check === 20;
-      const gtd = on20 ? values.gtd2 : values.gtd1;
+      // The 20th pays 1 Half GTD, the 5th pays 2 Half GTD — see EARNINGS.
+      const gtd = on20 ? values.gtd1 : values.gtd2;
       const over = on20 ? values.over : 0;
       const crew = on20 ? values.crew : 0;
 

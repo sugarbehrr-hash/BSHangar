@@ -18,9 +18,21 @@ export interface EarnField {
   on: CheckDay;
 }
 
+/**
+ * Which check pays which half of the guarantee is BACK TO FRONT from how it
+ * reads: the half you work first is paid later.
+ *
+ *   5th  -> 2 Half GTD
+ *   20th -> 1 Half GTD + Balance Paid at Overages
+ *
+ * Per the crew pay guide: "For the checks that are paid on the 5th, the amount
+ * under 2 Half GTD on Time Summary should be put under the column with the same
+ * title. For the checks that are paid on the 20th, the amounts under 1 Half GTD,
+ * and Balance Paid at Overages..."
+ */
 export const EARNINGS: EarnField[] = [
-  { key: 'gtd1', label: '1 Half GTD', note: 'Guarantee paid on the 5th', on: 5 },
-  { key: 'gtd2', label: '2 Half GTD', note: 'Guarantee paid on the 20th', on: 20 },
+  { key: 'gtd1', label: '1 Half GTD', note: 'Guarantee paid on the 20th', on: 20 },
+  { key: 'gtd2', label: '2 Half GTD', note: 'Guarantee paid on the 5th', on: 5 },
   {
     key: 'over',
     label: 'Balance Paid at Overages',
