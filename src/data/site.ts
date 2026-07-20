@@ -47,16 +47,23 @@ export const EXTERNAL = {
 export interface NavItem {
   label: string;
   href: string;
+  /**
+   * Bar-only label. The header is width-constrained — seven full labels need
+   * 1374px, which collapses the bar to a burger on an ordinary 1280px laptop.
+   * The footer and the 404 destination list are not constrained and keep the
+   * full `label`, where the extra words genuinely help.
+   */
+  short?: string;
 }
 
 export const NAV: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'New Here', href: '/new-here/' },
   { label: 'Commuting', href: '/commuting/' },
-  { label: 'Your Contract', href: '/contract/' },
-  { label: 'Crew Discounts', href: '/crew-discounts/' },
-  { label: 'Crew Essentials', href: '/crew-essentials/' },
-  { label: 'Crew Tools', href: '/tools/' },
+  { label: 'Your Contract', href: '/contract/', short: 'Contract' },
+  { label: 'Crew Discounts', href: '/crew-discounts/', short: 'Discounts' },
+  { label: 'Crew Essentials', href: '/crew-essentials/', short: 'Essentials' },
+  { label: 'Crew Tools', href: '/tools/', short: 'Tools' },
 ];
 
 /** Standing disclaimers. Carried verbatim from the export. */

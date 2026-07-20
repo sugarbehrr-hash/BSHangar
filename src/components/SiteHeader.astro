@@ -34,8 +34,12 @@ function isCurrent(href: string): boolean {
   <nav class="navlinks" id="navlinks" aria-label="Primary">
     {
       NAV.map((item) => (
-        <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
-          {item.label}
+        <a
+          href={item.href}
+          aria-current={isCurrent(item.href) ? 'page' : undefined}
+          aria-label={item.short ? item.label : undefined}
+        >
+          {item.short ?? item.label}
         </a>
       ))
     }
