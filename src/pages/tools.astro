@@ -5,7 +5,8 @@ import Callout from '../components/Callout.astro';
 import {
   EARNINGS,
   DEDUCTIONS,
-  BRACKETS,
+  FILING,
+  DEFAULT_FILING,
   DEFAULTS,
   bracketRange,
   type CheckDay,
@@ -189,11 +190,27 @@ const money = (n: number) =>
           </label>
         </div>
 
+        <div class="tc-body filingrow">
+          <div class="filinglabel">
+            <strong>Filing status</strong>
+            <small>From your W-4. Sets both your standard deduction and which bracket table applies.</small>
+          </div>
+          <div class="filingpick" role="tablist" aria-label="Filing status">
+            <button type="button" role="tab" data-filing="single" aria-selected="true">Single</button>
+            <button type="button" role="tab" data-filing="mfj" aria-selected="false">
+              Married filing jointly
+            </button>
+          </div>
+        </div>
+
         <details class="esttable-wrap">
           <summary>
             <Icon name="ph-caret-right" /> Federal withholding table (tap to view)
           </summary>
           <div class="tc-body" style="padding-top: 0;">
+            <p class="esttable-for">
+              Showing the <strong id="filingName">{FILING[DEFAULT_FILING].label}</strong> table.
+            </p>
             <div class="esttable-scroll">
               <table class="esttable">
                 <thead>
@@ -204,9 +221,9 @@ const money = (n: number) =>
                     <th>Subtract (−)</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="brBody">
                   {
-                    BRACKETS.map((b) => (
+                    FILING[DEFAULT_FILING].brackets.map((b) => (
                       <tr>
                         <td>{bracketRange(b)}</td>
                         <td>{money(b.add)}</td>
@@ -222,8 +239,8 @@ const money = (n: number) =>
             <div class="efield" style="margin-top: 10px; border-top: none;">
               <label>
                 Withholding allowance<small
-                  >Standard deduction per check, subtracted before finding your bracket ($358.33 =
-                  Single, $537.50 = Married filing jointly)</small
+                  >Standard deduction per check, set by your filing status above. Change it only if
+                  your W-4 does something unusual.</small
                 >
               </label>
               <div class="emoney">
@@ -232,7 +249,7 @@ const money = (n: number) =>
                   step="0.01"
                   min="0"
                   inputmode="decimal"
-                  value={DEFAULTS.allow}
+                  value={DEFAULTS.allow.toFixed(2)}
                   data-k="allow"
                   aria-label="Withholding allowance"
                 />
@@ -242,7 +259,7 @@ const money = (n: number) =>
             <Callout
               tone="gold"
               icon="ph-warning"
-              text="**Current as of the 2026 IRS tables.** These are the official 2026 Publication 15-T percentage-method values (Single / Standard withholding, W-4 Step 2 box unchecked), converted to per-semimonthly-check amounts. They are shown for reference and are not editable. If you're Married filing jointly, set your withholding allowance to $537.50 below — note the brackets themselves are the Single table, so your federal line will read high."
+              text="**Current as of the 2026 IRS tables.** These are the official 2026 Publication 15-T percentage-method values (Standard withholding, W-4 Step 2 box unchecked), divided down to per-semimonthly-check amounts. They are shown for reference and are not editable — pick your filing status above to switch tables."
               style="margin-top: 16px;"
             />
           </div>
@@ -305,7 +322,15 @@ const money = (n: number) =>
 </BaseLayout>
 
 <script>
-  import { EARNINGS, BRACKETS, DEFAULTS, FICA_RATE } from '../data/paycheck';
+  import {
+    EARNINGS,
+    FILING,
+    DEFAULT_FILING,
+    DEFAULTS,
+    FICA_RATE,
+    bracketRange,
+    type FilingStatus,
+  } from '../data/paycheck';
 
   // Tool picker. Panels use [hidden] rather than a display style so a tool
   // that is not on screen is also out of the accessibility tree.
@@ -339,6 +364,7 @@ const money = (n: number) =>
     const values: Record<string, number> = { ...DEFAULTS };
     let check: 5 | 20 = 5;
     let fica = true;
+    let filing: FilingStatus = DEFAULT_FILING;
 
     const money = (n: number) =>
       (n < 0 ? '-$' : '$') +
@@ -376,7 +402,7 @@ const money = (n: number) =>
 
       let fedTax = 0;
       if (fedTaxable > 0) {
-        const band = BRACKETS.find((b) => fedTaxable >= b.lo && fedTaxable < b.hi);
+        const band = FILING[filing].brackets.find((b) => fedTaxable >= b.lo && fedTaxable < b.hi);
         if (band) fedTax = Math.max(0, band.add + (fedTaxable - band.sub) * (band.pct / 100));
       }
 
@@ -456,6 +482,59 @@ const money = (n: number) =>
     ficaChk.addEventListener('change', () => {
       fica = ficaChk.checked;
       calc();
+    });
+
+    /* ---------- Filing status ---------- */
+
+    const FILING_KEY = 'bsh.paycheck.filing.v1';
+    const filingPick = document.querySelector<HTMLElement>('.filingpick');
+    const brBody = document.getElementById('brBody');
+    const filingName = document.getElementById('filingName');
+
+    /**
+     * Filing status drives BOTH the standard deduction and the bracket table.
+     * Switching only the allowance would leave the Single brackets in place and
+     * quietly report the wrong federal tax to married crew, which is worse than
+     * not offering the choice.
+     */
+    function setFiling(next: FilingStatus, remember = true) {
+      filing = next;
+      const profile = FILING[next];
+
+      for (const b of filingPick?.querySelectorAll<HTMLButtonElement>('button[data-filing]') ?? []) {
+        b.setAttribute('aria-selected', String(b.dataset.filing === next));
+      }
+      if (filingName) filingName.textContent = profile.label;
+
+      // The allowance is this status's standard deduction, so it follows.
+      values.allow = profile.allowance;
+      const allowField = document.querySelector<HTMLInputElement>('input[data-k="allow"]');
+      if (allowField) allowField.value = profile.allowance.toFixed(2);
+
+      if (brBody) {
+        brBody.innerHTML = profile.brackets
+          .map(
+            (b) =>
+              `<tr><td>${bracketRange(b)}</td><td>${money(b.add)}</td>` +
+              `<td>${b.pct}%</td><td>${money(b.sub)}</td></tr>`
+          )
+          .join('');
+      }
+
+      if (remember) {
+        try {
+          localStorage.setItem(FILING_KEY, next);
+        } catch {
+          /* choice simply will not persist */
+        }
+      }
+      calc();
+    }
+
+    filingPick?.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-filing]');
+      if (!button) return;
+      setFiling(button.dataset.filing === 'mfj' ? 'mfj' : 'single');
     });
 
     /* ---------- Payslip import ---------- */
@@ -685,10 +764,13 @@ const money = (n: number) =>
       if (slipForget) slipForget.hidden = false;
     }
 
-    // Restore the previous choice, without re-saving it.
+    // Restore previous choices, without re-saving them.
     try {
       const previous = localStorage.getItem(START_KEY);
       if (previous === 'upload' || previous === 'manual') chooseStart(previous, false);
+
+      const storedFiling = localStorage.getItem(FILING_KEY);
+      if (storedFiling === 'single' || storedFiling === 'mfj') setFiling(storedFiling, false);
     } catch {
       /* no stored preference */
     }

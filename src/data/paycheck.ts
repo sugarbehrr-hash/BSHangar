@@ -76,25 +76,87 @@ export interface Bracket {
 }
 
 /**
- * Semimonthly percentage-method federal withholding.
+ * 2026 Publication 15-T, ANNUAL Percentage Method, STANDARD Withholding Rate
+ * Schedules — for W-4 forms from 2020 or later with the Step 2 box unchecked.
  *
- * 2026 Publication 15-T, Single / Standard withholding with the W-4 Step 2 box
- * unchecked, converted to per-semimonthly-check amounts.
+ * Held as the IRS publishes them (annual) and divided down, rather than
+ * transcribed as per-check figures. The annual numbers are the ones you can
+ * check against the publication, and deriving removes a whole class of
+ * transcription error. Rows are [at least, tentative amount, percentage].
  *
- * The IRS reissues these every year, which is why the page exposes the table as
- * editable inputs instead of burying it — the numbers are expected to go stale,
- * and married-filing-jointly crew need to override them regardless.
+ * Source: https://www.irs.gov/publications/p15t
  */
-export const BRACKETS: Bracket[] = [
-  { lo: 0, hi: 312.5, add: 0, pct: 0, sub: 0 },
-  { lo: 312.5, hi: 829.17, add: 0, pct: 10, sub: 312.5 },
-  { lo: 829.17, hi: 2412.5, add: 51.67, pct: 12, sub: 829.17 },
-  { lo: 2412.5, hi: 4716.67, add: 241.67, pct: 22, sub: 2412.5 },
-  { lo: 4716.67, hi: 8719.79, add: 748.58, pct: 24, sub: 4716.67 },
-  { lo: 8719.79, hi: 10988.54, add: 1709.33, pct: 32, sub: 8719.79 },
-  { lo: 10988.54, hi: 27004.17, add: 2435.33, pct: 35, sub: 10988.54 },
-  { lo: 27004.17, hi: Infinity, add: 8040.79, pct: 37, sub: 27004.17 },
-];
+const ANNUAL_SCHEDULES: Record<FilingStatus, Array<[number, number, number]>> = {
+  single: [
+    [0, 0, 0],
+    [7_500, 0, 10],
+    [19_900, 1_240, 12],
+    [57_900, 5_800, 22],
+    [113_200, 17_966, 24],
+    [209_275, 41_024, 32],
+    [263_725, 58_448, 35],
+    [648_100, 192_979.25, 37],
+  ],
+  mfj: [
+    [0, 0, 0],
+    [19_300, 0, 10],
+    [44_100, 2_480, 12],
+    [120_100, 11_600, 22],
+    [230_700, 35_932, 24],
+    [422_850, 82_048, 32],
+    [531_750, 116_896, 35],
+    [788_000, 206_583.5, 37],
+  ],
+};
+
+/** Semimonthly: two checks a month. */
+const PAY_PERIODS = 24;
+
+/** Annual schedule -> per-check brackets. Thresholds keep full precision. */
+function perCheck(rows: Array<[number, number, number]>): Bracket[] {
+  return rows.map(([atLeast, tentative, pct], i) => {
+    const next = rows[i + 1];
+    return {
+      lo: atLeast / PAY_PERIODS,
+      hi: next ? next[0] / PAY_PERIODS : Infinity,
+      add: tentative / PAY_PERIODS,
+      pct,
+      sub: atLeast / PAY_PERIODS,
+    };
+  });
+}
+
+export type FilingStatus = 'single' | 'mfj';
+
+export interface FilingProfile {
+  /** Full name, for the callout and the accessible label. */
+  label: string;
+  /** Button text. */
+  short: string;
+  /**
+   * Per-check standard deduction — the Pub 15-T Step 1 adjustment ($8,600
+   * single / $12,900 married filing jointly) spread across the pay periods.
+   */
+  allowance: number;
+  brackets: Bracket[];
+}
+
+export const FILING: Record<FilingStatus, FilingProfile> = {
+  single: {
+    label: 'Single or Married filing separately',
+    short: 'Single',
+    allowance: 8_600 / PAY_PERIODS,
+    brackets: perCheck(ANNUAL_SCHEDULES.single),
+  },
+  mfj: {
+    label: 'Married filing jointly',
+    short: 'Married filing jointly',
+    allowance: 12_900 / PAY_PERIODS,
+    brackets: perCheck(ANNUAL_SCHEDULES.mfj),
+  },
+};
+
+export const DEFAULT_FILING: FilingStatus = 'single';
 
 /**
  * Bracket row label. Shared so the server and client passes agree.
@@ -128,8 +190,8 @@ export const DEFAULTS: Record<string, number> = {
   k401: 0,
   posttax: 0,
   dues: 25.0,
-  /** 2026 standard deduction per semimonthly check, Single. */
-  allow: 358.33,
+  /** Overwritten whenever filing status changes. */
+  allow: FILING[DEFAULT_FILING].allowance,
 };
 
 /** Combined Social Security + Medicare employee rate. */

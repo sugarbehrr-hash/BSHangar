@@ -132,7 +132,19 @@ section.toolband { padding-top: 24px; }
 
 .egrid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; }
 
-/* --- Editable withholding table --- */
+/* --- Filing status --- */
+.filingrow { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1.5px solid var(--cream-200); padding-top: 16px; }
+.filinglabel strong { display: block; font-size: 15px; font-weight: 600; color: var(--ink-900); }
+.filinglabel small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--ink-500); max-width: 380px; }
+.filingpick { display: flex; gap: 6px; flex: none; }
+.filingpick button { padding: 9px 15px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); font-family: var(--font-heading); font-weight: 700; font-size: 13px; color: var(--ink-500); cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
+.filingpick button:hover { border-color: var(--navy-700); color: var(--navy-900); }
+.filingpick button[aria-selected="true"] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+
+.esttable-for { margin: 0 0 10px; font-size: 12.5px; color: var(--ink-500); }
+.esttable-for strong { color: var(--navy-900); }
+
+/* --- Withholding table (read-only reference) --- */
 .esttable-wrap { border-top: 1.5px solid var(--cream-200); }
 .esttable-wrap summary { padding: 15px 26px; cursor: pointer; font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--sky-700); list-style: none; display: flex; align-items: center; gap: 9px; }
 .esttable-wrap summary::-webkit-details-marker { display: none; }
