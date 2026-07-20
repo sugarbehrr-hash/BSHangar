@@ -11,6 +11,14 @@
    the number you came for stays on screen while you fill the form.
    ============================================================ */
 
+/* Other pages open a .band with a kicker and an h2, which the section's 62px
+   top padding is spaced for. This page opens with the tool picker — a control
+   strip, not a heading — and that much air above it reads as a gap.
+
+   Selector matches `section.band`'s specificity deliberately: a bare
+   .toolband loses to it and silently does nothing. */
+section.toolband { padding-top: 24px; }
+
 /* --- Tool picker --- */
 .tooltabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; border-bottom: 1.5px solid var(--cream-300); padding-bottom: 12px; }
 .tooltabs button { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--ink-500); cursor: pointer; transition: background .15s, border-color .15s, color .15s; box-shadow: var(--shadow-sm); }
