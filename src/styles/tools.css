@@ -82,10 +82,10 @@ section.toolband { padding-top: 24px; }
 .esttable { width: 100%; border-collapse: collapse; font-size: 13px; }
 .esttable th { font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); text-align: right; padding: 6px; border-bottom: 1.5px solid var(--cream-300); }
 .esttable th:first-child { text-align: left; }
-.esttable td { padding: 5px 4px; border-bottom: 1px solid var(--cream-200); text-align: right; }
+/* Read-only reference figures — the published IRS values, not inputs.
+   Tabular figures so the columns line up down the table. */
+.esttable td { padding: 7px 4px; border-bottom: 1px solid var(--cream-200); text-align: right; font-variant-numeric: tabular-nums; }
 .esttable td:first-child { text-align: left; white-space: nowrap; color: var(--ink-500); }
-.esttable input { padding: 7px 8px; font-size: 13px; width: 88px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--cream-100); text-align: right; font-family: var(--font-body); outline: none; }
-.esttable input:focus { border-color: var(--sky-500); background: var(--white); }
 
 /* --- Result --- */
 .estresult { border-radius: var(--radius-lg); overflow: hidden; background: var(--navy-900); color: var(--cream-100); position: relative; box-shadow: var(--shadow-lg); border: 2px solid var(--gold-500); }

@@ -20,6 +20,14 @@ import {
  */
 const shownOn = (on: CheckDay) => on === 'both' || on === 5;
 const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
+
+/** Withholding-table amounts. Whole dollars print bare, cents print in full. */
+const money = (n: number) =>
+  '$' +
+  n.toLocaleString('en-US', {
+    minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
 ---
 
 <BaseLayout
@@ -131,7 +139,7 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
 
         <details class="esttable-wrap">
           <summary>
-            <Icon name="ph-caret-right" /> Federal withholding table (tap to view or edit)
+            <Icon name="ph-caret-right" /> Federal withholding table (tap to view)
           </summary>
           <div class="tc-body" style="padding-top: 0;">
             <div class="esttable-scroll">
@@ -146,21 +154,12 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
                 </thead>
                 <tbody>
                   {
-                    BRACKETS.map((b, i) => (
+                    BRACKETS.map((b) => (
                       <tr>
                         <td>{bracketRange(b)}</td>
-                        {(['add', 'pct', 'sub'] as const).map((field) => (
-                          <td>
-                            <input
-                              type="number"
-                              step="0.01"
-                              value={b[field]}
-                              data-br={i}
-                              data-f={field}
-                              aria-label={`${bracketRange(b)} ${field}`}
-                            />
-                          </td>
-                        ))}
+                        <td>{money(b.add)}</td>
+                        <td>{b.pct}%</td>
+                        <td>{money(b.sub)}</td>
                       </tr>
                     ))
                   }
@@ -191,7 +190,7 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
             <Callout
               tone="gold"
               icon="ph-warning"
-              text="**Current as of the 2026 IRS tables.** These are the 2026 Publication 15-T percentage-method values (Single / Standard withholding, W-4 Step 2 box unchecked), converted to per-semimonthly-check amounts. The IRS updates them every year — edit the values above when the new tables come out, or if you're Married filing jointly."
+              text="**Current as of the 2026 IRS tables.** These are the official 2026 Publication 15-T percentage-method values (Single / Standard withholding, W-4 Step 2 box unchecked), converted to per-semimonthly-check amounts. They are shown for reference and are not editable. If you're Married filing jointly, set your withholding allowance to $537.50 below — note the brackets themselves are the Single table, so your federal line will read high."
               style="margin-top: 16px;"
             />
           </div>
@@ -267,10 +266,10 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
   const toggle = document.querySelector<HTMLElement>('.esttoggle');
 
   if (earnBody && dedBody && breakBody && netBig && checkLbl && ficaChk && toggle) {
-    // Working copy of the numbers. Bracket edits mutate a clone so a reload
-    // always returns to the shipped table.
+    // Working copy of the user's own figures. The withholding brackets are not
+    // in here on purpose: they are the published IRS values, displayed as text
+    // and read straight from BRACKETS, so nothing on the page can alter them.
     const values: Record<string, number> = { ...DEFAULTS };
-    const brackets = BRACKETS.map((b) => ({ ...b }));
     let check: 5 | 20 = 5;
     let fica = true;
 
@@ -305,7 +304,7 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
 
       let fedTax = 0;
       if (fedTaxable > 0) {
-        const band = brackets.find((b) => fedTaxable >= b.lo && fedTaxable < b.hi);
+        const band = BRACKETS.find((b) => fedTaxable >= b.lo && fedTaxable < b.hi);
         if (band) fedTax = Math.max(0, band.add + (fedTaxable - band.sub) * (band.pct / 100));
       }
 
@@ -346,17 +345,10 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
         re-rendered ones, so nothing has to be rebound after a toggle. */
     function onInput(event: Event) {
       const input = event.target as HTMLInputElement;
-      if (!input.matches('input[data-k], input[data-br]')) return;
+      if (!input.matches('input[data-k]')) return;
 
-      const amount = parseFloat(input.value) || 0;
       const key = input.dataset.k;
-      const brIndex = input.dataset.br;
-
-      if (key) values[key] = amount;
-      else if (brIndex !== undefined) {
-        const field = input.dataset.f as 'add' | 'pct' | 'sub';
-        brackets[Number(brIndex)][field] = amount;
-      }
+      if (key) values[key] = parseFloat(input.value) || 0;
       calc();
     }
 
