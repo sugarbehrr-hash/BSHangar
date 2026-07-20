@@ -32,22 +32,25 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
       <h1 class="ph-title">Crew Tools</h1>
       <p class="ph-sub">
         Calculators built from the group's spreadsheets, so you can check the numbers yourself.
-        First on the bench: know what your paycheck should be before it lands.
       </p>
     </div>
   </div>
 
   <section class="band cream">
-    <div class="wrap toolwrap">
-      <div class="reveal">
-        <span class="kicker">Tool 01 · Pay</span>
-        <h2 class="h2">Paycheck Estimator.</h2>
-        <p class="sectlead">
-          Enter the numbers from your Time Summary and paystub, and see your expected net pay
-          before the check lands. Built from the Blue Streak pay-tracking spreadsheet.
-        </p>
+    <div class="wrap">
+      <div class="tooltabs" role="tablist" aria-label="Tools">
+        <button type="button" role="tab" id="tab-pay" data-tool="pay" aria-selected="true" aria-controls="tool-pay">
+          <Icon name="ph-calculator" /> Paycheck Estimator
+        </button>
+        <button type="button" role="tab" id="tab-time" data-tool="time" aria-selected="false" aria-controls="tool-time">
+          <Icon name="ph-clock-countdown" /> Time Out Estimator
+          <span class="soonpill">Soon</span>
+        </button>
       </div>
 
+      <div id="tool-pay" role="tabpanel" aria-labelledby="tab-pay">
+        <div class="estlayout">
+          <div class="estmain">
       <div class="esttoggle reveal" role="tablist" aria-label="Which check">
         <button type="button" role="tab" data-check="5" aria-selected="true">
           Check on the 5th<small>1 Half GTD</small>
@@ -168,7 +171,8 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
             <div class="efield" style="margin-top: 10px; border-top: none;">
               <label>
                 Withholding allowance<small
-                  >Amount subtracted before finding your bracket ($179.38 = claiming "1")</small
+                  >Standard deduction per check, subtracted before finding your bracket ($358.33 =
+                  Single, $537.50 = Married filing jointly)</small
                 >
               </label>
               <div class="emoney">
@@ -187,37 +191,72 @@ const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
             <Callout
               tone="gold"
               icon="ph-warning"
-              text="**The IRS updates these numbers every year.** This is the semimonthly percentage-method table from the Blue Streak spreadsheet — check the current Publication 15-T and edit the values above so your estimate stays accurate."
+              text="**Current as of the 2026 IRS tables.** These are the 2026 Publication 15-T percentage-method values (Single / Standard withholding, W-4 Step 2 box unchecked), converted to per-semimonthly-check amounts. The IRS updates them every year — edit the values above when the new tables come out, or if you're Married filing jointly."
               style="margin-top: 16px;"
             />
           </div>
         </details>
       </div>
 
-      <div class="estresult reveal" aria-live="polite">
-        <div class="gl"></div>
-        <div class="est-top">
-          <span class="est-lbl">Expected Net Income</span>
-          <span class="est-lbl alt" id="checkLbl">Check of the 5th</span>
+            <Callout
+              icon="ph-info"
+              text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
+            />
+          </div>
+
+          <aside class="estside">
+            <div class="estresult" aria-live="polite">
+              <div class="gl"></div>
+              <div class="est-top">
+                <span class="est-lbl">Expected Net Income</span>
+                <span class="est-lbl alt" id="checkLbl">Check of the 5th</span>
+              </div>
+              <div class="est-net" id="netBig">$0.00</div>
+              <div class="est-sub">
+                What should hit your bank account. Compare it to your paystub — if it doesn't
+                match, something changed.
+              </div>
+              <div class="est-break" id="breakBody"></div>
+            </div>
+          </aside>
         </div>
-        <div class="est-net" id="netBig">$0.00</div>
-        <div class="est-sub">
-          What should hit your bank account. Compare it to your paystub — if it doesn't match,
-          something changed.
-        </div>
-        <div class="est-break" id="breakBody"></div>
       </div>
 
-      <Callout
-        icon="ph-info"
-        text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
-      />
+      <div id="tool-time" role="tabpanel" aria-labelledby="tab-time" hidden>
+        <div class="toolcard" style="margin-top: 0;">
+          <div class="tc-body" style="padding: 44px 26px; text-align: center;">
+            <Icon name="ph-clock-countdown" class="soon-icon" />
+            <p class="soon-title">Coming soon</p>
+            <p class="soon-body">
+              This one's still on the bench. Got the duty-limit rules or a spreadsheet for it? Send
+              them in the group and we'll build it faster.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <script>
   import { EARNINGS, BRACKETS, DEFAULTS, FICA_RATE } from '../data/paycheck';
+
+  // Tool picker. Panels use [hidden] rather than a display style so a tool
+  // that is not on screen is also out of the accessibility tree.
+  const toolTabs = document.querySelector<HTMLElement>('.tooltabs');
+  if (toolTabs) {
+    toolTabs.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-tool]');
+      if (!button) return;
+
+      for (const tab of toolTabs.querySelectorAll<HTMLButtonElement>('button[data-tool]')) {
+        const selected = tab === button;
+        tab.setAttribute('aria-selected', String(selected));
+        const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '');
+        if (panel) panel.hidden = !selected;
+      }
+    });
+  }
 
   const earnBody = document.getElementById('earnBody');
   const dedBody = document.getElementById('dedBody');

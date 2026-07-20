@@ -31,7 +31,12 @@ a { text-decoration: none; color: inherit; }
    fight that. */
 img, video, canvas { max-width: 100%; height: auto; }
 
-.site { font-family: var(--font-body); color: var(--ink-900); min-height: 100vh; overflow-x: hidden; }
+/* overflow-x is `clip`, not `hidden`. Both contain the decorative overflow
+   (the pagehead glow, the hero art), but `hidden` computes overflow-y to
+   `auto`, which makes .site a scroll container and silently disables
+   position:sticky for every descendant — including the estimator's running
+   total. `clip` contains the same overflow without creating one. */
+.site { font-family: var(--font-body); color: var(--ink-900); min-height: 100vh; overflow-x: clip; }
 
 /* ---------- LAYOUT SHELL ---------- */
 .wrap { max-width: 1140px; margin: 0 auto; padding: 0 28px; }

@@ -27,6 +27,11 @@
 }
 
 @media (max-width: 960px) {
+  /* Estimator drops to one column; the total stops sticking and simply
+     follows the inputs, which is the reading order on a narrow screen. */
+  .estlayout { grid-template-columns: 1fr; }
+  .estside { position: static; }
+
   .hero-a .inner { grid-template-columns: 1fr; gap: 30px; }
   .hero-a h1 { font-size: 56px; }
 
