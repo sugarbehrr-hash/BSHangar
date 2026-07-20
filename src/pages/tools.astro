@@ -59,6 +59,38 @@ const money = (n: number) =>
       <div id="tool-pay" role="tabpanel" aria-labelledby="tab-pay">
         <div class="estlayout">
           <div class="estmain">
+      <div class="slipcard reveal">
+        <div class="slip-head">
+          <Icon name="ph-file-pdf" class="slip-icon" />
+          <div>
+            <h3>Start from your payslip</h3>
+            <p>
+              Upload the Workday <strong>Payslip to Print</strong> PDF and the fields below fill
+              themselves. Your deductions are remembered on this device, so next check you only
+              type the earnings that changed.
+            </p>
+          </div>
+        </div>
+
+        <label class="slip-drop" for="slipFile">
+          <Icon name="ph-upload-simple" />
+          <span><strong>Choose a payslip PDF</strong> or drop one here</span>
+        </label>
+        <input type="file" id="slipFile" accept="application/pdf,.pdf" class="sr-only" />
+
+        <p class="slip-privacy">
+          <Icon name="ph-lock-simple" />
+          Read entirely on your own device. The file is never uploaded — this site has no server to
+          send it to.
+        </p>
+
+        <div id="slipStatus" class="slip-status" role="status" hidden></div>
+
+        <button type="button" id="slipForget" class="slip-forget" hidden>
+          Forget my saved deductions
+        </button>
+      </div>
+
       <div class="esttoggle reveal" role="tablist" aria-label="Which check">
         <button type="button" role="tab" data-check="5" aria-selected="true">
           Check on the 5th<small>1 Half GTD</small>
@@ -197,6 +229,21 @@ const money = (n: number) =>
         </details>
       </div>
 
+            <div id="reconcile" class="toolcard reconcile" hidden>
+              <div class="tc-head">
+                <h3>Estimate vs. your actual payslip</h3>
+                <span class="hint" id="reconcileFor"></span>
+              </div>
+              <div class="tc-body">
+                <div id="reconcileRows"></div>
+                <p class="rec-note">
+                  Small differences are normal — state and local tax, mid-period benefit changes,
+                  and rounding all move the number. A large gap on Federal Income Tax usually means
+                  your W-4 or filing status differs from the Single table above.
+                </p>
+              </div>
+            </div>
+
             <Callout
               icon="ph-info"
               text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
@@ -292,7 +339,12 @@ const money = (n: number) =>
         .join('');
     }
 
-    function calc() {
+    /**
+     * The calculation on its own, with no DOM in it. Reconcile needs the same
+     * figures the result card shows, and recomputing them a second way is how
+     * the two drift apart.
+     */
+    function currentEstimate() {
       const on20 = check === 20;
       const gtd = on20 ? values.gtd2 : values.gtd1;
       const over = on20 ? values.over : 0;
@@ -318,6 +370,12 @@ const money = (n: number) =>
         fedTax -
         ficaAmt -
         values.dues;
+
+      return { taxableEarn, k401, fedTax, fica: ficaAmt, net };
+    }
+
+    function calc() {
+      const { taxableEarn, k401, fedTax, fica: ficaAmt, net } = currentEstimate();
 
       const rows: Array<[string, number, 'pos' | 'neg']> = [
         ['Taxable earnings', taxableEarn, 'pos'],
@@ -354,23 +412,215 @@ const money = (n: number) =>
 
     document.addEventListener('input', onInput);
 
+    // Narrowing from the guard above does not survive into these function
+    // declarations, so hold the checked references directly.
+    const checkToggle = toggle;
+
+    /** Shared by the toggle and by payslip import, which also picks a check. */
+    function setCheck(next: 5 | 20) {
+      check = next;
+      for (const b of checkToggle.querySelectorAll<HTMLButtonElement>('button[data-check]')) {
+        b.setAttribute('aria-selected', String(Number(b.dataset.check) === next));
+      }
+      checkLbl!.textContent = next === 5 ? 'Check of the 5th' : 'Check of the 20th';
+      renderEarnings();
+      calc();
+    }
+
     toggle.addEventListener('click', (event) => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-check]');
       if (!button) return;
-
-      check = Number(button.dataset.check) === 20 ? 20 : 5;
-      for (const b of toggle.querySelectorAll<HTMLButtonElement>('button[data-check]')) {
-        b.setAttribute('aria-selected', String(b === button));
-      }
-      checkLbl!.textContent = check === 5 ? 'Check of the 5th' : 'Check of the 20th';
-      renderEarnings();
-      calc();
+      setCheck(Number(button.dataset.check) === 20 ? 20 : 5);
     });
 
     ficaChk.addEventListener('change', () => {
       fica = ficaChk.checked;
       calc();
     });
+
+    /* ---------- Payslip import ---------- */
+
+    /**
+     * Only the figures that hold steady between checks are remembered, and
+     * only on this device. Earnings are deliberately NOT stored: they change
+     * every check, and a shared crew-room computer should not hold someone's
+     * pay history.
+     */
+    const STORE_KEY = 'bsh.paycheck.deductions.v1';
+    const STABLE_KEYS = ['pretax', 'k401', 'posttax', 'dues'] as const;
+
+    const slipInput = document.getElementById('slipFile') as HTMLInputElement | null;
+    const slipDrop = document.querySelector<HTMLElement>('.slip-drop');
+    const slipStatus = document.getElementById('slipStatus');
+    const slipForget = document.getElementById('slipForget') as HTMLButtonElement | null;
+    const reconcile = document.getElementById('reconcile');
+    const reconcileRows = document.getElementById('reconcileRows');
+    const reconcileFor = document.getElementById('reconcileFor');
+
+    function readStore(): Record<string, number> | null {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        return raw ? (JSON.parse(raw) as Record<string, number>) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function writeStore(source: Record<string, number>) {
+      const keep: Record<string, number> = {};
+      for (const k of STABLE_KEYS) if (typeof source[k] === 'number') keep[k] = source[k];
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(keep));
+        if (slipForget) slipForget.hidden = false;
+      } catch {
+        /* storage disabled — prefill simply will not persist */
+      }
+    }
+
+    /** Write values into state and sync any matching input already on screen. */
+    function applyValues(incoming: Record<string, number>) {
+      for (const [key, value] of Object.entries(incoming)) {
+        if (!Number.isFinite(value)) continue;
+        values[key] = value;
+        const field = document.querySelector<HTMLInputElement>(`input[data-k="${key}"]`);
+        if (field) field.value = String(value);
+      }
+    }
+
+    function setStatus(html: string, tone: 'ok' | 'bad' | '') {
+      if (!slipStatus) return;
+      slipStatus.className = `slip-status${tone ? ' ' + tone : ''}`;
+      slipStatus.innerHTML = html;
+      slipStatus.hidden = false;
+    }
+
+    const asMoney = (n: number) =>
+      (n < 0 ? '-$' : '$') +
+      Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    /** Estimate vs. actual, once a payslip has supplied real figures. */
+    function showReconcile(actual: { federal: number | null; fica: number | null; net: number | null }, label: string) {
+      if (!reconcile || !reconcileRows) return;
+      const estimate = currentEstimate();
+      const rows: Array<[string, number, number]> = [];
+      if (actual.federal !== null) rows.push(['Federal income tax', estimate.fedTax, actual.federal]);
+      if (actual.fica !== null) rows.push(['Social Security & Medicare', estimate.fica, actual.fica]);
+      if (actual.net !== null) rows.push(['Net pay', estimate.net, actual.net]);
+
+      if (rows.length === 0) {
+        reconcile.hidden = true;
+        return;
+      }
+
+      if (reconcileFor) reconcileFor.textContent = label;
+      reconcileRows.innerHTML =
+        '<div class="rec-head"><span>Line</span><span class="rec-figs"><span>Estimated</span><span>Actual</span><span>Difference</span></span></div>' +
+        rows
+          .map(([name, est, act]) => {
+            const diff = act - est;
+            // Within a dollar is rounding, not a discrepancy worth alarming over.
+            const tone = Math.abs(diff) <= 1 ? 'close' : 'off';
+            return (
+              `<div class="rec-row"><span class="rec-label">${name}</span>` +
+              `<span class="rec-figs">` +
+              `<span class="rec-est">${asMoney(est)}</span>` +
+              `<span class="rec-act">${asMoney(act)}</span>` +
+              `<span class="rec-diff ${tone}">${diff >= 0 ? '+' : ''}${asMoney(diff)}</span>` +
+              `</span></div>`
+            );
+          })
+          .join('');
+      reconcile.hidden = false;
+    }
+
+    async function handleFile(file: File) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        setStatus("That doesn't look like a PDF. Use the <strong>Payslip to Print</strong> download from Workday.", 'bad');
+        return;
+      }
+
+      setStatus('Reading your payslip…', '');
+
+      try {
+        const [{ parsePayslip }, { mapPayslip }] = await Promise.all([
+          import('../lib/payslip'),
+          import('../lib/payslip-map'),
+        ]);
+
+        const slip = await parsePayslip(file);
+        const mapped = mapPayslip(slip);
+
+        if (Object.keys(mapped.values).length === 0) {
+          setStatus(
+            "Couldn't find any pay lines in that PDF. If it opens correctly in a PDF reader, it may be a different report — this expects Workday's <strong>Payslip to Print</strong>.",
+            'bad'
+          );
+          return;
+        }
+
+        applyValues(mapped.values);
+        if (mapped.check) setCheck(mapped.check);
+        else calc();
+
+        writeStore(mapped.values);
+
+        const filled = Object.keys(mapped.values).length;
+        const when = slip.checkDate ? ` dated ${slip.checkDate}` : '';
+        let html = `<strong>Filled ${filled} field${filled === 1 ? '' : 's'}</strong> from your payslip${when}. Check them against the PDF before trusting the result.`;
+
+        const warnings = [...mapped.notes, ...mapped.unmapped.map((u) => `Not used: ${u}`)];
+        if (warnings.length) {
+          html += '<ul>' + warnings.map((w) => `<li class="warn">${w}</li>`).join('') + '</ul>';
+        }
+        setStatus(html, 'ok');
+
+        showReconcile(mapped.actual, slip.checkDate ? `check dated ${slip.checkDate}` : '');
+      } catch (error) {
+        setStatus(
+          `Could not read that PDF. ${error instanceof Error ? error.message : 'Unknown error'}`,
+          'bad'
+        );
+      }
+    }
+
+    slipInput?.addEventListener('change', () => {
+      const file = slipInput.files?.[0];
+      if (file) void handleFile(file);
+    });
+
+    if (slipDrop) {
+      for (const type of ['dragenter', 'dragover'] as const) {
+        slipDrop.addEventListener(type, (e) => {
+          e.preventDefault();
+          slipDrop.classList.add('dragging');
+        });
+      }
+      for (const type of ['dragleave', 'drop'] as const) {
+        slipDrop.addEventListener(type, () => slipDrop.classList.remove('dragging'));
+      }
+      slipDrop.addEventListener('drop', (event) => {
+        event.preventDefault();
+        const file = (event as DragEvent).dataTransfer?.files?.[0];
+        if (file) void handleFile(file);
+      });
+    }
+
+    slipForget?.addEventListener('click', () => {
+      try {
+        localStorage.removeItem(STORE_KEY);
+      } catch {
+        /* nothing to clear */
+      }
+      slipForget.hidden = true;
+      setStatus('Saved deductions cleared from this device.', '');
+    });
+
+    // Restore remembered deductions on load.
+    const saved = readStore();
+    if (saved && Object.keys(saved).length) {
+      applyValues(saved);
+      if (slipForget) slipForget.hidden = false;
+    }
 
     calc();
   }

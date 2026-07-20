@@ -36,6 +36,48 @@ section.toolband { padding-top: 24px; }
 .estlayout { display: grid; grid-template-columns: 2fr 1fr; gap: 26px; align-items: start; }
 .estside { position: sticky; top: 20px; }
 
+/* --- Payslip import --- */
+.slipcard { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 22px 26px; }
+.slip-head { display: flex; gap: 14px; align-items: flex-start; }
+.slip-icon { font-size: 30px; color: var(--red-600); flex: none; margin-top: 2px; }
+.slip-head h3 { font-family: var(--font-heading); font-weight: 800; font-size: 19px; color: var(--navy-900); margin: 0 0 5px; }
+.slip-head p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-700); }
+
+.slip-drop { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; padding: 20px 18px; border: 2px dashed var(--cream-300); border-radius: var(--radius-md); background: var(--cream-100); color: var(--ink-700); font-size: 14.5px; cursor: pointer; text-align: center; transition: border-color .15s, background .15s; }
+.slip-drop:hover, .slip-drop.dragging { border-color: var(--sky-500); background: var(--white); }
+.slip-drop i { font-size: 21px; color: var(--sky-700); }
+.slip-drop strong { color: var(--navy-900); }
+/* Keyboard focus lands on the hidden input, so show the ring on its label. */
+#slipFile:focus-visible + .slip-privacy, #slipFile:focus-visible ~ .slip-drop { outline: 2px solid var(--sky-500); outline-offset: 2px; }
+
+.slip-privacy { display: flex; align-items: flex-start; gap: 8px; margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-500); }
+.slip-privacy i { font-size: 15px; color: var(--sky-700); flex: none; margin-top: 1px; }
+
+.slip-status { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); font-size: 13.5px; line-height: 1.55; border: 1.5px solid var(--cream-300); background: var(--cream-100); }
+.slip-status.ok { border-color: #9FE0BC; background: #F2FBF6; }
+.slip-status.bad { border-color: #F3A8A0; background: #FEF4F3; }
+.slip-status strong { color: var(--navy-900); }
+.slip-status ul { margin: 8px 0 0; padding-left: 18px; }
+.slip-status li { margin-top: 3px; }
+.slip-status .warn { color: var(--ink-700); }
+
+.slip-forget { margin-top: 12px; padding: 8px 14px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); font-family: var(--font-heading); font-weight: 700; font-size: 12.5px; color: var(--ink-500); cursor: pointer; transition: border-color .15s, color .15s; }
+.slip-forget:hover { border-color: var(--red-600); color: var(--red-600); }
+
+/* --- Reconcile --- */
+.reconcile { border-color: var(--sky-300); }
+.rec-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--cream-200); font-size: 14.5px; }
+.rec-row:first-child { border-top: none; }
+.rec-row .rec-label { color: var(--ink-900); font-weight: 600; }
+.rec-figs { display: flex; gap: 18px; font-variant-numeric: tabular-nums; }
+.rec-figs span { min-width: 92px; text-align: right; }
+.rec-est { color: var(--ink-500); }
+.rec-act { color: var(--navy-900); font-weight: 600; }
+.rec-diff.close { color: #1B7F4C; }
+.rec-diff.off { color: var(--red-600); font-weight: 700; }
+.rec-head { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 6px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.rec-note { margin: 14px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-500); }
+
 /* --- Which-check toggle --- */
 .esttoggle { display: flex; gap: 12px; }
 .esttoggle button { flex: 1; padding: 14px 12px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--white); font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--ink-500); cursor: pointer; transition: background .15s, border-color .15s, color .15s; box-shadow: var(--shadow-sm); }
