@@ -107,6 +107,16 @@ const ANNUAL_SCHEDULES: Record<FilingStatus, Array<[number, number, number]>> = 
     [531_750, 116_896, 35],
     [788_000, 206_583.5, 37],
   ],
+  hoh: [
+    [0, 0, 0],
+    [15_550, 0, 10],
+    [33_250, 1_770, 12],
+    [83_000, 7_740, 22],
+    [121_250, 16_155, 24],
+    [217_300, 39_207, 32],
+    [271_750, 56_631, 35],
+    [656_150, 191_171, 37],
+  ],
 };
 
 /** Semimonthly: two checks a month. */
@@ -126,7 +136,16 @@ function perCheck(rows: Array<[number, number, number]>): Bracket[] {
   });
 }
 
-export type FilingStatus = 'single' | 'mfj';
+/**
+ * The three schedules Pub 15-T actually publishes — which is not the same as
+ * the three answers people expect.
+ *
+ * There is no standalone "Married" table. Married filing SEPARATELY shares the
+ * Single schedule, which is why `single` is labelled for both: a married crew
+ * member picks `mfj` or `single` depending on how they file, and the labels
+ * have to say so or they will guess.
+ */
+export type FilingStatus = 'single' | 'mfj' | 'hoh';
 
 export interface FilingProfile {
   /** Full name, for the callout and the accessible label. */
@@ -141,18 +160,32 @@ export interface FilingProfile {
   brackets: Bracket[];
 }
 
+/**
+ * The Step 1 standard-deduction adjustment is $12,900 for married filing
+ * jointly and $8,600 for everyone else — Head of household included. Only the
+ * brackets differ between Single and Head of household.
+ */
+const ALLOWANCE_MFJ = 12_900 / PAY_PERIODS;
+const ALLOWANCE_OTHER = 8_600 / PAY_PERIODS;
+
 export const FILING: Record<FilingStatus, FilingProfile> = {
   single: {
-    label: 'Single or Married filing separately',
-    short: 'Single',
-    allowance: 8_600 / PAY_PERIODS,
+    label: 'Single or married filing separately',
+    short: 'Single / Married filing separately',
+    allowance: ALLOWANCE_OTHER,
     brackets: perCheck(ANNUAL_SCHEDULES.single),
   },
   mfj: {
     label: 'Married filing jointly',
     short: 'Married filing jointly',
-    allowance: 12_900 / PAY_PERIODS,
+    allowance: ALLOWANCE_MFJ,
     brackets: perCheck(ANNUAL_SCHEDULES.mfj),
+  },
+  hoh: {
+    label: 'Head of household',
+    short: 'Head of household',
+    allowance: ALLOWANCE_OTHER,
+    brackets: perCheck(ANNUAL_SCHEDULES.hoh),
   },
 };
 

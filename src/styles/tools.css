@@ -133,10 +133,13 @@ section.toolband { padding-top: 24px; }
 .egrid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; }
 
 /* --- Filing status --- */
-.filingrow { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1.5px solid var(--cream-200); padding-top: 16px; }
+/* Stacked, not side-by-side: three W-4 statuses spelled out properly are too
+   wide to sit beside the label without truncating the one that matters most. */
+.filingrow { border-top: 1.5px solid var(--cream-200); padding-top: 16px; }
 .filinglabel strong { display: block; font-size: 15px; font-weight: 600; color: var(--ink-900); }
-.filinglabel small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--ink-500); max-width: 380px; }
-.filingpick { display: flex; gap: 6px; flex: none; }
+.filinglabel small { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: var(--ink-500); max-width: 560px; }
+.filinglabel em { font-style: italic; }
+.filingpick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .filingpick button { padding: 9px 15px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); font-family: var(--font-heading); font-weight: 700; font-size: 13px; color: var(--ink-500); cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
 .filingpick button:hover { border-color: var(--navy-700); color: var(--navy-900); }
 .filingpick button[aria-selected="true"] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }

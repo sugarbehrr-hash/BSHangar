@@ -193,13 +193,25 @@ const money = (n: number) =>
         <div class="tc-body filingrow">
           <div class="filinglabel">
             <strong>Filing status</strong>
-            <small>From your W-4. Sets both your standard deduction and which bracket table applies.</small>
+            <small>
+              The three boxes on your W-4, Step 1(c). Sets both your standard deduction and which
+              bracket table applies. Married filing <em>separately</em> uses the same table as
+              Single — that's the IRS's grouping, not ours.
+            </small>
           </div>
           <div class="filingpick" role="tablist" aria-label="Filing status">
-            <button type="button" role="tab" data-filing="single" aria-selected="true">Single</button>
-            <button type="button" role="tab" data-filing="mfj" aria-selected="false">
-              Married filing jointly
-            </button>
+            {
+              (['single', 'mfj', 'hoh'] as const).map((key) => (
+                <button
+                  type="button"
+                  role="tab"
+                  data-filing={key}
+                  aria-selected={key === DEFAULT_FILING ? 'true' : 'false'}
+                >
+                  {FILING[key].short}
+                </button>
+              ))
+            }
           </div>
         </div>
 
@@ -534,7 +546,8 @@ const money = (n: number) =>
     filingPick?.addEventListener('click', (event) => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-filing]');
       if (!button) return;
-      setFiling(button.dataset.filing === 'mfj' ? 'mfj' : 'single');
+      const picked = button.dataset.filing;
+      if (picked === 'mfj' || picked === 'hoh' || picked === 'single') setFiling(picked);
     });
 
     /* ---------- Payslip import ---------- */
@@ -770,7 +783,9 @@ const money = (n: number) =>
       if (previous === 'upload' || previous === 'manual') chooseStart(previous, false);
 
       const storedFiling = localStorage.getItem(FILING_KEY);
-      if (storedFiling === 'single' || storedFiling === 'mfj') setFiling(storedFiling, false);
+      if (storedFiling === 'single' || storedFiling === 'mfj' || storedFiling === 'hoh') {
+        setFiling(storedFiling, false);
+      }
     } catch {
       /* no stored preference */
     }
