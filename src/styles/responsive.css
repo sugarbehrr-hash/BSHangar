@@ -49,6 +49,7 @@
   .wrap { padding: 0 18px; }
 
   .catgrid, .cols2, .cols3, .prodgrid, .steprow, .reslist, .egrid { grid-template-columns: 1fr; }
+  .startpick-btns { grid-template-columns: 1fr; }
 
   /* Estimator: stack each label above its input so long field labels
      stop squeezing the number box on a phone. */

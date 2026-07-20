@@ -59,7 +59,27 @@ const money = (n: number) =>
       <div id="tool-pay" role="tabpanel" aria-labelledby="tab-pay">
         <div class="estlayout">
           <div class="estmain">
-      <div class="slipcard reveal">
+      <div class="startpick reveal" role="group" aria-label="How do you want to start?">
+        <p class="startpick-q">How do you want to start?</p>
+        <div class="startpick-btns">
+          <button type="button" data-start="upload" aria-pressed="false" aria-controls="slipcard">
+            <Icon name="ph-file-pdf" />
+            <span>
+              Upload my payslip
+              <small>Reads the PDF and fills the form for you</small>
+            </span>
+          </button>
+          <button type="button" data-start="manual" aria-pressed="false">
+            <Icon name="ph-keyboard" />
+            <span>
+              Enter it myself
+              <small>Type the numbers from your Time Summary</small>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="slipcard reveal" id="slipcard" hidden>
         <div class="slip-head">
           <Icon name="ph-file-pdf" class="slip-icon" />
           <div>
@@ -447,6 +467,7 @@ const money = (n: number) =>
      * pay history.
      */
     const STORE_KEY = 'bsh.paycheck.deductions.v1';
+    const START_KEY = 'bsh.paycheck.start.v1';
     const STABLE_KEYS = ['pretax', 'k401', 'posttax', 'dues'] as const;
 
     const slipInput = document.getElementById('slipFile') as HTMLInputElement | null;
@@ -615,11 +636,61 @@ const money = (n: number) =>
       setStatus('Saved deductions cleared from this device.', '');
     });
 
+    /* ---------- How to start ---------- */
+
+    const startPick = document.querySelector<HTMLElement>('.startpick');
+    const slipCard = document.getElementById('slipcard');
+
+    /**
+     * Typing the numbers in is a first-class path. The upload panel stays
+     * collapsed until it is chosen, so the PDF never reads as a requirement
+     * for crew who do not have one to hand.
+     */
+    function chooseStart(mode: 'upload' | 'manual', remember = true) {
+      if (!startPick) return;
+
+      for (const b of startPick.querySelectorAll<HTMLButtonElement>('button[data-start]')) {
+        b.setAttribute('aria-pressed', String(b.dataset.start === mode));
+      }
+      if (slipCard) slipCard.hidden = mode !== 'upload';
+
+      if (remember) {
+        try {
+          localStorage.setItem(START_KEY, mode);
+        } catch {
+          /* choice simply will not persist */
+        }
+      }
+    }
+
+    startPick?.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-start]');
+      if (!button) return;
+
+      const mode = button.dataset.start === 'upload' ? 'upload' : 'manual';
+      chooseStart(mode);
+
+      if (mode === 'manual') {
+        // Drop them straight onto the first thing they need to type.
+        earnBody.querySelector<HTMLInputElement>('input[data-k]')?.focus();
+      } else {
+        slipInput?.focus();
+      }
+    });
+
     // Restore remembered deductions on load.
     const saved = readStore();
     if (saved && Object.keys(saved).length) {
       applyValues(saved);
       if (slipForget) slipForget.hidden = false;
+    }
+
+    // Restore the previous choice, without re-saving it.
+    try {
+      const previous = localStorage.getItem(START_KEY);
+      if (previous === 'upload' || previous === 'manual') chooseStart(previous, false);
+    } catch {
+      /* no stored preference */
     }
 
     calc();

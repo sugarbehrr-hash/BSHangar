@@ -36,6 +36,20 @@ section.toolband { padding-top: 24px; }
 .estlayout { display: grid; grid-template-columns: 2fr 1fr; gap: 26px; align-items: start; }
 .estside { position: sticky; top: 20px; }
 
+/* --- Start-method chooser --- */
+/* Typing the numbers in is a first-class path, not a fallback. The upload
+   panel stays collapsed until it is picked so it never reads as required. */
+.startpick { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 20px 22px; }
+.startpick-q { margin: 0 0 14px; font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--navy-900); }
+.startpick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.startpick-btns button { display: flex; align-items: flex-start; gap: 11px; text-align: left; padding: 15px 16px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--cream-100); font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; color: var(--navy-900); cursor: pointer; transition: background .15s, border-color .15s, box-shadow .15s; }
+.startpick-btns button i { font-size: 21px; color: var(--sky-700); flex: none; margin-top: 1px; }
+.startpick-btns button small { display: block; margin-top: 4px; font-family: var(--font-body); font-weight: 400; font-size: 12.5px; line-height: 1.45; color: var(--ink-500); }
+.startpick-btns button:hover { border-color: var(--navy-700); background: var(--white); }
+.startpick-btns button[aria-pressed="true"] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; box-shadow: var(--shadow-sm); }
+.startpick-btns button[aria-pressed="true"] i { color: var(--gold-500); }
+.startpick-btns button[aria-pressed="true"] small { color: var(--sky-300); }
+
 /* --- Payslip import --- */
 .slipcard { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 22px 26px; }
 .slip-head { display: flex; gap: 14px; align-items: flex-start; }
