@@ -36,16 +36,29 @@ section.toolband { padding-top: 24px; }
 .estlayout { display: grid; grid-template-columns: 2fr 1fr; gap: 26px; align-items: start; }
 .estside { position: sticky; top: 20px; }
 
+/* Sets the expectation before any control appears: do the steps in order,
+   there is no calculate button. */
+.estintro { margin: 0 0 18px; font-size: 15px; line-height: 1.55; color: var(--ink-700); max-width: 720px; }
+
+/* --- Numbered step headers --- */
+/* One header pattern for every step, whether the step lives in a .toolcard,
+   the .startpick chooser, or a bare .stepcard — the numbers are what carry
+   the "do this, then this" reading, so they must look identical everywhere. */
+.stephead { display: flex; align-items: flex-start; gap: 14px; }
+.stepnum { flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--navy-900); color: var(--gold-500); font-family: var(--font-heading); font-weight: 800; font-size: 16px; display: grid; place-items: center; margin-top: 1px; }
+.stephead-txt h3 { font-family: var(--font-heading); font-weight: 800; font-size: 18px; color: var(--navy-900); margin: 0 0 4px; }
+.stephead-txt p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-500); max-width: 560px; }
+.stephead-txt strong { color: var(--navy-900); }
+
 /* --- Start-method chooser --- */
 /* Typing the numbers in is a first-class path, not a fallback. The upload
    panel stays collapsed until it is picked so it never reads as required. */
-.startpick { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 20px 22px; }
-/* Both openers sit above the check toggle, which has no top margin of its own.
+.startpick, .stepcard { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 20px 22px; }
+/* Every opener sits above the next card, which has no top margin of its own.
    16px matches the rhythm .toolcard sets for the rest of the column, and it is
-   needed on each because either one can be the last thing before it. */
-.startpick, .slipcard { margin-bottom: 16px; }
-.startpick-q { margin: 0 0 14px; font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--navy-900); }
-.startpick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+   needed on each because any one can be the last thing before the next. */
+.startpick, .slipcard, .stepcard { margin-bottom: 16px; }
+.startpick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 .startpick-btns button { display: flex; align-items: flex-start; gap: 11px; text-align: left; padding: 15px 16px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--cream-100); font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; color: var(--navy-900); cursor: pointer; transition: background .15s, border-color .15s, box-shadow .15s; }
 .startpick-btns button i { font-size: 21px; color: var(--sky-700); flex: none; margin-top: 1px; }
 .startpick-btns button small { display: block; margin-top: 4px; font-family: var(--font-body); font-weight: 400; font-size: 12.5px; line-height: 1.45; color: var(--ink-500); }
@@ -97,7 +110,7 @@ section.toolband { padding-top: 24px; }
 .rec-note { margin: 14px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--ink-500); }
 
 /* --- Which-check toggle --- */
-.esttoggle { display: flex; gap: 12px; }
+.esttoggle { display: flex; gap: 12px; margin-top: 16px; }
 .esttoggle button { flex: 1; padding: 14px 12px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--white); font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--ink-500); cursor: pointer; transition: background .15s, border-color .15s, color .15s; box-shadow: var(--shadow-sm); }
 .esttoggle button small { display: block; font-family: var(--font-body); font-weight: 500; font-size: 12px; margin-top: 3px; opacity: .85; }
 .esttoggle button:hover { border-color: var(--navy-700); }
@@ -134,12 +147,13 @@ section.toolband { padding-top: 24px; }
 
 /* --- Filing status --- */
 /* Stacked, not side-by-side: three W-4 statuses spelled out properly are too
-   wide to sit beside the label without truncating the one that matters most. */
-.filingrow { border-top: 1.5px solid var(--cream-200); padding-top: 16px; }
-.filinglabel strong { display: block; font-size: 15px; font-weight: 600; color: var(--ink-900); }
-.filinglabel small { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.5; color: var(--ink-500); max-width: 560px; }
+   wide to sit beside the note without truncating the one that matters most.
+   Now its own Step 5 card, so the buttons come first and the married-filing-
+   separately caveat reads as a footnote under them. */
+.filinglabel small { display: block; font-size: 12.5px; line-height: 1.5; color: var(--ink-500); max-width: 560px; }
 .filinglabel em { font-style: italic; }
-.filingpick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.filingpick { display: flex; flex-wrap: wrap; gap: 6px; }
+.filingpick + .filinglabel { margin-top: 12px; }
 .filingpick button { padding: 9px 15px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); font-family: var(--font-heading); font-weight: 700; font-size: 13px; color: var(--ink-500); cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
 .filingpick button:hover { border-color: var(--navy-700); color: var(--navy-900); }
 .filingpick button[aria-selected="true"] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
@@ -172,6 +186,7 @@ section.toolband { padding-top: 24px; }
 .est-sub { padding: 0 26px 18px; font-size: 13.5px; color: var(--sky-300); }
 .est-break { background: var(--navy-800); border-top: 1px solid rgba(159, 208, 240, 0.25); padding: 12px 26px 18px; }
 .est-brw { display: flex; justify-content: space-between; font-size: 14.5px; padding: 6px 0; color: var(--cream-100); }
+.est-empty { font-size: 13.5px; line-height: 1.55; color: var(--sky-300); padding: 4px 0; }
 .est-brw .neg { color: #F3A8A0; }
 .est-brw .pos { color: #9FE0BC; }
 .est-brw.total { border-top: 1px solid rgba(159, 208, 240, 0.3); margin-top: 6px; padding-top: 10px; font-family: var(--font-heading); font-weight: 800; color: var(--gold-500); }

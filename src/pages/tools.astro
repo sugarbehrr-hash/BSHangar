@@ -58,23 +58,33 @@ const money = (n: number) =>
       </div>
 
       <div id="tool-pay" role="tabpanel" aria-labelledby="tab-pay">
+        <p class="estintro reveal">
+          Five quick steps, top to bottom. Do them in order — the answer on the right fills in by
+          itself as you go. There is no calculate button.
+        </p>
         <div class="estlayout">
           <div class="estmain">
-      <div class="startpick reveal" role="group" aria-label="How do you want to start?">
-        <p class="startpick-q">How do you want to start?</p>
+      <div class="startpick reveal" role="group" aria-label="Step 1: How do you want to put your numbers in?">
+        <div class="stephead">
+          <span class="stepnum">1</span>
+          <div class="stephead-txt">
+            <h3>How do you want to put your numbers in?</h3>
+            <p>Pick one. Both get you the same answer — uploading just does the typing for you.</p>
+          </div>
+        </div>
         <div class="startpick-btns">
           <button type="button" data-start="upload" aria-pressed="false" aria-controls="slipcard">
             <Icon name="ph-file-pdf" />
             <span>
-              Upload my payslip
-              <small>Reads the PDF and fills the form for you</small>
+              Upload my payslip PDF
+              <small>Easiest. We read the file and fill in the boxes for you.</small>
             </span>
           </button>
           <button type="button" data-start="manual" aria-pressed="false">
             <Icon name="ph-keyboard" />
             <span>
-              Enter it myself
-              <small>Type the numbers from your Time Summary</small>
+              Type them in myself
+              <small>Copy the numbers from your Time Summary, one box at a time.</small>
             </span>
           </button>
         </div>
@@ -84,11 +94,11 @@ const money = (n: number) =>
         <div class="slip-head">
           <Icon name="ph-file-pdf" class="slip-icon" />
           <div>
-            <h3>Start from your payslip</h3>
+            <h3>Upload your payslip here</h3>
             <p>
-              Upload the Workday <strong>Payslip to Print</strong> PDF and the fields below fill
-              themselves. Your deductions are remembered on this device, so next check you only
-              type the earnings that changed.
+              In Workday, download the <strong>Payslip to Print</strong> PDF, then choose it below.
+              The boxes in Steps 2–4 fill themselves. Your deductions are remembered on this
+              device, so next check you only type the earnings that changed.
             </p>
           </div>
         </div>
@@ -112,19 +122,39 @@ const money = (n: number) =>
         </button>
       </div>
 
-      <div class="esttoggle reveal" role="tablist" aria-label="Which check">
-        <button type="button" role="tab" data-check="5" aria-selected="true">
-          Check on the 5th<small>2 Half GTD</small>
-        </button>
-        <button type="button" role="tab" data-check="20" aria-selected="false">
-          Check on the 20th<small>1 Half GTD + overages</small>
-        </button>
+      <div class="stepcard reveal">
+        <div class="stephead">
+          <span class="stepnum">2</span>
+          <div class="stephead-txt">
+            <h3>Which paycheck are you checking?</h3>
+            <p>
+              Look at the date the money lands (or will land) in your bank. On or near the 5th?
+              Pick the first button. On or near the 20th? Pick the second.
+            </p>
+          </div>
+        </div>
+        <div class="esttoggle" role="tablist" aria-label="Step 2: Which check">
+          <button type="button" role="tab" data-check="5" aria-selected="true">
+            My check comes on the 5th<small>Pays your 2 Half GTD</small>
+          </button>
+          <button type="button" role="tab" data-check="20" aria-selected="false">
+            My check comes on the 20th<small>Pays your 1 Half GTD + overages + crew cash</small>
+          </button>
+        </div>
       </div>
 
       <div class="toolcard reveal">
         <div class="tc-head">
-          <h3>Earnings</h3>
-          <span class="hint">from your Time Summary</span>
+          <div class="stephead">
+            <span class="stepnum">3</span>
+            <div class="stephead-txt">
+              <h3>Fill in your earnings</h3>
+              <p>
+                Open your <strong>Time Summary</strong> and copy each number into the box with the
+                same name. If a line isn't on your Time Summary, leave the box at 0 — that's fine.
+              </p>
+            </div>
+          </div>
         </div>
         <div class="tc-body" id="earnBody">
           {
@@ -153,8 +183,16 @@ const money = (n: number) =>
 
       <div class="toolcard reveal">
         <div class="tc-head">
-          <h3>Deductions</h3>
-          <span class="hint">from your paystub</span>
+          <div class="stephead">
+            <span class="stepnum">4</span>
+            <div class="stephead-txt">
+              <h3>Fill in your deductions</h3>
+              <p>
+                These come from your <strong>last paystub</strong>, and they're usually the same
+                every check — so once you've typed them once, you rarely touch them again.
+              </p>
+            </div>
+          </div>
         </div>
         <div class="tc-body">
           <div class="egrid" id="dedBody">
@@ -190,16 +228,23 @@ const money = (n: number) =>
           </label>
         </div>
 
-        <div class="tc-body filingrow">
-          <div class="filinglabel">
-            <strong>Filing status</strong>
-            <small>
-              The three boxes on your W-4, Step 1(c). Sets both your standard deduction and which
-              bracket table applies. Married filing <em>separately</em> uses the same table as
-              Single — that's the IRS's grouping, not ours.
-            </small>
+      </div>
+
+      <div class="toolcard reveal">
+        <div class="tc-head">
+          <div class="stephead">
+            <span class="stepnum">5</span>
+            <div class="stephead-txt">
+              <h3>Pick how you file your taxes</h3>
+              <p>
+                This is the box you checked on your <strong>W-4, Step 1(c)</strong> — the same way
+                you file your tax return every spring. It decides how much federal tax comes out.
+              </p>
+            </div>
           </div>
-          <div class="filingpick" role="tablist" aria-label="Filing status">
+        </div>
+        <div class="tc-body filingrow">
+          <div class="filingpick" role="tablist" aria-label="Step 5: Filing status">
             {
               (['single', 'mfj', 'hoh'] as const).map((key) => (
                 <button
@@ -212,6 +257,12 @@ const money = (n: number) =>
                 </button>
               ))
             }
+          </div>
+          <div class="filinglabel">
+            <small>
+              Married filing <em>separately</em>? Pick the first button — the IRS puts it in the
+              same table as Single. That's their grouping, not ours.
+            </small>
           </div>
         </div>
 
@@ -288,7 +339,7 @@ const money = (n: number) =>
                 <p class="rec-note">
                   Small differences are normal — state and local tax, mid-period benefit changes,
                   and rounding all move the number. A large gap on Federal Income Tax usually means
-                  your W-4 or filing status differs from the Single table above.
+                  the filing status you picked in Step 5 doesn't match your W-4.
                 </p>
               </div>
             </div>
@@ -303,13 +354,13 @@ const money = (n: number) =>
             <div class="estresult" aria-live="polite">
               <div class="gl"></div>
               <div class="est-top">
-                <span class="est-lbl">Expected Net Income</span>
+                <span class="est-lbl">Your answer</span>
                 <span class="est-lbl alt" id="checkLbl">Check of the 5th</span>
               </div>
               <div class="est-net" id="netBig">$0.00</div>
               <div class="est-sub">
-                What should hit your bank account. Compare it to your paystub — if it doesn't
-                match, something changed.
+                This is what should hit your bank account. It updates by itself as you fill in the
+                steps — no button to press. If your real paystub doesn't match, something changed.
               </div>
               <div class="est-break" id="breakBody"></div>
             </div>
@@ -435,6 +486,16 @@ const money = (n: number) =>
 
     function calc() {
       const { taxableEarn, k401, fedTax, fica: ficaAmt, net } = currentEstimate();
+
+      // Until an earning goes in, the total would open at a negative number
+      // (the default deductions alone), which reads as "broken" to someone
+      // still on step 1. Hold the answer until there is something to add up.
+      if (taxableEarn === 0 && values.pdno === 0) {
+        netBig!.textContent = '$0.00';
+        breakBody!.innerHTML =
+          '<div class="est-empty">Nothing to add up yet — your number appears here as soon as you fill in your earnings (Step 3).</div>';
+        return;
+      }
 
       const rows: Array<[string, number, 'pos' | 'neg']> = [
         ['Taxable earnings', taxableEarn, 'pos'],
