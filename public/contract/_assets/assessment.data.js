@@ -496,7 +496,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §3.B rate scale: every rung rises 10% effective March 6, 2026 (0-6 months $27.06 to $29.77; 18 Year $43.51 to $47.86). Full scale in this card's pay table."
+            }
+          ]
         },
         {
           "id": "pay-retro",
@@ -517,7 +521,11 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "Retroactive pay ramp (about 1.5%/month from July 2023 to 5-6%/month by late 2025) is the union's retro summary; the governing retro LOA/section is pending Cole's confirmation."
+            }
+          ]
         },
         {
           "id": "pay-wagepath",
@@ -538,7 +546,11 @@ window.ASSESSMENT = {
             "sr": "RC"
           },
           "chart": "pay_vs_prices",
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §3.B rate scale: after the day-one 10%, rates rise +1.5% on March 6, 2027 and +1.5% on March 6, 2028, then hold flat until the next contract."
+            }
+          ]
         },
         {
           "id": "pay-floor",
@@ -562,7 +574,11 @@ window.ASSESSMENT = {
             "sr": "nc"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §3.B rate scale: the 0-6 month floor is set at $29.77 and locked permanently into the scale, up from today's $27.06."
+            }
+          ]
         },
         {
           "id": "pay-progression",
@@ -586,7 +602,11 @@ window.ASSESSMENT = {
             "pay_progression_relative",
             "pay_raise_by_step"
           ],
-          "reference": null
+          "reference": [
+            {
+              "basis": "Derived from the TA §3.B rate scale: every rung is the current rate x1.10, so the flattened 2022 shape is preserved rather than restored. Old-vs-new detail is this card's pay table and the concession chart."
+            }
+          ]
         },
         {
           "id": "pay-boarding",
@@ -678,7 +698,16 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.M",
+              "title": "Deadhead Pay",
+              "quote": "When a Flight Attendant deadheads, s/he will be paid 50% (75% pay and credit effective March 6, 2028) of the deadhead time based on the greater of scheduled or actual time of the deadhead.",
+              "status": "draft",
+              "bold": "75% pay and credit effective March 6, 2028"
+            }
+          ]
         },
         {
           "id": "pay-perdiem",
@@ -741,7 +770,16 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.O",
+              "title": "Holidays",
+              "quote": "Thanksgiving Day, Christmas Day, New Years Day, Memorial Day and July 4th and any Critical Coverage day designated by the Company.",
+              "status": "draft",
+              "bold": "New Years Day"
+            }
+          ]
         },
         {
           "id": "pay-payroll",
@@ -762,7 +800,16 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.S.4",
+              "title": "Payroll resolution",
+              "quote": "When an error results in a loss of credited time or money to a flight attendant of $50 or more, the Flight Attendant will be paid and credited for the time lost.",
+              "status": "draft",
+              "bold": "$50 or more"
+            }
+          ]
         },
         {
           "id": "pay-drugtest",
@@ -783,7 +830,16 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.R",
+              "title": "Pay for Drug/Alcohol Tests",
+              "quote": "A Flight Attendant notified of a random drug or alcohol test scheduled at any point during a trip will be paid an additional $10.00 for such test.",
+              "status": "draft",
+              "bold": "$10.00 for such test"
+            }
+          ]
         },
         {
           "id": "pay-cdo-min",
@@ -804,7 +860,11 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "CDO (standup) minimum pay - governing TA section pending Cole's confirmation."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -861,7 +921,11 @@ window.ASSESSMENT = {
             "sr": "MG"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §9.E.1.a: Ready Reserve (HRV) assignments limited to no more than 10 per month (no cap today). Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "res-rap",
@@ -882,7 +946,16 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "9.D.1",
+              "title": "Reserve Availability Period",
+              "quote": "The Reserve Availability Period (RAP) will be thirteen (13) hours.",
+              "bold": "thirteen (13)",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "res-golden",
@@ -933,7 +1006,16 @@ window.ASSESSMENT = {
             "sr": "SG"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "9.H",
+              "title": "Automatic release",
+              "quote": "Flight Attendants with no further required activity are considered automatically released.",
+              "bold": "automatically released",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "res-bucket",
@@ -954,7 +1036,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §9.E.2: HRV assignments handed out through a bucket system that spreads them by availability. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "res-pickup",
@@ -975,7 +1061,16 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "9.R",
+              "title": "Reserve trip pickup",
+              "quote": "A Reserve Flight Attendant may pick up open time and trip trade in accordance with paragraph I.5.",
+              "bold": "pick up open time",
+              "status": "draft"
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1039,7 +1134,11 @@ window.ASSESSMENT = {
             "sr": "SG"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §8.A.3: caps on maximum sections and landings per trip. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "sch-tripdrop",
@@ -1090,7 +1189,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §8.I.5.c / 8.I.5.d.v: trade floor lowered to 40 hours (from 60), effective on final PBS implementation. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "sch-golden-timing",
@@ -1111,7 +1214,16 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.I.2.c",
+              "title": "Golden Days award date",
+              "quote": "The Golden Days will be awarded by the 22nd of the month prior at 1700.",
+              "bold": "22nd",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "sch-mix",
@@ -1132,7 +1244,16 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.A.4",
+              "title": "Mix of trip lengths",
+              "quote": "Schedules will contain regular lines of time comprised of trips of similar length to the extent possible, except CDOs.",
+              "bold": "trips of similar length",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "sch-pbs",
@@ -1153,7 +1274,16 @@ window.ASSESSMENT = {
             "sr": "dep"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "PBS LOA",
+              "title": "Preferential Bidding System",
+              "quote": "The parties agree to implement a Preferential Bidding System (PBS) using IBS PBS Software.",
+              "bold": "Preferential Bidding System",
+              "status": "draft"
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1217,7 +1347,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §10.D.2: seniority continues to accrue while on Workers' Compensation leave. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "leave-fatigue",
@@ -1238,7 +1372,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §23.L.1: fatigue-call procedures. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "leave-return",
@@ -1259,7 +1397,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §10.J.2: return-from-leave process (DOR + 2 months). Full clause pending Cole's verify."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1315,7 +1457,11 @@ window.ASSESSMENT = {
             "sr": "nc"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §11.B: new hires pay for the initial uniform complement via payroll deduction. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-allowance",
@@ -1336,7 +1482,11 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §11.E: annual uniform allowance, with the balance visible on the website. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-shoes",
@@ -1357,7 +1507,16 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "11.L",
+              "title": "Shoes and accessories",
+              "quote": "A Flight Attendant may purchase shoes, pantyhose, tights, and socks from a vendor of her/his choice with approval from the Director of Inflight.",
+              "bold": "vendor of her/his choice",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "uni-stolen",
@@ -1378,7 +1537,11 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §11.F: replacement for stolen uniforms. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-balance",
@@ -1399,7 +1562,11 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §11.E: uniform-allowance balance visible on the website. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-maternity",
@@ -1420,7 +1587,16 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "11.O",
+              "title": "Maternity Uniforms",
+              "quote": "The Company shall keep and maintain a clean and adequate supply of maternity uniforms.",
+              "bold": "maternity uniforms",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "uni-alter",
@@ -1441,7 +1617,16 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "11.M",
+              "title": "Alterations",
+              "quote": "The Company will reimburse necessary alterations to uniform items the Flight Attendant purchases following the initial complement, to the extent of sufficient credit in the uniform replacement allowance bank.",
+              "bold": "necessary alterations",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "exp-parking",
@@ -1462,7 +1647,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §24.J: commuter parking benefit (DOR + 2 months). Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "exp-transit",
@@ -1483,7 +1672,11 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA commuter public-transit benefit - governing section pending Cole's confirmation."
+            }
+          ]
         },
         {
           "id": "exp-hotel",
@@ -1504,7 +1697,11 @@ window.ASSESSMENT = {
             "sr": "nc"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §6.B.4-6.B.5: training hotel for commuters. Full clause pending Cole's verify."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1567,7 +1764,11 @@ window.ASSESSMENT = {
             "sr": "dep"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §16: notice before an investigatory meeting shortened (7 to 5 days). Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "job-board",
@@ -1588,7 +1789,11 @@ window.ASSESSMENT = {
             "sr": "SG"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §17: System Board (dispute panel) process changes. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "job-life",
@@ -1609,7 +1814,16 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "25.A",
+              "title": "Life Insurance",
+              "quote": "The Company will provide at no cost to the Flight Attendant life insurance coverage in an amount equal to 1.5 times the Flight Attendant's annual salary.",
+              "bold": "1.5 times the Flight Attendant's annual salary",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "job-health",
@@ -1630,7 +1844,11 @@ window.ASSESSMENT = {
             "sr": "nc"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA health-insurance cost share - governing section pending Cole's confirmation."
+            }
+          ]
         },
         {
           "id": "job-401k",
@@ -1651,7 +1869,11 @@ window.ASSESSMENT = {
             "sr": "SG"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §27.B: increase to the 401(k) company match. Full clause pending Cole's verify."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1708,7 +1930,16 @@ window.ASSESSMENT = {
             "sr": "nc"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "14.G",
+              "title": "Flight Pay Loss",
+              "quote": "The Company will absorb flight pay loss for Flight Attendants who hold local union positions when required by the Company to attend meetings.",
+              "bold": "absorb flight pay loss",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "union-pac",
@@ -1729,7 +1960,11 @@ window.ASSESSMENT = {
             "sr": "nc"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA §15.G: FlightPAC payroll deduction. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "dur-term",
@@ -1750,7 +1985,11 @@ window.ASSESSMENT = {
             "sr": "dep"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "basis": "TA term: the CBA runs March 6, 2026 through March 6, 2029 - a 3-year contract (Implementation Timeline LOA preamble)."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
