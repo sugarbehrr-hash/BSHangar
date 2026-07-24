@@ -651,6 +651,68 @@ const DLV = {
 };
 const TYPE_CLS = { NEW: "ty-new", CODIFY: "ty-kept", RESTORE: "ty-restored" };
 
+// glossary: subtle click-to-define on a curated set of genuinely confusing terms.
+// Only the FIRST document-wide occurrence of each is linked (dotted underline), so the
+// page never fills with links; the full glossary section remains the complete reference.
+let _glossItems = null;
+function glossItems() {
+  if (_glossItems) return _glossItems;
+  const A2 = window.ASSESSMENT || {};
+  if (!A2.glossary || !A2.glossary.length) return [];
+  const def = {}; A2.glossary.forEach(t => { def[String(t[0]).toLowerCase()] = t[1]; });
+  const CONFUSING = ["PBS", "HRV", "RAP", "DOR", "amendable", "junior-assigned", "carve-out",
+                     "selfing", "Flight Pay Loss", "pay and credit", "Continuous Duty Overnight",
+                     "Implementation LOA", "AD OPT"];
+  _glossItems = CONFUSING.filter(term => def[term.toLowerCase()]).map(term => {
+    const isAcro = term === term.toUpperCase() && /[A-Z]{2,}/.test(term);
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return { term, def: def[term.toLowerCase()], re: new RegExp("(^|[^\\w-])(" + esc + ")(?![\\w-])", isAcro ? "" : "i") };
+  });
+  return _glossItems;
+}
+function ensureGlossCss() {
+  if (document.getElementById("gloss-css")) return;
+  const st = document.createElement("style"); st.id = "gloss-css";
+  st.textContent = ".gloss-link{border-bottom:1px dotted var(--ink-300,#9aa0b0);cursor:help}.gloss-link:hover{border-bottom-color:var(--gold-500,#e8a33d)}";
+  document.head.appendChild(st);
+}
+function linkGlossary() {
+  const items = glossItems();
+  if (!items.length) return;
+  ensureGlossCss();
+  const done = new Set();
+  // if a re-render preserved existing links, don't create a duplicate for the same term
+  document.querySelectorAll(".gloss-link[data-term]").forEach(el => done.add(el.getAttribute("data-term")));
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode(n) {
+      if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      const p = n.parentElement;
+      if (!p || p.closest("script,style,a,button,h1,h2,h3,.gloss-link,.vc-refchip,#vc-refov,[data-sec='glossary']")) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = []; let n; while ((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(node => {
+    for (const it of items) {
+      if (done.has(it.term)) continue;
+      it.re.lastIndex = 0;
+      const m = it.re.exec(node.nodeValue);
+      if (!m) continue;
+      const mid = node.splitText(m.index + m[1].length);
+      mid.splitText(m[2].length);
+      const span = document.createElement("span");
+      span.className = "gloss-link";
+      span.setAttribute("data-term", it.term);
+      span.setAttribute("data-def", it.def);
+      span.setAttribute("onclick", "window.__vcGlossShow(this)");
+      span.textContent = mid.nodeValue;
+      mid.parentNode.replaceChild(span, mid);
+      done.add(it.term);
+      break;
+    }
+  });
+}
+
 // Scoreboard "your group" frame: a single overlay that slides over the active column,
 // measured from the live DOM so it always hugs the column exactly (no per-cell boxes).
 function positionSbHighlight() {
@@ -707,9 +769,11 @@ class Component extends DCLogic {
     requestAnimationFrame(this._sbReposition);
     setTimeout(this._sbReposition, 300);
     window.addEventListener("resize", this._sbReposition);
+    try { linkGlossary(); } catch (e) {}
   }
   componentDidUpdate() {
     if (this._sbReposition) requestAnimationFrame(this._sbReposition);
+    try { linkGlossary(); } catch (e) {}
   }
   componentWillUnmount() {
     if (this._sbReposition) window.removeEventListener("resize", this._sbReposition);

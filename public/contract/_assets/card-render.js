@@ -54,6 +54,7 @@
     + '.vc-refquote{font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:1.7;color:#2c3345;background:#fff;border:1.5px solid var(--cream-300,#e3dccb);border-radius:12px;padding:15px 17px;margin:0}'
     + '.vc-refquote mark{background:#f7e3b6;color:var(--navy-900,#1f2a44);font-weight:700;padding:1px 2px;border-radius:3px}'
     + '.vc-refcite{font-size:14px;line-height:1.65}.vc-refcite a{color:var(--sky-700,#5b7fa6);font-weight:700;text-decoration:none}'
+    + '.vc-refdef{font-size:14.5px;line-height:1.65;color:#2c3345}'
     + '.vc-reffoot{padding:11px 18px;border-top:1px solid var(--cream-300,#e3dccb);display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-500,#7c8398);background:var(--cream-200,#f1ead9)}'
     + '.vc-refdraft{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#a9741a;background:#f7e9cd;border:1px solid #ecd6a3;border-radius:5px;padding:2px 6px}'
     + '.vc-refchip:hover{background:#2b3a5c!important}'
@@ -90,6 +91,18 @@
     var foot=(rf.status==="draft"?'<span class="vc-refdraft">Draft &ndash; pending verify</span>':'')
       +'<span>'+(isSrc?"Cited for comparison":"Verbatim from the "+(rf.doc==="Tentative Agreement"?"TA":escHtml(rf.doc||"source")))+'</span>';
     document.getElementById("vc-reffoot").innerHTML=foot;
+    document.getElementById("vc-refbody").scrollTop=0;
+    document.getElementById("vc-refov").classList.add("open");
+  };
+  // glossary variant — same shell, a term + its plain-language definition
+  window.__vcGlossShow=function(el){
+    ensureRefPop();
+    var term=el.getAttribute("data-term")||"", def=el.getAttribute("data-def")||"";
+    document.getElementById("vc-refeye").textContent="Term";
+    document.getElementById("vc-refloc").innerHTML=escHtml(term);
+    document.getElementById("vc-refsub").textContent="";
+    document.getElementById("vc-refbody").innerHTML='<div class="vc-refdef">'+escHtml(def)+'</div>';
+    document.getElementById("vc-reffoot").innerHTML='<span>Plain-language glossary</span>';
     document.getElementById("vc-refbody").scrollTop=0;
     document.getElementById("vc-refov").classList.add("open");
   };
