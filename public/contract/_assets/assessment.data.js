@@ -610,14 +610,16 @@ window.ASSESSMENT = {
             "sr": "SG"
           },
           "chart": null,
-          "reference": {
-            "doc": "Tentative Agreement",
-            "section": "3.Q",
-            "title": "Boarding Pay",
-            "quote": "1. Effective March 6, 2027, Flight Attendants will be paid boarding pay for all minutes of the established boarding time for each boarding for each flight segment actually boarded. Flight Attendants shall also receive boarding pay in the event that a flight boards and then cancels. 2. Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate (as specified in Section 3.B., above). 3. Boarding pay will be paid above guarantee for both Reserves and Lineholders.",
-            "bold": "Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate",
-            "status": "draft"
-          }
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.Q",
+              "title": "Boarding Pay",
+              "quote": "1. Effective March 6, 2027, Flight Attendants will be paid boarding pay for all minutes of the established boarding time for each boarding for each flight segment actually boarded. Flight Attendants shall also receive boarding pay in the event that a flight boards and then cancels. 2. Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate (as specified in Section 3.B., above). 3. Boarding pay will be paid above guarantee for both Reserves and Lineholders.",
+              "bold": "Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "pay-minday",
@@ -638,14 +640,24 @@ window.ASSESSMENT = {
             "sr": "sg"
           },
           "chart": null,
-          "reference": {
-            "doc": "Tentative Agreement",
-            "section": "3.F.4",
-            "title": "Minimum Day Pay - carve-outs",
-            "quote": "If a Flight Attendant does not fly a portion of his/her trip due to absence or a partial trade, minimum daily guarantee will not apply to the days of that trip that the Flight Attendant does not fly due to absence or the partial trade. Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
-            "bold": "Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
-            "status": "draft"
-          }
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.F",
+              "title": "Minimum Day Pay",
+              "quote": "F. Minimum Day Pay. Each calendar day of a trip will be credited with the greater of actual flight time flown, scheduled flight time or three and one-half (3.5) hours (increasing to 3.75 hours effective March 6, 2028), with carve-outs as follows.",
+              "bold": "increasing to 3.75 hours effective March 6, 2028",
+              "status": "draft"
+            },
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.F.4",
+              "title": "Minimum Day Pay - carve-outs",
+              "quote": "If a Flight Attendant does not fly a portion of his/her trip due to absence or a partial trade, minimum daily guarantee will not apply to the days of that trip that the Flight Attendant does not fly due to absence or the partial trade. Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
+              "bold": "Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "pay-deadhead",
@@ -870,14 +882,16 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": {
-            "doc": "Tentative Agreement",
-            "section": "8.I.2",
-            "title": "Golden Days",
-            "quote": "A Golden Day is an immovable day off during which a Flight Attendant cannot be junior assigned. A Reserve Flight Attendant may request up to six (6) Golden Days per bid period. All other days off will be considered movable by the Company provided that a moved day off is only done when operationally necessary and is replaced by an off day within the current bid month. The Golden Days will be awarded by the 22nd of the month prior at 1700.",
-            "bold": "A Reserve Flight Attendant may request up to six (6) Golden Days per bid period.",
-            "status": "draft"
-          }
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.I.2",
+              "title": "Golden Days",
+              "quote": "A Golden Day is an immovable day off during which a Flight Attendant cannot be junior assigned. A Reserve Flight Attendant may request up to six (6) Golden Days per bid period. All other days off will be considered movable by the Company provided that a moved day off is only done when operationally necessary and is replaced by an off day within the current bid month. The Golden Days will be awarded by the 22nd of the month prior at 1700.",
+              "bold": "A Reserve Flight Attendant may request up to six (6) Golden Days per bid period.",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "res-autocheck",
@@ -1025,14 +1039,16 @@ window.ASSESSMENT = {
             "sr": "SG"
           },
           "chart": null,
-          "reference": {
-            "doc": "Tentative Agreement",
-            "section": "8.I.5.e",
-            "title": "Trip Drops",
-            "quote": "e. Trip Drops (effective upon implementation of PBS): i. Trips may be dropped into open time on a first-come, first-served basis subject to the following conditions: a. The drop is completed prior to forty-eight (48) hours from the scheduled departure of the trip; b. The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed; c. The drop does not cause the Flight Attendant to fall below forty (40) hours of credit; and d. The drop complies with all contractual restrictions. ii. Requests inside forty-eight (48) hours may be approved at Company discretion. iii. Dropping a trip adjusts the Flight Attendant's minimum monthly guarantee accordingly.",
-            "bold": "The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed",
-            "status": "draft"
-          }
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.I.5.e",
+              "title": "Trip Drops",
+              "quote": "e. Trip Drops (effective upon implementation of PBS): i. Trips may be dropped into open time on a first-come, first-served basis subject to the following conditions: a. The drop is completed prior to forty-eight (48) hours from the scheduled departure of the trip; b. The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed; c. The drop does not cause the Flight Attendant to fall below forty (40) hours of credit; and d. The drop complies with all contractual restrictions. ii. Requests inside forty-eight (48) hours may be approved at Company discretion. iii. Dropping a trip adjusts the Flight Attendant's minimum monthly guarantee accordingly.",
+              "bold": "The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "sch-tradefloor",

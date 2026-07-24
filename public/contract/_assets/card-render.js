@@ -29,17 +29,26 @@
   // ── reference popover (ADR-048): a claim's source, shown at the point of claim ──
   function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
   function escAttr(s){return escHtml(s).replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
-  function refLabel(rf){ return rf.basis ? "Basis" : (rf.source ? "Source" : "In the contract"); }
-  function refChip(rf){
-    if (rf.basis) return '<div style="font-size:11.5px; line-height:1.5; color:var(--ink-500);">' + escHtml(rf.basis) + '</div>';
-    var face = rf.source ? escHtml(rf.source) : ("§" + escHtml(rf.section || ""));
-    var tag = rf.source ? "Source" : (rf.doc === "Tentative Agreement" ? "TA" : escHtml(rf.doc || "TA"));
-    return '<button type="button" class="vc-refchip" data-ref="' + escAttr(JSON.stringify(rf)) + '" onclick="window.__vcRefOpen(this)" '
+  function refLabel(refs){
+    if (refs.some(function(r){return r.quote;})) return "In the contract";
+    if (refs.some(function(r){return r.source;})) return "Source";
+    return "Basis";
+  }
+  function refChip(refs, cardTitle){
+    if (refs.length === 1 && refs[0].basis)
+      return '<div style="font-size:11.5px; line-height:1.5; color:var(--ink-500);">' + escHtml(refs[0].basis) + '</div>';
+    var secs = refs.filter(function(r){return r.section;}).map(function(r){return "§" + r.section;});
+    var face = secs.length === 0 ? (refs[0].source ? "Source" : "Details")
+             : secs.length <= 2 ? secs.join(" · ")
+             : secs[0] + " +" + (secs.length - 1);
+    var tag = refs.some(function(r){return r.quote;}) ? "TA" : (refs.some(function(r){return r.source;}) ? "Source" : "");
+    var payload = escAttr(JSON.stringify({ t: cardTitle || "", r: refs }));
+    return '<button type="button" class="vc-refchip" data-ref="' + payload + '" onclick="window.__vcRefOpen(this)" '
       + 'style="display:inline-flex; align-items:center; justify-content:space-between; gap:8px; width:100%; cursor:pointer; '
       + 'font-family:var(--font-heading); font-weight:800; font-size:12.5px; color:#fff; background:var(--navy-900); '
       + 'border:1.5px solid var(--navy-900); border-radius:9px; padding:7px 11px; text-align:left;">'
-      + '<span style="display:inline-flex; align-items:center; gap:7px; min-width:0;"><span style="font-size:9px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-500);">' + tag + '</span> ' + face + '</span>'
-      + '<span style="opacity:0.7; font-size:12px;">&#9656;</span></button>';
+      + '<span style="display:inline-flex; align-items:center; gap:7px; min-width:0;"><span style="font-size:9px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-500); flex-shrink:0;">' + tag + '</span> <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + escHtml(face) + '</span></span>'
+      + '<span style="opacity:0.7; font-size:12px; flex-shrink:0;">&#9656;</span></button>';
   }
   var REFPOP_CSS = '.vc-refov{position:fixed;inset:0;background:rgba(31,42,68,.44);display:none;align-items:center;justify-content:center;padding:24px;z-index:9999}'
     + '.vc-refov.open{display:flex}'
@@ -55,6 +64,8 @@
     + '.vc-refquote mark{background:#f7e3b6;color:var(--navy-900,#1f2a44);font-weight:700;padding:1px 2px;border-radius:3px}'
     + '.vc-refcite{font-size:14px;line-height:1.65}.vc-refcite a{color:var(--sky-700,#5b7fa6);font-weight:700;text-decoration:none}'
     + '.vc-refdef{font-size:14.5px;line-height:1.65;color:#2c3345}'
+    + '.vc-refclause{margin-bottom:16px}.vc-refclause:last-child{margin-bottom:0}'
+    + '.vc-refsec{font-family:var(--font-heading);font-size:11px;font-weight:800;letter-spacing:.03em;color:var(--gold-600,#b07d1e);margin:0 0 6px}'
     + '.vc-reffoot{padding:11px 18px;border-top:1px solid var(--cream-300,#e3dccb);display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-500,#7c8398);background:var(--cream-200,#f1ead9)}'
     + '.vc-refdraft{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#a9741a;background:#f7e9cd;border:1px solid #ecd6a3;border-radius:5px;padding:2px 6px}'
     + '.vc-refchip:hover{background:#2b3a5c!important}'
@@ -73,24 +84,32 @@
   }
   window.__vcRefOpen=function(btn){
     ensureRefPop();
-    var rf; try{rf=JSON.parse(btn.getAttribute("data-ref"));}catch(e){return;}
-    var isSrc=!!rf.source;
-    document.getElementById("vc-refeye").textContent=isSrc?"Source · external":"In the contract";
-    document.getElementById("vc-refloc").innerHTML=isSrc?escHtml(rf.source||""):("§"+escHtml(rf.section||""));
-    document.getElementById("vc-refsub").textContent=isSrc?(rf.detail||""):((rf.doc||"")+(rf.title?" · "+rf.title:""));
-    var body;
-    if(isSrc){
-      body='<div class="vc-refcite">'+escHtml(rf.detail||"")+(rf.url?'<div style="margin-top:8px;"><a href="'+escAttr(rf.url)+'" target="_blank" rel="noopener">View source &#8599;</a></div>':'')+'</div>';
-    } else {
-      var q=rf.quote||"", h, i=rf.bold?q.indexOf(rf.bold):-1;
-      if(i>=0){h=escHtml(q.slice(0,i))+'<mark>'+escHtml(rf.bold)+'</mark>'+escHtml(q.slice(i+rf.bold.length));}
+    var data; try{data=JSON.parse(btn.getAttribute("data-ref"));}catch(e){return;}
+    var refs=(data && data.r) || [], title=(data && data.t) || "";
+    if(!refs.length) return;
+    var hasQuote=refs.some(function(r){return r.quote;});
+    var hasSrc=refs.some(function(r){return r.source;});
+    document.getElementById("vc-refeye").textContent=hasQuote?"In the contract":(hasSrc?"Source · external":"Basis");
+    document.getElementById("vc-refloc").innerHTML=escHtml(title||(hasQuote?"Contract language":"Source"));
+    document.getElementById("vc-refsub").textContent=refs.length>1?(refs.length+" citations"):"";
+    var body="", anyDraft=false;
+    refs.forEach(function(r){
+      if(r.basis){ body+='<div class="vc-refclause"><div class="vc-refdef">'+escHtml(r.basis)+'</div></div>'; return; }
+      if(r.source){
+        body+='<div class="vc-refclause"><div class="vc-refsec">'+escHtml(r.source)+'</div><div class="vc-refcite">'+escHtml(r.detail||"")
+          +(r.url?' <a href="'+escAttr(r.url)+'" target="_blank" rel="noopener">View &#8599;</a>':'')+'</div></div>';
+        return;
+      }
+      if(r.status==="draft") anyDraft=true;
+      var q=r.quote||"", i=r.bold?q.indexOf(r.bold):-1, h;
+      if(i>=0){h=escHtml(q.slice(0,i))+'<mark>'+escHtml(r.bold)+'</mark>'+escHtml(q.slice(i+r.bold.length));}
       else{h=escHtml(q);}
-      body='<p class="vc-refquote">'+h+'</p>';
-    }
+      var sec=(r.doc==="Tentative Agreement"?"TA ":(r.doc?escHtml(r.doc)+" ":""))+"§"+escHtml(r.section||"")+(r.title?" · "+escHtml(r.title):"");
+      body+='<div class="vc-refclause"><div class="vc-refsec">'+sec+'</div><p class="vc-refquote">'+h+'</p></div>';
+    });
     document.getElementById("vc-refbody").innerHTML=body;
-    var foot=(rf.status==="draft"?'<span class="vc-refdraft">Draft &ndash; pending verify</span>':'')
-      +'<span>'+(isSrc?"Cited for comparison":"Verbatim from the "+(rf.doc==="Tentative Agreement"?"TA":escHtml(rf.doc||"source")))+'</span>';
-    document.getElementById("vc-reffoot").innerHTML=foot;
+    document.getElementById("vc-reffoot").innerHTML=(anyDraft?'<span class="vc-refdraft">Draft &ndash; pending verify</span>':'')
+      +'<span>'+(hasQuote?"Verbatim from the TA":"Cited for comparison")+'</span>';
     document.getElementById("vc-refbody").scrollTop=0;
     document.getElementById("vc-refov").classList.add("open");
   };
@@ -341,8 +360,8 @@
         + '<div style="font-size:11px; line-height:1.5; color:var(--ink-500); margin-top:3px;">' + (c.market.note || "") + '</div>';
       metaRows.push(["Vs. other airlines", mkt]);
     }
-    if (c.reference) {
-      metaRows.push([refLabel(c.reference), refChip(c.reference)]);
+    if (c.reference && c.reference.length) {
+      metaRows.push([refLabel(c.reference), refChip(c.reference, c.title)]);
     }
     let meta = '<div style="background:var(--cream-100); border-radius:12px; padding:13px 14px; display:flex; flex-direction:column;">';
     meta += metaRows.map((r, i) => {
