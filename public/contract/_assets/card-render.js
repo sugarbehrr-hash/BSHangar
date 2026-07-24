@@ -21,6 +21,14 @@
  * ==========================================================================*/
 (function () {
   const A = window.ASSESSMENT || {};
+
+  // Mobile (quick fix): stack a card's boxes instead of squishing them.
+  (function(){
+    if (typeof document === "undefined" || document.getElementById("vc-mobile-css")) return;
+    var st = document.createElement("style"); st.id = "vc-mobile-css";
+    st.textContent = "@media(max-width:640px){.vc-card{grid-template-columns:1fr!important}.vc-tp{grid-template-columns:1fr!important}.vc-tp-arrow{transform:rotate(90deg);margin:2px auto}.vc-rail{position:static!important}}";
+    (document.head || document.documentElement).appendChild(st);
+  })();
   const RLABELS = (A.ratingSystem || {}).labels || {};
   const TYPE_LABELS = A.typeLabels || {};
   const MKT_LABELS = A.marketLabels || {};
@@ -326,11 +334,11 @@
     left += '<h3 style="font-family:var(--font-heading); font-weight:800; font-size:17.5px; color:var(--navy-900); margin:0 0 10px; line-height:1.3;">' + (c.title || "") + '</h3>';
     left += '<p style="font-size:14px; line-height:1.6; margin:0 0 12px;">' + prose + '</p>';
     // today → proposed
-    left += '<div style="display:grid; grid-template-columns:1fr 40px 1fr; align-items:stretch; margin:0 0 12px;">'
+    left += '<div class="vc-tp" style="display:grid; grid-template-columns:1fr 40px 1fr; align-items:stretch; margin:0 0 12px;">'
       + '<div style="padding:13px 16px; border-radius:12px; background:var(--cream-200); border:1.5px dashed var(--cream-300);">'
       + '<div style="font-family:var(--font-heading); font-weight:800; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:6px; color:var(--ink-300);"><i class="ph-fill ph-clock-counter-clockwise"></i> Today</div>'
       + '<p style="margin:0; font-size:13.5px; line-height:1.55;">' + (c.today || "") + '</p></div>'
-      + '<div style="display:flex; align-items:center; justify-content:center; color:var(--gold-600); font-size:20px;"><i class="ph-bold ph-arrow-right"></i></div>'
+      + '<div class="vc-tp-arrow" style="display:flex; align-items:center; justify-content:center; color:var(--gold-600); font-size:20px;"><i class="ph-bold ph-arrow-right"></i></div>'
       + '<div style="padding:13px 16px; border-radius:12px; background:var(--sky-100); border:1.5px solid var(--sky-700);">'
       + '<div style="font-family:var(--font-heading); font-weight:800; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:6px; color:var(--sky-700);"><i class="ph-fill ph-arrow-fat-right"></i> Proposed</div>'
       + '<p style="margin:0; font-size:13.5px; line-height:1.55;">' + (c.proposed || "") + '</p></div></div>';
@@ -386,9 +394,9 @@
       + '<div class="ink-gold" style="font-family:var(--font-heading); font-weight:800; font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-500); margin-bottom:8px;">Worth to each group</div>'
       + '<div style="display:flex; flex-direction:column; gap:7px;"' + (ctx.chipsAnchor ? ' data-comment-anchor="' + ctx.chipsAnchor + '"' : '') + '>' + chips + '</div></div>';
 
-    const right = '<div style="display:flex; flex-direction:column; gap:10px; position:sticky; top:calc(var(--tb-h, 54px) + 12px); align-self:start;">' + meta + worth + '</div>';
+    const right = '<div class="vc-rail" style="display:flex; flex-direction:column; gap:10px; position:sticky; top:calc(var(--tb-h, 54px) + 12px); align-self:start;">' + meta + worth + '</div>';
 
-    return '<div data-card-id="' + (c.id || '') + '" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid;">'
+    return '<div data-card-id="' + (c.id || '') + '" class="vc-card" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid;">'
       + left + right + '</div>';
   }
 
@@ -502,7 +510,7 @@
         + '<div class="ink-onnavy" style="font-family:var(--font-heading); font-weight:800; font-size:15.5px; line-height:1.2; color:#fff;">' + m.callout + '</div></div>';
     }
     const right = '<div style="display:flex; flex-direction:column; gap:10px;">' + mvBlock + calloutBlock + '</div>';
-    return '<div data-card-id="' + (m.id || '') + '" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid;">'
+    return '<div data-card-id="' + (m.id || '') + '" class="vc-card" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid;">'
       + left + right + '</div>';
   }
 
