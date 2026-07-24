@@ -699,7 +699,28 @@ window.ASSESSMENT = {
             "sr": "tk"
           },
           "chart": null,
-          "reference": null
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "6.A.1",
+              "title": "Per Diem Allowance",
+              "quote": "A Flight Attendant will receive a per diem allowance of $2.05 on March 6, 2026, which shall increase to $2.10 on March 6, 2027, and to $2.15 on March 6, 2028.",
+              "bold": "$2.05 on March 6, 2026, which shall increase to $2.10 on March 6, 2027, and to $2.15 on March 6, 2028",
+              "status": "draft"
+            },
+            {
+              "doc": "Current CBA",
+              "section": "6.A",
+              "title": "Per Diem Allowance (today)",
+              "quote": "A Flight Attendant will receive a per diem allowance of $1.85 at DOR, $1.90, $1.95, and $2.00 by DOR+3.",
+              "bold": "$2.00 by DOR+3",
+              "status": "draft"
+            },
+            {
+              "source": "AA (APFA 2024 CBA) and United (AFA 2026) per-diem schedules",
+              "detail": "American mainline: $2.85 domestic / $3.40 international (Oct 2024), rising to $3.05 / $3.60 by 2028. United: $2.97 domestic / $3.54 international (2026). PSA's proposed $2.05-2.15 sits about 30% below mainline."
+            }
+          ]
         },
         {
           "id": "pay-nyd",
