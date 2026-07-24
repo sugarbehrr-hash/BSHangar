@@ -495,7 +495,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-retro",
@@ -515,7 +516,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-wagepath",
@@ -535,7 +537,8 @@ window.ASSESSMENT = {
             "mc": "RC",
             "sr": "RC"
           },
-          "chart": "pay_vs_prices"
+          "chart": "pay_vs_prices",
+          "reference": null
         },
         {
           "id": "pay-floor",
@@ -558,7 +561,8 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-progression",
@@ -581,7 +585,8 @@ window.ASSESSMENT = {
           "chart": [
             "pay_progression_relative",
             "pay_raise_by_step"
-          ]
+          ],
+          "reference": null
         },
         {
           "id": "pay-boarding",
@@ -604,7 +609,15 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": {
+            "doc": "Tentative Agreement",
+            "section": "3.Q",
+            "title": "Boarding Pay",
+            "quote": "1. Effective March 6, 2027, Flight Attendants will be paid boarding pay for all minutes of the established boarding time for each boarding for each flight segment actually boarded. Flight Attendants shall also receive boarding pay in the event that a flight boards and then cancels. 2. Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate (as specified in Section 3.B., above). 3. Boarding pay will be paid above guarantee for both Reserves and Lineholders.",
+            "bold": "Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate",
+            "status": "draft"
+          }
         },
         {
           "id": "pay-minday",
@@ -617,14 +630,22 @@ window.ASSESSMENT = {
           "today": "3.5 hours per calendar day, and certain 'carve-outs' reduce it in some situations.",
           "proposed": "Carve-outs removed at ratification; the 3.5-hour minimum rises to 3.75 hours on 2028.",
           "plain": "A little more pay on short days, and the carve-outs that used to chip away at your minimum paid hours on a short day are gone right away.",
-          "meaning": "You're guaranteed a bit more pay on short days, and the deductions that chipped away at it are gone right away. One catch, and it is worse than the pilots' contract: under new TA section F.4 the minimum-day guarantee does not cover the unflown portion of a trip you miss through an absence or a partial trade - and a cancellation or reassignment the company causes does NOT count as one of those exceptions, so you can still lose the guarantee on time you never chose to give up.",
-          "realterms": "The minimum-day floor rises, but TA section F.4 carves out the unflown part of a missed trip (absence or partial trade), and company-caused cancellations and reassignments are not treated as exceptions - a narrower guarantee than PSA pilots hold.",
+          "meaning": "You're guaranteed a bit more pay on short days, and the deductions that chipped away at it are gone right away. One catch, and it is worse than the pilots' contract: under new TA section 3.F.4 the minimum-day guarantee does not cover the unflown portion of a trip you miss through an absence or a partial trade - and a cancellation or reassignment the company causes does NOT count as one of those exceptions, so you can still lose the guarantee on time you never chose to give up.",
+          "realterms": "The minimum-day floor rises, but TA section 3.F.4 carves out the unflown part of a missed trip (absence or partial trade), and company-caused cancellations and reassignments are not treated as exceptions - a narrower guarantee than PSA pilots hold.",
           "rating": {
             "nh": "SG",
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": {
+            "doc": "Tentative Agreement",
+            "section": "3.F.4",
+            "title": "Minimum Day Pay - carve-outs",
+            "quote": "If a Flight Attendant does not fly a portion of his/her trip due to absence or a partial trade, minimum daily guarantee will not apply to the days of that trip that the Flight Attendant does not fly due to absence or the partial trade. Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
+            "bold": "Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
+            "status": "draft"
+          }
         },
         {
           "id": "pay-deadhead",
@@ -644,7 +665,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-perdiem",
@@ -664,7 +686,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-nyd",
@@ -684,7 +707,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-payroll",
@@ -704,7 +728,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-drugtest",
@@ -724,7 +749,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "pay-cdo-min",
@@ -744,7 +770,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         }
       ],
       "verdictByGroup": {
@@ -800,7 +827,8 @@ window.ASSESSMENT = {
             "mc": "MG",
             "sr": "MG"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "res-rap",
@@ -820,7 +848,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "res-golden",
@@ -840,7 +869,15 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": {
+            "doc": "Tentative Agreement",
+            "section": "8.I.2",
+            "title": "Golden Days",
+            "quote": "A Golden Day is an immovable day off during which a Flight Attendant cannot be junior assigned. A Reserve Flight Attendant may request up to six (6) Golden Days per bid period. All other days off will be considered movable by the Company provided that a moved day off is only done when operationally necessary and is replaced by an off day within the current bid month. The Golden Days will be awarded by the 22nd of the month prior at 1700.",
+            "bold": "A Reserve Flight Attendant may request up to six (6) Golden Days per bid period.",
+            "status": "draft"
+          }
         },
         {
           "id": "res-autocheck",
@@ -860,7 +897,8 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "res-bucket",
@@ -880,7 +918,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "res-pickup",
@@ -900,7 +939,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         }
       ],
       "verdictByGroup": {
@@ -963,7 +1003,8 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "sch-tripdrop",
@@ -976,14 +1017,22 @@ window.ASSESSMENT = {
           "today": "You cannot drop a trip - the 'straight trip drop' button doesn't exist yet.",
           "proposed": "'Straight trip drop' - you can drop a trip into open time once the new PBS system is live, on the same footing as a trade: seniority bidding first, then first-come-first-served.",
           "plain": "You'd finally be able to drop a trip you can't fly - but only once the new bidding system (PBS) is up and running.",
-          "meaning": "Real schedule flexibility you've never had - but it's a PROMISE, not a rule: it only exists once PBS is built and live (possibly year 2 of this 3-year contract), and its usefulness depends on how well PBS is implemented. The written rule (TA 8.5.e): a drop goes into open time first-come-first-served only if it is completed more than 48 hours before the trip departs, minimum reserves are still covered for every affected day, you do not fall below 40 hours of credit, and all other contract limits are met; inside 48 hours it is company discretion; and dropping a trip lowers your monthly guarantee accordingly. Read that language skeptically: pilots working comparable rules have found the trip-drop button close to unusable in practice - thin staffing leaves little open time to drop into, and the wide company discretion lets the system be built to the company's advantage. Value it as a promise, not a rule you can count on.",
+          "meaning": "Real schedule flexibility you've never had - but it's a PROMISE, not a rule: it only exists once PBS is built and live (possibly year 2 of this 3-year contract), and its usefulness depends on how well PBS is implemented. The written rule (TA 8.I.5.e): a drop goes into open time first-come-first-served only if it is completed more than 48 hours before the trip departs, minimum reserves are still covered for every affected day, you do not fall below 40 hours of credit, and all other contract limits are met; inside 48 hours it is company discretion; and dropping a trip lowers your monthly guarantee accordingly. Read that language skeptically: pilots working comparable rules have found the trip-drop button close to unusable in practice - thin staffing leaves little open time to drop into, and the wide company discretion lets the system be built to the company's advantage. Value it as a promise, not a rule you can count on.",
           "realterms": null,
           "rating": {
             "nh": "SG",
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": {
+            "doc": "Tentative Agreement",
+            "section": "8.I.5.e",
+            "title": "Trip Drops",
+            "quote": "e. Trip Drops (effective upon implementation of PBS): i. Trips may be dropped into open time on a first-come, first-served basis subject to the following conditions: a. The drop is completed prior to forty-eight (48) hours from the scheduled departure of the trip; b. The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed; c. The drop does not cause the Flight Attendant to fall below forty (40) hours of credit; and d. The drop complies with all contractual restrictions. ii. Requests inside forty-eight (48) hours may be approved at Company discretion. iii. Dropping a trip adjusts the Flight Attendant's minimum monthly guarantee accordingly.",
+            "bold": "The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed",
+            "status": "draft"
+          }
         },
         {
           "id": "sch-tradefloor",
@@ -1003,7 +1052,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "sch-golden-timing",
@@ -1023,7 +1073,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "sch-mix",
@@ -1043,7 +1094,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "sch-pbs",
@@ -1063,7 +1115,8 @@ window.ASSESSMENT = {
             "mc": "dep",
             "sr": "dep"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         }
       ],
       "verdictByGroup": {
@@ -1126,7 +1179,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "leave-fatigue",
@@ -1146,7 +1200,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "leave-return",
@@ -1166,7 +1221,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         }
       ],
       "verdictByGroup": {
@@ -1221,7 +1277,8 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "uni-allowance",
@@ -1241,7 +1298,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "uni-shoes",
@@ -1261,7 +1319,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "uni-stolen",
@@ -1281,7 +1340,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "uni-balance",
@@ -1301,7 +1361,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "uni-maternity",
@@ -1321,7 +1382,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "uni-alter",
@@ -1341,7 +1403,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "exp-parking",
@@ -1361,7 +1424,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "exp-transit",
@@ -1381,7 +1445,8 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "exp-hotel",
@@ -1401,7 +1466,8 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         }
       ],
       "verdictByGroup": {
@@ -1463,7 +1529,8 @@ window.ASSESSMENT = {
             "mc": "dep",
             "sr": "dep"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "job-board",
@@ -1483,7 +1550,8 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "job-life",
@@ -1503,7 +1571,8 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "job-health",
@@ -1523,7 +1592,8 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "job-401k",
@@ -1543,7 +1613,8 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         }
       ],
       "verdictByGroup": {
@@ -1599,7 +1670,8 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "union-pac",
@@ -1619,7 +1691,8 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         },
         {
           "id": "dur-term",
@@ -1639,7 +1712,8 @@ window.ASSESSMENT = {
             "mc": "dep",
             "sr": "dep"
           },
-          "chart": null
+          "chart": null,
+          "reference": null
         }
       ],
       "verdictByGroup": {

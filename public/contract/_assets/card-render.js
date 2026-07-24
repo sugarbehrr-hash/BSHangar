@@ -25,6 +25,74 @@
   const TYPE_LABELS = A.typeLabels || {};
   const MKT_LABELS = A.marketLabels || {};
   const GROUP_SHORT = { nh: "New Hire", mc: "Mid-Career", sr: "Senior" };
+
+  // ── reference popover (ADR-048): a claim's source, shown at the point of claim ──
+  function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function escAttr(s){return escHtml(s).replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+  function refLabel(rf){ return rf.basis ? "Basis" : (rf.source ? "Source" : "In the contract"); }
+  function refChip(rf){
+    if (rf.basis) return '<div style="font-size:11.5px; line-height:1.5; color:var(--ink-500);">' + escHtml(rf.basis) + '</div>';
+    var face = rf.source ? escHtml(rf.source) : ("§" + escHtml(rf.section || ""));
+    var tag = rf.source ? "Source" : (rf.doc === "Tentative Agreement" ? "TA" : escHtml(rf.doc || "TA"));
+    return '<button type="button" class="vc-refchip" data-ref="' + escAttr(JSON.stringify(rf)) + '" onclick="window.__vcRefOpen(this)" '
+      + 'style="display:inline-flex; align-items:center; justify-content:space-between; gap:8px; width:100%; cursor:pointer; '
+      + 'font-family:var(--font-heading); font-weight:800; font-size:12.5px; color:#fff; background:var(--navy-900); '
+      + 'border:1.5px solid var(--navy-900); border-radius:9px; padding:7px 11px; text-align:left;">'
+      + '<span style="display:inline-flex; align-items:center; gap:7px; min-width:0;"><span style="font-size:9px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-500);">' + tag + '</span> ' + face + '</span>'
+      + '<span style="opacity:0.7; font-size:12px;">&#9656;</span></button>';
+  }
+  var REFPOP_CSS = '.vc-refov{position:fixed;inset:0;background:rgba(31,42,68,.44);display:none;align-items:center;justify-content:center;padding:24px;z-index:9999}'
+    + '.vc-refov.open{display:flex}'
+    + '.vc-refcard{background:var(--cream-100,#faf6ef);border:1.5px solid var(--cream-300,#e3dccb);border-radius:16px;width:100%;max-width:468px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px rgba(31,42,68,.32)}'
+    + '.vc-refhead{background:var(--navy-900,#1f2a44);color:#fff;padding:16px 18px 15px;position:relative}'
+    + '.vc-refeye{font-family:var(--font-heading);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-500,#e8a33d);margin-bottom:7px}'
+    + '.vc-refloc{font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:1.2}'
+    + '.vc-refsub{font-size:12.5px;color:#c9d1e2;margin-top:3px}'
+    + '.vc-refx{position:absolute;top:12px;right:12px;width:30px;height:30px;border:0;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-size:18px;line-height:1;cursor:pointer}'
+    + '.vc-refx:hover{background:rgba(255,255,255,.22)}'
+    + '.vc-refbody{padding:18px;overflow-y:auto}'
+    + '.vc-refquote{font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:1.7;color:#2c3345;background:#fff;border:1.5px solid var(--cream-300,#e3dccb);border-radius:12px;padding:15px 17px;margin:0}'
+    + '.vc-refquote mark{background:#f7e3b6;color:var(--navy-900,#1f2a44);font-weight:700;padding:1px 2px;border-radius:3px}'
+    + '.vc-refcite{font-size:14px;line-height:1.65}.vc-refcite a{color:var(--sky-700,#5b7fa6);font-weight:700;text-decoration:none}'
+    + '.vc-reffoot{padding:11px 18px;border-top:1px solid var(--cream-300,#e3dccb);display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-500,#7c8398);background:var(--cream-200,#f1ead9)}'
+    + '.vc-refdraft{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#a9741a;background:#f7e9cd;border:1px solid #ecd6a3;border-radius:5px;padding:2px 6px}'
+    + '.vc-refchip:hover{background:#2b3a5c!important}'
+    + '@media(max-width:560px){.vc-refov{align-items:flex-end;padding:0}.vc-refcard{max-width:100%;border-radius:18px 18px 0 0;max-height:80vh}}';
+  function ensureRefPop(){
+    if (document.getElementById("vc-refov")) return;
+    var st=document.createElement("style"); st.textContent=REFPOP_CSS; document.head.appendChild(st);
+    var ov=document.createElement("div"); ov.id="vc-refov"; ov.className="vc-refov";
+    ov.innerHTML='<div class="vc-refcard" role="dialog" aria-modal="true" aria-labelledby="vc-refloc">'
+      +'<div class="vc-refhead"><div class="vc-refeye" id="vc-refeye"></div><div class="vc-refloc" id="vc-refloc"></div><div class="vc-refsub" id="vc-refsub"></div><button class="vc-refx" id="vc-refx" aria-label="Close">&times;</button></div>'
+      +'<div class="vc-refbody" id="vc-refbody"></div><div class="vc-reffoot" id="vc-reffoot"></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click",function(e){if(e.target===ov)ov.classList.remove("open");});
+    document.getElementById("vc-refx").addEventListener("click",function(){ov.classList.remove("open");});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")ov.classList.remove("open");});
+  }
+  window.__vcRefOpen=function(btn){
+    ensureRefPop();
+    var rf; try{rf=JSON.parse(btn.getAttribute("data-ref"));}catch(e){return;}
+    var isSrc=!!rf.source;
+    document.getElementById("vc-refeye").textContent=isSrc?"Source · external":"In the contract";
+    document.getElementById("vc-refloc").innerHTML=isSrc?escHtml(rf.source||""):("§"+escHtml(rf.section||""));
+    document.getElementById("vc-refsub").textContent=isSrc?(rf.detail||""):((rf.doc||"")+(rf.title?" · "+rf.title:""));
+    var body;
+    if(isSrc){
+      body='<div class="vc-refcite">'+escHtml(rf.detail||"")+(rf.url?'<div style="margin-top:8px;"><a href="'+escAttr(rf.url)+'" target="_blank" rel="noopener">View source &#8599;</a></div>':'')+'</div>';
+    } else {
+      var q=rf.quote||"", h, i=rf.bold?q.indexOf(rf.bold):-1;
+      if(i>=0){h=escHtml(q.slice(0,i))+'<mark>'+escHtml(rf.bold)+'</mark>'+escHtml(q.slice(i+rf.bold.length));}
+      else{h=escHtml(q);}
+      body='<p class="vc-refquote">'+h+'</p>';
+    }
+    document.getElementById("vc-refbody").innerHTML=body;
+    var foot=(rf.status==="draft"?'<span class="vc-refdraft">Draft &ndash; pending verify</span>':'')
+      +'<span>'+(isSrc?"Cited for comparison":"Verbatim from the "+(rf.doc==="Tentative Agreement"?"TA":escHtml(rf.doc||"source")))+'</span>';
+    document.getElementById("vc-reffoot").innerHTML=foot;
+    document.getElementById("vc-refbody").scrollTop=0;
+    document.getElementById("vc-refov").classList.add("open");
+  };
   const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   // ── rating code → pill colors (mirrors the .t-* tone classes) ──────────────
@@ -259,6 +327,9 @@
       const mkt = '<span style="display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:6px; border:1.5px solid var(--navy-900); background:var(--white); font-family:var(--font-heading); font-weight:800; font-size:9.5px; letter-spacing:0.04em; text-transform:uppercase; color:var(--navy-900);"><i class="ph-fill ph-chart-bar"></i> ' + (MKT_LABELS[c.market.position] || c.market.position) + '</span>'
         + '<div style="font-size:11px; line-height:1.5; color:var(--ink-500); margin-top:3px;">' + (c.market.note || "") + '</div>';
       metaRows.push(["Vs. other airlines", mkt]);
+    }
+    if (c.reference) {
+      metaRows.push([refLabel(c.reference), refChip(c.reference)]);
     }
     let meta = '<div style="background:var(--cream-100); border-radius:12px; padding:13px 14px; display:flex; flex-direction:column;">';
     meta += metaRows.map((r, i) => {
