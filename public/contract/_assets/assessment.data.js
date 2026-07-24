@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  assessment.data.js — SINGLE SOURCE OF TRUTH for the contract vote guide.
- *  Produced by the contract-vote-analyzer skill. window.ASSESSMENT below.
+ *  Produced by the ta-analyzer skill. window.ASSESSMENT below.
  *
  *  CLAUDE DESIGN: YOU ARE THE DISPLAY LAYER ONLY.
  *  Read window.ASSESSMENT.renderContract FIRST. Render this file top to bottom
@@ -18,7 +18,7 @@
  */
 window.ASSESSMENT = {
   "renderContract": {
-    "READ_THIS_FIRST": "This file is the Single Source of Truth, produced by the contract-vote-analyzer skill. Claude Design is the DISPLAY LAYER ONLY. Render what is here; do not think for it.",
+    "READ_THIS_FIRST": "This file is the Single Source of Truth, produced by the ta-analyzer skill. Claude Design is the DISPLAY LAYER ONLY. Render what is here; do not think for it.",
     "you_must": [
       "Render the charts by loading the renderer that ships beside this file, assessment-charts.js, and calling window.AssessmentChart(chartSpec, opts) for each entry in charts[]. Load it VERBATIM - do not rewrite, reimplement, or 'improve' the chart code. It already honors every field below (showAllTicks, render.numberFormat, kind, emphasis, seriesOrder, highlightRange, annotations); hand-building charts is what reintroduces the tick/format/bar-vs-line bugs. You own the frame around each chart (card, caption, spacing), not the chart's own drawing.",
       "Render every section in the EXACT order given by howToRead.page_order — top to bottom, none skipped, none reordered.",
@@ -67,7 +67,7 @@ window.ASSESSMENT = {
     "register": "Website/short lens renders `plain`/`plainCaption`; PDF/full lens renders `meaning`/`realterms`/`headline`. Same order, same legend, same lead-ins — only the prose depth differs (see designBrief).",
     "if_something_is_missing_or_unclear": "Leave it out and surface it as a gap for the skill to fix. Never fill a gap with generated content — invented data in a voting guide is the one unacceptable failure.",
     "renderContractChangelog": {
-      "version": "2.1.0",
+      "version": "2.1.1",
       "note": "Per-version list of shapes with a visual consequence. If a line here has no matching you_must instruction, that is a skill bug.",
       "renderable_placements": [
         "anchors",
@@ -154,8 +154,8 @@ window.ASSESSMENT = {
   },
   "meta": {
     "contract": "PSA AFA 2026 Tentative Agreement",
-    "version": "2.1.0",
-    "generator": "contract-vote-analyzer v2.1.0",
+    "version": "2.1.1",
+    "generator": "ta-analyzer v2.1.1",
     "baseline": "Your real current contract = 2019 CBA + in-force side letters",
     "standpoint": "Every rating looks FORWARD from ratification day, across the contract's term plus the likely negotiation lag after it. Catching up on the past counts as your starting position, not a forward gain. Fixed-dollar benefits lose real value each year; percentage-based pay tracks the wage path; work RULES hold full value for the contract's whole life.",
     "mode": "pending_TA",
@@ -242,7 +242,7 @@ window.ASSESSMENT = {
     }
   ],
   "preface": {
-    "cycle": "Before any number, understand the cycle every airline contract runs on. When a contract becomes 'amendable' (its renewal date), your pay doesn't rise — it FREEZES at the old rate until a brand-new deal is signed. Negotiations take years (the last one ran 2.6 years past due). So prices keep climbing while your pay sits still, and by the time a raise lands, it's mostly just catching you back up to the hole the freeze dug. Then the next contract becomes amendable, and it starts again. Freeze, catch up, freeze. This is why getting a good deal done quickly matters: a short contract gets you back to the table sooner — but only helps if the deal is actually good, because you live with it through the next freeze too. That is the whole reason to read this before you vote.",
+    "cycle": "Before any number, understand the cycle every airline contract runs on. When a contract becomes 'amendable' (its renewal date), your pay doesn't rise — it FREEZES at the old rate until a brand-new deal is signed. Negotiations take years (this last round ran 2.6 years past due; the contract before 2019 took about 3 years to ratify). So prices keep climbing while your pay sits still, and by the time a raise lands, it's mostly just catching you back up to the hole the freeze dug. Then the next contract becomes amendable, and it starts again. Freeze, catch up, freeze. This is why getting a good deal done quickly matters: a short contract gets you back to the table sooner — but only helps if the deal is actually good, because you live with it through the next freeze too. That is the whole reason to read this before you vote.",
     "forward_protection": "This is why one idea matters more than the headline raise: FORWARD PROTECTION. A contract protects you against the cycle if it has either (a) guaranteed back-pay to the amendable date — so the frozen years get paid, which also removes the company's reason to drag out talks — or (b) raises that beat inflation, so a catch-up actually gets ahead instead of just breaking even. Without forward protection, workers lose ground every cycle, and it compounds over a career. As you read, ask of every pay change: does this protect the gap, or not?",
     "incentives": "One honest thing about how to read any contract summary — including this one. Everyone at the table is arguing their own interest, and that's not a scandal, it's just how it works:\n• The COMPANY wants to keep costs down, so it highlights the big headline number and the shiny new items.\n• The UNION — which is your own coworkers doing hard work against a tough company — wants the deal to pass and gets credit for a 'good contract,' so it naturally frames things in the best light.\n• YOU just want to know, honestly, what it means for your paycheck and your life.\nNone of that implies bad faith — it's why this guide exists: to weigh each change on its own, from your side of the table, so you can decide for yourself. That's also why we WEIGH changes instead of counting them — a long list of small wins is the easiest way to make any deal look better than it is.",
     "fair_both_ways": "This stage cuts both ways. Once you see the cycle, some changes look better, not worse — boarding pay, for instance, is real new money that helps offset the erosion. The point isn't to make the deal look bad; it's to make every piece legible, good and bad, judged against how pay actually works over time."
@@ -450,7 +450,6 @@ window.ASSESSMENT = {
       "PBS (Preferential Bidding System — software that builds your monthly schedule from ranked preferences instead of picking whole lines.)",
       "HRV (Ready Reserve — a reserve day spent at or near the airport, ready to fly on very short notice.)",
       "RAP (Reserve Availability Period — the daily window a reserve must be reachable and ready to fly.)",
-      "FOLO (First Out / Last Out — the order in which reserves are called for trips.)",
       "CBA (Collective Bargaining Agreement — your union contract.)",
       "AFA (Association of Flight Attendants — your union.)",
       "NMB (National Mediation Board — the federal agency that oversees airline labor relations.)",
@@ -477,7 +476,7 @@ window.ASSESSMENT = {
       "changes": [
         {
           "id": "pay-levelset",
-          "title": "Day-one pay level (the +10% and retro)",
+          "title": "Day-one pay level (the +10%)",
           "type": "NEW",
           "starts": "2026",
           "delivery": "automatic",
@@ -487,14 +486,34 @@ window.ASSESSMENT = {
             "note": "Restores rates that narrowly lead the current regional table - but PSA settled first (peers negotiate next off this floor) and remains ~20% under mainline entry."
           },
           "today": "Rates frozen since 2023 while prices rose ~8-9% - your paycheck buys noticeably less than it did.",
-          "proposed": "+10% at ratification plus retro pay - restoring your rate to roughly its 2023 purchasing power.",
-          "plain": "You get a 10% raise the day this signs, plus back-pay for what you're owed. Here's the catch: your pay's been frozen since 2023 while everything got more expensive, so this mostly just gets you back to even - not ahead.",
+          "proposed": "+10% at ratification - restoring your rate to roughly its 2023 purchasing power.",
+          "plain": "You get a 10% raise the day this signs. Here's the catch: your pay's been frozen since 2023 while everything got more expensive, so this mostly just gets you back to even - not ahead.",
           "meaning": "This sets your STARTING position for the contract - it repairs the freeze years. Under this guide's standpoint (the life of the contract, looking forward), catch-up on the past counts as where you begin, not as a forward gain.",
-          "realterms": "In real terms (market): Restores rates that narrowly lead the current regional table - but PSA settled first (peers negotiate next off this floor) and remains ~20% under mainline entry. On retro pay, PSA lags the majors badly. United's retro runs about 4% a year from 2021 through 2024, then jumps to 22% in 2025 and 25% in early 2026; American mainline runs 3-4% through 2022, 10.8% in 2023, and about 20% into 2024. PSA's retro starts at just 1.5% a month in July 2023 and only ramps to 5-6% a month by late 2025 - and it is thinnest for the newest hires (1-3 years), who have the least service for it to apply to.",
+          "realterms": "In real terms (market): Restores rates that narrowly lead the current regional table - but PSA settled first (peers negotiate next off this floor) and remains ~20% under mainline entry.",
           "rating": {
             "nh": "sg",
             "mc": "sg",
             "sr": "sg"
+          },
+          "chart": null
+        },
+        {
+          "id": "pay-retro",
+          "title": "Back-pay for the freeze years (retro pay)",
+          "type": "NEW",
+          "starts": "At ratification",
+          "delivery": "automatic",
+          "cond": null,
+          "market": null,
+          "today": "No back-pay - the raises you missed while pay sat frozen since 2023 are simply gone.",
+          "proposed": "Back-pay for the freeze years, ramping from ~1.5%/month in July 2023 to ~5-6%/month by late 2025.",
+          "plain": "You get some back-pay for the years your raise was frozen - but it starts small (1.5% a month back in 2023) and only builds up late, so it's thin, and thinnest of all if you're newer.",
+          "meaning": "Back-pay repairs part of the freeze, but under this guide's standpoint it counts as catch-up on the past - where you begin, not a forward gain. It is also weak next to the majors and thinnest for the newest FAs (1-3 years), who have the least service for it to apply to.",
+          "realterms": "PSA lags the majors badly on back-pay. United's runs about 4% a year from 2021 through 2024, then jumps to 22% in 2025 and 25% in early 2026; American mainline runs 3-4% through 2022, 10.8% in 2023, and about 20% into 2024. PSA's starts at just 1.5% a month in July 2023 and only ramps to 5-6% a month by late 2025 - and it is thinnest for the newest hires (1-3 years), who have the least service for it to apply to.",
+          "rating": {
+            "nh": "tk",
+            "mc": "tk",
+            "sr": "tk"
           },
           "chart": null
         },
@@ -532,10 +551,10 @@ window.ASSESSMENT = {
           "today": "Junior floor sits at $27.06 - but only because a 2022 side letter hauled it up from the real 2019 rate of ~$20 to stay able to hire; the company can still lower it.",
           "proposed": "Bottom rungs repriced to $29.77 and locked permanently into the contract scale.",
           "plain": "New-hire starting pay gets locked in higher and they can't drop it anymore. Real win if you're junior. Just know why it happened: they couldn't hire anyone at the old rate, so their hand was forced.",
-          "meaning": "The genuine win for new hires: you start ~$10/hr above the old scale and the company can no longer cut junior rates. It was also market-forced: a regional cannot hire at $20 when mainline starts at $36.",
+          "meaning": "A real protection for new hires - the floor is locked in and can no longer be cut - but barely a raise in market terms: Envoy ($29.73) and Piedmont ($28.08) already start at or above this, so PSA is matching peers, not leading them. The 2022 LOA's own text admits the old rates were 'not sufficiently competitive' to hire; this repricing was market-forced to stay staffed, not a gift - a regional cannot hire at $20 when mainline starts at $36.",
           "realterms": "In real terms (market): The 2022 LOA's own text says rates were 'not sufficiently competitive' to hire; mainline entry is $35-37. Forced repricing to stay staffed.",
           "rating": {
-            "nh": "sg",
+            "nh": "nc",
             "mc": "nc",
             "sr": "nc"
           },
@@ -575,7 +594,7 @@ window.ASSESSMENT = {
             "position": "catch_up",
             "note": "Catch-up, not a win: Delta set the 50% standard in 2022, so PSA's 50% in 2027 matches a five-year-old benchmark."
           },
-          "today": "You are not paid for boarding time — only from all doors closed and parking brake released.",
+          "today": "Today you get nothing for boarding time - your pay clock doesn't start until all doors are closed and the parking brake is released.",
           "proposed": "50% of your hourly rate for all boarding time (including reboards), paid on top of your guarantee, for lineholders and reserves alike.",
           "plain": "Finally getting paid for boarding - 50% of your rate. Real money. But almost every airline already pays it, so this is PSA catching up, not doing us a favor - and it doesn't start for a year.",
           "meaning": "Real new money for time you already work: 50% of your hourly rate for all boarding time, above guarantee, reserves and lineholders alike. A solid gain versus today's contract - permanent, percentage-based money that rides every future raise - but a catch-up versus the market. Starts 2027.",
@@ -639,7 +658,7 @@ window.ASSESSMENT = {
           "proposed": "$2.05 (2026), $2.10 (2027), $2.15 (2028).",
           "plain": "Meal money goes up a nickel a year. It's something, but it doesn't keep up with what food actually costs now.",
           "meaning": "Nominal bumps of ~2.4%/yr against ~3-4% inflation: the real value of your meal money declines slightly over the contract's life. A token.",
-          "realterms": "~2.5% on ~$2.00/hr, below inflation - a token bump in real terms.",
+          "realterms": "~2.5% on ~$2.00/hr, below inflation - and far below mainline: PSA's ~$2.05-2.15 domestic runs about 30% under American ($2.85 in 2024, rising to $3.05 by 2028) and United ($2.97) - even though a regional FA's meals cost the same. A token bump that also leaves a wide gap to the majors.",
           "rating": {
             "nh": "tk",
             "mc": "tk",
@@ -732,27 +751,27 @@ window.ASSESSMENT = {
         "nh": {
           "verdict": "Net positive",
           "polarity": "pos",
-          "score": 4.75,
+          "score": 4.0,
           "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": []
+          "addonNotes": [],
+          "bandEdgeNote": "This lands just over the line between two verdicts (score 4, boundary 4) - a small change in one item could tip it either way."
         },
         "mc": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.75,
-          "tally": "9 gains, 2 costs",
+          "score": 3.0,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
           "addonNotes": []
         },
         "sr": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.0,
-          "tally": "9 gains, 2 costs",
+          "score": 2.25,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": [],
-          "bandEdgeNote": "This lands just over the line between two verdicts (score 2, boundary 1.5) - a small change in one item could tip it either way."
+          "addonNotes": []
         }
       }
     },
@@ -761,7 +780,7 @@ window.ASSESSMENT = {
       "anchor": "cat-reserve",
       "topicNote": "This is where the contract does the most for junior FAs - and note a forward-looking bonus: these are RULES, not dollars. A cap of 10 or a 13-hour RAP holds full value every year of the contract; it can't be eroded by inflation the way un-indexed money can.",
       "webTakeaway": "Bottom line: if you sit reserve, this is the best part of the deal for you. Hard caps on Ready Reserve, an hour less on your availability window, six permanent Golden Days, and a fairer way to spread the pain - these are real rules, not promises. A couple of the best ones (auto check-in, fair assignment) only pay off if the company builds the systems right, but the core wins are locked in.",
-      "netNote": "Still the strongest part of the deal for junior FAs, but split it honestly: the BANKABLE wins are the hard rules - the HRV cap of 10, the 13-hour RAP, 6 Golden Days, trip pickups (+6 for a new hire). The rest (auto check-in, FOLO, the bucket system, worth ~+4 more) are PROMISES: new systems the Company must build and build well. The Implementation LOA's expedited arbitration protects against non-delivery, but a clunky system still 'complies.' The +6 is bankable under the contract; the +4 depends on systems the Company has yet to build.",
+      "netNote": "Still the strongest part of the deal for junior FAs, but split it honestly: the BANKABLE wins are the hard rules - the HRV cap of 10, the 13-hour RAP, 6 Golden Days, trip pickups (+6 for a new hire). The rest (auto check-in, the bucket system, worth ~+3 more) are PROMISES: new systems the Company must build and build well. The Implementation LOA's expedited arbitration protects against non-delivery, but a clunky system still 'complies.' The +6 is bankable under the contract; the +3 depends on systems the Company has yet to build.",
       "changes": [
         {
           "id": "res-hrv",
@@ -844,26 +863,6 @@ window.ASSESSMENT = {
           "chart": null
         },
         {
-          "id": "res-folo",
-          "title": "Order you get called (FOLO)",
-          "type": "NEW",
-          "starts": "Within 6 months of DOR",
-          "delivery": "promise",
-          "cond": "reserve",
-          "market": null,
-          "today": "No visibility into whether you're first-out or last-out for trips.",
-          "proposed": "You can set a first-out / last-out preference and see where you are on the list.",
-          "plain": "You'll finally see whether you're first-out or last-out and set a preference, so you can actually plan your day. (Depends on them building the system.)",
-          "meaning": "Predictability - you can plan your day around where you sit on the list. Depends on the Company delivering working software (due within 6 months of ratification).",
-          "realterms": null,
-          "rating": {
-            "nh": "sg",
-            "mc": "sg",
-            "sr": "sg"
-          },
-          "chart": null
-        },
-        {
           "id": "res-bucket",
           "title": "How HRV is handed out",
           "type": "NEW",
@@ -912,7 +911,7 @@ window.ASSESSMENT = {
           "tally": "4 gains, 0 costs",
           "depCount": 0,
           "addonNotes": [
-            "+4 more if the new systems are built well"
+            "+3 more if the new systems are built well"
           ]
         },
         "mc": {
@@ -923,7 +922,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         },
         "sr": {
@@ -934,7 +933,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         }
       }
@@ -974,10 +973,10 @@ window.ASSESSMENT = {
           "delivery": "promise",
           "cond": null,
           "market": null,
-          "today": "You cannot drop a trip.",
+          "today": "You cannot drop a trip - the 'straight trip drop' button doesn't exist yet.",
           "proposed": "'Straight trip drop' - you can drop a trip into open time once the new PBS system is live, on the same footing as a trade: seniority bidding first, then first-come-first-served.",
           "plain": "You'd finally be able to drop a trip you can't fly - but only once the new bidding system (PBS) is up and running.",
-          "meaning": "Real schedule flexibility you've never had - but it's a PROMISE, not a rule: it only exists once PBS is built and live (possibly year 2 of this 3-year contract), and its usefulness depends on how well PBS is implemented. The written rule (TA 8.5.e): a drop goes into open time first-come-first-served only if it is completed more than 48 hours before the trip departs, minimum reserves are still covered for every affected day, you do not fall below 40 hours of credit, and all other contract limits are met; inside 48 hours it is company discretion; and dropping a trip lowers your monthly guarantee accordingly. Read that language skeptically: pilots working comparable rules have found trip drops close to unusable in practice - thin staffing leaves little open time to drop into, and the wide company discretion lets the system be built to the company's advantage. Value it as a promise, not a rule you can count on.",
+          "meaning": "Real schedule flexibility you've never had - but it's a PROMISE, not a rule: it only exists once PBS is built and live (possibly year 2 of this 3-year contract), and its usefulness depends on how well PBS is implemented. The written rule (TA 8.5.e): a drop goes into open time first-come-first-served only if it is completed more than 48 hours before the trip departs, minimum reserves are still covered for every affected day, you do not fall below 40 hours of credit, and all other contract limits are met; inside 48 hours it is company discretion; and dropping a trip lowers your monthly guarantee accordingly. Read that language skeptically: pilots working comparable rules have found the trip-drop button close to unusable in practice - thin staffing leaves little open time to drop into, and the wide company discretion lets the system be built to the company's advantage. Value it as a promise, not a rule you can count on.",
           "realterms": null,
           "rating": {
             "nh": "SG",
@@ -997,7 +996,7 @@ window.ASSESSMENT = {
           "today": "You must keep at least 60 hours to trade trips.",
           "proposed": "Lowered to 40 hours (once PBS is live).",
           "plain": "Easier to trade trips: you'd only need to keep 40 hours instead of 60. Again, waits on PBS going live.",
-          "meaning": "Easier to trade away trips and reshape your month - but like trip drop, it waits on PBS being built, and inherits PBS's delivery risk.",
+          "meaning": "Easier to trade away trips and reshape your month - but like trip drop, it waits on PBS being built, and inherits PBS's delivery risk. And the paper number oversells the real flexibility: to straight-drop, the grid has to be green on every day of the trip, and who can actually reach it is seniority-split - above-average odds for seniors, below-average for mid-career, and effectively none for juniors, because senior trading and PBS-driven reserve consolidation eat up the open time.",
           "realterms": null,
           "rating": {
             "nh": "sg",
@@ -1681,27 +1680,27 @@ window.ASSESSMENT = {
         "nh": {
           "verdict": "Net positive",
           "polarity": "pos",
-          "score": 4.75,
+          "score": 4.0,
           "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": []
+          "addonNotes": [],
+          "bandEdgeNote": "This lands just over the line between two verdicts (score 4, boundary 4) - a small change in one item could tip it either way."
         },
         "mc": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.75,
-          "tally": "9 gains, 2 costs",
+          "score": 3.0,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
           "addonNotes": []
         },
         "sr": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.0,
-          "tally": "9 gains, 2 costs",
+          "score": 2.25,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": [],
-          "bandEdgeNote": "This lands just over the line between two verdicts (score 2, boundary 1.5) - a small change in one item could tip it either way."
+          "addonNotes": []
         }
       },
       {
@@ -1714,7 +1713,7 @@ window.ASSESSMENT = {
           "tally": "4 gains, 0 costs",
           "depCount": 0,
           "addonNotes": [
-            "+4 more if the new systems are built well"
+            "+3 more if the new systems are built well"
           ]
         },
         "mc": {
@@ -1725,7 +1724,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         },
         "sr": {
@@ -1736,7 +1735,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         }
       },
@@ -2247,12 +2246,17 @@ window.ASSESSMENT = {
           "in effect Apr 2026"
         ],
         [
-          "Envoy, Piedmont (AA siblings)",
-          "$27+ floor",
-          "contracts amendable — bargain next, off PSA"
+          "Envoy (AA sibling)",
+          "$29.73",
+          "current - bargains next"
+        ],
+        [
+          "Piedmont (AA sibling)",
+          "$28.08",
+          "current - bargains next"
         ]
       ],
-      "footnote": "Only carriers with published rates are shown. Envoy and Piedmont (PSA's American-owned siblings) are between contracts at the 2022 $27+ floor and negotiate next — using PSA's number as their starting point, which is why PSA's #1 spot is real today but likely temporary."
+      "footnote": "Envoy already sits at $29.73 - just 4 CENTS under PSA's proposed $29.77 - and Piedmont at $28.08. So PSA's #1 spot is real today but nominal, and likely temporary: these American-owned siblings bargain next, off these numbers."
     }
   ],
   "charts": [
@@ -2262,7 +2266,7 @@ window.ASSESSMENT = {
       "placement": "outlook",
       "scope": "all",
       "verdict": "REAL-TERMS PAY CUT",
-      "headline": "Prices climb every year; your pay freezes, leaps once to catch up, then freezes again - each leap starting from a deeper hole, so the gap compounds over a career (~11% less buying power by the next contract). Because pay stays frozen at the old rate until a new deal is ratified, a longer negotiation costs the Company nothing in wages. The provision that would offset that - guaranteed retro pay back to the amendable date - is not in this deal.",
+      "headline": "Prices climb every year; your pay freezes, leaps once to catch up, then freezes again - each leap starting from a deeper hole, so the gap compounds over a career (~11% less buying power by the next contract). Because pay stays frozen at the old rate until a new deal is ratified, a longer negotiation costs the Company nothing in wages. The provision that would offset that - guaranteed retro pay back to the amendable date - is not in this deal, and it was winnable: it simply removes the Company's reason to stall, since a longer fight already saves them wage money.",
       "plainCaption": "Your pay goes up a little; prices go up more, and the gap is money quietly leaving your pocket - about 11% less buying power by the time the next contract's due. Worse: your pay stays frozen at the old rate until a new deal is signed, so the company actually saves money by dragging out the next round - the gap gives them a reason to stall. There's no guaranteed back-pay here to take that reason away.",
       "polarity": "neg",
       "leadIn": "The cycle above, in your actual numbers. Base pay against the cost of living over the life of the deal (base pay only — boarding pay and your yearly seniority step are judged separately). Watch the gap: that's the ground the freeze takes, and what a raise has to climb back before it's a real gain.",
@@ -2830,7 +2834,7 @@ window.ASSESSMENT = {
       "title": "Rules vs. promises",
       "register": "pdf",
       "placement": "anchors",
-      "body": "Not all 'wins' are equally bankable. Pay rates, caps, and notice periods are self-executing: the date arrives, the rule applies, and a violation is an easy grievance. But several quality-of-life items (auto check-in, FOLO, the HRV bucket system, and everything gated on PBS - trip drop, the 40-hour trade floor) are construction projects: their value depends on the Company building them properly. The Implementation LOA provides expedited arbitration (heard in 15 days, decided in 30) against NON-delivery, but a poorly built system still 'complies.' Note the timing squeeze: PBS may not be fully live until year 2 of this 3-year contract, so its dependent benefits could exist for barely a year before everything is renegotiated."
+      "body": "Not all 'wins' are equally bankable. Pay rates, caps, and notice periods are self-executing: the date arrives, the rule applies, and a violation is an easy grievance. But several quality-of-life items (auto check-in, the HRV bucket system, and everything gated on PBS - trip drop, the 40-hour trade floor) are construction projects: their value depends on the Company building them properly. The Implementation LOA provides expedited arbitration (heard in 15 days, decided in 30) against NON-delivery, but a poorly built system still 'complies.' Note the timing squeeze: PBS may not be fully live until year 2 of this 3-year contract, so its dependent benefits could exist for barely a year before everything is renegotiated."
     },
     {
       "id": "precedent",
@@ -3016,10 +3020,6 @@ window.ASSESSMENT = {
     [
       "RAP",
       "Reserve Availability Period — the daily window a reserve must be reachable and ready to fly."
-    ],
-    [
-      "FOLO",
-      "First Out / Last Out — the order in which reserves are called for trips."
     ],
     [
       "CBA",
