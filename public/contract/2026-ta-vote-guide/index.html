@@ -651,74 +651,6 @@ const DLV = {
 };
 const TYPE_CLS = { NEW: "ty-new", CODIFY: "ty-kept", RESTORE: "ty-restored" };
 
-// —— glossary hover/tap tooltips ——
-const GLOSS = (A.glossary || []).map(t => {
-  const isAcro = /^[A-Z]{2,}s?$/.test(t[0]);
-  const esc = t[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return { label: t[0], def: t[1], re: new RegExp("(^|[^\\w])(" + esc + ")(?![\\w])", isAcro ? "g" : "gi") };
-});
-function initGlossary() {
-  if (window.__rv2Glossary) return;
-  window.__rv2Glossary = true;
-  const tip = document.createElement("div");
-  tip.style.cssText = "position:fixed;z-index:9999;max-width:290px;background:var(--navy-900,#0f1e3d);color:#fff;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.5;box-shadow:0 6px 22px rgba(15,30,61,0.35);pointer-events:none;display:none;font-family:var(--font-body,sans-serif);";
-  document.body.appendChild(tip);
-  let last = null, timer = null;
-  function findTerm(x, y) {
-    let range = null;
-    if (document.caretRangeFromPoint) range = document.caretRangeFromPoint(x, y);
-    else if (document.caretPositionFromPoint) {
-      const p = document.caretPositionFromPoint(x, y);
-      if (p) { range = document.createRange(); range.setStart(p.offsetNode, p.offset); }
-    }
-    const node = range && range.startContainer;
-    if (!node || node.nodeType !== 3 || (node.parentElement && node.parentElement.closest("script,style,a,h1,h2"))) return null;
-    const text = node.textContent, off = range.startOffset;
-    for (let i = 0; i < GLOSS.length; i++) {
-      const g = GLOSS[i]; g.re.lastIndex = 0; let m;
-      while ((m = g.re.exec(text))) {
-        const s = m.index + m[1].length, en = s + m[2].length;
-        if (off >= s && off <= en) return g;
-        if (s > off) break;
-      }
-    }
-    return null;
-  }
-  function showTip(hit, x, y) {
-    if (last !== hit) {
-      tip.innerHTML = "";
-      const b = document.createElement("b"); b.textContent = hit.label; b.style.cssText = "display:block;margin-bottom:3px;color:#E8B84B;";
-      tip.appendChild(b); tip.appendChild(document.createTextNode(hit.def));
-      last = hit;
-    }
-    tip.style.display = "block";
-    const w = tip.offsetWidth, h = tip.offsetHeight;
-    let px = x + 14, py = y + 16;
-    if (px + w > window.innerWidth - 10) px = Math.max(10, x - w - 12);
-    if (py + h > window.innerHeight - 10) py = Math.max(10, y - h - 12);
-    tip.style.left = px + "px"; tip.style.top = py + "px";
-  }
-  function hideTip() { tip.style.display = "none"; last = null; }
-  let touching = false;
-  document.addEventListener("touchstart", () => { touching = true; }, { passive: true });
-  document.addEventListener("mousemove", e => {
-    if (touching) { touching = false; return; }
-    if (timer) return;
-    timer = setTimeout(() => { timer = null; }, 60);
-    const hit = findTerm(e.clientX, e.clientY);
-    if (hit) showTip(hit, e.clientX, e.clientY); else hideTip();
-  });
-  document.addEventListener("touchend", e => {
-    const t = e.changedTouches && e.changedTouches[0];
-    if (!t) return;
-    const el = document.elementFromPoint(t.clientX, t.clientY);
-    if (el && el.closest("button,a,input,label,summary")) { hideTip(); return; }
-    const hit = findTerm(t.clientX, t.clientY);
-    if (hit) showTip(hit, t.clientX, t.clientY); else hideTip();
-  }, { passive: true });
-  document.addEventListener("scroll", hideTip, { passive: true });
-}
-
 // Scoreboard "your group" frame: a single overlay that slides over the active column,
 // measured from the live DOM so it always hugs the column exactly (no per-cell boxes).
 function positionSbHighlight() {
@@ -767,7 +699,6 @@ class Component extends DCLogic {
       };
       setTimeout(poll, 50);
     }
-    initGlossary();
     this._applyPageOrder();
     // clicking anywhere outside an open "Jump to" dropdown closes it (native <details> won't)
     this._closeMenus = (e) => { document.querySelectorAll("details[open]").forEach(d => { if (!d.contains(e.target)) d.open = false; }); };
