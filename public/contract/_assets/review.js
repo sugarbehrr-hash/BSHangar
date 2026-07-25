@@ -1,17 +1,14 @@
 /* Beta review layer (display-only, ADR-048 companion).
-   Entry is a visible banner on the page ("Start reviewing") - no URL tricks.
-   Review mode persists in localStorage once started; an Exit control turns it off.
-   Feedback lives in localStorage and exports to a JSON file the reviewer sends back -
-   content stays single-sourced in the skill; this never writes to it.
-   (When the guide leaves beta, remove this one <script> tag and the banner is gone.) */
+   Review mode is ALWAYS ON during the beta - no enter/exit. A permanent banner marks
+   the doc as a draft in review. Feedback lives in localStorage and exports to a JSON file
+   the reviewer sends back - content stays single-sourced in the skill; this never writes to it.
+   (When the guide is finalized, remove this one <script> tag and the whole layer is gone.) */
 (function () {
-  var KEY = "rv2-review", ONKEY = "rv2-on";
+  var KEY = "rv2-review";
   var S = (function () { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } })();
   S.cards = S.cards || {}; S.refs = S.refs || {};
-  var ACTIVE = false;
+  var ACTIVE = true; // review mode is always on during the beta (no enter/exit)
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
-  function setOn(v) { try { v ? localStorage.setItem(ONKEY, "1") : localStorage.removeItem(ONKEY); } catch (e) {} }
-  function getOn() { try { return localStorage.getItem(ONKEY) === "1"; } catch (e) { return false; } }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function escA(s) { return esc(s).replace(/"/g, "&quot;"); }
   function $(id) { return document.getElementById(id); }
@@ -42,7 +39,6 @@
       ".rv-stat{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.rv-stat b{color:#fff}" +
       ".rv-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.rv-dot.g{background:#4bbd82}.rv-dot.a{background:var(--gold-500,#e8a33d)}" +
       ".rv-prog{width:100px;height:6px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}.rv-prog i{display:block;height:100%;background:#4bbd82;width:0;transition:width .25s}" +
-      ".rv-exit{background:none;border:0;color:#aeb6c6;font-size:11.5px;cursor:pointer;text-decoration:underline}" +
       ".rv-btn{font-family:var(--font-heading,inherit);font-weight:800;font-size:12.5px;border-radius:8px;padding:8px 14px;cursor:pointer;border:1.5px solid transparent}" +
       ".rv-btn.gold{background:var(--gold-500,#e8a33d);color:#3a2a08}.rv-btn.gold:hover{background:#f0b256}" +
       ".rv-btn.dark{background:transparent;color:var(--navy-900,#1f2a44);border-color:var(--cream-300,#d8cfb8)}" +
@@ -80,12 +76,9 @@
     if ($("rv-banner")) return;
     var b = document.createElement("div"); b.className = "rv-banner"; b.id = "rv-banner";
     b.innerHTML = '<span class="rv-btag">Beta</span>' +
-      '<span class="rv-bmsg"><b>This guide is a draft in review.</b> Your feedback helps finalize it before it goes out.</span>' +
-      '<button class="rv-btn gold" id="rv-startbtn">Start reviewing</button>';
+      '<span class="rv-bmsg"><b>This guide is a draft in review.</b> Confirm or flag each item, add notes, then submit your feedback with the bar below.</span>';
     document.body.insertBefore(b, document.body.firstChild);
-    $("rv-startbtn").onclick = startReview;
   }
-  function removeBanner() { var b = $("rv-banner"); if (b) b.remove(); }
 
   // ---------- chrome (bottom bar + overlays) ----------
   function buildChrome() {
@@ -95,7 +88,6 @@
     bar.innerHTML =
       '<span class="rv-brand">Beta review</span>' +
       '<span class="rv-who">Reviewing as <b id="rv-name">-</b> <button id="rv-edit">change</button></span>' +
-      '<button class="rv-exit" id="rv-exit">Exit</button>' +
       '<div class="rv-stats">' +
       '<span class="rv-stat"><span class="rv-dot g"></span><b id="rv-c">0</b>&nbsp;confirmed</span>' +
       '<span class="rv-stat"><span class="rv-dot a"></span><b id="rv-f">0</b>&nbsp;flagged</span>' +
@@ -117,7 +109,6 @@
     document.body.appendChild(ov);
 
     $("rv-edit").onclick = askName;
-    $("rv-exit").onclick = exitReview;
     $("rv-start").onclick = function () { var v = $("rv-nameinput").value.trim(); if (!v) { $("rv-nameinput").focus(); return; } S.reviewer = v; save(); $("rv-name").textContent = v; $("rv-nameov").classList.remove("open"); };
     $("rv-namecancel").onclick = function () { $("rv-nameov").classList.remove("open"); };
     $("rv-nameov").onclick = function (e) { if (e.target === this) this.classList.remove("open"); };
@@ -163,21 +154,6 @@
     updateBar();
   }
   window.__applyReview = function () { if (ACTIVE) applyStrips(); };
-
-  // ---------- activation ----------
-  function startReview() {
-    ACTIVE = true; setOn(true);
-    removeBanner(); injectCss(); buildChrome(); applyStrips();
-    // no forced name prompt - naming happens at submit (it labels the file)
-  }
-  function exitReview() {
-    ACTIVE = false; setOn(false);
-    var bar = $("rv-bar"); if (bar) bar.remove();
-    document.body.classList.remove("rv-on");
-    document.querySelectorAll(".rv-strip").forEach(function (s) { s.remove(); });
-    document.querySelectorAll("[data-card-id]").forEach(function (c) { c.classList.remove("rv-c", "rv-f"); });
-    showBanner();
-  }
 
   // ---------- strip interactions ----------
   document.addEventListener("click", function (e) {
@@ -264,8 +240,9 @@
     toast("Saved " + name + " — send it back to compile.");
   }
 
-  // ---------- boot ----------
+  // ---------- boot: review mode is always on during the beta (no enter/exit) ----------
   injectCss();
-  ACTIVE = getOn() || /[?&]review\b/.test(location.search);
-  if (ACTIVE) startReview(); else showBanner();
+  showBanner();
+  buildChrome();
+  applyStrips();
 })();
