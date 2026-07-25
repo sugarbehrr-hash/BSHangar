@@ -14,6 +14,7 @@
   <script src="/contract/_assets/assessment.data.js"></script>
   <script src="/contract/_assets/assessment-charts.js"></script>
   <script src="/contract/_assets/card-render.js"></script>
+  <script src="/contract/_assets/review.js"></script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <style>
     html { -webkit-print-color-adjust: exact; print-color-adjust: exact; scroll-behavior: smooth; }
@@ -770,10 +771,12 @@ class Component extends DCLogic {
     setTimeout(this._sbReposition, 300);
     window.addEventListener("resize", this._sbReposition);
     try { linkGlossary(); } catch (e) {}
+    try { window.__applyReview && window.__applyReview(); } catch (e) {}
   }
   componentDidUpdate() {
     if (this._sbReposition) requestAnimationFrame(this._sbReposition);
     try { linkGlossary(); } catch (e) {}
+    try { window.__applyReview && window.__applyReview(); } catch (e) {}
   }
   componentWillUnmount() {
     if (this._sbReposition) window.removeEventListener("resize", this._sbReposition);
