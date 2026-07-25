@@ -1,19 +1,21 @@
 /* Beta review layer (display-only, ADR-048 companion).
-   Gated behind ?review in the URL, so members see a clean document.
+   Entry is a visible banner on the page ("Start reviewing") - no URL tricks.
+   Review mode persists in localStorage once started; an Exit control turns it off.
    Feedback lives in localStorage and exports to a JSON file the reviewer sends back -
-   content stays single-sourced in the skill; this never writes to it. */
+   content stays single-sourced in the skill; this never writes to it.
+   (When the guide leaves beta, remove this one <script> tag and the banner is gone.) */
 (function () {
-  if (!/[?&]review\b/.test(location.search)) return;
-
-  var KEY = "rv2-review";
+  var KEY = "rv2-review", ONKEY = "rv2-on";
   var S = (function () { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } })();
   S.cards = S.cards || {}; S.refs = S.refs || {};
+  var ACTIVE = false;
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function setOn(v) { try { v ? localStorage.setItem(ONKEY, "1") : localStorage.removeItem(ONKEY); } catch (e) {} }
+  function getOn() { try { return localStorage.getItem(ONKEY) === "1"; } catch (e) { return false; } }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function escA(s) { return esc(s).replace(/"/g, "&quot;"); }
   function $(id) { return document.getElementById(id); }
 
-  // claim ids (the 46 change cards) - only these get a review strip / count toward progress
   var CLAIMS = {};
   (function () { var A = window.ASSESSMENT || {}; (A.topics || []).forEach(function (t) { (t.changes || []).forEach(function (c) { CLAIMS[c.id] = c.title || c.id; }); }); })();
   function claimCount() { return Object.keys(CLAIMS).length; }
@@ -22,17 +24,24 @@
     if ($("rv-css")) return;
     var st = document.createElement("style"); st.id = "rv-css";
     st.textContent =
+      // entry banner
+      ".rv-banner{background:var(--navy-900,#1f2a44);color:#fff;display:flex;align-items:center;gap:12px;padding:11px 18px;font-family:var(--font-body,sans-serif);flex-wrap:wrap;border-bottom:2px solid var(--gold-500,#e8a33d)}" +
+      ".rv-btag{font-family:var(--font-heading,inherit);font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#3a2a08;background:var(--gold-500,#e8a33d);padding:3px 8px;border-radius:5px;white-space:nowrap}" +
+      ".rv-bmsg{font-size:13.5px;color:#dbe0ec}.rv-bmsg b{color:#fff}" +
+      ".rv-banner .rv-btn{margin-left:auto}" +
       "body.rv-on{padding-bottom:66px}" +
+      // bottom action bar
       ".rv-bar{position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--navy-900,#1f2a44);color:#fff;display:flex;align-items:center;gap:14px;padding:10px 18px;box-shadow:0 -6px 24px rgba(31,42,68,.22);flex-wrap:wrap;font-family:var(--font-body,sans-serif)}" +
       ".rv-brand{font-family:var(--font-heading,inherit);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500,#e8a33d);white-space:nowrap}" +
       ".rv-who{font-size:13px;color:#dbe0ec}.rv-who b{color:#fff;font-weight:700}.rv-who button{background:none;border:0;color:var(--gold-500,#e8a33d);font-size:11.5px;cursor:pointer;text-decoration:underline;padding:0}" +
       ".rv-stats{display:flex;align-items:center;gap:12px;margin-left:auto;font-size:12.5px;color:#cdd3e0;flex-wrap:wrap}" +
       ".rv-stat{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.rv-stat b{color:#fff}" +
       ".rv-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.rv-dot.g{background:#4bbd82}.rv-dot.a{background:var(--gold-500,#e8a33d)}" +
-      ".rv-prog{width:110px;height:6px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}.rv-prog i{display:block;height:100%;background:#4bbd82;width:0;transition:width .25s}" +
+      ".rv-prog{width:100px;height:6px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}.rv-prog i{display:block;height:100%;background:#4bbd82;width:0;transition:width .25s}" +
+      ".rv-exit{background:none;border:0;color:#aeb6c6;font-size:11.5px;cursor:pointer;text-decoration:underline}" +
       ".rv-btn{font-family:var(--font-heading,inherit);font-weight:800;font-size:12.5px;border-radius:8px;padding:8px 14px;cursor:pointer;border:1.5px solid transparent}" +
       ".rv-btn.gold{background:var(--gold-500,#e8a33d);color:#3a2a08}.rv-btn.gold:hover{background:#f0b256}" +
-      ".rv-btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}.rv-btn.ghost:hover{background:rgba(255,255,255,.1)}" +
+      ".rv-btn.dark{background:transparent;color:var(--navy-900,#1f2a44);border-color:var(--cream-300,#d8cfb8)}" +
       // per-card strip
       ".rv-strip{grid-column:1/-1;border-top:1px solid var(--cream-300,#e3dccb);margin:14px -16px -20px -22px;padding:11px 20px;background:var(--cream-100,#faf6ef);border-radius:0 0 15px 15px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}" +
       ".rv-rl{font-family:var(--font-heading,inherit);font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-500,#7c8398);margin-right:2px}" +
@@ -55,13 +64,26 @@
       ".rv-sb input[type=text]{width:100%;font-size:15px;padding:11px 13px;border:1.5px solid var(--cream-300,#d8cfb8);border-radius:10px;background:#fff;color:var(--ink-700,#3a4256)}.rv-sb input[type=text]:focus{outline:none;border-color:var(--gold-500,#e8a33d)}" +
       ".rv-sumrow{display:flex;gap:10px;margin:2px 0 14px}.rv-sumcard{flex:1;background:#fff;border:1.5px solid var(--cream-300,#e3dccb);border-radius:11px;padding:11px 6px;text-align:center}.rv-sumcard .n{font-family:var(--font-display,serif);font-size:24px;color:var(--navy-900,#1f2a44);line-height:1}.rv-sumcard .t{font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-500,#7c8398);margin-top:4px}" +
       ".rv-signoff{display:flex;gap:9px;align-items:flex-start;background:#fff;border:1.5px solid var(--cream-300,#e3dccb);border-radius:11px;padding:12px 14px;margin:0 0 14px;cursor:pointer}.rv-signoff input{margin-top:2px;width:17px;height:17px;flex-shrink:0}.rv-signoff .t{font-size:13px}.rv-signoff .t b{color:var(--navy-900,#1f2a44)}.rv-signoff .t span{display:block;font-size:11.5px;color:var(--ink-500,#7c8398);margin-top:2px}" +
-      ".rv-actions{display:flex;gap:9px}.rv-actions .rv-btn{flex:1;text-align:center;padding:11px}.rv-btn.dark{background:transparent;color:var(--navy-900,#1f2a44);border-color:var(--cream-300,#d8cfb8)}" +
-      ".rv-toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:var(--navy-900,#1f2a44);color:#fff;font-weight:700;font-size:13px;padding:11px 18px;border-radius:99px;box-shadow:0 10px 30px rgba(31,42,68,.3);display:none;z-index:1200}.rv-toast.show{display:block}" +
-      "@media(max-width:560px){.rv-strip{margin:14px -16px -20px -16px}.rv-stats{width:100%;margin-left:0;justify-content:space-between}}";
+      ".rv-actions{display:flex;gap:9px}.rv-actions .rv-btn{flex:1;text-align:center;padding:11px}" +
+      ".rv-toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:var(--navy-900,#1f2a44);color:#fff;font-weight:700;font-size:13px;padding:11px 18px;border-radius:99px;box-shadow:0 10px 30px rgba(31,42,68,.3);display:none;z-index:1200;text-align:center;max-width:90vw}.rv-toast.show{display:block}" +
+      "@media(max-width:560px){.rv-strip{margin:14px -16px -20px -16px}.rv-stats{width:100%;margin-left:0;justify-content:space-between}.rv-banner .rv-btn{margin-left:0}}";
     document.head.appendChild(st);
   }
 
-  // ---------- chrome ----------
+  // ---------- entry banner ----------
+  function showBanner() {
+    injectCss();
+    if ($("rv-banner")) return;
+    var b = document.createElement("div"); b.className = "rv-banner"; b.id = "rv-banner";
+    b.innerHTML = '<span class="rv-btag">Beta</span>' +
+      '<span class="rv-bmsg"><b>This guide is a draft in review.</b> Your feedback helps finalize it before it goes out.</span>' +
+      '<button class="rv-btn gold" id="rv-startbtn">Start reviewing</button>';
+    document.body.insertBefore(b, document.body.firstChild);
+    $("rv-startbtn").onclick = startReview;
+  }
+  function removeBanner() { var b = $("rv-banner"); if (b) b.remove(); }
+
+  // ---------- chrome (bottom bar + overlays) ----------
   function buildChrome() {
     if ($("rv-bar")) return;
     document.body.classList.add("rv-on");
@@ -69,6 +91,7 @@
     bar.innerHTML =
       '<span class="rv-brand">Beta review</span>' +
       '<span class="rv-who">Reviewing as <b id="rv-name">-</b> <button id="rv-edit">change</button></span>' +
+      '<button class="rv-exit" id="rv-exit">Exit</button>' +
       '<div class="rv-stats">' +
       '<span class="rv-stat"><span class="rv-dot g"></span><b id="rv-c">0</b>&nbsp;confirmed</span>' +
       '<span class="rv-stat"><span class="rv-dot a"></span><b id="rv-f">0</b>&nbsp;flagged</span>' +
@@ -89,17 +112,16 @@
     document.body.appendChild(ov);
 
     $("rv-edit").onclick = askName;
+    $("rv-exit").onclick = exitReview;
     $("rv-start").onclick = function () { var v = $("rv-nameinput").value.trim(); if (!v) { $("rv-nameinput").focus(); return; } S.reviewer = v; save(); $("rv-name").textContent = v; $("rv-nameov").classList.remove("open"); };
     $("rv-nameinput").addEventListener("keydown", function (e) { if (e.key === "Enter") $("rv-start").click(); });
     $("rv-submit").onclick = openSubmit;
     $("rv-subcancel").onclick = function () { $("rv-subov").classList.remove("open"); };
     $("rv-subdownload").onclick = doDownload;
-
     $("rv-name").textContent = S.reviewer || "-";
-    if (!S.reviewer) askName();
   }
   function askName() { $("rv-nameov").classList.add("open"); $("rv-nameinput").value = S.reviewer || ""; setTimeout(function () { $("rv-nameinput").focus(); }, 40); }
-  function toast(m) { var t = $("rv-toast"); t.innerHTML = m; t.classList.add("show"); setTimeout(function () { t.classList.remove("show"); }, 3400); }
+  function toast(m) { var t = $("rv-toast"); t.innerHTML = m; t.classList.add("show"); setTimeout(function () { t.classList.remove("show"); }, 3600); }
 
   // ---------- per-card strips ----------
   function stripInner(id) {
@@ -115,16 +137,16 @@
     card.classList.toggle("rv-c", st.status === "confirmed");
     card.classList.toggle("rv-f", st.status === "flagged");
     var strip = card.querySelector(":scope > .rv-strip"); if (!strip) return;
-    var cb = strip.querySelector('[data-rv="confirm"]'), fb = strip.querySelector('[data-rv="flag"]');
-    cb.classList.toggle("on-c", st.status === "confirmed");
-    fb.classList.toggle("on-f", st.status === "flagged");
+    strip.querySelector('[data-rv="confirm"]').classList.toggle("on-c", st.status === "confirmed");
+    strip.querySelector('[data-rv="flag"]').classList.toggle("on-f", st.status === "flagged");
   }
-  function applyReview() {
-    injectCss(); buildChrome();
+  function applyStrips() {
+    if (!ACTIVE) return;
+    injectCss();
     document.querySelectorAll("[data-card-id]").forEach(function (card) {
       var id = card.getAttribute("data-card-id");
-      if (!CLAIMS[id]) return;                       // only the 46 claim cards
-      if (card.querySelector(":scope > .rv-strip")) return; // survives if not re-rendered
+      if (!CLAIMS[id]) return;
+      if (card.querySelector(":scope > .rv-strip")) return;
       var strip = document.createElement("div"); strip.className = "rv-strip"; strip.setAttribute("data-rv-for", id);
       strip.innerHTML = stripInner(id);
       card.appendChild(strip);
@@ -132,8 +154,24 @@
     });
     updateBar();
   }
-  window.__applyReview = applyReview;
+  window.__applyReview = function () { if (ACTIVE) applyStrips(); };
 
+  // ---------- activation ----------
+  function startReview() {
+    ACTIVE = true; setOn(true);
+    removeBanner(); injectCss(); buildChrome(); applyStrips();
+    if (!S.reviewer) askName();
+  }
+  function exitReview() {
+    ACTIVE = false; setOn(false);
+    var bar = $("rv-bar"); if (bar) bar.remove();
+    document.body.classList.remove("rv-on");
+    document.querySelectorAll(".rv-strip").forEach(function (s) { s.remove(); });
+    document.querySelectorAll("[data-card-id]").forEach(function (c) { c.classList.remove("rv-c", "rv-f"); });
+    showBanner();
+  }
+
+  // ---------- strip interactions ----------
   document.addEventListener("click", function (e) {
     var b = e.target.closest("[data-rv]"); if (!b) return;
     var strip = b.closest(".rv-strip"); if (!strip) return;
@@ -155,10 +193,9 @@
     var cardEl = btn.closest && btn.closest("[data-card-id]");
     var cid = cardEl ? cardEl.getAttribute("data-card-id") : "";
     if (origOpen) origOpen(btn);
-    if (!CLAIMS[cid]) return;
+    if (!ACTIVE || !CLAIMS[cid]) return;
     var body = $("vc-refbody"); if (!body) return;
-    var clauses = body.querySelectorAll(".vc-refclause");
-    clauses.forEach(function (cl, i) {
+    body.querySelectorAll(".vc-refclause").forEach(function (cl, i) {
       if (cl.querySelector(".rv-cite")) return;
       var rk = cid + "::" + i, st = S.refs[rk] || {};
       var row = document.createElement("div"); row.className = "rv-cite"; row.setAttribute("data-rk", rk);
@@ -181,7 +218,7 @@
   function counts() {
     var c = 0, f = 0, n = 0;
     Object.keys(S.cards).forEach(function (k) { if (!CLAIMS[k]) return; var s = S.cards[k]; if (s.status === "confirmed") c++; if (s.status === "flagged") f++; if (s.note) n++; });
-    Object.keys(S.refs).forEach(function (k) { var s = S.refs[k]; if (s.status === "flagged") f++; });
+    Object.keys(S.refs).forEach(function (k) { if (S.refs[k].status === "flagged") f++; });
     return { c: c, f: f, n: n };
   }
   function updateBar() {
@@ -214,6 +251,8 @@
     toast("Saved " + name + " — send it back to compile.");
   }
 
-  // first paint (in case data is already present); the app also calls window.__applyReview on render
-  if (window.ASSESSMENT && Object.keys(CLAIMS).length) applyReview();
+  // ---------- boot ----------
+  injectCss();
+  ACTIVE = getOn() || /[?&]review\b/.test(location.search);
+  if (ACTIVE) startReview(); else showBanner();
 })();
