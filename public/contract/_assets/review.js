@@ -32,8 +32,8 @@
       ".rv-bmsg{font-size:13.5px;color:#dbe0ec}.rv-bmsg b{color:#fff}" +
       ".rv-banner .rv-btn{margin-left:auto}" +
       "body.rv-on{padding-bottom:66px}" +
-      // keep the sticky details/rating rail from sliding under the fixed review bar on short viewports
-      "@media(min-width:561px){body.rv-on .vc-rail{max-height:calc(100vh - var(--tb-h,54px) - 82px);overflow-y:auto;overscroll-behavior:contain}}" +
+      // in review mode the details/rating rail is NOT sticky, so it can never get pinned over the fixed review bar
+      "body.rv-on .vc-rail{position:static!important;max-height:none!important;overflow:visible!important}" +
       // bottom action bar
       ".rv-bar{position:fixed;left:0;right:0;bottom:0;z-index:1000;background:var(--navy-900,#1f2a44);color:#fff;display:flex;align-items:center;gap:14px;padding:10px 18px;box-shadow:0 -6px 24px rgba(31,42,68,.22);flex-wrap:wrap;font-family:var(--font-body,sans-serif)}" +
       ".rv-brand{font-family:var(--font-heading,inherit);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500,#e8a33d);white-space:nowrap}" +
