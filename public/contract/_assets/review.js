@@ -102,9 +102,10 @@
     var ov = document.createElement("div"); ov.innerHTML =
       '<div class="rv-ov" id="rv-nameov"><div class="rv-sheet"><div class="rv-sh"><div class="k">Beta review</div><h2>Who’s reviewing?</h2></div>' +
       '<div class="rv-sb"><label class="rv-field" for="rv-nameinput">Your name</label><input type="text" id="rv-nameinput" placeholder="e.g. Cole" autocomplete="off">' +
-      '<div style="height:14px"></div><div class="rv-actions"><button class="rv-btn gold" id="rv-start" style="flex:1;padding:11px">Start reviewing</button></div></div></div></div>' +
+      '<div style="height:14px"></div><div class="rv-actions"><button class="rv-btn dark" id="rv-namecancel">Not now</button><button class="rv-btn gold" id="rv-start" style="padding:11px">Save name</button></div></div></div></div>' +
       '<div class="rv-ov" id="rv-subov"><div class="rv-sheet"><div class="rv-sh"><div class="k">Submit review</div><h2 id="rv-subtitle">Your review</h2></div>' +
-      '<div class="rv-sb"><div class="rv-sumrow"><div class="rv-sumcard"><div class="n" id="rv-sc">0</div><div class="t">Confirmed</div></div>' +
+      '<div class="rv-sb"><label class="rv-field" for="rv-subname">Your name</label><input type="text" id="rv-subname" placeholder="e.g. Cole" autocomplete="off"><div style="height:14px"></div>' +
+      '<div class="rv-sumrow"><div class="rv-sumcard"><div class="n" id="rv-sc">0</div><div class="t">Confirmed</div></div>' +
       '<div class="rv-sumcard"><div class="n" id="rv-sf">0</div><div class="t">Flagged</div></div><div class="rv-sumcard"><div class="n" id="rv-sn">0</div><div class="t">Notes</div></div></div>' +
       '<label class="rv-signoff"><input type="checkbox" id="rv-signoff"><span class="t"><b>Sign off — I’ve reviewed the whole document.</b><span>Marks your review complete before it goes to the wider group.</span></span></label>' +
       '<div class="rv-actions"><button class="rv-btn dark" id="rv-subcancel">Keep reviewing</button><button class="rv-btn gold" id="rv-subdownload">Download &amp; send</button></div></div></div></div>' +
@@ -114,11 +115,14 @@
     $("rv-edit").onclick = askName;
     $("rv-exit").onclick = exitReview;
     $("rv-start").onclick = function () { var v = $("rv-nameinput").value.trim(); if (!v) { $("rv-nameinput").focus(); return; } S.reviewer = v; save(); $("rv-name").textContent = v; $("rv-nameov").classList.remove("open"); };
+    $("rv-namecancel").onclick = function () { $("rv-nameov").classList.remove("open"); };
+    $("rv-nameov").onclick = function (e) { if (e.target === this) this.classList.remove("open"); };
+    $("rv-subov").onclick = function (e) { if (e.target === this) this.classList.remove("open"); };
     $("rv-nameinput").addEventListener("keydown", function (e) { if (e.key === "Enter") $("rv-start").click(); });
     $("rv-submit").onclick = openSubmit;
     $("rv-subcancel").onclick = function () { $("rv-subov").classList.remove("open"); };
     $("rv-subdownload").onclick = doDownload;
-    $("rv-name").textContent = S.reviewer || "-";
+    $("rv-name").textContent = S.reviewer || "you";
   }
   function askName() { $("rv-nameov").classList.add("open"); $("rv-nameinput").value = S.reviewer || ""; setTimeout(function () { $("rv-nameinput").focus(); }, 40); }
   function toast(m) { var t = $("rv-toast"); t.innerHTML = m; t.classList.add("show"); setTimeout(function () { t.classList.remove("show"); }, 3600); }
@@ -160,7 +164,7 @@
   function startReview() {
     ACTIVE = true; setOn(true);
     removeBanner(); injectCss(); buildChrome(); applyStrips();
-    if (!S.reviewer) askName();
+    // no forced name prompt - naming happens at submit (it labels the file)
   }
   function exitReview() {
     ACTIVE = false; setOn(false);
@@ -231,12 +235,17 @@
   }
   function openSubmit() {
     var s = counts();
-    $("rv-subtitle").textContent = (S.reviewer || "Your") + (S.reviewer ? "’s" : "") + " review";
+    $("rv-subtitle").textContent = "Submit your review";
+    $("rv-subname").value = S.reviewer || "";
     $("rv-sc").textContent = s.c; $("rv-sf").textContent = s.f; $("rv-sn").textContent = s.n;
     $("rv-signoff").checked = !!S.signedOff;
     $("rv-subov").classList.add("open");
+    if (!S.reviewer) setTimeout(function () { $("rv-subname").focus(); }, 40);
   }
   function doDownload() {
+    var nm = $("rv-subname").value.trim();
+    if (!nm) { $("rv-subname").focus(); toast("Add your name so we know whose review this is."); return; }
+    S.reviewer = nm; $("rv-name").textContent = nm;
     S.signedOff = $("rv-signoff").checked; save();
     var d = new Date(), iso = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     var cards = {}; Object.keys(S.cards).forEach(function (k) { var it = S.cards[k]; if (it.status || it.note) cards[k] = { status: it.status || null, note: it.note || "" }; });
