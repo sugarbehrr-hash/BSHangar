@@ -25,11 +25,13 @@ const total = venueCount(category);
   title={`${base.code} ${category.label}`}
   description={`Crew ${category.label.toLowerCase()} at ${base.code} (${base.name}). ${total} spots listed by terminal, with gates and what your badge gets you.`}
 >
-  <div class="pagehead">
+  <div class="masthead">
     <div class="wrap">
-      <div class="ph-eyebrow">Discounts · {base.code}</div>
-      <h1 class="ph-title">{category.label}</h1>
-      <p class="ph-sub">{base.name} · {base.sub}</p>
+      <div class="mh-body">
+        <div class="mh-eyebrow">Discounts · {base.code}</div>
+        <h1 class="mh-title">{category.label}</h1>
+        <p class="mh-sub">{base.name} · {base.sub}</p>
+      </div>
     </div>
   </div>
 

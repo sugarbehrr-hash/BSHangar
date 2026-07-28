@@ -50,19 +50,51 @@ img, video, canvas { max-width: 100%; height: auto; }
 /* ---------- LAYOUT SHELL ---------- */
 .wrap { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
 
-.pagehead { background: var(--navy-900); color: var(--cream-100); padding: 46px 0 40px; position: relative; overflow: hidden; }
-.pagehead::after { content: ""; position: absolute; right: -60px; top: -60px; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, rgba(232,163,61,0.22), transparent 70%); }
-.ph-eyebrow { font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-500); margin-bottom: 12px; }
-.ph-title { font-family: var(--font-display); text-transform: uppercase; font-size: 62px; line-height: .9; margin: 0; color: var(--cream-100); }
-.ph-sub { font-size: 18px; line-height: 1.55; color: var(--sky-300); max-width: 640px; margin: 16px 0 0; }
+/* ---------- MASTHEAD ----------
+   The navy page header. `.mh-body` carries the padding rather than the
+   masthead itself, so a section-tab strip can dock flush to the bottom edge
+   inside the same .wrap without inheriting that padding. Mobile-first: the
+   compact scale is the base, the roomy one is the >=700px override. */
+.masthead { background: var(--navy-900); color: var(--cream-100); position: relative; overflow: hidden; }
+.masthead::after { content: ""; position: absolute; right: -70px; top: -80px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(232,163,61,0.20), transparent 70%); pointer-events: none; }
+.masthead > .wrap { position: relative; z-index: 2; }
+.mh-body { padding: 22px 0 26px; }
+.mh-eyebrow { font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-500); margin-bottom: 12px; }
+.mh-title { font-family: var(--font-display); text-transform: uppercase; font-size: 42px; line-height: .9; margin: 0; color: var(--cream-100); }
+.mh-title .r { color: var(--red-500); }
+.mh-sub { font-size: 18px; line-height: 1.55; color: var(--sky-300); max-width: 640px; margin: 16px 0 0; }
+.mh-meta { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 14px 0 0; font-family: var(--font-heading); font-weight: 700; font-size: 12.5px; color: var(--sky-300); }
+@media (min-width: 700px) {
+  .mh-body { padding: 46px 0 40px; }
+  .mh-title { font-size: 62px; }
+}
 
 /* ---------- SECTION SHELL ---------- */
-section.band { padding: 62px 0; }
+section.band { padding: 34px 0; }
 section.band.cream { background: var(--cream-200); }
 section.band.paper { background: var(--cream-100); }
-.kicker { font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--red-600); }
-.h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 44px; line-height: .95; color: var(--navy-900); margin: 10px 0 0; }
-.sectlead { font-size: 18px; line-height: 1.6; color: var(--ink-700); max-width: 720px; margin: 14px 0 0; }
+section.band.tight { padding-top: 20px; }
+@media (min-width: 700px) {
+  section.band { padding: 62px 0; }
+  section.band.tight { padding-top: 34px; }
+}
+
+/* The first band under the masthead gets ONE gap on every page. Previously
+   this varied per page and read as too much air under the header. */
+.masthead + .band,
+.masthead + .band.tight { padding-top: 24px; }
+@media (min-width: 700px) {
+  .masthead + .band,
+  .masthead + .band.tight { padding-top: 32px; }
+}
+
+/* ---------- BAND OPENER ----------
+   One pattern introduces every band: kicker -> h2 -> lead. */
+.band-head { max-width: 720px; }
+.band-head + * { margin-top: 22px; }
+.kicker { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--red-600); }
+.h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 32px; line-height: .95; color: var(--navy-900); margin: 10px 0 0; }
+.lead { font-size: 18px; line-height: 1.6; color: var(--ink-700); max-width: 720px; margin: 14px 0 0; text-wrap: pretty; }
 
 /* ---------- SKIP LINK (added — the export had no keyboard bypass) ---------- */
 .skip-link { position: absolute; left: -9999px; top: 0; z-index: 100; padding: 12px 20px; background: var(--gold-500); color: var(--navy-900);

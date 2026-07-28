@@ -56,20 +56,22 @@ const relatedLinks =
 ---
 
 <BaseLayout title={title} description={description}>
-  <div class="pagehead">
+  <div class="masthead">
     <div class="wrap">
-      <div class="ph-eyebrow">{guide.eyebrow}</div>
-      <h1 class="ph-title">{guide.title}</h1>
-      <p class="ph-sub">{guide.intro}</p>
-      {
-        provenance.length > 0 && (
-          <p class="ph-meta">
-            {provenance.map((line) => (
-              <span>{line}</span>
-            ))}
-          </p>
-        )
-      }
+      <div class="mh-body">
+        <div class="mh-eyebrow">{guide.eyebrow}</div>
+        <h1 class="mh-title">{guide.title}</h1>
+        <p class="mh-sub">{guide.intro}</p>
+        {
+          provenance.length > 0 && (
+            <p class="mh-meta">
+              {provenance.map((line) => (
+                <span>{line}</span>
+              ))}
+            </p>
+          )
+        }
+      </div>
     </div>
   </div>
 
