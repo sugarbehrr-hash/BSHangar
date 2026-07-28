@@ -298,6 +298,9 @@ export const commutingHelp = {
   headingAccent: 'Call, then document.',
   rows: [
     { k: 'Crew Scheduling', v: 'Call before you miss report' },
+    // Union Rep sits between the two; the page renders its value from
+    // UNION_REP_PHONE rather than a literal, so `phone` marks the slot.
+    { k: 'Union Rep Assistance', v: '', phone: true },
     { k: 'Docs to Supervisor', v: 'Within 24 hrs' },
   ],
   ctaLabel: 'Commute-fail steps',

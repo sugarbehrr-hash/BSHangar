@@ -34,15 +34,15 @@ const { figures, intro, icon = 'ph-scroll' } = Astro.props;
           aria-pressed="false"
           aria-controls={`dp-${figure.key}`}
         >
-          <span class="fig">
+          <div class="fig">
             {figure.value}
             {figure.unit && <span>{figure.unit}</span>}
-          </span>
-          <span>
-            <span class="lb">{figure.label}</span>
-            <span class="cap">{figure.caption}</span>
-          </span>
-          <span class="rf">{figure.ref}</span>
+          </div>
+          <div>
+            <div class="lb">{figure.label}</div>
+            <div class="cap">{figure.caption}</div>
+          </div>
+          <div class="rf">{figure.ref}</div>
           <Icon name="ph-arrow-right" class="nlgo" />
         </button>
       ))

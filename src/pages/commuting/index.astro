@@ -42,17 +42,20 @@ import { commutingResources } from '../../data/resources';
             {commutingHelp.heading}<br /><span class="r">{commutingHelp.headingAccent}</span>
           </h2>
           {
-            commutingHelp.rows.map((row) => (
-              <div class="tarow">
-                <span class="k">{row.k}</span>
-                <span class="v">{row.v}</span>
-              </div>
-            ))
+            commutingHelp.rows.map((row) =>
+              'phone' in row && row.phone ? (
+                <div class="tarow">
+                  <span class="k">{row.k}</span>
+                  <a class="v live" href={UNION_REP_PHONE.href}>{UNION_REP_PHONE.display}</a>
+                </div>
+              ) : (
+                <div class="tarow">
+                  <span class="k">{row.k}</span>
+                  <span class="v">{row.v}</span>
+                </div>
+              )
+            )
           }
-          <div class="tarow">
-            <span class="k">Union Rep Assistance</span>
-            <a class="v live" href={UNION_REP_PHONE.href}>{UNION_REP_PHONE.display}</a>
-          </div>
           <div class="cta">
             <a class="btn primary sm" href={commutingHelp.ctaHref}>
               <Icon name="ph-list-checks" /> {commutingHelp.ctaLabel}

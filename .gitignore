@@ -21,3 +21,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Local-only: design prototypes, used for side-by-side comparison
+public/_proto/
+public/src/
