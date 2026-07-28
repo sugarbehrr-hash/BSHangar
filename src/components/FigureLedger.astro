@@ -16,11 +16,9 @@ import type { ContractFigure, ContractIntro } from '../data/contract-hub';
 interface Props {
   figures: ContractFigure[];
   intro: ContractIntro;
-  /** Icon for every pane's badge. */
-  icon?: string;
 }
 
-const { figures, intro, icon = 'ph-scroll' } = Astro.props;
+const { figures, intro } = Astro.props;
 ---
 
 <div class="figrow">
@@ -52,7 +50,7 @@ const { figures, intro, icon = 'ph-scroll' } = Astro.props;
   <aside class="card flat detailpanel" data-panel>
     <div class="dp" data-row="intro">
       <div class="card-head">
-        <span class="card-badge"><Icon name={icon} /></span>
+        <span class="card-badge"><Icon name={intro.icon} /></span>
         <div class="card-titles">
           <h3 class="card-title">{intro.title}</h3>
           <div class="card-sub">{intro.sub}</div>
@@ -62,21 +60,21 @@ const { figures, intro, icon = 'ph-scroll' } = Astro.props;
       {
         intro.action && (
           <div class="zdo">
-            <Icon name="ph-chat-teardrop-text" />
+            <Icon name={intro.actionIcon} />
             <div set:html={richText(intro.action)} />
           </div>
         )
       }
-      <div class="dphint">
+      <p class="dphint">
         <Icon name="ph-hand-tap" /> Tap a number for the detail
-      </div>
+      </p>
     </div>
 
     {
       figures.map((figure) => (
         <div class="dp" id={`dp-${figure.key}`} data-row={figure.key} hidden>
           <div class="card-head">
-            <span class="card-badge"><Icon name={icon} /></span>
+            <span class="card-badge"><Icon name={figure.icon} /></span>
             <div class="card-titles">
               <h3 class="card-title">{figure.pane.title}</h3>
               <div class="card-sub">{figure.pane.sub}</div>
@@ -85,7 +83,7 @@ const { figures, intro, icon = 'ph-scroll' } = Astro.props;
           {figure.pane.paras.map((p) => <p set:html={richText(p)} />)}
           {figure.pane.action && (
             <div class="zdo">
-              <Icon name="ph-envelope-simple" />
+              <Icon name={figure.pane.actionIcon} />
               <div set:html={richText(figure.pane.action)} />
             </div>
           )}

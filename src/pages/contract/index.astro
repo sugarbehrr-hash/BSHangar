@@ -112,7 +112,7 @@ const docs = contractResources.filter((res) => res.kind === 'generated');
       <div class="grid two">
         {
           docs.map((res) => (
-            <article class="card doc" style={`--accent: ${res.accent};`}>
+            <div class="card doc" style={`--accent: ${res.accent};`}>
               <div class="card-head">
                 <span class="card-badge sq"><Icon name={res.icon} /></span>
                 <div class="card-titles">
@@ -128,7 +128,7 @@ const docs = contractResources.filter((res) => res.kind === 'generated');
                   </a>
                 ))}
               </div>
-            </article>
+            </div>
           ))
         }
       </div>

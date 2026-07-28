@@ -20,6 +20,8 @@
 export interface ContractFigure {
   /** Stable key; ties a row to its detail pane. */
   key: string;
+  /** Badge glyph on this figure's detail pane. */
+  icon: string;
   value: string;
   unit: string;
   label: string;
@@ -32,11 +34,15 @@ export interface ContractFigure {
     paras: string[];
     /** The single "do this" line closing the pane. */
     action: string;
+    /** Glyph on that line. Each pane has its own. */
+    actionIcon: string;
   };
 }
 
 /** The pane shown before any figure is chosen. */
 export interface ContractIntro {
+  icon: string;
+  actionIcon: string;
   title: string;
   sub: string;
   paras: string[];
@@ -47,6 +53,8 @@ export interface ContractIntro {
 export interface ContractSituation {
   /** Section chip, e.g. "§16". */
   badge: string;
+  /** Glyph on this situation's action line. Each has its own. */
+  actionIcon: string;
   title: string;
   /** Uppercase sub-line under the title. */
   note: string;
@@ -78,12 +86,14 @@ export const contractFigures: ContractFigure[] = [
   },
   {
     "key": "duty",
+    "icon": "ph-scroll",
     "value": "15",
     "unit": "hrs",
     "label": "Max duty day",
     "caption": "Between rest periods — a ceiling, not a target",
     "ref": "",
     "pane": {
+      "actionIcon": "ph-microphone",
       "title": "Max duty day",
       "sub": "§7 · 15 hrs",
       "paras": [
@@ -96,12 +106,14 @@ export const contractFigures: ContractFigure[] = [
   },
   {
     "key": "rest",
+    "icon": "ph-scroll",
     "value": "10",
     "unit": "hrs",
     "label": "Minimum rest",
     "caption": "Between duty periods, measured at the hotel",
     "ref": "",
     "pane": {
+      "actionIcon": "ph-envelope-simple",
       "title": "Minimum rest",
       "sub": "§7 · 10 hrs",
       "paras": [
@@ -113,29 +125,33 @@ export const contractFigures: ContractFigure[] = [
   },
   {
     "key": "gtd",
+    "icon": "ph-scroll",
     "value": "75",
     "unit": "hrs",
     "label": "Monthly guarantee",
     "caption": "When you're available the whole month",
     "ref": "",
     "pane": {
+      "actionIcon": "ph-calculator",
       "title": "Monthly guarantee",
       "sub": "§3 · 75 hrs",
       "paras": [
         "Available all month and the Company still didn't schedule you to 75 hours? You're paid for 75 anyway.",
         "The guarantee assumes full availability — dropped trips and unpaid leave reduce it, which is where most “my check is short” questions actually land."
       ],
-      "action": "**Check your Time Summary against 75 before the 20th** with the [Paycheck Estimator](Tools.dc.html)."
+      "action": "**Check your Time Summary against 75 before the 20th** with the [Paycheck Estimator](/tools/)."
     }
   },
   {
     "key": "minday",
+    "icon": "ph-scroll",
     "value": "3.5",
     "unit": "hrs",
     "label": "Minimum day pay",
     "caption": "Actual or 3.5, whichever is greater",
     "ref": "",
     "pane": {
+      "actionIcon": "ph-note-pencil",
       "title": "Minimum day pay",
       "sub": "§3 · 3.5 hrs",
       "paras": [
@@ -147,12 +163,14 @@ export const contractFigures: ContractFigure[] = [
   },
   {
     "key": "shortcall",
+    "icon": "ph-scroll",
     "value": "2",
     "unit": "hrs",
     "label": "Short-call report",
     "caption": "Clock starts when the phone rings",
     "ref": "",
     "pane": {
+      "actionIcon": "ph-clock-countdown",
       "title": "Short-call report",
       "sub": "§9 · 2 hrs",
       "paras": [
@@ -164,12 +182,14 @@ export const contractFigures: ContractFigure[] = [
   },
   {
     "key": "file",
+    "icon": "ph-scroll",
     "value": "30",
     "unit": "days",
     "label": "To file a grievance",
     "caption": "15 days if it's discipline",
     "ref": "",
     "pane": {
+      "actionIcon": "ph-paper-plane-tilt",
       "title": "To file a grievance",
       "sub": "§16 · 30 days",
       "paras": [
@@ -182,6 +202,8 @@ export const contractFigures: ContractFigure[] = [
 ];
 
 export const contractIntro: ContractIntro = {
+  "icon": "ph-scroll",
+  "actionIcon": "ph-chat-teardrop-text",
   "title": "Reading the citations",
   "sub": "§ = Section of the CBA",
   "paras": [
@@ -193,6 +215,7 @@ export const contractIntro: ContractIntro = {
 export const contractSituations: ContractSituation[] = [
   {
     "badge": "§16",
+    "actionIcon": "ph-phone-call",
     "title": "I've been called into a meeting with management",
     "note": "Do this before you answer anything",
     "urgent": true,
@@ -218,6 +241,7 @@ export const contractSituations: ContractSituation[] = [
   },
   {
     "badge": "§7",
+    "actionIcon": "ph-note-pencil",
     "title": "They're pushing my duty day long",
     "note": "Duty limits & rest",
     "rows": [
@@ -246,6 +270,7 @@ export const contractSituations: ContractSituation[] = [
   },
   {
     "badge": "§9",
+    "actionIcon": "ph-clock-countdown",
     "title": "Scheduling just called me on reserve",
     "note": "Notice, report times & FOLO",
     "rows": [
@@ -269,6 +294,7 @@ export const contractSituations: ContractSituation[] = [
   },
   {
     "badge": "§3",
+    "actionIcon": "ph-calculator",
     "title": "My paycheck looks wrong",
     "note": "Guarantee, minimums & premiums",
     "rows": [
@@ -288,10 +314,11 @@ export const contractSituations: ContractSituation[] = [
         "ref": "§8"
       }
     ],
-    "action": "**Report it in writing within 5 business days** and keep your copy. Check the math first with the [Paycheck Estimator](Tools.dc.html)."
+    "action": "**Report it in writing within 5 business days** and keep your copy. Check the math first with the [Paycheck Estimator](/tools/)."
   },
   {
     "badge": "§8",
+    "actionIcon": "ph-camera",
     "title": "My line or my days off changed",
     "note": "Awards, trades & days off",
     "rows": [
@@ -315,6 +342,7 @@ export const contractSituations: ContractSituation[] = [
   },
   {
     "badge": "§4",
+    "actionIcon": "ph-first-aid",
     "title": "I'm sick, or I'm on vacation",
     "note": "Sick accrual & vacation",
     "rows": [

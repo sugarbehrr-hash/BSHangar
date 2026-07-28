@@ -30,8 +30,12 @@ function escapeHtml(input: string): string {
 const SAFE_HREF = /^(\/|https:\/\/|tel:|mailto:|#)/;
 
 /**
- * Escape `text`, then turn **bold** runs into <strong> and [label](href) into
+ * Escape `text`, then turn **bold** runs into <b> and [label](href) into
  * links. Returns an HTML string intended for set:html.
+ *
+ * <b> rather than <strong> because the design system styles the bold runs by
+ * tag — `.dp p b`, `.zdo b`, `.check b` — and those selectors do not match
+ * <strong>, so the emphasis would render at the wrong colour.
  *
  * Links were added for the hub redesign, whose action lines point at the
  * Paycheck Estimator, the union number and the guides. The alternative was
@@ -40,7 +44,7 @@ const SAFE_HREF = /^(\/|https:\/\/|tel:|mailto:|#)/;
  */
 export function richText(text: string): string {
   return escapeHtml(text)
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (whole, label: string, href: string) => {
       // The href arrives HTML-escaped; compare on the decoded form.
       const raw = href.replace(/&amp;/g, '&').replace(/&#39;/g, "'");

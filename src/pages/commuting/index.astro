@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import FigureLedger from '../../components/FigureLedger.astro';
 import SituationZone from '../../components/SituationZone.astro';
-import { UNION_REP_PHONE, DISCLAIMER } from '../../data/site';
+import { UNION_REP_PHONE } from '../../data/site';
 import {
   commutingFigures,
   commutingIntro,
@@ -110,7 +110,7 @@ import { commutingResources } from '../../data/resources';
       <div class="grid two">
         {
           commutingResources.map((res) => (
-            <article class="card doc" style={`--accent: ${res.accent};`}>
+            <div class="card doc" style={`--accent: ${res.accent};`}>
               <div class="card-head">
                 <span class="card-badge sq"><Icon name={res.icon} /></span>
                 <div class="card-titles">
@@ -126,12 +126,12 @@ import { commutingResources } from '../../data/resources';
                   </a>
                 ))}
               </div>
-            </article>
+            </div>
           ))
         }
       </div>
 
-      <p class="art-disclaimer">{DISCLAIMER.footer}</p>
+      <p class="art-disclaimer">{commutingCopy.disclaimer}</p>
     </div>
   </section>
 </BaseLayout>

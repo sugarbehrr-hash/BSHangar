@@ -55,7 +55,7 @@ const categoryPath = (b: Base, c: Category) =>
         type="search"
         id="venue-filter"
         data-filter
-        placeholder={`Filter ${base.code} ${category.label.toLowerCase()}…`}
+        placeholder={`Filter ${base.code} venues`}
         autocomplete="off"
       />
     </div>
@@ -74,7 +74,7 @@ const categoryPath = (b: Base, c: Category) =>
           <>
             <span class="tdot">·</span>
             {flyers.map((f) => (
-              <a class="txtbtn" href={f.href}>{f.label}</a>
+              <a class="txtbtn" href={f.href}>Full list (PDF)</a>
             ))}
           </>
         )

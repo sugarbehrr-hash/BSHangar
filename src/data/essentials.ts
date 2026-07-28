@@ -32,7 +32,7 @@ export const products: Product[] = [
     blurb:
       'A sturdy, TSA-friendly roller that fits the bin and takes a beating layover after layover. The bag that outlasts the schedule.',
     icon: 'ph-suitcase-rolling',
-    tag: 'Bag',
+    tag: 'Bags',
     cat: 'bags',
     url: 'https://www.amazon.com/s?k=flight+crew+rolling+luggage',
   },
@@ -41,7 +41,7 @@ export const products: Product[] = [
     blurb:
       'Non-negotiable for long duty days and red-eyes. Keeps the swelling down and your legs fresh from block-out to block-in.',
     icon: 'ph-heartbeat',
-    tag: 'Comfort',
+    tag: 'Legs',
     cat: 'body',
     url: 'https://www.amazon.com/s?k=compression+socks',
   },
@@ -50,7 +50,7 @@ export const products: Product[] = [
     blurb:
       'Bright, durable tags so your bag is unmistakable on a crowded crew rack. Grab a two-pack and never guess again.',
     icon: 'ph-tag',
-    tag: 'Bag',
+    tag: 'Tags',
     cat: 'bags',
     url: 'https://www.amazon.com/s?k=luggage+tags',
   },
@@ -59,7 +59,7 @@ export const products: Product[] = [
     blurb:
       'A slim power bank that keeps your phone alive through delays, standby lists, and the whole trip. Charge once, fly all day.',
     icon: 'ph-battery-charging',
-    tag: 'Tech',
+    tag: 'Power',
     cat: 'kit',
     url: 'https://www.amazon.com/s?k=portable+charger+power+bank',
   },
@@ -77,7 +77,7 @@ export const products: Product[] = [
     blurb:
       'Turn a chaotic rollaboard into an organized carry-on. Separate clean, dirty, and layover-ready in seconds.',
     icon: 'ph-package',
-    tag: 'Bag',
+    tag: 'Packing',
     cat: 'bags',
     url: 'https://www.amazon.com/s?k=packing+cubes',
   },
@@ -86,7 +86,7 @@ export const products: Product[] = [
     blurb:
       'Cabin air is brutal. A leak-proof, bin-friendly bottle keeps you hydrated across every leg — refill past security.',
     icon: 'ph-drop',
-    tag: 'Health',
+    tag: 'Hydrate',
     cat: 'body',
     url: 'https://www.amazon.com/s?k=insulated+water+bottle',
   },
@@ -104,7 +104,7 @@ export const products: Product[] = [
     blurb:
       'Hours on hard galley floors add up. A cushioned insole saves your feet and your back on a four-leg day.',
     icon: 'ph-sneaker',
-    tag: 'Comfort',
+    tag: 'Shoes',
     cat: 'body',
     url: 'https://www.amazon.com/s?k=comfort+insoles+standing',
   },

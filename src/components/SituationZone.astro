@@ -48,7 +48,7 @@ const { situation, id } = Astro.props;
     {
       situation.action && (
         <div class="zdo">
-          <Icon name="ph-phone-call" />
+          <Icon name={situation.actionIcon} />
           <div set:html={richText(situation.action)} />
         </div>
       )

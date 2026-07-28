@@ -27,12 +27,14 @@ export type CommutingSituation = ContractSituation & { anchor?: string };
 export const commutingFigures: CommutingFigure[] = [
   {
     "key": "list",
+    "icon": "ph-clock-countdown",
     "value": "24",
     "unit": "hrs",
     "label": "List before report",
     "caption": "No less than 24 hours ahead of your trip",
     "ref": "Before",
     "pane": {
+      "actionIcon": "ph-bell-ringing",
       "title": "List before report",
       "sub": "Program · 24 hrs",
       "paras": [
@@ -44,12 +46,14 @@ export const commutingFigures: CommutingFigure[] = [
   },
   {
     "key": "two",
+    "icon": "ph-airplane-in-flight",
     "value": "2",
     "unit": "flights",
     "label": "Primary and secondary",
     "caption": "Both need open seats when you list",
     "ref": "Before",
     "pane": {
+      "actionIcon": "ph-device-mobile",
       "title": "Primary and secondary",
       "sub": "Program · 2 flights",
       "paras": [
@@ -61,12 +65,14 @@ export const commutingFigures: CommutingFigure[] = [
   },
   {
     "key": "buffer",
+    "icon": "ph-hourglass-high",
     "value": "1",
     "unit": "hr",
     "label": "Cushion before check-in",
     "caption": "On both flights, not just the primary",
     "ref": "Before",
     "pane": {
+      "actionIcon": "ph-moon-stars",
       "title": "Cushion before check-in",
       "sub": "Program · 1 hr",
       "paras": [
@@ -79,12 +85,14 @@ export const commutingFigures: CommutingFigure[] = [
   },
   {
     "key": "docs",
+    "icon": "ph-folder-open",
     "value": "24",
     "unit": "hrs",
     "label": "To document a failure",
     "caption": "What turns a CNC into a COM code",
     "ref": "After",
     "pane": {
+      "actionIcon": "ph-paper-plane-tilt",
       "title": "To document a failure",
       "sub": "CNC → COM · 24 hrs",
       "paras": [
@@ -97,6 +105,8 @@ export const commutingFigures: CommutingFigure[] = [
 ];
 
 export const commutingIntro: ContractIntro = {
+  "icon": "ph-airplane-tilt",
+  "actionIcon": "ph-chat-teardrop-text",
   "title": "Why the program matters",
   "sub": "Protection, not paperwork",
   "paras": [
@@ -108,6 +118,7 @@ export const commutingIntro: ContractIntro = {
 export const commutingSituations: CommutingSituation[] = [
   {
     "badge": "CNC",
+    "actionIcon": "ph-phone-call",
     "title": "My commute failed and I can't make report",
     "note": "Call Scheduling before you're late, not after",
     "rows": [
@@ -138,6 +149,7 @@ export const commutingSituations: CommutingSituation[] = [
   },
   {
     "badge": "FULL",
+    "actionIcon": "ph-list-magnifying-glass",
     "title": "My primary is full or delayed",
     "note": "Switching to the back-up",
     "rows": [
@@ -159,6 +171,7 @@ export const commutingSituations: CommutingSituation[] = [
   },
   {
     "badge": "GATE",
+    "actionIcon": "ph-camera",
     "title": "I'm leaving for the airport now",
     "note": "Ground time & paperwork",
     "rows": [
@@ -181,6 +194,7 @@ export const commutingSituations: CommutingSituation[] = [
   },
   {
     "badge": "ID90",
+    "actionIcon": "ph-identification-card",
     "title": "I don't know how to list on this airline",
     "note": "Who uses what",
     "rows": [
@@ -205,6 +219,7 @@ export const commutingSituations: CommutingSituation[] = [
   },
   {
     "badge": "RSV",
+    "actionIcon": "ph-clock-user",
     "title": "I'm on reserve and I'm not going to make it",
     "note": "Your three options",
     "rows": [
@@ -221,10 +236,11 @@ export const commutingSituations: CommutingSituation[] = [
         "ref": "Program"
       }
     ],
-    "action": "**Pick the option and repeat it back** — “so that's my RAP moving to 1400 today.” Reserve rules in full: [Your Contract](Contract Hub.dc.html)."
+    "action": "**Pick the option and repeat it back** — “so that's my RAP moving to 1400 today.” Reserve rules in full: [Your Contract](/contract/)."
   },
   {
     "badge": "DRESS",
+    "actionIcon": "ph-t-shirt",
     "title": "A gate agent questioned what I'm wearing",
     "note": "Any cabin, including premium",
     "rows": [
@@ -245,6 +261,7 @@ export const commutingSituations: CommutingSituation[] = [
   },
   {
     "badge": "TAX",
+    "actionIcon": "ph-calculator",
     "title": "My non-rev travel showed up on my paycheck",
     "note": "Imputed income, explained",
     "rows": [
@@ -258,7 +275,7 @@ export const commutingSituations: CommutingSituation[] = [
         "ref": "Tax"
       }
     ],
-    "action": "**It's usually small — don't let it stop you flying.** Sanity-check the rest of your check with the [Paycheck Estimator](Tools.dc.html)."
+    "action": "**It's usually small — don't let it stop you flying.** Sanity-check the rest of your check with the [Paycheck Estimator](/tools/)."
   }
 ];
 
@@ -286,6 +303,9 @@ export const commutingCopy = {
     "point. It's free and it's yours.",
   docsKicker: 'Want every word',
   docsHeading: 'Take the guide with you.',
+  disclaimer:
+    "These are plain-language summaries to help you — they don't carry protections. Always " +
+    'confirm current terms and program status with your Inflight Supervisor or LEC officers.',
   docsLead:
     'This page is the streamlined version — the parts you need in the moment. The complete text ' +
     'lives in the PDFs, sized for your bag. Download them once and they work with no signal.',
