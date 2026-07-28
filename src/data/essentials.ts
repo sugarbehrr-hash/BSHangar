@@ -13,8 +13,18 @@ export interface Product {
   icon: string;
   /** Small uppercase chip on the tile, e.g. "Bag". */
   tag: string;
+  /** Filter group. The pill bar and its counts derive from these. */
+  cat: 'bags' | 'body' | 'kit';
   url: string;
 }
+
+/** Pill-bar groups, in display order. Counts derive from `products`. */
+export const productCategories = [
+  { key: 'all', label: 'Everything', icon: 'ph-squares-four' },
+  { key: 'bags', label: 'Bags & packing', icon: 'ph-suitcase-rolling' },
+  { key: 'body', label: 'Body & rest', icon: 'ph-heartbeat' },
+  { key: 'kit', label: 'Power & uniform', icon: 'ph-battery-charging' },
+] as const;
 
 export const products: Product[] = [
   {
@@ -23,6 +33,7 @@ export const products: Product[] = [
       'A sturdy, TSA-friendly roller that fits the bin and takes a beating layover after layover. The bag that outlasts the schedule.',
     icon: 'ph-suitcase-rolling',
     tag: 'Bag',
+    cat: 'bags',
     url: 'https://www.amazon.com/s?k=flight+crew+rolling+luggage',
   },
   {
@@ -31,6 +42,7 @@ export const products: Product[] = [
       'Non-negotiable for long duty days and red-eyes. Keeps the swelling down and your legs fresh from block-out to block-in.',
     icon: 'ph-heartbeat',
     tag: 'Comfort',
+    cat: 'body',
     url: 'https://www.amazon.com/s?k=compression+socks',
   },
   {
@@ -39,6 +51,7 @@ export const products: Product[] = [
       'Bright, durable tags so your bag is unmistakable on a crowded crew rack. Grab a two-pack and never guess again.',
     icon: 'ph-tag',
     tag: 'Bag',
+    cat: 'bags',
     url: 'https://www.amazon.com/s?k=luggage+tags',
   },
   {
@@ -47,6 +60,7 @@ export const products: Product[] = [
       'A slim power bank that keeps your phone alive through delays, standby lists, and the whole trip. Charge once, fly all day.',
     icon: 'ph-battery-charging',
     tag: 'Tech',
+    cat: 'kit',
     url: 'https://www.amazon.com/s?k=portable+charger+power+bank',
   },
   {
@@ -55,6 +69,7 @@ export const products: Product[] = [
       "Wrinkle-release spray, a mini lint roller, and a stain pen — the trio that keeps you sharp when there's no time to iron.",
     icon: 'ph-t-shirt',
     tag: 'Uniform',
+    cat: 'kit',
     url: 'https://www.amazon.com/s?k=wrinkle+release+spray+travel',
   },
   {
@@ -63,6 +78,7 @@ export const products: Product[] = [
       'Turn a chaotic rollaboard into an organized carry-on. Separate clean, dirty, and layover-ready in seconds.',
     icon: 'ph-package',
     tag: 'Bag',
+    cat: 'bags',
     url: 'https://www.amazon.com/s?k=packing+cubes',
   },
   {
@@ -71,6 +87,7 @@ export const products: Product[] = [
       'Cabin air is brutal. A leak-proof, bin-friendly bottle keeps you hydrated across every leg — refill past security.',
     icon: 'ph-drop',
     tag: 'Health',
+    cat: 'body',
     url: 'https://www.amazon.com/s?k=insulated+water+bottle',
   },
   {
@@ -79,6 +96,7 @@ export const products: Product[] = [
       'Eye mask, earplugs, and a compact travel pillow — the difference between a rough overnight and real rest.',
     icon: 'ph-moon-stars',
     tag: 'Rest',
+    cat: 'body',
     url: 'https://www.amazon.com/s?k=travel+sleep+kit+eye+mask+earplugs',
   },
   {
@@ -87,6 +105,7 @@ export const products: Product[] = [
       'Hours on hard galley floors add up. A cushioned insole saves your feet and your back on a four-leg day.',
     icon: 'ph-sneaker',
     tag: 'Comfort',
+    cat: 'body',
     url: 'https://www.amazon.com/s?k=comfort+insoles+standing',
   },
 ];

@@ -20,3 +20,30 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 .curtain-main h1 .r { color: var(--red-500); }
 .curtain-main .curtain-copy { font-size: var(--fs-lead); line-height: var(--lh-normal); color: var(--cream-300); margin: 0 0 30px; }
 .curtain-main .cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+/* ---------- SEARCH RESULTS PANEL ----------
+   Site-only: the prototypes ship a search input with no working results, so
+   system.css has no rule for this. Absolute inside .searchbox (which is
+   position:relative) so it tracks the input at any width. */
+.searchpanel { position: absolute; top: calc(100% + 12px); right: 0; width: 340px; max-width: calc(100vw - 40px); z-index: 70;
+               background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+               overflow: hidden; display: none; }
+.searchpanel[data-open="1"] { display: block; }
+.sphead { padding: 11px 16px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-500); border-bottom: 1px solid var(--cream-200); }
+.sres { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--cream-200); transition: background .14s; }
+.sres:first-child { border-top: none; }
+.sres:hover { background: var(--sky-100); }
+.sres .b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--navy-900); }
+.sres .b i { color: #fff; font-size: 18px; }
+.sres .t { font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--navy-900); line-height: 1.1; }
+.sres .d { font-size: 12px; color: var(--ink-500); line-height: 1.2; margin-top: 2px; }
+.snone { padding: 20px 16px; font-size: 13.5px; color: var(--ink-500); }
+
+/* Curtain brand mark — the curtain predates the logo lockup. */
+.curtain .brand .mark { width: 44px; height: 44px; border-radius: 50%; background: var(--red-600); display: grid; place-items: center; }
+.curtain .brand .mark i { font-size: 26px; color: #fff; }
+.curtain .brand .wm { font-family: var(--font-display); text-transform: uppercase; font-size: 21px; line-height: .82; color: var(--cream-100); }
+.curtain .brand .wm small { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 8.5px; letter-spacing: .2em; color: var(--gold-500); margin-top: 3px; }
+
+/* Situation stack spacing — the zones are system.css, the stack is ours. */
+.situations { margin-bottom: 26px; }

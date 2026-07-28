@@ -36,7 +36,7 @@ import { contractResources } from '../../data/resources';
     </div>
   </div>
 
-  <section class="band cream">
+  <section class="band">
     <div class="wrap">
       <div class="band-head">
         <span class="kicker">{contractCopy.figuresKicker}</span>
@@ -62,7 +62,7 @@ import { contractResources } from '../../data/resources';
           <b>{contractCopy.actionTitle}</b>
           <span>{contractCopy.actionBody}</span>
         </div>
-        <a class="btn btn-red" href={UNION_REP_PHONE.href}>
+        <a class="btn primary" href={UNION_REP_PHONE.href}>
           <Icon name="ph-phone-call" /> {UNION_REP_PHONE.display}
         </a>
       </div>
@@ -87,7 +87,7 @@ import { contractResources } from '../../data/resources';
               <p class="card-text">{res.blurb}</p>
               <div class="card-actions">
                 {res.links.map((link) => (
-                  <a class={`btn btn-${link.variant} btn-sm`} href={link.href}>
+                  <a class={`btn ${link.variant} sm`} href={link.href}>
                     <Icon name={link.icon} /> {link.label}
                   </a>
                 ))}

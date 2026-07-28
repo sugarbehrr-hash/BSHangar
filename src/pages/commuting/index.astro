@@ -36,25 +36,25 @@ import { commutingResources } from '../../data/resources';
           <p class="mh-sub">{commutingCopy.sub}</p>
         </div>
 
-        <aside class="helppanel">
+        <aside class="tapanel">
           <span class="flag"><Icon name="ph-warning" /> {commutingHelp.flag}</span>
           <h2>
             {commutingHelp.heading}<br /><span class="r">{commutingHelp.headingAccent}</span>
           </h2>
           {
             commutingHelp.rows.map((row) => (
-              <div class="hprow">
+              <div class="tarow">
                 <span class="k">{row.k}</span>
                 <span class="v">{row.v}</span>
               </div>
             ))
           }
-          <div class="hprow">
+          <div class="tarow">
             <span class="k">Union Rep Assistance</span>
             <a class="v live" href={UNION_REP_PHONE.href}>{UNION_REP_PHONE.display}</a>
           </div>
           <div class="cta">
-            <a class="btn btn-red btn-sm" href={commutingHelp.ctaHref}>
+            <a class="btn primary sm" href={commutingHelp.ctaHref}>
               <Icon name="ph-list-checks" /> {commutingHelp.ctaLabel}
             </a>
           </div>
@@ -63,7 +63,7 @@ import { commutingResources } from '../../data/resources';
     </div>
   </div>
 
-  <section class="band cream">
+  <section class="band">
     <div class="wrap">
       <div class="band-head">
         <span class="kicker">{commutingCopy.figuresKicker}</span>
@@ -93,7 +93,7 @@ import { commutingResources } from '../../data/resources';
           <b>{commutingCopy.actionTitle}</b>
           <span>{commutingCopy.actionBody}</span>
         </div>
-        <a class="btn btn-red" href={UNION_REP_PHONE.href}>
+        <a class="btn primary" href={UNION_REP_PHONE.href}>
           <Icon name="ph-phone-call" /> {UNION_REP_PHONE.display}
         </a>
       </div>
@@ -118,7 +118,7 @@ import { commutingResources } from '../../data/resources';
               <p class="card-text">{res.blurb}</p>
               <div class="card-actions">
                 {res.links.map((link) => (
-                  <a class={`btn btn-${link.variant} btn-sm`} href={link.href}>
+                  <a class={`btn ${link.variant} sm`} href={link.href}>
                     <Icon name={link.icon} /> {link.label}
                   </a>
                 ))}

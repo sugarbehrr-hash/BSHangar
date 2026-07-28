@@ -19,7 +19,7 @@ export interface ResourceLink {
   label: string;
   href: string;
   /** Button variant from the design system. */
-  variant: 'red' | 'gold' | 'navy';
+  variant: 'primary' | 'gold' | 'navy';
   icon: string;
 }
 
@@ -76,7 +76,7 @@ export const contractResources: Resource[] = [
     accent: 'var(--red-600)',
     kind: 'vendored',
     links: [
-      { label: 'Read', href: '/contract/2026-ta-vote-guide/', variant: 'red', icon: 'ph-book-open' },
+      { label: 'Read', href: '/contract/2026-ta-vote-guide/', variant: 'primary', icon: 'ph-book-open' },
       { label: 'PDF', href: '/contract/2026-ta-report/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },

@@ -1,41 +1,65 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import { DISCLAIMER } from '../data/site';
-import { products } from '../data/essentials';
+import { FACEBOOK_GROUP } from '../data/site';
+import { products, productCategories } from '../data/essentials';
+
+/** Pill counts derive from the data, so they can't disagree with the grid. */
+const countFor = (key: string) =>
+  key === 'all' ? products.length : products.filter((p) => p.cat === key).length;
 ---
 
 <BaseLayout
   title="Crew Essentials"
-  description="Gear that survives the schedule: rolling bags, compression socks, power banks, uniform care and layover sleep kits — vetted picks from PSA flight attendants."
+  description="Gear that survives the schedule: rolling bags, packing cubes, compression socks, power banks, uniform care and layover sleep kits — vetted picks from PSA flight attendants."
 >
   <div class="masthead">
     <div class="wrap">
       <div class="mh-body">
-        <div class="mh-eyebrow">Vetted by crew</div>
-        <h1 class="mh-title">Essentials</h1>
+        <div class="mh-eyebrow">Packed &amp; tested by crew</div>
+        <h1 class="mh-title">Crew Essentials</h1>
         <p class="mh-sub">
-          The bags, socks, chargers and care kit that survive the schedule. No sponsored fluff —
-          just the things that keep showing up in crew bags because they last.
+          The gear that actually survives the schedule. These are the picks that come up again and
+          again in the group — vetted by FAs, with links to buy.
         </p>
       </div>
     </div>
   </div>
 
-  <section class="band cream">
+  <section class="band">
     <div class="wrap">
-      <div class="prodgrid">
+      <div class="pillbar" id="catbar">
+        {
+          productCategories.map((cat, i) => (
+            <button class="pill" type="button" data-cat={cat.key} aria-pressed={i === 0}>
+              <Icon name={cat.icon} />
+              {cat.label} <span class="count">{countFor(cat.key)}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="toolrow">
+        <span class="count-label" id="prodcount" aria-live="polite">
+          Showing all {products.length} picks
+        </span>
+        <span class="quietbtns">
+          <a class="txtbtn" href="#note">Why these, and how the links work</a>
+        </span>
+      </div>
+
+      <div class="grid three" id="prodgrid">
         {
           products.map((product) => (
-            <div class="prod">
+            <div class="card product" data-cat={product.cat}>
               <div class="shot">
                 <span class="tagchip">{product.tag}</span>
                 <Icon name={product.icon} />
               </div>
               <div class="pbody">
-                <h3>{product.title}</h3>
-                <p>{product.blurb}</p>
-                <a class="amz" href={product.url} target="_blank" rel="noopener sponsored">
+                <h3 class="card-title">{product.title}</h3>
+                <p class="card-text">{product.blurb}</p>
+                <a class="btn quiet sm" href={product.url} target="_blank" rel="noopener sponsored">
                   <Icon name="ph-amazon-logo" /> View on Amazon
                 </a>
               </div>
@@ -44,7 +68,59 @@ import { products } from '../data/essentials';
         }
       </div>
 
-      <p class="disclosure">{DISCLAIMER.affiliate}</p>
+      <div class="notice warn spaced" id="note">
+        <Icon name="ph-hand-heart" />
+        <div class="nt">
+          <b>A quick note.</b> As an Amazon Associate, the Hangar earns from qualifying purchases —
+          at no extra cost to you. These are genuine crew picks; buying through these links helps
+          keep the group's guides free and up to date. Thank you for the support.
+        </div>
+      </div>
+
+      <div class="actionbar" style="margin-top:20px; --accent: var(--sky-700);">
+        <span class="card-badge"><Icon name="ph-chats-circle" /></span>
+        <div class="txt">
+          <b>Got a pick the whole hangar should know about?</b>
+          <span>Post it in the group — if crew keep recommending it, it lands on this page.</span>
+        </div>
+        <a class="btn gold" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <Icon name="ph-arrow-up-right" /> Open the group
+        </a>
+      </div>
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // Category filter. The only JavaScript on the page — the grid is fully
+  // rendered at build time and this just hides what doesn't match.
+  const bar = document.querySelector<HTMLElement>('#catbar');
+  const grid = document.querySelector<HTMLElement>('#prodgrid');
+  const label = document.querySelector<HTMLElement>('#prodcount');
+
+  if (bar && grid && label) {
+    const pills = [...bar.querySelectorAll<HTMLButtonElement>('.pill')];
+    const cards = [...grid.querySelectorAll<HTMLElement>('.card.product')];
+    const total = cards.length;
+
+    const apply = (cat: string) => {
+      let shown = 0;
+      for (const card of cards) {
+        const match = cat === 'all' || card.dataset.cat === cat;
+        card.hidden = !match;
+        if (match) shown++;
+      }
+      for (const pill of pills) {
+        pill.setAttribute('aria-pressed', String(pill.dataset.cat === cat));
+      }
+      label.textContent =
+        cat === 'all'
+          ? `Showing all ${total} picks`
+          : `Showing ${shown} of ${total} picks`;
+    };
+
+    for (const pill of pills) {
+      pill.addEventListener('click', () => apply(pill.dataset.cat ?? 'all'));
+    }
+  }
+</script>
