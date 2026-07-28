@@ -16,7 +16,8 @@
 .hero-a .cta { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
 .hero-a .art { position: relative; }
 .hero-a .art .sun { position: absolute; inset: 6% 10% 22% 8%; border-radius: 50%; background: radial-gradient(circle at 50% 45%, var(--gold-500), var(--gold-600) 60%, transparent 72%); filter: blur(2px); opacity: .9; }
-/* Height comes from the media reset in base.css — see the note there; it is
-   load-bearing for this image specifically. */
-.hero-a .art img { position: relative; width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); display: block; }
+/* The brand lockup is white-on-transparent, so the card supplies the navy
+   backing; the extra bottom padding keeps the caption pill off the wordmark. */
+.hero-a .art .logo-card { position: relative; display: flex; align-items: center; justify-content: center; background: var(--navy-700); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); padding: 40px 32px 58px; }
+.hero-a .art .logo-card img { width: 100%; display: block; }
 .hero-a .art .pill { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); background: var(--white); color: var(--navy-900); font-family: var(--font-heading); font-weight: 800; font-size: 13px; padding: 9px 18px; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); white-space: nowrap; }

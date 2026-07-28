@@ -1,9 +1,8 @@
 ---
-import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, FACEBOOK_GROUP } from '../data/site';
-import airportScene from '../assets/airport-scene.jpg';
+import brandLogo from '../assets/brand-logo.svg';
 
 /**
  * The real homepage, extracted from src/pages/index.astro so it can render at
@@ -101,13 +100,15 @@ const steps = [
         </div>
         <div class="art">
           <div class="sun float"></div>
-          <Image
-            src={airportScene}
-            alt="Flat illustration of a plane taking off at an airport"
-            widths={[480, 760, 1040]}
-            sizes="(max-width: 960px) 92vw, 500px"
-            loading="eager"
-          />
+          <div class="logo-card">
+            <img
+              src={brandLogo.src}
+              alt="Blue Streak Hangar — the wordmark with the jet swoosh"
+              width={brandLogo.width}
+              height={brandLogo.height}
+              loading="eager"
+            />
+          </div>
           <span class="pill">✈ Straight from the galley, not the corporate memo</span>
         </div>
       </div>
