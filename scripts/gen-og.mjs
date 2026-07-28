@@ -200,7 +200,7 @@ for (const file of pages) {
   const eyebrowWords = (eyebrow.toLowerCase().match(/[a-z]+/g) ?? []).filter((w) => w.length > 2);
   const overlap = eyebrowWords.filter((w) => titleWords.has(w)).length;
   if (eyebrowWords.length > 0 && overlap / eyebrowWords.length >= 0.6) {
-    eyebrow = 'Jr & Sr Hangar';
+    eyebrow = 'By crew, for crew';
   }
 
   const pathname = '/' + relative(DIST, dirname(file)).split(sep).filter(Boolean).join('/');

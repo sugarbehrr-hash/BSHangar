@@ -8,10 +8,8 @@
 
 export const SITE = {
   name: 'Blue Streak Hangar',
-  /** Full legal name used in the footer copyright line. */
-  legalName: 'Blue Streak, Junior & Senior Hangar',
   url: 'https://bluestreakhangar.com',
-  tagline: 'PSA Flight Attendants · Jr & Sr Hangar',
+  tagline: 'PSA Flight Attendants · Crew Hub',
   description:
     'Non-rev commuting, your CBA in plain language, crew discounts at CLT, DCA, ' +
     'DFW & PHL, and gear that lasts. Written by PSA flight attendants, for PSA ' +
@@ -21,7 +19,7 @@ export const SITE = {
 /** Wordmark, split across two lines in the nav and footer. */
 export const BRAND = {
   line1: 'Blue Streak',
-  line2: 'JR & SR HANGAR',
+  line2: 'HANGAR',
 } as const;
 
 export const FACEBOOK_GROUP = 'https://www.facebook.com/groups/bluestreakhangar';
