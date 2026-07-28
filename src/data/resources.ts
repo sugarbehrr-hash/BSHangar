@@ -99,6 +99,22 @@ export const commutingResources: Resource[] = [
       { label: 'Download PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },
+  {
+    id: 'how-to-list',
+    title: 'How to List, by Airline',
+    format: 'PDF · step-by-step · print-ready',
+    blurb:
+      'Screen-by-screen listing for every carrier we have an agreement with, including ' +
+      'which system to use and what to enter.',
+    icon: 'ph-list-numbers',
+    accent: 'var(--navy-700)',
+    kind: 'generated',
+    // TODO: this has no artifact of its own yet — the listing tables live inside
+    // the commuting guide, so it points there until one is authored.
+    links: [
+      { label: 'Download PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-file-pdf' },
+    ],
+  },
 ];
 
 /**

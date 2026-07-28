@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import { richText } from '../lib/rich-text';
+
+/**
+ * Tinted notice. Tone carries the meaning — there is no side border, per the
+ * design system: background tint plus a coloured icon, nothing else.
+ *
+ * `info` is the base .notice; the rest are its modifiers in system.css.
+ */
+interface Props {
+  tone?: 'info' | 'alert' | 'ok' | 'warn';
+  icon: string;
+  text: string;
+  /** Adds the standard 26px top gap when the notice follows other content. */
+  spaced?: boolean;
+  id?: string;
+  style?: string;
+}
+
+const { tone = 'info', icon, text, spaced = false, id, style } = Astro.props;
+---
+
+<div class:list={['notice', tone !== 'info' && tone, spaced && 'spaced']} id={id} style={style}>
+  <Icon name={icon} />
+  <div class="nt" set:html={richText(text)}></div>
+</div>

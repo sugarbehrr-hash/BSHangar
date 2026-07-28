@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import Callout from '../components/Callout.astro';
+import Notice from '../components/Notice.astro';
 import {
   EARNINGS,
   DEDUCTIONS,
@@ -321,8 +321,8 @@ const money = (n: number) =>
               </div>
             </div>
 
-            <Callout
-              tone="gold"
+            <Notice
+              tone="warn"
               icon="ph-warning"
               text="**Current as of the 2026 IRS tables.** These are the official 2026 Publication 15-T percentage-method values (Standard withholding, W-4 Step 2 box unchecked), divided down to per-semimonthly-check amounts. They are shown for reference and are not editable — pick your filing status above to switch tables."
               style="margin-top: 16px;"
@@ -346,7 +346,7 @@ const money = (n: number) =>
               </div>
             </div>
 
-            <Callout
+            <Notice
               icon="ph-info"
               text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
             />

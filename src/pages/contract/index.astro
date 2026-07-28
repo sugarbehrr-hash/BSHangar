@@ -10,7 +10,16 @@ import {
   contractSituations,
   contractCopy,
 } from '../../data/contract-hub';
-import { contractResources } from '../../data/resources';
+import { contractResources, VOTE_GUIDE } from '../../data/resources';
+import { taPanel } from '../../data/contract';
+
+const ta = taPanel[taPanel.phase];
+
+/**
+ * The vendored TA guide is surfaced by the masthead panel above, so it is not
+ * repeated as a document card — those are the two full-text guides only.
+ */
+const docs = contractResources.filter((res) => res.kind === 'generated');
 
 /**
  * The Contract hub, rebuilt on the redesign's two patterns.
@@ -28,10 +37,37 @@ import { contractResources } from '../../data/resources';
 >
   <div class="masthead">
     <div class="wrap">
-      <div class="mh-body">
-        <div class="mh-eyebrow">Collective Bargaining Agreement</div>
-        <h1 class="mh-title">Contractual Knowledge<br />Is Power</h1>
-        <p class="mh-sub">{contractCopy.sub}</p>
+      <div class="mh-grid">
+        <div class="mh-body">
+          <div class="mh-eyebrow">Collective Bargaining Agreement</div>          <h1 class="mh-title">Contractual Knowledge<br />Is Power</h1>
+          <p class="mh-sub">{contractCopy.sub}</p>
+        </div>
+
+        {
+          taPanel.show && (
+            <aside class="tapanel">
+              <span class="flag">
+                <Icon name={ta.flagIcon} /> {ta.flag}
+              </span>
+              <h2>
+                {ta.heading}
+                <br />
+                <span class="r">{ta.headingAccent}</span>
+              </h2>
+              {ta.rows.map((row) => (
+                <div class="tarow">
+                  <span class="k">{row.k}</span>
+                  <span class:list={['v', 'live' in row && row.live && 'live']}>{row.v}</span>
+                </div>
+              ))}
+              <div class="cta">
+                <a class="btn primary sm" href={VOTE_GUIDE.guide}>
+                  <Icon name="ph-book-open" /> {ta.ctaLabel}
+                </a>
+              </div>
+            </aside>
+          )
+        }
       </div>
     </div>
   </div>
@@ -75,7 +111,7 @@ import { contractResources } from '../../data/resources';
 
       <div class="grid two">
         {
-          contractResources.map((res) => (
+          docs.map((res) => (
             <article class="card doc" style={`--accent: ${res.accent};`}>
               <div class="card-head">
                 <span class="card-badge sq"><Icon name={res.icon} /></span>

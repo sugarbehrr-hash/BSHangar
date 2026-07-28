@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import DiscountExplorer from '../../../components/DiscountExplorer.astro';
+import Notice from '../../../components/Notice.astro';
 import BaseTabs from '../../../components/BaseTabs.astro';
 import { bases, venueCount } from '../../../data/bases';
 
@@ -34,9 +35,16 @@ const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
     </div>
   </div>
 
-  <section class="band">
+  <section class="band tight">
     <div class="wrap">
       <DiscountExplorer base={base} category={category} />
+
+      <Notice
+        tone="info"
+        icon="ph-hand-tap"
+        spaced
+        text={"**Ask before you pay.** Crew discounts aren't posted at every register — show your AA badge and ask. Spotted a new deal or a spot that's closed? Post it in the group and we'll keep the list current."}
+      />
     </div>
   </section>
 </BaseLayout>

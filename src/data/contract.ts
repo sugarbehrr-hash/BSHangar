@@ -98,6 +98,42 @@ export const contractCards: ContractCard[] = [
   },
 ];
 
+/**
+ * The 2026 Tentative Agreement panel in the masthead's second column.
+ *
+ * TEMPORARY SCAFFOLDING. The redesign ships it behind this flag; when the
+ * ratification vote closes, switch `phase` to 'ratified', and once that is old
+ * news set `show: false` and delete this block with the panel markup.
+ */
+export const taPanel = {
+  show: true,
+  phase: 'voting' as 'voting' | 'ratified',
+  voting: {
+    flagIcon: 'ph-scales',
+    flag: 'On the table now · 2026 TA',
+    heading: 'A tentative agreement is out.',
+    headingAccent: 'Read it before you vote.',
+    rows: [
+      { k: 'Voting closes', v: 'Aug 25 · 1700 ET' },
+      { k: 'Time left', v: '21 days', live: true },
+      { k: 'Town halls', v: 'Jul 30 CLT · Aug 6 PHL' },
+    ],
+    ctaLabel: 'Read the vote guide',
+  },
+  ratified: {
+    flagIcon: 'ph-seal-check',
+    flag: 'Ratified · 2026 contract',
+    heading: 'The 2026 agreement passed.',
+    headingAccent: "Here's what changed.",
+    rows: [
+      { k: 'Voted yes', v: '61%', live: true },
+      { k: 'Turnout', v: '84% of members' },
+      { k: 'In force', v: 'Sep 1, 2026' },
+    ],
+    ctaLabel: 'See what changed',
+  },
+} as const;
+
 /** The featured 2026 Tentative Agreement banner at the top of /contract/. */
 export const taBanner = {
   flag: 'On the table now · 2026 TA',

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import Callout from '../../components/Callout.astro';
+import Notice from '../../components/Notice.astro';
 import { bases, venueCount } from '../../data/bases';
 import { FACEBOOK_GROUP } from '../../data/site';
 
@@ -58,8 +58,8 @@ const accents = ['var(--red-600)', 'var(--sky-700)', 'var(--gold-600)', 'var(--n
         }
       </div>
 
-      <Callout
-        tone="tip"
+      <Notice
+        tone="info"
         icon="ph-hand-tap"
         text={`**Ask before you pay.** Crew discounts aren't posted at every register — show your AA badge and ask. Spotted a new deal or a spot that's closed? Post it in the group and we'll keep the list current.`}
       />
