@@ -85,8 +85,8 @@ const categoryPath = (b: Base, c: Category) =>
   </div>
 
   {
-    category.zones.map((zone) => (
-      <details class="zone" data-zone>
+    category.zones.map((zone, i) => (
+      <details class="zone" data-zone open={i === 0}>
         <summary class="zhead">
           <span class="zbadge">{zone.badge}</span>
           <span class="ztitle">
