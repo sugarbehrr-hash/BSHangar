@@ -41,9 +41,13 @@
 }
 
 @media (max-width: 620px) {
-  .nav { padding: 10px 16px; gap: 10px; }
+  .nav-inner { padding: 10px 16px; gap: 10px; }
   .search input { width: 44px; padding-right: 0; }
   .search input:focus { width: 180px; }
+  /* The input collapses to a 44px icon here, so a 340px panel right-aligned to
+     it would hang off the left edge. Span the viewport instead — the standard
+     mobile pattern, and it gives results more room to read. */
+  .searchpanel { position: fixed; top: 68px; left: 16px; right: 16px; width: auto; max-width: none; }
   .fbbtn span { display: none; }
   .fbbtn { padding: 0 12px; }
   .wrap { padding: 0 18px; }

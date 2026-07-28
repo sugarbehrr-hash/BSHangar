@@ -12,7 +12,6 @@
   --font-display: 'Anton', 'Arial Narrow', sans-serif;          /* big uppercase headlines */
   --font-heading: 'Archivo', 'Helvetica Neue', sans-serif;      /* subheads + UI labels */
   --font-body:    'Libre Franklin', 'Helvetica Neue', sans-serif; /* body copy */
-  --font-script:  'Caveat', 'Comic Sans MS', cursive;           /* warm handwritten accent */
 
   /* ---- Weights ---- */
   --fw-regular: 400;  /* @kind font */

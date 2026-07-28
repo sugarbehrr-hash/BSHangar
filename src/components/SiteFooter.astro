@@ -11,38 +11,21 @@ import {
 } from '../data/site';
 
 /**
- * Facebook CTA band + footer.
+ * Site footer.
  *
  * The export's footer listed "Union Rep · 844-423-2232" as a link to the
  * contract page rather than a callable number. It is a tel: link now — most of
  * this audience is on a phone when they need it.
+ *
+ * The big red "Come say hi" Facebook band that used to sit above this was
+ * removed: the group is already one click away from the persistent header
+ * button and the Quick links column below, and it repeated on every page.
  */
 const year = new Date().getFullYear();
 
 /** Footer nav omits Home; the brand mark above already goes there. */
 const footerNav = NAV.filter((item) => item.href !== '/');
 ---
-
-<section class="fbcta">
-  <div class="in">
-    <div class="script">Come say hi,</div>
-    <h2>You're not flying this alone.</h2>
-    <p>
-      Questions, tips, trade requests and the occasional galley meme. The hangar is
-      full of crew happy to help.
-    </p>
-    <a
-      class="btn btn-gold"
-      href={FACEBOOK_GROUP}
-      target="_blank"
-      rel="noopener"
-      style="height:56px;padding:0 30px;font-size:16px;"
-    >
-      <Icon name="ph-facebook-logo" />
-      Join the Facebook group
-    </a>
-  </div>
-</section>
 
 <footer class="footer">
   <div class="wrap">

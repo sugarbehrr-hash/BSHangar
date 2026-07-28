@@ -26,58 +26,65 @@ function isCurrent(href: string): boolean {
 ---
 
 <header class="nav">
-  <a href="/" class="brand" aria-label={`${BRAND.line1} home`}>
-    <span class="mark"><Icon name="ph-airplane-tilt" /></span>
-    <span class="wm">{BRAND.line1}<small>{BRAND.line2}</small></span>
-  </a>
-
-  <nav class="navlinks" id="navlinks" aria-label="Primary">
-    {
-      NAV.map((item) => (
-        <a
-          href={item.href}
-          aria-current={isCurrent(item.href) ? 'page' : undefined}
-          aria-label={item.short ? item.label : undefined}
-        >
-          {item.short ?? item.label}
-        </a>
-      ))
-    }
-  </nav>
-
-  <div class="navtools">
-    <div class="search">
-      <Icon name="ph-magnifying-glass" class="si" />
-      <label class="sr-only" for="site-search">Search the hangar</label>
-      <input
-        type="search"
-        id="site-search"
-        name="q"
-        placeholder="Search the hangar…"
-        autocomplete="off"
-        role="combobox"
-        aria-expanded="false"
-        aria-controls="search-results"
-        aria-autocomplete="list"
-      />
-    </div>
-
-    <a class="fbbtn" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
-      <Icon name="ph-facebook-logo" />
-      <span>Facebook Group</span>
+  <!-- The bar background stays full-bleed; its CONTENTS sit in the same 1140px
+       container as every page body, so the brand and search line up with the
+       content beneath them instead of drifting to the screen edges. -->
+  <div class="nav-inner">
+    <a href="/" class="brand" aria-label={`${BRAND.line1} home`}>
+      <span class="mark"><Icon name="ph-airplane-tilt" /></span>
+      <span class="wm">{BRAND.line1}<small>{BRAND.line2}</small></span>
     </a>
 
-    <button class="burger" type="button" aria-expanded="false" aria-controls="navlinks">
-      <span class="sr-only">Menu</span>
-      <Icon name="ph-list" weight="bold" />
-    </button>
+    <nav class="navlinks" id="navlinks" aria-label="Primary">
+      {
+        NAV.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+            aria-label={item.short ? item.label : undefined}
+          >
+            {item.short ?? item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="navtools">
+      <div class="search">
+        <Icon name="ph-magnifying-glass" class="si" />
+        <label class="sr-only" for="site-search">Search the hangar</label>
+        <input
+          type="search"
+          id="site-search"
+          name="q"
+          placeholder="Search the hangar…"
+          autocomplete="off"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="search-results"
+          aria-autocomplete="list"
+        />
+
+        <!-- Inside .search so the panel tracks the input. It used to be
+             viewport-pinned, which only lined up while the bar was full-bleed. -->
+        <div class="searchpanel" id="search-results" role="listbox" aria-label="Search results">
+          <div class="sphead" data-search-head>Search</div>
+          <div data-search-list></div>
+        </div>
+      </div>
+
+      <a class="fbbtn" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+        <Icon name="ph-facebook-logo" />
+        <span>Facebook Group</span>
+      </a>
+
+      <button class="burger" type="button" aria-expanded="false" aria-controls="navlinks">
+        <span class="sr-only">Menu</span>
+        <Icon name="ph-list" weight="bold" />
+      </button>
+    </div>
   </div>
 </header>
-
-<div class="searchpanel" id="search-results" role="listbox" aria-label="Search results">
-  <div class="sphead" data-search-head>Search</div>
-  <div data-search-list></div>
-</div>
 
 <style>
   /* Visually hidden but available to assistive tech. The export had no labels

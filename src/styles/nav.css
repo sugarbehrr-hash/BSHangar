@@ -7,8 +7,12 @@
    and carries the accessibility semantics the export lacked.
    ============================================================ */
 
+/* The bar spans the viewport; .nav-inner holds its contents to the same
+   1140px container as .wrap, so the brand and search align with the page
+   body instead of sitting at the screen edges on a wide monitor. */
 .nav { position: sticky; top: 0; z-index: 60; background: var(--navy-900); color: var(--cream-100);
-       display: flex; align-items: center; gap: 20px; padding: 12px 28px; box-shadow: 0 2px 14px rgba(15,30,61,0.28); }
+       box-shadow: 0 2px 14px rgba(15,30,61,0.28); }
+.nav-inner { max-width: 1140px; margin: 0 auto; display: flex; align-items: center; gap: 20px; padding: 12px 28px; }
 
 .brand { display: flex; align-items: center; gap: 12px; flex: none; }
 .brand .mark { width: 44px; height: 44px; border-radius: 50%; background: var(--red-600); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(200,16,46,0.4); transition: transform .25s var(--ease-out); }
@@ -44,7 +48,9 @@
 .burger { display: none; width: 42px; height: 42px; border-radius: 10px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 22px; cursor: pointer; }
 
 /* ---------- SEARCH RESULTS PANEL ---------- */
-.searchpanel { position: fixed; top: 66px; right: 28px; width: 340px; max-width: calc(100vw - 40px); z-index: 70;
+/* Absolute inside .search (which is position:relative), so the panel hangs off
+   the input itself and stays aligned with it at any viewport width. */
+.searchpanel { position: absolute; top: calc(100% + 12px); right: 0; width: 340px; max-width: calc(100vw - 40px); z-index: 70;
                background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
                overflow: hidden; display: none; }
 .searchpanel[data-open="1"] { display: block; }
