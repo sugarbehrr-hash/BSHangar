@@ -1,6 +1,7 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import StructuredData from '../components/StructuredData.astro';
 import { SITE } from '../data/site';
 import { PRELAUNCH } from '../data/prelaunch';
@@ -76,6 +77,7 @@ const ogImage = new URL(`/og/${ogSlug}.png`, Astro.site ?? SITE.url).href;
 
     <div class="site">
       <SiteHeader path={path} />
+      <Breadcrumbs path={path} title={title} />
       <!-- data-pagefind-body scopes the search index to real page content, so
            the nav and footer (identical on every page) never become results. -->
       <main id="main" data-pagefind-body>

@@ -1,14 +1,15 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Icon from '../components/Icon.astro';
-import InfoCard from '../components/InfoCard.astro';
-import Callout from '../components/Callout.astro';
-import RichText from '../components/RichText.astro';
-import { UNION_REP_PHONE, DISCLAIMER } from '../data/site';
-import { contractCards, taBanner, contractCallouts } from '../data/contract';
-import { contractResources, VOTE_GUIDE } from '../data/resources';
-import { contractGuide } from '../data/guides/contract';
-import { slugify } from '../lib/slug';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import SectionNav from '../../components/SectionNav.astro';
+import InfoCard from '../../components/InfoCard.astro';
+import Callout from '../../components/Callout.astro';
+import RichText from '../../components/RichText.astro';
+import { UNION_REP_PHONE, DISCLAIMER } from '../../data/site';
+import { contractCards, taBanner, contractCallouts } from '../../data/contract';
+import { contractResources, VOTE_GUIDE } from '../../data/resources';
+import { contractGuide } from '../../data/guides/contract';
+import { slugify } from '../../lib/slug';
 
 /**
  * Each summary card deep-links into the CBA Field Manual section it
@@ -16,7 +17,7 @@ import { slugify } from '../lib/slug';
  * checked against the manual's real sections, so a renamed section fails the
  * build here instead of shipping a dead link.
  */
-const MANUAL_PATH = '/guides/contract-field-manual/';
+const MANUAL_PATH = '/contract/field-manual/';
 const manualAnchors = new Set(contractGuide.sections.map((s) => slugify(s.title)));
 
 const cards = contractCards.map((card) => {
@@ -47,6 +48,8 @@ const cards = contractCards.map((card) => {
 
   <section class="band cream">
     <div class="wrap">
+      <SectionNav />
+
       <div class="tabanner">
         <div class="in">
           <span class="flag"><Icon name="ph-scales" /> {taBanner.flag}</span>

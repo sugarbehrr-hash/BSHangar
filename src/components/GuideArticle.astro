@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from './Icon.astro';
 import GuideBody from './GuideBody.astro';
 import GuideToc from './GuideToc.astro';
+import SectionNav from './SectionNav.astro';
 import type { Guide } from '../data/guides/types';
 
 /**
@@ -51,6 +52,9 @@ const provenance = [guide.meta.translates, guide.meta.revised].filter(Boolean);
   </div>
 
   <section class="band cream">
+    <div class="wrap">
+      <SectionNav />
+    </div>
     <div class="wrap article">
       <aside class="art-rail">
         <GuideToc guide={guide} />

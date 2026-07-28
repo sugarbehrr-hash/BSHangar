@@ -50,7 +50,7 @@ export const contractResources: Resource[] = [
     links: [
       {
         label: 'Read',
-        href: '/guides/contract-field-manual/',
+        href: '/contract/field-manual/',
         variant: 'navy',
         icon: 'ph-book-open',
       },
@@ -68,7 +68,7 @@ export const contractResources: Resource[] = [
     accent: 'var(--sky-700)',
     kind: 'generated',
     links: [
-      { label: 'Read', href: '/guides/reserve-field-guide/', variant: 'navy', icon: 'ph-book-open' },
+      { label: 'Read', href: '/contract/reserve-guide/', variant: 'navy', icon: 'ph-book-open' },
       { label: 'Print', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-printer' },
     ],
   },

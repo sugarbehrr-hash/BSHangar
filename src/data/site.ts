@@ -41,6 +41,12 @@ export const EXTERNAL = {
   flyzed: 'https://www.flyzed.info',
 } as const;
 
+/** A page living under a nav section, e.g. the CBA Field Manual under Contract. */
+export interface NavChild {
+  label: string;
+  href: string;
+}
+
 /** Primary navigation. `href` doubles as the active-state key. */
 export interface NavItem {
   label: string;
@@ -52,13 +58,27 @@ export interface NavItem {
    * full `label`, where the extra words genuinely help.
    */
   short?: string;
+  /**
+   * Sub-pages of this section. Drives the SectionNav tab strip on the section's
+   * pages and keeps the sub-structure in the same tree as the nav itself —
+   * there is no second registry of what belongs to a section.
+   */
+  children?: NavChild[];
 }
 
 export const NAV: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'New Here', href: '/new-here/' },
   { label: 'Commuting', href: '/commuting/' },
-  { label: 'Your Contract', href: '/contract/', short: 'Contract' },
+  {
+    label: 'Your Contract',
+    href: '/contract/',
+    short: 'Contract',
+    children: [
+      { label: 'CBA Field Manual', href: '/contract/field-manual/' },
+      { label: 'Reserve Field Guide', href: '/contract/reserve-guide/' },
+    ],
+  },
   { label: 'Crew Discounts', href: '/crew-discounts/', short: 'Discounts' },
   { label: 'Crew Essentials', href: '/crew-essentials/', short: 'Essentials' },
   { label: 'Crew Tools', href: '/tools/', short: 'Tools' },

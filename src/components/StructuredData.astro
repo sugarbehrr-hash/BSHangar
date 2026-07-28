@@ -1,5 +1,6 @@
 ---
 import { SITE, FACEBOOK_GROUP } from '../data/site';
+import { breadcrumbsFor } from '../lib/breadcrumbs';
 
 /**
  * JSON-LD. Emitted on every page via BaseLayout.
@@ -34,41 +35,23 @@ const website = {
   url: origin + '/',
 };
 
-/** Build a crumb trail from the path, humanising each segment. */
-const segments = path.split('/').filter(Boolean);
-
-const LABELS: Record<string, string> = {
-  'new-here': 'New Here',
-  commuting: 'Commuting',
-  contract: 'Your Contract',
-  'crew-discounts': 'Crew Discounts',
-  'crew-essentials': 'Crew Essentials',
-  tools: 'Crew Tools',
-  print: 'Printable Guides',
-};
-
-function labelFor(segment: string, index: number): string {
-  if (LABELS[segment]) return LABELS[segment];
-  // Base codes (clt, dca…) read better uppercased; deeper segments use the
-  // page title, which already names the category.
-  if (segment.length <= 4) return segment.toUpperCase();
-  return index === segments.length - 1 ? title : segment;
-}
+/**
+ * Crumb trail from the shared derivation in src/lib/breadcrumbs.ts — the same
+ * trail the visible Breadcrumbs component renders.
+ */
+const crumbs = breadcrumbsFor(path, title);
 
 const breadcrumb =
-  segments.length > 0
+  crumbs.length > 1
     ? {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: origin + '/' },
-          ...segments.map((segment, i) => ({
-            '@type': 'ListItem',
-            position: i + 2,
-            name: labelFor(segment, i),
-            item: `${origin}/${segments.slice(0, i + 1).join('/')}/`,
-          })),
-        ],
+        itemListElement: crumbs.map((crumb, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: crumb.label,
+          item: origin + crumb.href,
+        })),
       }
     : null;
 ---

@@ -96,7 +96,7 @@ export interface GuideSection {
 }
 
 export interface Guide {
-  /** URL segment under /print/ and /guides/. */
+  /** Print-artifact segment under /print/. Web routes live under their section. */
   slug: string;
   title: string;
   eyebrow: string;
