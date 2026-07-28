@@ -1,7 +1,7 @@
 /*
  * ============================================================================
  *  assessment.data.js — SINGLE SOURCE OF TRUTH for the contract vote guide.
- *  Produced by the contract-vote-analyzer skill. window.ASSESSMENT below.
+ *  Produced by the ta-analyzer skill. window.ASSESSMENT below.
  *
  *  CLAUDE DESIGN: YOU ARE THE DISPLAY LAYER ONLY.
  *  Read window.ASSESSMENT.renderContract FIRST. Render this file top to bottom
@@ -18,7 +18,7 @@
  */
 window.ASSESSMENT = {
   "renderContract": {
-    "READ_THIS_FIRST": "This file is the Single Source of Truth, produced by the contract-vote-analyzer skill. Claude Design is the DISPLAY LAYER ONLY. Render what is here; do not think for it.",
+    "READ_THIS_FIRST": "This file is the Single Source of Truth, produced by the ta-analyzer skill. Claude Design is the DISPLAY LAYER ONLY. Render what is here; do not think for it.",
     "you_must": [
       "Render the charts by loading the renderer that ships beside this file, assessment-charts.js, and calling window.AssessmentChart(chartSpec, opts) for each entry in charts[]. Load it VERBATIM - do not rewrite, reimplement, or 'improve' the chart code. It already honors every field below (showAllTicks, render.numberFormat, kind, emphasis, seriesOrder, highlightRange, annotations); hand-building charts is what reintroduces the tick/format/bar-vs-line bugs. You own the frame around each chart (card, caption, spacing), not the chart's own drawing.",
       "Render every section in the EXACT order given by howToRead.page_order — top to bottom, none skipped, none reordered.",
@@ -67,7 +67,7 @@ window.ASSESSMENT = {
     "register": "Website/short lens renders `plain`/`plainCaption`; PDF/full lens renders `meaning`/`realterms`/`headline`. Same order, same legend, same lead-ins — only the prose depth differs (see designBrief).",
     "if_something_is_missing_or_unclear": "Leave it out and surface it as a gap for the skill to fix. Never fill a gap with generated content — invented data in a voting guide is the one unacceptable failure.",
     "renderContractChangelog": {
-      "version": "2.1.0",
+      "version": "2.1.1",
       "note": "Per-version list of shapes with a visual consequence. If a line here has no matching you_must instruction, that is a skill bug.",
       "renderable_placements": [
         "anchors",
@@ -154,8 +154,8 @@ window.ASSESSMENT = {
   },
   "meta": {
     "contract": "PSA AFA 2026 Tentative Agreement",
-    "version": "2.1.0",
-    "generator": "contract-vote-analyzer v2.1.0",
+    "version": "2.1.1",
+    "generator": "ta-analyzer v2.1.1",
     "baseline": "Your real current contract = 2019 CBA + in-force side letters",
     "standpoint": "Every rating looks FORWARD from ratification day, across the contract's term plus the likely negotiation lag after it. Catching up on the past counts as your starting position, not a forward gain. Fixed-dollar benefits lose real value each year; percentage-based pay tracks the wage path; work RULES hold full value for the contract's whole life.",
     "mode": "pending_TA",
@@ -242,7 +242,7 @@ window.ASSESSMENT = {
     }
   ],
   "preface": {
-    "cycle": "Before any number, understand the cycle every airline contract runs on. When a contract becomes 'amendable' (its renewal date), your pay doesn't rise — it FREEZES at the old rate until a brand-new deal is signed. Negotiations take years (the last one ran 2.6 years past due). So prices keep climbing while your pay sits still, and by the time a raise lands, it's mostly just catching you back up to the hole the freeze dug. Then the next contract becomes amendable, and it starts again. Freeze, catch up, freeze. This is why getting a good deal done quickly matters: a short contract gets you back to the table sooner — but only helps if the deal is actually good, because you live with it through the next freeze too. That is the whole reason to read this before you vote.",
+    "cycle": "Before any number, understand the cycle every airline contract runs on. When a contract becomes 'amendable' (its renewal date), your pay doesn't rise — it FREEZES at the old rate until a brand-new deal is signed. Negotiations take years (this last round ran 2.6 years past due; the contract before 2019 took about 3 years to ratify). So prices keep climbing while your pay sits still, and by the time a raise lands, it's mostly just catching you back up to the hole the freeze dug. Then the next contract becomes amendable, and it starts again. Freeze, catch up, freeze. This is why getting a good deal done quickly matters: a short contract gets you back to the table sooner — but only helps if the deal is actually good, because you live with it through the next freeze too. That is the whole reason to read this before you vote.",
     "forward_protection": "This is why one idea matters more than the headline raise: FORWARD PROTECTION. A contract protects you against the cycle if it has either (a) guaranteed back-pay to the amendable date — so the frozen years get paid, which also removes the company's reason to drag out talks — or (b) raises that beat inflation, so a catch-up actually gets ahead instead of just breaking even. Without forward protection, workers lose ground every cycle, and it compounds over a career. As you read, ask of every pay change: does this protect the gap, or not?",
     "incentives": "One honest thing about how to read any contract summary — including this one. Everyone at the table is arguing their own interest, and that's not a scandal, it's just how it works:\n• The COMPANY wants to keep costs down, so it highlights the big headline number and the shiny new items.\n• The UNION — which is your own coworkers doing hard work against a tough company — wants the deal to pass and gets credit for a 'good contract,' so it naturally frames things in the best light.\n• YOU just want to know, honestly, what it means for your paycheck and your life.\nNone of that implies bad faith — it's why this guide exists: to weigh each change on its own, from your side of the table, so you can decide for yourself. That's also why we WEIGH changes instead of counting them — a long list of small wins is the easiest way to make any deal look better than it is.",
     "fair_both_ways": "This stage cuts both ways. Once you see the cycle, some changes look better, not worse — boarding pay, for instance, is real new money that helps offset the erosion. The point isn't to make the deal look bad; it's to make every piece legible, good and bad, judged against how pay actually works over time."
@@ -450,7 +450,6 @@ window.ASSESSMENT = {
       "PBS (Preferential Bidding System — software that builds your monthly schedule from ranked preferences instead of picking whole lines.)",
       "HRV (Ready Reserve — a reserve day spent at or near the airport, ready to fly on very short notice.)",
       "RAP (Reserve Availability Period — the daily window a reserve must be reachable and ready to fly.)",
-      "FOLO (First Out / Last Out — the order in which reserves are called for trips.)",
       "CBA (Collective Bargaining Agreement — your union contract.)",
       "AFA (Association of Flight Attendants — your union.)",
       "NMB (National Mediation Board — the federal agency that oversees airline labor relations.)",
@@ -477,7 +476,7 @@ window.ASSESSMENT = {
       "changes": [
         {
           "id": "pay-levelset",
-          "title": "Day-one pay level (the +10% and retro)",
+          "title": "Day-one pay level (the +10%)",
           "type": "NEW",
           "starts": "2026",
           "delivery": "automatic",
@@ -487,16 +486,46 @@ window.ASSESSMENT = {
             "note": "Restores rates that narrowly lead the current regional table - but PSA settled first (peers negotiate next off this floor) and remains ~20% under mainline entry."
           },
           "today": "Rates frozen since 2023 while prices rose ~8-9% - your paycheck buys noticeably less than it did.",
-          "proposed": "+10% at ratification plus retro pay - restoring your rate to roughly its 2023 purchasing power.",
-          "plain": "You get a 10% raise the day this signs, plus back-pay for what you're owed. Here's the catch: your pay's been frozen since 2023 while everything got more expensive, so this mostly just gets you back to even - not ahead.",
+          "proposed": "+10% at ratification - restoring your rate to roughly its 2023 purchasing power.",
+          "plain": "You get a 10% raise the day this signs. Here's the catch: your pay's been frozen since 2023 while everything got more expensive, so this mostly just gets you back to even - not ahead.",
           "meaning": "This sets your STARTING position for the contract - it repairs the freeze years. Under this guide's standpoint (the life of the contract, looking forward), catch-up on the past counts as where you begin, not as a forward gain.",
-          "realterms": "In real terms (market): Restores rates that narrowly lead the current regional table - but PSA settled first (peers negotiate next off this floor) and remains ~20% under mainline entry. On retro pay, PSA lags the majors badly. United's retro runs about 4% a year from 2021 through 2024, then jumps to 22% in 2025 and 25% in early 2026; American mainline runs 3-4% through 2022, 10.8% in 2023, and about 20% into 2024. PSA's retro starts at just 1.5% a month in July 2023 and only ramps to 5-6% a month by late 2025 - and it is thinnest for the newest hires (1-3 years), who have the least service for it to apply to.",
+          "realterms": "In real terms (market): Restores rates that narrowly lead the current regional table - but PSA settled first (peers negotiate next off this floor) and remains ~20% under mainline entry.",
           "rating": {
             "nh": "sg",
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §3.B rate scale: every rung rises 10% effective March 6, 2026 (0-6 months $27.06 to $29.77; 18 Year $43.51 to $47.86). Full scale in this card's pay table."
+            }
+          ]
+        },
+        {
+          "id": "pay-retro",
+          "title": "Back-pay for the freeze years (retro pay)",
+          "type": "NEW",
+          "starts": "At ratification",
+          "delivery": "automatic",
+          "cond": null,
+          "market": null,
+          "today": "No back-pay - the raises you missed while pay sat frozen since 2023 are simply gone.",
+          "proposed": "Back-pay for the freeze years, ramping from ~1.5%/month in July 2023 to ~5-6%/month by late 2025.",
+          "plain": "You get some back-pay for the years your raise was frozen - but it starts small (1.5% a month back in 2023) and only builds up late, so it's thin, and thinnest of all if you're newer.",
+          "meaning": "Back-pay repairs part of the freeze, but under this guide's standpoint it counts as catch-up on the past - where you begin, not a forward gain. It is also weak next to the majors and thinnest for the newest FAs (1-3 years), who have the least service for it to apply to.",
+          "realterms": "PSA lags the majors badly on back-pay. United's runs about 4% a year from 2021 through 2024, then jumps to 22% in 2025 and 25% in early 2026; American mainline runs 3-4% through 2022, 10.8% in 2023, and about 20% into 2024. PSA's starts at just 1.5% a month in July 2023 and only ramps to 5-6% a month by late 2025 - and it is thinnest for the newest hires (1-3 years), who have the least service for it to apply to.",
+          "rating": {
+            "nh": "tk",
+            "mc": "tk",
+            "sr": "tk"
+          },
+          "chart": null,
+          "reference": [
+            {
+              "basis": "Retroactive pay ramp (about 1.5%/month from July 2023 to 5-6%/month by late 2025) is the union's retro summary; the governing retro LOA/section is pending Cole's confirmation."
+            }
+          ]
         },
         {
           "id": "pay-wagepath",
@@ -516,7 +545,12 @@ window.ASSESSMENT = {
             "mc": "RC",
             "sr": "RC"
           },
-          "chart": "pay_vs_prices"
+          "chart": "pay_vs_prices",
+          "reference": [
+            {
+              "basis": "TA §3.B rate scale: after the day-one 10%, rates rise +1.5% on March 6, 2027 and +1.5% on March 6, 2028, then hold flat until the next contract."
+            }
+          ]
         },
         {
           "id": "pay-floor",
@@ -532,14 +566,19 @@ window.ASSESSMENT = {
           "today": "Junior floor sits at $27.06 - but only because a 2022 side letter hauled it up from the real 2019 rate of ~$20 to stay able to hire; the company can still lower it.",
           "proposed": "Bottom rungs repriced to $29.77 and locked permanently into the contract scale.",
           "plain": "New-hire starting pay gets locked in higher and they can't drop it anymore. Real win if you're junior. Just know why it happened: they couldn't hire anyone at the old rate, so their hand was forced.",
-          "meaning": "The genuine win for new hires: you start ~$10/hr above the old scale and the company can no longer cut junior rates. It was also market-forced: a regional cannot hire at $20 when mainline starts at $36.",
+          "meaning": "A real protection for new hires - the floor is locked in and can no longer be cut - but barely a raise in market terms: Envoy ($29.73) and Piedmont ($28.08) already start at or above this, so PSA is matching peers, not leading them. The 2022 LOA's own text admits the old rates were 'not sufficiently competitive' to hire; this repricing was market-forced to stay staffed, not a gift - a regional cannot hire at $20 when mainline starts at $36.",
           "realterms": "In real terms (market): The 2022 LOA's own text says rates were 'not sufficiently competitive' to hire; mainline entry is $35-37. Forced repricing to stay staffed.",
           "rating": {
-            "nh": "sg",
+            "nh": "nc",
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §3.B rate scale: the 0-6 month floor is set at $29.77 and locked permanently into the scale, up from today's $27.06."
+            }
+          ]
         },
         {
           "id": "pay-progression",
@@ -562,6 +601,11 @@ window.ASSESSMENT = {
           "chart": [
             "pay_progression_relative",
             "pay_raise_by_step"
+          ],
+          "reference": [
+            {
+              "basis": "Derived from the TA §3.B rate scale: every rung is the current rate x1.10, so the flattened 2022 shape is preserved rather than restored. Old-vs-new detail is this card's pay table and the concession chart."
+            }
           ]
         },
         {
@@ -575,7 +619,7 @@ window.ASSESSMENT = {
             "position": "catch_up",
             "note": "Catch-up, not a win: Delta set the 50% standard in 2022, so PSA's 50% in 2027 matches a five-year-old benchmark."
           },
-          "today": "You are not paid for boarding time — only from all doors closed and parking brake released.",
+          "today": "Today you get nothing for boarding time - your pay clock doesn't start until all doors are closed and the parking brake is released.",
           "proposed": "50% of your hourly rate for all boarding time (including reboards), paid on top of your guarantee, for lineholders and reserves alike.",
           "plain": "Finally getting paid for boarding - 50% of your rate. Real money. But almost every airline already pays it, so this is PSA catching up, not doing us a favor - and it doesn't start for a year.",
           "meaning": "Real new money for time you already work: 50% of your hourly rate for all boarding time, above guarantee, reserves and lineholders alike. A solid gain versus today's contract - permanent, percentage-based money that rides every future raise - but a catch-up versus the market. Starts 2027.",
@@ -585,7 +629,17 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.Q",
+              "title": "Boarding Pay",
+              "quote": "1. Effective March 6, 2027, Flight Attendants will be paid boarding pay for all minutes of the established boarding time for each boarding for each flight segment actually boarded. Flight Attendants shall also receive boarding pay in the event that a flight boards and then cancels. 2. Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate (as specified in Section 3.B., above). 3. Boarding pay will be paid above guarantee for both Reserves and Lineholders.",
+              "bold": "Boarding pay will be paid at 50% of the Flight Attendant's hourly pay rate",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "pay-minday",
@@ -598,14 +652,32 @@ window.ASSESSMENT = {
           "today": "3.5 hours per calendar day, and certain 'carve-outs' reduce it in some situations.",
           "proposed": "Carve-outs removed at ratification; the 3.5-hour minimum rises to 3.75 hours on 2028.",
           "plain": "A little more pay on short days, and the carve-outs that used to chip away at your minimum paid hours on a short day are gone right away.",
-          "meaning": "You're guaranteed a bit more pay on short days, and the deductions that chipped away at it are gone right away. One catch, and it is worse than the pilots' contract: under new TA section F.4 the minimum-day guarantee does not cover the unflown portion of a trip you miss through an absence or a partial trade - and a cancellation or reassignment the company causes does NOT count as one of those exceptions, so you can still lose the guarantee on time you never chose to give up.",
-          "realterms": "The minimum-day floor rises, but TA section F.4 carves out the unflown part of a missed trip (absence or partial trade), and company-caused cancellations and reassignments are not treated as exceptions - a narrower guarantee than PSA pilots hold.",
+          "meaning": "You're guaranteed a bit more pay on short days, and the deductions that chipped away at it are gone right away. One catch, and it is worse than the pilots' contract: under new TA section 3.F.4 the minimum-day guarantee does not cover the unflown portion of a trip you miss through an absence or a partial trade - and a cancellation or reassignment the company causes does NOT count as one of those exceptions, so you can still lose the guarantee on time you never chose to give up.",
+          "realterms": "The minimum-day floor rises, but TA section 3.F.4 carves out the unflown part of a missed trip (absence or partial trade), and company-caused cancellations and reassignments are not treated as exceptions - a narrower guarantee than PSA pilots hold.",
           "rating": {
             "nh": "SG",
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.F",
+              "title": "Minimum Day Pay",
+              "quote": "F. Minimum Day Pay. Each calendar day of a trip will be credited with the greater of actual flight time flown, scheduled flight time or three and one-half (3.5) hours (increasing to 3.75 hours effective March 6, 2028), with carve-outs as follows.",
+              "bold": "increasing to 3.75 hours effective March 6, 2028",
+              "status": "draft"
+            },
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.F.4",
+              "title": "Minimum Day Pay - carve-outs",
+              "quote": "If a Flight Attendant does not fly a portion of his/her trip due to absence or a partial trade, minimum daily guarantee will not apply to the days of that trip that the Flight Attendant does not fly due to absence or the partial trade. Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
+              "bold": "Flight cancellation or reassignment to a different schedule by the company will not trigger this exception.",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "pay-deadhead",
@@ -625,7 +697,17 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.M",
+              "title": "Deadhead Pay",
+              "quote": "When a Flight Attendant deadheads, s/he will be paid 50% (75% pay and credit effective March 6, 2028) of the deadhead time based on the greater of scheduled or actual time of the deadhead.",
+              "status": "draft",
+              "bold": "75% pay and credit effective March 6, 2028"
+            }
+          ]
         },
         {
           "id": "pay-perdiem",
@@ -639,13 +721,35 @@ window.ASSESSMENT = {
           "proposed": "$2.05 (2026), $2.10 (2027), $2.15 (2028).",
           "plain": "Meal money goes up a nickel a year. It's something, but it doesn't keep up with what food actually costs now.",
           "meaning": "Nominal bumps of ~2.4%/yr against ~3-4% inflation: the real value of your meal money declines slightly over the contract's life. A token.",
-          "realterms": "~2.5% on ~$2.00/hr, below inflation - a token bump in real terms.",
+          "realterms": "~2.5% on ~$2.00/hr, below inflation - and far below mainline: PSA's ~$2.05-2.15 domestic runs about 30% under American ($2.85 in 2024, rising to $3.05 by 2028) and United ($2.97) - even though a regional FA's meals cost the same. A token bump that also leaves a wide gap to the majors.",
           "rating": {
             "nh": "tk",
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "6.A.1",
+              "title": "Per Diem Allowance",
+              "quote": "A Flight Attendant will receive a per diem allowance of $2.05 on March 6, 2026, which shall increase to $2.10 on March 6, 2027, and to $2.15 on March 6, 2028.",
+              "bold": "$2.05 on March 6, 2026, which shall increase to $2.10 on March 6, 2027, and to $2.15 on March 6, 2028",
+              "status": "draft"
+            },
+            {
+              "doc": "Current CBA",
+              "section": "6.A",
+              "title": "Per Diem Allowance (today)",
+              "quote": "A Flight Attendant will receive a per diem allowance of $1.85 at DOR, $1.90, $1.95, and $2.00 by DOR+3.",
+              "bold": "$2.00 by DOR+3",
+              "status": "draft"
+            },
+            {
+              "source": "AA (APFA 2024 CBA) and United (AFA 2026) per-diem schedules",
+              "detail": "American mainline: $2.85 domestic / $3.40 international (Oct 2024), rising to $3.05 / $3.60 by 2028. United: $2.97 domestic / $3.54 international (2026). PSA's proposed $2.05-2.15 sits about 30% below mainline."
+            }
+          ]
         },
         {
           "id": "pay-nyd",
@@ -665,7 +769,17 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.O",
+              "title": "Holidays",
+              "quote": "Thanksgiving Day, Christmas Day, New Years Day, Memorial Day and July 4th and any Critical Coverage day designated by the Company.",
+              "status": "draft",
+              "bold": "New Years Day"
+            }
+          ]
         },
         {
           "id": "pay-payroll",
@@ -685,7 +799,17 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.S.4",
+              "title": "Payroll resolution",
+              "quote": "When an error results in a loss of credited time or money to a flight attendant of $50 or more, the Flight Attendant will be paid and credited for the time lost.",
+              "status": "draft",
+              "bold": "$50 or more"
+            }
+          ]
         },
         {
           "id": "pay-drugtest",
@@ -705,7 +829,17 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "3.R",
+              "title": "Pay for Drug/Alcohol Tests",
+              "quote": "A Flight Attendant notified of a random drug or alcohol test scheduled at any point during a trip will be paid an additional $10.00 for such test.",
+              "status": "draft",
+              "bold": "$10.00 for such test"
+            }
+          ]
         },
         {
           "id": "pay-cdo-min",
@@ -725,34 +859,39 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "CDO (standup) minimum pay - governing TA section pending Cole's confirmation."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
         "nh": {
           "verdict": "Net positive",
           "polarity": "pos",
-          "score": 4.75,
+          "score": 4.0,
           "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": []
+          "addonNotes": [],
+          "bandEdgeNote": "This lands just over the line between two verdicts (score 4, boundary 4) - a small change in one item could tip it either way."
         },
         "mc": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.75,
-          "tally": "9 gains, 2 costs",
+          "score": 3.0,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
           "addonNotes": []
         },
         "sr": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.0,
-          "tally": "9 gains, 2 costs",
+          "score": 2.25,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": [],
-          "bandEdgeNote": "This lands just over the line between two verdicts (score 2, boundary 1.5) - a small change in one item could tip it either way."
+          "addonNotes": []
         }
       }
     },
@@ -761,7 +900,7 @@ window.ASSESSMENT = {
       "anchor": "cat-reserve",
       "topicNote": "This is where the contract does the most for junior FAs - and note a forward-looking bonus: these are RULES, not dollars. A cap of 10 or a 13-hour RAP holds full value every year of the contract; it can't be eroded by inflation the way un-indexed money can.",
       "webTakeaway": "Bottom line: if you sit reserve, this is the best part of the deal for you. Hard caps on Ready Reserve, an hour less on your availability window, six permanent Golden Days, and a fairer way to spread the pain - these are real rules, not promises. A couple of the best ones (auto check-in, fair assignment) only pay off if the company builds the systems right, but the core wins are locked in.",
-      "netNote": "Still the strongest part of the deal for junior FAs, but split it honestly: the BANKABLE wins are the hard rules - the HRV cap of 10, the 13-hour RAP, 6 Golden Days, trip pickups (+6 for a new hire). The rest (auto check-in, FOLO, the bucket system, worth ~+4 more) are PROMISES: new systems the Company must build and build well. The Implementation LOA's expedited arbitration protects against non-delivery, but a clunky system still 'complies.' The +6 is bankable under the contract; the +4 depends on systems the Company has yet to build.",
+      "netNote": "Still the strongest part of the deal for junior FAs, but split it honestly: the BANKABLE wins are the hard rules - the HRV cap of 10, the 13-hour RAP, 6 Golden Days, trip pickups (+6 for a new hire). The rest (auto check-in, the bucket system, worth ~+3 more) are PROMISES: new systems the Company must build and build well. The Implementation LOA's expedited arbitration protects against non-delivery, but a clunky system still 'complies.' The +6 is bankable under the contract; the +3 depends on systems the Company has yet to build.",
       "changes": [
         {
           "id": "res-hrv",
@@ -781,7 +920,12 @@ window.ASSESSMENT = {
             "mc": "MG",
             "sr": "MG"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §9.E.1.a: Ready Reserve (HRV) assignments limited to no more than 10 per month (no cap today). Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "res-rap",
@@ -801,7 +945,17 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "9.D.1",
+              "title": "Reserve Availability Period",
+              "quote": "The Reserve Availability Period (RAP) will be thirteen (13) hours.",
+              "bold": "thirteen (13)",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "res-golden",
@@ -821,7 +975,17 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.I.2",
+              "title": "Golden Days",
+              "quote": "A Golden Day is an immovable day off during which a Flight Attendant cannot be junior assigned. A Reserve Flight Attendant may request up to six (6) Golden Days per bid period. All other days off will be considered movable by the Company provided that a moved day off is only done when operationally necessary and is replaced by an off day within the current bid month. The Golden Days will be awarded by the 22nd of the month prior at 1700.",
+              "bold": "A Reserve Flight Attendant may request up to six (6) Golden Days per bid period.",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "res-autocheck",
@@ -841,27 +1005,17 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
-        },
-        {
-          "id": "res-folo",
-          "title": "Order you get called (FOLO)",
-          "type": "NEW",
-          "starts": "Within 6 months of DOR",
-          "delivery": "promise",
-          "cond": "reserve",
-          "market": null,
-          "today": "No visibility into whether you're first-out or last-out for trips.",
-          "proposed": "You can set a first-out / last-out preference and see where you are on the list.",
-          "plain": "You'll finally see whether you're first-out or last-out and set a preference, so you can actually plan your day. (Depends on them building the system.)",
-          "meaning": "Predictability - you can plan your day around where you sit on the list. Depends on the Company delivering working software (due within 6 months of ratification).",
-          "realterms": null,
-          "rating": {
-            "nh": "sg",
-            "mc": "sg",
-            "sr": "sg"
-          },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "9.H",
+              "title": "Automatic release",
+              "quote": "Flight Attendants with no further required activity are considered automatically released.",
+              "bold": "automatically released",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "res-bucket",
@@ -881,7 +1035,12 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §9.E.2: HRV assignments handed out through a bucket system that spreads them by availability. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "res-pickup",
@@ -901,7 +1060,17 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "9.R",
+              "title": "Reserve trip pickup",
+              "quote": "A Reserve Flight Attendant may pick up open time and trip trade in accordance with paragraph I.5.",
+              "bold": "pick up open time",
+              "status": "draft"
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -912,7 +1081,7 @@ window.ASSESSMENT = {
           "tally": "4 gains, 0 costs",
           "depCount": 0,
           "addonNotes": [
-            "+4 more if the new systems are built well"
+            "+3 more if the new systems are built well"
           ]
         },
         "mc": {
@@ -923,7 +1092,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         },
         "sr": {
@@ -934,7 +1103,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         }
       }
@@ -964,7 +1133,12 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §8.A.3: caps on maximum sections and landings per trip. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "sch-tripdrop",
@@ -974,17 +1148,27 @@ window.ASSESSMENT = {
           "delivery": "promise",
           "cond": null,
           "market": null,
-          "today": "You cannot drop a trip.",
+          "today": "You cannot drop a trip - the 'straight trip drop' button doesn't exist yet.",
           "proposed": "'Straight trip drop' - you can drop a trip into open time once the new PBS system is live, on the same footing as a trade: seniority bidding first, then first-come-first-served.",
           "plain": "You'd finally be able to drop a trip you can't fly - but only once the new bidding system (PBS) is up and running.",
-          "meaning": "Real schedule flexibility you've never had - but it's a PROMISE, not a rule: it only exists once PBS is built and live (possibly year 2 of this 3-year contract), and its usefulness depends on how well PBS is implemented. The written rule (TA 8.5.e): a drop goes into open time first-come-first-served only if it is completed more than 48 hours before the trip departs, minimum reserves are still covered for every affected day, you do not fall below 40 hours of credit, and all other contract limits are met; inside 48 hours it is company discretion; and dropping a trip lowers your monthly guarantee accordingly. Read that language skeptically: pilots working comparable rules have found trip drops close to unusable in practice - thin staffing leaves little open time to drop into, and the wide company discretion lets the system be built to the company's advantage. Value it as a promise, not a rule you can count on.",
+          "meaning": "Real schedule flexibility you've never had - but it's a PROMISE, not a rule: it only exists once PBS is built and live (possibly year 2 of this 3-year contract), and its usefulness depends on how well PBS is implemented. The written rule (TA 8.I.5.e): a drop goes into open time first-come-first-served only if it is completed more than 48 hours before the trip departs, minimum reserves are still covered for every affected day, you do not fall below 40 hours of credit, and all other contract limits are met; inside 48 hours it is company discretion; and dropping a trip lowers your monthly guarantee accordingly. Read that language skeptically: pilots working comparable rules have found the trip-drop button close to unusable in practice - thin staffing leaves little open time to drop into, and the wide company discretion lets the system be built to the company's advantage. Value it as a promise, not a rule you can count on.",
           "realterms": null,
           "rating": {
             "nh": "SG",
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.I.5.e",
+              "title": "Trip Drops",
+              "quote": "e. Trip Drops (effective upon implementation of PBS): i. Trips may be dropped into open time on a first-come, first-served basis subject to the following conditions: a. The drop is completed prior to forty-eight (48) hours from the scheduled departure of the trip; b. The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed; c. The drop does not cause the Flight Attendant to fall below forty (40) hours of credit; and d. The drop complies with all contractual restrictions. ii. Requests inside forty-eight (48) hours may be approved at Company discretion. iii. Dropping a trip adjusts the Flight Attendant's minimum monthly guarantee accordingly.",
+              "bold": "The minimum number of required reserves for each day affected by the drop is maintained after the drop is completed",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "sch-tradefloor",
@@ -997,14 +1181,19 @@ window.ASSESSMENT = {
           "today": "You must keep at least 60 hours to trade trips.",
           "proposed": "Lowered to 40 hours (once PBS is live).",
           "plain": "Easier to trade trips: you'd only need to keep 40 hours instead of 60. Again, waits on PBS going live.",
-          "meaning": "Easier to trade away trips and reshape your month - but like trip drop, it waits on PBS being built, and inherits PBS's delivery risk.",
+          "meaning": "Easier to trade away trips and reshape your month - but like trip drop, it waits on PBS being built, and inherits PBS's delivery risk. And the paper number oversells the real flexibility: to straight-drop, the grid has to be green on every day of the trip, and who can actually reach it is seniority-split - above-average odds for seniors, below-average for mid-career, and effectively none for juniors, because senior trading and PBS-driven reserve consolidation eat up the open time.",
           "realterms": null,
           "rating": {
             "nh": "sg",
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §8.I.5.c / 8.I.5.d.v: trade floor lowered to 40 hours (from 60), effective on final PBS implementation. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "sch-golden-timing",
@@ -1024,7 +1213,17 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.I.2.c",
+              "title": "Golden Days award date",
+              "quote": "The Golden Days will be awarded by the 22nd of the month prior at 1700.",
+              "bold": "22nd",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "sch-mix",
@@ -1044,7 +1243,17 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "8.A.4",
+              "title": "Mix of trip lengths",
+              "quote": "Schedules will contain regular lines of time comprised of trips of similar length to the extent possible, except CDOs.",
+              "bold": "trips of similar length",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "sch-pbs",
@@ -1064,7 +1273,17 @@ window.ASSESSMENT = {
             "mc": "dep",
             "sr": "dep"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "PBS LOA",
+              "title": "Preferential Bidding System",
+              "quote": "The parties agree to implement a Preferential Bidding System (PBS) using IBS PBS Software.",
+              "bold": "Preferential Bidding System",
+              "status": "draft"
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1127,7 +1346,12 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §10.D.2: seniority continues to accrue while on Workers' Compensation leave. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "leave-fatigue",
@@ -1147,7 +1371,12 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §23.L.1: fatigue-call procedures. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "leave-return",
@@ -1167,7 +1396,12 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §10.J.2: return-from-leave process (DOR + 2 months). Full clause pending Cole's verify."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1222,7 +1456,12 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §11.B: new hires pay for the initial uniform complement via payroll deduction. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-allowance",
@@ -1242,7 +1481,12 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §11.E: annual uniform allowance, with the balance visible on the website. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-shoes",
@@ -1262,7 +1506,17 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "11.L",
+              "title": "Shoes and accessories",
+              "quote": "A Flight Attendant may purchase shoes, pantyhose, tights, and socks from a vendor of her/his choice with approval from the Director of Inflight.",
+              "bold": "vendor of her/his choice",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "uni-stolen",
@@ -1282,7 +1536,12 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §11.F: replacement for stolen uniforms. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-balance",
@@ -1302,7 +1561,12 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §11.E: uniform-allowance balance visible on the website. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "uni-maternity",
@@ -1322,7 +1586,17 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "11.O",
+              "title": "Maternity Uniforms",
+              "quote": "The Company shall keep and maintain a clean and adequate supply of maternity uniforms.",
+              "bold": "maternity uniforms",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "uni-alter",
@@ -1342,7 +1616,17 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "11.M",
+              "title": "Alterations",
+              "quote": "The Company will reimburse necessary alterations to uniform items the Flight Attendant purchases following the initial complement, to the extent of sufficient credit in the uniform replacement allowance bank.",
+              "bold": "necessary alterations",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "exp-parking",
@@ -1362,7 +1646,12 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §24.J: commuter parking benefit (DOR + 2 months). Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "exp-transit",
@@ -1382,7 +1671,12 @@ window.ASSESSMENT = {
             "mc": "sg",
             "sr": "sg"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA commuter public-transit benefit - governing section pending Cole's confirmation."
+            }
+          ]
         },
         {
           "id": "exp-hotel",
@@ -1402,7 +1696,12 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §6.B.4-6.B.5: training hotel for commuters. Full clause pending Cole's verify."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1464,7 +1763,12 @@ window.ASSESSMENT = {
             "mc": "dep",
             "sr": "dep"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §16: notice before an investigatory meeting shortened (7 to 5 days). Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "job-board",
@@ -1484,7 +1788,12 @@ window.ASSESSMENT = {
             "mc": "SG",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §17: System Board (dispute panel) process changes. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "job-life",
@@ -1504,7 +1813,17 @@ window.ASSESSMENT = {
             "mc": "tk",
             "sr": "tk"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "25.A",
+              "title": "Life Insurance",
+              "quote": "The Company will provide at no cost to the Flight Attendant life insurance coverage in an amount equal to 1.5 times the Flight Attendant's annual salary.",
+              "bold": "1.5 times the Flight Attendant's annual salary",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "job-health",
@@ -1524,7 +1843,12 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA health-insurance cost share - governing section pending Cole's confirmation."
+            }
+          ]
         },
         {
           "id": "job-401k",
@@ -1544,7 +1868,12 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "SG"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §27.B: increase to the 401(k) company match. Full clause pending Cole's verify."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1600,7 +1929,17 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "doc": "Tentative Agreement",
+              "section": "14.G",
+              "title": "Flight Pay Loss",
+              "quote": "The Company will absorb flight pay loss for Flight Attendants who hold local union positions when required by the Company to attend meetings.",
+              "bold": "absorb flight pay loss",
+              "status": "draft"
+            }
+          ]
         },
         {
           "id": "union-pac",
@@ -1620,7 +1959,12 @@ window.ASSESSMENT = {
             "mc": "nc",
             "sr": "nc"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA §15.G: FlightPAC payroll deduction. Full clause pending Cole's verify."
+            }
+          ]
         },
         {
           "id": "dur-term",
@@ -1640,7 +1984,12 @@ window.ASSESSMENT = {
             "mc": "dep",
             "sr": "dep"
           },
-          "chart": null
+          "chart": null,
+          "reference": [
+            {
+              "basis": "TA term: the CBA runs March 6, 2026 through March 6, 2029 - a 3-year contract (Implementation Timeline LOA preamble)."
+            }
+          ]
         }
       ],
       "verdictByGroup": {
@@ -1681,27 +2030,27 @@ window.ASSESSMENT = {
         "nh": {
           "verdict": "Net positive",
           "polarity": "pos",
-          "score": 4.75,
+          "score": 4.0,
           "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": []
+          "addonNotes": [],
+          "bandEdgeNote": "This lands just over the line between two verdicts (score 4, boundary 4) - a small change in one item could tip it either way."
         },
         "mc": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.75,
-          "tally": "9 gains, 2 costs",
+          "score": 3.0,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
           "addonNotes": []
         },
         "sr": {
           "verdict": "Modest positive",
           "polarity": "pos",
-          "score": 2.0,
-          "tally": "9 gains, 2 costs",
+          "score": 2.25,
+          "tally": "10 gains, 2 costs",
           "depCount": 0,
-          "addonNotes": [],
-          "bandEdgeNote": "This lands just over the line between two verdicts (score 2, boundary 1.5) - a small change in one item could tip it either way."
+          "addonNotes": []
         }
       },
       {
@@ -1714,7 +2063,7 @@ window.ASSESSMENT = {
           "tally": "4 gains, 0 costs",
           "depCount": 0,
           "addonNotes": [
-            "+4 more if the new systems are built well"
+            "+3 more if the new systems are built well"
           ]
         },
         "mc": {
@@ -1725,7 +2074,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         },
         "sr": {
@@ -1736,7 +2085,7 @@ window.ASSESSMENT = {
           "depCount": 0,
           "addonNotes": [
             "+5.2 more if reserve",
-            "+4 more if reserve & the new systems are built well"
+            "+3 more if reserve & the new systems are built well"
           ]
         }
       },
@@ -2247,12 +2596,17 @@ window.ASSESSMENT = {
           "in effect Apr 2026"
         ],
         [
-          "Envoy, Piedmont (AA siblings)",
-          "$27+ floor",
-          "contracts amendable — bargain next, off PSA"
+          "Envoy (AA sibling)",
+          "$29.73",
+          "current - bargains next"
+        ],
+        [
+          "Piedmont (AA sibling)",
+          "$28.08",
+          "current - bargains next"
         ]
       ],
-      "footnote": "Only carriers with published rates are shown. Envoy and Piedmont (PSA's American-owned siblings) are between contracts at the 2022 $27+ floor and negotiate next — using PSA's number as their starting point, which is why PSA's #1 spot is real today but likely temporary."
+      "footnote": "Envoy already sits at $29.73 - just 4 CENTS under PSA's proposed $29.77 - and Piedmont at $28.08. So PSA's #1 spot is real today but nominal, and likely temporary: these American-owned siblings bargain next, off these numbers."
     }
   ],
   "charts": [
@@ -2262,7 +2616,7 @@ window.ASSESSMENT = {
       "placement": "outlook",
       "scope": "all",
       "verdict": "REAL-TERMS PAY CUT",
-      "headline": "Prices climb every year; your pay freezes, leaps once to catch up, then freezes again - each leap starting from a deeper hole, so the gap compounds over a career (~11% less buying power by the next contract). Because pay stays frozen at the old rate until a new deal is ratified, a longer negotiation costs the Company nothing in wages. The provision that would offset that - guaranteed retro pay back to the amendable date - is not in this deal.",
+      "headline": "Prices climb every year; your pay freezes, leaps once to catch up, then freezes again - each leap starting from a deeper hole, so the gap compounds over a career (~11% less buying power by the next contract). Because pay stays frozen at the old rate until a new deal is ratified, a longer negotiation costs the Company nothing in wages. The provision that would offset that - guaranteed retro pay back to the amendable date - is not in this deal, and it was winnable: it simply removes the Company's reason to stall, since a longer fight already saves them wage money.",
       "plainCaption": "Your pay goes up a little; prices go up more, and the gap is money quietly leaving your pocket - about 11% less buying power by the time the next contract's due. Worse: your pay stays frozen at the old rate until a new deal is signed, so the company actually saves money by dragging out the next round - the gap gives them a reason to stall. There's no guaranteed back-pay here to take that reason away.",
       "polarity": "neg",
       "leadIn": "The cycle above, in your actual numbers. Base pay against the cost of living over the life of the deal (base pay only — boarding pay and your yearly seniority step are judged separately). Watch the gap: that's the ground the freeze takes, and what a raise has to climb back before it's a real gain.",
@@ -2507,7 +2861,7 @@ window.ASSESSMENT = {
       "scope": "all",
       "verdict": "CAREER PAY LADDER ~25% FLATTER, LOCKED IN",
       "headline": "Relative pay growth over a career, each ladder indexed to its own starting rate. The old ladder multiplied your pay to 2.16x your start; the current/new flat-bottom ladder reaches only 1.61x - about 25% flatter. The gap was created by the 2022 hiring side letter (not this TA), but this TA applies a flat +10% on top and makes the flattened shape PERMANENT.",
-      "plainCaption": "This shows how much your pay grows over a whole career, not the dollar amounts. The old ladder more than doubled your starting pay (2.16x). The new one only reaches 1.61x - a flatter climb. You still get raises, but the career grows about a quarter less than it used to. Only people hired into the flat bottom walk this flatter ladder; anyone already past year 3 kept their old early raises.",
+      "plainCaption": "This is your career's pay GROWTH - each ladder measured against its own starting rate, so it shows pure shape, not this year's dollars (your raise and higher floor are real, and judged on their own cards). It's the easiest cost in the deal to miss, because nothing in your check ever goes down. The old ladder more than doubled your pay over a career (2.16x); the new one reaches only 1.61x - about a quarter flatter. Both are true at once: your raises after year 2 don't change, so it feels like nothing happened - yet the distance from starting to senior pay is cut roughly in half. That reaches everyone above the floor, not just new hires; only when you feel it differs. Because every raise is a percentage of this flatter shape, it becomes the starting line every future contract builds on - new and future hires pay the most, their first two years now flat.",
       "polarity": "neg",
       "leadIn": "How much your pay grows across a whole career - old ladder vs the new one.",
       "axes": {
@@ -2830,7 +3184,7 @@ window.ASSESSMENT = {
       "title": "Rules vs. promises",
       "register": "pdf",
       "placement": "anchors",
-      "body": "Not all 'wins' are equally bankable. Pay rates, caps, and notice periods are self-executing: the date arrives, the rule applies, and a violation is an easy grievance. But several quality-of-life items (auto check-in, FOLO, the HRV bucket system, and everything gated on PBS - trip drop, the 40-hour trade floor) are construction projects: their value depends on the Company building them properly. The Implementation LOA provides expedited arbitration (heard in 15 days, decided in 30) against NON-delivery, but a poorly built system still 'complies.' Note the timing squeeze: PBS may not be fully live until year 2 of this 3-year contract, so its dependent benefits could exist for barely a year before everything is renegotiated."
+      "body": "Not all 'wins' are equally bankable. Pay rates, caps, and notice periods are self-executing: the date arrives, the rule applies, and a violation is an easy grievance. But several quality-of-life items (auto check-in, the HRV bucket system, and everything gated on PBS - trip drop, the 40-hour trade floor) are construction projects: their value depends on the Company building them properly. The Implementation LOA provides expedited arbitration (heard in 15 days, decided in 30) against NON-delivery, but a poorly built system still 'complies.' Note the timing squeeze: PBS may not be fully live until year 2 of this 3-year contract, so its dependent benefits could exist for barely a year before everything is renegotiated."
     },
     {
       "id": "precedent",
@@ -3016,10 +3370,6 @@ window.ASSESSMENT = {
     [
       "RAP",
       "Reserve Availability Period — the daily window a reserve must be reachable and ready to fly."
-    ],
-    [
-      "FOLO",
-      "First Out / Last Out — the order in which reserves are called for trips."
     ],
     [
       "CBA",

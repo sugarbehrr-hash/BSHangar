@@ -14,6 +14,7 @@
   <script src="./assessment.data.js"></script>
   <script src="./assessment-charts.js"></script>
   <script src="./card-render.js"></script>
+  <script src="./review.js"></script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <style>
     html { -webkit-print-color-adjust: exact; print-color-adjust: exact; scroll-behavior: smooth; }
@@ -124,7 +125,7 @@
     <h1 style="font-family:var(--font-display); text-transform:uppercase; font-size:52px; line-height:0.94; color:#fff; margin:0 0 16px;">{{ pageTitle }}</h1>
     <p style="font-size:16px; line-height:1.6; color:var(--sky-100); max-width:760px; margin:0 0 10px;">{{ pageSubtitle }}</p>
     <p style="font-size:12.5px; line-height:1.55; color:var(--sky-300); max-width:760px; margin:0 0 20px;">Baseline: {{ baseline }}</p>
-    <a href="./CbaVoteReportV2.dc.html" style="display:inline-flex; align-items:center; gap:8px; width:fit-content; padding:12px 20px; border-radius:999px; background:var(--gold-500); color:var(--navy-900); text-decoration:none; font-family:var(--font-heading); font-weight:800; font-size:13px;"><i class="ph-fill ph-file-pdf"></i> Read the full technical report (PDF)</a>
+    <a href="./report.html" style="display:inline-flex; align-items:center; gap:8px; width:fit-content; padding:12px 20px; border-radius:999px; background:var(--gold-500); color:var(--navy-900); text-decoration:none; font-family:var(--font-heading); font-weight:800; font-size:13px;"><i class="ph-fill ph-file-pdf"></i> Read the full technical report (PDF)</a>
   </div>
 
   <!-- ============ WHAT THIS IS / DEAL IN ONE PARAGRAPH / HOW TO USE ============ -->
@@ -651,72 +652,66 @@ const DLV = {
 };
 const TYPE_CLS = { NEW: "ty-new", CODIFY: "ty-kept", RESTORE: "ty-restored" };
 
-// —— glossary hover/tap tooltips ——
-const GLOSS = (A.glossary || []).map(t => {
-  const isAcro = /^[A-Z]{2,}s?$/.test(t[0]);
-  const esc = t[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return { label: t[0], def: t[1], re: new RegExp("(^|[^\\w])(" + esc + ")(?![\\w])", isAcro ? "g" : "gi") };
-});
-function initGlossary() {
-  if (window.__rv2Glossary) return;
-  window.__rv2Glossary = true;
-  const tip = document.createElement("div");
-  tip.style.cssText = "position:fixed;z-index:9999;max-width:290px;background:var(--navy-900,#0f1e3d);color:#fff;border-radius:10px;padding:10px 13px;font-size:12.5px;line-height:1.5;box-shadow:0 6px 22px rgba(15,30,61,0.35);pointer-events:none;display:none;font-family:var(--font-body,sans-serif);";
-  document.body.appendChild(tip);
-  let last = null, timer = null;
-  function findTerm(x, y) {
-    let range = null;
-    if (document.caretRangeFromPoint) range = document.caretRangeFromPoint(x, y);
-    else if (document.caretPositionFromPoint) {
-      const p = document.caretPositionFromPoint(x, y);
-      if (p) { range = document.createRange(); range.setStart(p.offsetNode, p.offset); }
-    }
-    const node = range && range.startContainer;
-    if (!node || node.nodeType !== 3 || (node.parentElement && node.parentElement.closest("script,style,a,h1,h2"))) return null;
-    const text = node.textContent, off = range.startOffset;
-    for (let i = 0; i < GLOSS.length; i++) {
-      const g = GLOSS[i]; g.re.lastIndex = 0; let m;
-      while ((m = g.re.exec(text))) {
-        const s = m.index + m[1].length, en = s + m[2].length;
-        if (off >= s && off <= en) return g;
-        if (s > off) break;
-      }
-    }
-    return null;
-  }
-  function showTip(hit, x, y) {
-    if (last !== hit) {
-      tip.innerHTML = "";
-      const b = document.createElement("b"); b.textContent = hit.label; b.style.cssText = "display:block;margin-bottom:3px;color:#E8B84B;";
-      tip.appendChild(b); tip.appendChild(document.createTextNode(hit.def));
-      last = hit;
-    }
-    tip.style.display = "block";
-    const w = tip.offsetWidth, h = tip.offsetHeight;
-    let px = x + 14, py = y + 16;
-    if (px + w > window.innerWidth - 10) px = Math.max(10, x - w - 12);
-    if (py + h > window.innerHeight - 10) py = Math.max(10, y - h - 12);
-    tip.style.left = px + "px"; tip.style.top = py + "px";
-  }
-  function hideTip() { tip.style.display = "none"; last = null; }
-  let touching = false;
-  document.addEventListener("touchstart", () => { touching = true; }, { passive: true });
-  document.addEventListener("mousemove", e => {
-    if (touching) { touching = false; return; }
-    if (timer) return;
-    timer = setTimeout(() => { timer = null; }, 60);
-    const hit = findTerm(e.clientX, e.clientY);
-    if (hit) showTip(hit, e.clientX, e.clientY); else hideTip();
+// glossary: subtle click-to-define on a curated set of genuinely confusing terms.
+// Only the FIRST document-wide occurrence of each is linked (dotted underline), so the
+// page never fills with links; the full glossary section remains the complete reference.
+let _glossItems = null;
+function glossItems() {
+  if (_glossItems) return _glossItems;
+  const A2 = window.ASSESSMENT || {};
+  if (!A2.glossary || !A2.glossary.length) return [];
+  const def = {}; A2.glossary.forEach(t => { def[String(t[0]).toLowerCase()] = t[1]; });
+  const CONFUSING = ["PBS", "HRV", "RAP", "DOR", "amendable", "junior-assigned", "carve-out",
+                     "selfing", "Flight Pay Loss", "pay and credit", "Continuous Duty Overnight",
+                     "Implementation LOA", "AD OPT"];
+  _glossItems = CONFUSING.filter(term => def[term.toLowerCase()]).map(term => {
+    const isAcro = term === term.toUpperCase() && /[A-Z]{2,}/.test(term);
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return { term, def: def[term.toLowerCase()], re: new RegExp("(^|[^\\w-])(" + esc + ")(?![\\w-])", isAcro ? "" : "i") };
   });
-  document.addEventListener("touchend", e => {
-    const t = e.changedTouches && e.changedTouches[0];
-    if (!t) return;
-    const el = document.elementFromPoint(t.clientX, t.clientY);
-    if (el && el.closest("button,a,input,label,summary")) { hideTip(); return; }
-    const hit = findTerm(t.clientX, t.clientY);
-    if (hit) showTip(hit, t.clientX, t.clientY); else hideTip();
-  }, { passive: true });
-  document.addEventListener("scroll", hideTip, { passive: true });
+  return _glossItems;
+}
+function ensureGlossCss() {
+  if (document.getElementById("gloss-css")) return;
+  const st = document.createElement("style"); st.id = "gloss-css";
+  st.textContent = ".gloss-link{border-bottom:1px dotted var(--ink-300,#9aa0b0);cursor:help}.gloss-link:hover{border-bottom-color:var(--gold-500,#e8a33d)}";
+  document.head.appendChild(st);
+}
+function linkGlossary() {
+  const items = glossItems();
+  if (!items.length) return;
+  ensureGlossCss();
+  const done = new Set();
+  // if a re-render preserved existing links, don't create a duplicate for the same term
+  document.querySelectorAll(".gloss-link[data-term]").forEach(el => done.add(el.getAttribute("data-term")));
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode(n) {
+      if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      const p = n.parentElement;
+      if (!p || p.closest("script,style,a,button,h1,h2,h3,.gloss-link,.vc-refchip,#vc-refov,[data-sec='glossary']")) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = []; let n; while ((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(node => {
+    for (const it of items) {
+      if (done.has(it.term)) continue;
+      it.re.lastIndex = 0;
+      const m = it.re.exec(node.nodeValue);
+      if (!m) continue;
+      const mid = node.splitText(m.index + m[1].length);
+      mid.splitText(m[2].length);
+      const span = document.createElement("span");
+      span.className = "gloss-link";
+      span.setAttribute("data-term", it.term);
+      span.setAttribute("data-def", it.def);
+      span.setAttribute("onclick", "window.__vcGlossShow(this)");
+      span.textContent = mid.nodeValue;
+      mid.parentNode.replaceChild(span, mid);
+      done.add(it.term);
+      break;
+    }
+  });
 }
 
 // Scoreboard "your group" frame: a single overlay that slides over the active column,
@@ -767,7 +762,6 @@ class Component extends DCLogic {
       };
       setTimeout(poll, 50);
     }
-    initGlossary();
     this._applyPageOrder();
     // clicking anywhere outside an open "Jump to" dropdown closes it (native <details> won't)
     this._closeMenus = (e) => { document.querySelectorAll("details[open]").forEach(d => { if (!d.contains(e.target)) d.open = false; }); };
@@ -776,9 +770,13 @@ class Component extends DCLogic {
     requestAnimationFrame(this._sbReposition);
     setTimeout(this._sbReposition, 300);
     window.addEventListener("resize", this._sbReposition);
+    try { linkGlossary(); } catch (e) {}
+    try { window.__applyReview && window.__applyReview(); } catch (e) {}
   }
   componentDidUpdate() {
     if (this._sbReposition) requestAnimationFrame(this._sbReposition);
+    try { linkGlossary(); } catch (e) {}
+    try { window.__applyReview && window.__applyReview(); } catch (e) {}
   }
   componentWillUnmount() {
     if (this._sbReposition) window.removeEventListener("resize", this._sbReposition);

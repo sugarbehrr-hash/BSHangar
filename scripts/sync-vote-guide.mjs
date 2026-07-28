@@ -48,6 +48,7 @@ const SHARED = [
   'assessment-charts.js',
   'assessment.data.js',
   'styles.css',
+  'review.js',
 ];
 
 const TOKENS = ['colors.css', 'effects.css', 'fonts.css', 'spacing.css', 'typography.css'];
