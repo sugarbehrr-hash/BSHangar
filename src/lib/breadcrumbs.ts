@@ -1,11 +1,14 @@
 import { NAV } from '../data/site';
 
 /* ============================================================
-   Breadcrumb derivation — one trail, two consumers
+   Breadcrumb derivation — for structured data only
    ------------------------------------------------------------
-   The visible Breadcrumbs component and the BreadcrumbList
-   JSON-LD in StructuredData both render exactly this, so what
-   Google shows and what a person sees can never disagree.
+   The visible trail was removed in the hub redesign: the site is
+   flat enough that the header nav's aria-current already answers
+   "where am I", and on Discounts the trail sat between the base
+   tabs and the filter pills, splitting two controls that belong
+   together. StructuredData still emits BreadcrumbList from this,
+   so search engines keep the hierarchy.
    ============================================================ */
 
 export interface Crumb {

@@ -64,15 +64,6 @@
 .sres .d { font-size: 12px; color: var(--ink-500); line-height: 1.2; margin-top: 2px; }
 .snone { padding: 20px 16px; font-size: 13.5px; color: var(--ink-500); }
 
-/* ---------- BREADCRUMBS ----------
-   Trail under the header on pages two or more levels deep. Navy like the
-   pagehead it sits on, so it reads as part of the masthead. */
-.crumbs { background: var(--navy-900); }
-.crumbs ol { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 12px 0 0; }
-.crumbs li { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-heading); font-weight: 700; font-size: 12.5px; letter-spacing: .03em; color: var(--cream-100); }
-.crumbs li a { color: var(--sky-300); padding: 2px 4px; border-radius: var(--radius-sm); transition: color .15s, background .15s; }
-.crumbs li a:hover { color: #fff; background: rgba(159,208,240,0.14); }
-.crumbs li i { font-size: 12px; color: var(--sky-300); opacity: .6; }
 
 /* ---------- SECTION SUB-NAV ----------
    The .cattab pills from the discounts explorer, used as a section tab strip

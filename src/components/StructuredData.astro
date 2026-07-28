@@ -36,8 +36,9 @@ const website = {
 };
 
 /**
- * Crumb trail from the shared derivation in src/lib/breadcrumbs.ts — the same
- * trail the visible Breadcrumbs component renders.
+ * Crumb trail from the shared derivation in src/lib/breadcrumbs.ts. This is now
+ * its only consumer — the visible trail was removed in the hub redesign — so
+ * the hierarchy still reaches search engines even though no page draws it.
  */
 const crumbs = breadcrumbsFor(path, title);
 
