@@ -1,44 +1,69 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CurtainShell from '../components/CurtainShell.astro';
 import Icon from '../components/Icon.astro';
 import { NAV } from '../data/site';
+import { PRELAUNCH } from '../data/prelaunch';
 
 /**
  * GitHub Pages serves /404.html automatically for unmatched paths, including
  * on a custom domain. build.format is 'directory', so this emits 404/index.html
  * — Pages looks for 404.html at the root, so astro.config keeps this route
  * flat via the redirect handling in Phase 6. Verified against the built output.
+ *
+ * While PRELAUNCH is on this renders in the curtain shell instead of
+ * BaseLayout: the destination list — and BaseLayout's own header nav — would
+ * hand every unfinished section to anyone who mistypes a URL.
  */
 const destinations = NAV.filter((item) => item.href !== '/');
 ---
 
-<BaseLayout
-  title="Page not found"
-  description="That page doesn't exist. Here's where everything lives in the hangar."
->
-  <div class="pagehead">
-    <div class="wrap">
-      <div class="ph-eyebrow">404</div>
-      <h1 class="ph-title">Wrong gate.</h1>
-      <p class="ph-sub">
-        That page doesn't exist, or it moved. Everything in the hangar is one tap away below.
+{
+  PRELAUNCH ? (
+    <CurtainShell
+      title="Page not found"
+      description="That page doesn't exist. The hangar opens soon."
+    >
+      <h1>
+        Wrong <span class="r">gate.</span>
+      </h1>
+      <p class="curtain-copy">
+        That page doesn't exist, or it isn't open yet — the hangar is still under construction.
       </p>
-    </div>
-  </div>
-
-  <section class="band cream">
-    <div class="wrap">
-      <div class="cols3">
-        {
-          destinations.map((item) => (
-            <a class="catcard reveal" href={item.href} style="--accent: var(--navy-700);">
-              <span class="cb"><Icon name="ph-arrow-right" /></span>
-              <h3>{item.label}</h3>
-              <span class="go">Go <Icon name="ph-arrow-right" /></span>
-            </a>
-          ))
-        }
+      <div class="cta">
+        <a class="btn btn-red" href="/"><Icon name="ph-airplane-tilt" /> To the gate</a>
       </div>
-    </div>
-  </section>
-</BaseLayout>
+    </CurtainShell>
+  ) : (
+    <BaseLayout
+      title="Page not found"
+      description="That page doesn't exist. Here's where everything lives in the hangar."
+    >
+      <div class="pagehead">
+        <div class="wrap">
+          <div class="ph-eyebrow">404</div>
+          <h1 class="ph-title">Wrong gate.</h1>
+          <p class="ph-sub">
+            That page doesn't exist, or it moved. Everything in the hangar is one tap away below.
+          </p>
+        </div>
+      </div>
+
+      <section class="band cream">
+        <div class="wrap">
+          <div class="cols3">
+            {
+              destinations.map((item) => (
+                <a class="catcard reveal" href={item.href} style="--accent: var(--navy-700);">
+                  <span class="cb"><Icon name="ph-arrow-right" /></span>
+                  <h3>{item.label}</h3>
+                  <span class="go">Go <Icon name="ph-arrow-right" /></span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    </BaseLayout>
+  )
+}

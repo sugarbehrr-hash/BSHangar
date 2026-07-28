@@ -1,0 +1,12 @@
+---
+import HomePage from '../../components/HomePage.astro';
+
+/**
+ * Unlinked pre-launch entry to the full site — the real homepage, served at
+ * an unguessable path while `/` shows the curtain. Nothing links here,
+ * robots.txt disallows it, and BaseLayout noindexes it (see
+ * src/data/prelaunch.ts, PREVIEW_PATH). Delete this directory at launch.
+ */
+---
+
+<HomePage />

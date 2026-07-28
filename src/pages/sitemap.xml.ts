@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { bases } from '../data/bases';
 import { SITE } from '../data/site';
+import { PRELAUNCH } from '../data/prelaunch';
 
 /**
  * sitemap.xml, generated from the same data that generates the routes.
@@ -49,7 +50,9 @@ export const GET: APIRoute = () => {
   const origin = SITE.url.replace(/\/$/, '');
   const lastmod = new Date().toISOString().slice(0, 10);
 
-  const urls = buildEntries()
+  // Pre-launch the sitemap advertises nothing: every Astro page is noindexed
+  // and the vendored vote guide is excluded anyway (see src/data/prelaunch.ts).
+  const urls = (PRELAUNCH ? [] : buildEntries())
     .map(
       (entry) =>
         `  <url>\n` +

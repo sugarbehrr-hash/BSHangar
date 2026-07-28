@@ -1,0 +1,99 @@
+---
+import Icon from './Icon.astro';
+import { BRAND } from '../data/site';
+import '../styles/global.css';
+
+/**
+ * Minimal standalone shell for the public pages that stay up while PRELAUNCH
+ * is on (the coming-soon root and the 404). Deliberately NOT BaseLayout: no
+ * header nav, no footer, no search — every link that shell exposes would
+ * advertise an unfinished page. The brand block is static, not a link, for the
+ * same reason there is nowhere to send it.
+ */
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" is:inline></script>
+  </head>
+
+  <body class="curtain">
+    <main class="curtain-main">
+      <div class="brand" aria-hidden="true">
+        <span class="mark"><Icon name="ph-airplane-tilt" /></span>
+        <span class="wm">{BRAND.line1}<small>{BRAND.line2}</small></span>
+      </div>
+
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  /* Scoped by the .curtain body class; navy canvas like the hero, content
+     centered in the viewport. Type and buttons come from the shared tokens
+     and buttons.css, so the curtain reads as the same product. */
+  body.curtain {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy-900);
+    color: var(--cream-100);
+  }
+
+  .curtain-main {
+    max-width: 620px;
+    padding: 48px 24px;
+    text-align: center;
+  }
+
+  .curtain-main .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 34px;
+  }
+
+  .curtain-main h1 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: clamp(44px, 9vw, 64px);
+    line-height: 0.92;
+    margin: 0 0 18px;
+    color: var(--cream-100);
+  }
+
+  .curtain-main h1 .r {
+    color: var(--red-500);
+  }
+
+  .curtain-main .curtain-copy {
+    font-size: var(--fs-lead);
+    line-height: var(--lh-normal);
+    color: var(--cream-300);
+    margin: 0 0 30px;
+  }
+
+  .curtain-main .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+  }
+</style>
