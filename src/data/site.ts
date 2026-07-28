@@ -41,12 +41,6 @@ export const EXTERNAL = {
   flyzed: 'https://www.flyzed.info',
 } as const;
 
-/** A page living under a nav section, e.g. the CBA Field Manual under Contract. */
-export interface NavChild {
-  label: string;
-  href: string;
-}
-
 /** Primary navigation. `href` doubles as the active-state key. */
 export interface NavItem {
   label: string;
@@ -59,34 +53,12 @@ export interface NavItem {
    * short enough to render identically everywhere.
    */
   short?: string;
-  /**
-   * Sub-pages of this section. Drives the footer, the BreadcrumbList JSON-LD
-   * and a guide's "keep reading" links, and keeps the sub-structure in the
-   * same tree as the nav itself rather than in a second registry.
-   *
-   * It deliberately does NOT render a tab strip on hub pages: the hubs answer
-   * the question directly and link to the full guides from their document
-   * cards, so a strip repeating those links is noise.
-   */
-  children?: NavChild[];
 }
 
 export const NAV: NavItem[] = [
   { label: 'Home', href: '/' },
-  {
-    label: 'Commuting',
-    href: '/commuting/',
-    children: [{ label: 'Full guide', href: '/commuting/guide/' }],
-  },
-  {
-    label: 'Your Contract',
-    href: '/contract/',
-    short: 'Contract',
-    children: [
-      { label: 'CBA Field Manual', href: '/contract/field-manual/' },
-      { label: 'Reserve Field Guide', href: '/contract/reserve-guide/' },
-    ],
-  },
+  { label: 'Commuting', href: '/commuting/' },
+  { label: 'Your Contract', href: '/contract/', short: 'Contract' },
   { label: 'Discounts', href: '/crew-discounts/' },
   { label: 'Essentials', href: '/crew-essentials/' },
   { label: 'Tools', href: '/tools/' },

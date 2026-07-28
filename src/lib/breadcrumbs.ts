@@ -16,23 +16,20 @@ export interface Crumb {
   href: string;
 }
 
-/** Labels for segments that are not nav sections or nav children. */
+/** Labels for segments that are not nav sections. */
 const SEGMENT_LABELS: Record<string, string> = {
   print: 'Printable Guides',
 };
 
 /** Every label the nav tree already knows, keyed by full path. */
 const NAV_LABELS: Record<string, string> = Object.fromEntries(
-  NAV.flatMap((item) => [
-    [item.href, item.label],
-    ...(item.children ?? []).map((child) => [child.href, child.label] as const),
-  ])
+  NAV.map((item) => [item.href, item.label])
 );
 
 /**
  * Build the crumb trail for a path, ending with the current page.
  *
- * Labels resolve in order: the nav tree (sections and their children), the
+ * Labels resolve in order: the nav tree, the
  * static segment table, an uppercased short code (base codes like "clt"),
  * and finally — for the last crumb only — the page's own title, which
  * already names deep pages like a discount category.

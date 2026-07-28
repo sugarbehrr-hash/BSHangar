@@ -48,13 +48,7 @@ export const contractResources: Resource[] = [
     accent: 'var(--navy-700)',
     kind: 'generated',
     links: [
-      {
-        label: 'Read online',
-        href: '/contract/field-manual/',
-        variant: 'navy',
-        icon: 'ph-book-open',
-      },
-      { label: 'Print or save as PDF', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Full guide', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-printer' },
     ],
   },
   {
@@ -68,8 +62,7 @@ export const contractResources: Resource[] = [
     accent: 'var(--sky-700)',
     kind: 'generated',
     links: [
-      { label: 'Read online', href: '/contract/reserve-guide/', variant: 'navy', icon: 'ph-book-open' },
-      { label: 'Print or save as PDF', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Full guide', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-printer' },
     ],
   },
   {
@@ -103,8 +96,7 @@ export const commutingResources: Resource[] = [
     accent: 'var(--sky-700)',
     kind: 'generated',
     links: [
-      { label: 'Read online', href: '/commuting/guide/', variant: 'navy', icon: 'ph-book-open' },
-      { label: 'Print or save as PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Full guide', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-printer' },
     ],
   },
 ];
