@@ -262,29 +262,33 @@ export const commutingSituations: CommutingSituation[] = [
   }
 ];
 
-/** Band openers. The figure count is deliberately NOT stated — it will drift. */
+/** Band openers — copy verbatim from Commuting Guide.dc.html. */
 export const commutingCopy = {
   eyebrow: 'Non-Rev · List · Fly · Report',
   title: 'Getting To Base<br />Without Losing Sleep',
   sub:
-    'Commuting sorted by the moment you need it — not by policy heading. The deadlines that keep ' +
-    'you inside the program, the situations that come up on the way to base, and the full guide ' +
-    'when you want every word.',
+    'Commuting sorted by the moment you need it — not by policy heading. Four deadlines that ' +
+    'keep you inside the program, the situations that come up on the way to base, and the full ' +
+    'guide when you want every word.',
   figuresKicker: 'Keep these in your head',
-  figuresHeading: "The deadlines. That's the program.",
+  figuresHeading: "Four deadlines. That's the program.",
   figuresLead:
-    'Miss one of these and the protection goes away, however good your reason was. Tap any row ' +
-    'for what it actually means and what to do about it.',
-  situationsKicker: 'When it happens on the way',
+    'Everything the Commuter Program asks of you is one of these four. Tap any row for what it ' +
+    'actually means and what to do about it.',
+  situationsKicker: 'When it happens on the way to base',
   situationsHeading: 'Find your situation. Open it.',
   situationsLead:
-    "You don't think in policy headings standing at a gate — you think \"what do I do now?\". " +
-    "Tap the one that's happening to you.",
+    'You don\'t think in policy headings standing at a full gate at 4am — you think ' +
+    '\u201Cwhat do I do now?\u201D. Tap the one that\'s happening to you.',
+  actionTitle: "Told the program doesn't cover you?",
+  actionBody:
+    'Call a rep before you agree to anything — before you accept a reassignment, a code, or a ' +
+    "point. It's free and it's yours.",
   docsKicker: 'Want every word',
   docsHeading: 'Take the guide with you.',
   docsLead:
-    'This page is the streamlined version — the parts you need in the moment. The complete ' +
-    'step-by-step text lives in the full guide.',
+    'This page is the streamlined version — the parts you need in the moment. The complete text ' +
+    'lives in the PDFs, sized for your bag. Download them once and they work with no signal.',
 } as const;
 
 /** The "it's going wrong right now" panel in the masthead's second column. */

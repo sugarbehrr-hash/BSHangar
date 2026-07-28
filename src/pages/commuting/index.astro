@@ -90,8 +90,8 @@ import { commutingResources } from '../../data/resources';
       <div class="actionbar">
         <span class="card-badge"><Icon name="ph-headset" /></span>
         <div class="txt">
-          <b>Commute failed and you're not sure what you're owed?</b>
-          <span>Call a rep before you agree to anything — it's free and it's yours.</span>
+          <b>{commutingCopy.actionTitle}</b>
+          <span>{commutingCopy.actionBody}</span>
         </div>
         <a class="btn btn-red" href={UNION_REP_PHONE.href}>
           <Icon name="ph-phone-call" /> {UNION_REP_PHONE.display}

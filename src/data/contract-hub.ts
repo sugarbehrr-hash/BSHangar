@@ -338,25 +338,33 @@ export const contractSituations: ContractSituation[] = [
   }
 ];
 
-/** Band openers. The figure count is stated, so it tracks the array. */
+/** Band openers — copy verbatim from Contract Hub.dc.html. */
+const WORD = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+
 export const contractCopy = {
+  sub:
+    `Your contract, sorted by the moment you need it — not by section number. ` +
+    `${WORD[contractFigures.length]?.toLowerCase() ?? contractFigures.length} numbers to remember, ` +
+    `${WORD[contractSituations.length]?.toLowerCase() ?? contractSituations.length} situations that come up on the line, ` +
+    `and the full manual when you want the detail.`,
   figuresKicker: 'Keep these in your head',
-  figuresHeading: `${
-    ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'][
-      contractFigures.length
-    ] ?? contractFigures.length
-  } numbers, and you're covered.`,
+  figuresHeading: `${WORD[contractFigures.length] ?? contractFigures.length} numbers, and you're covered.`,
   figuresLead:
-    'Almost every conversation on the line comes back to one of these. Tap any row for ' +
-    'what it actually means and what to do about it.',
+    'Almost every conversation on the line comes back to one of these. Tap any row for what ' +
+    'it actually means and what to do about it.',
   situationsKicker: 'When it happens on the line',
   situationsHeading: 'Find your situation. Open it.',
   situationsLead:
-    'You don\'t think in section numbers at 5am in a hotel lobby — you think "can they do ' +
-    'this?". Tap the one that\'s happening to you.',
+    'You don\'t think in section numbers at 5am in a hotel lobby — you think \u201Ccan they do ' +
+    'this?\u201D. Tap the one that\'s happening to you.',
+  actionTitle: "Not sure whether something's a violation?",
+  actionBody:
+    "That's exactly what the reps are for. Call before you agree to anything — it's free and " +
+    "it's yours.",
   docsKicker: 'Want every word',
   docsHeading: 'Take the manual with you.',
   docsLead:
     'This page is the streamlined version — the parts you need in the moment. The complete ' +
-    'section-by-section text lives in the full guides.',
+    'section-by-section text lives only in the PDFs, sized for your bag. Download them once ' +
+    'and they work with no signal.',
 } as const;

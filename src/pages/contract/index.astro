@@ -31,11 +31,7 @@ import { contractResources } from '../../data/resources';
       <div class="mh-body">
         <div class="mh-eyebrow">Collective Bargaining Agreement</div>
         <h1 class="mh-title">Contractual Knowledge<br />Is Power</h1>
-        <p class="mh-sub">
-          Your contract, sorted by the moment you need it — not by section number. The numbers to
-          remember, the situations that come up on the line, and the full manual when you want the
-          detail.
-        </p>
+        <p class="mh-sub">{contractCopy.sub}</p>
       </div>
     </div>
   </div>
@@ -63,11 +59,8 @@ import { contractResources } from '../../data/resources';
       <div class="actionbar">
         <span class="card-badge"><Icon name="ph-headset" /></span>
         <div class="txt">
-          <b>Not sure whether something's a violation?</b>
-          <span>
-            That's exactly what the reps are for. Call before you agree to anything — it's free and
-            it's yours.
-          </span>
+          <b>{contractCopy.actionTitle}</b>
+          <span>{contractCopy.actionBody}</span>
         </div>
         <a class="btn btn-red" href={UNION_REP_PHONE.href}>
           <Icon name="ph-phone-call" /> {UNION_REP_PHONE.display}

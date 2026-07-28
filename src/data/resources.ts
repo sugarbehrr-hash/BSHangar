@@ -40,29 +40,29 @@ export const contractResources: Resource[] = [
   {
     id: 'cba-field-manual',
     title: 'CBA Field Manual',
-    format: 'Web guide + printable',
+    format: 'PDF · full text · print-ready',
     blurb:
-      'The full section-by-section reference — duty & rest, pay, scheduling, ' +
-      'reserve, grievances and the LOAs, each sourced to the CBA.',
+      'Every provision above in full, plus the rest — duty & rest, pay, scheduling, ' +
+      'reserve, sick, vacation and grievances, each sourced to the CBA and the LOAs.',
     icon: 'ph-scroll',
     accent: 'var(--navy-700)',
     kind: 'generated',
     links: [
-      { label: 'Full guide', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Download PDF', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },
   {
     id: 'reserve-field-guide',
     title: 'Reserve Field Guide',
-    format: 'Web guide + printable',
+    format: 'PDF · full text · print-ready',
     blurb:
-      'Short-call reserve, SCR, the duty clock and rest rules — the plain-language ' +
-      '§7 & §9 reference for reserve life.',
+      'Short-call reserve, SCR, the duty clock and rest rules — the whole §7 & §9 ' +
+      'reference for reserve life, in plain language.',
     icon: 'ph-phone-call',
     accent: 'var(--sky-700)',
     kind: 'generated',
     links: [
-      { label: 'Full guide', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Download PDF', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },
   {
@@ -88,15 +88,15 @@ export const commutingResources: Resource[] = [
   {
     id: 'commuting-guide',
     title: 'Commuting Guide',
-    format: 'Web guide + printable',
+    format: 'PDF · full text · print-ready',
     blurb:
-      'The full Commuter Program reference — listing, back-ups, what happens when a ' +
-      'commute fails, documentation, dress and the day-of checklist.',
+      'The whole program in full — listing, the four steps, commute-fail protections, ' +
+      "dress guidelines and the pro tips that don't fit on a page.",
     icon: 'ph-airplane-takeoff',
     accent: 'var(--sky-700)',
     kind: 'generated',
     links: [
-      { label: 'Full guide', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Download PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },
 ];
