@@ -60,9 +60,13 @@ export interface NavItem {
    */
   short?: string;
   /**
-   * Sub-pages of this section. Drives the SectionNav tab strip on the section's
-   * pages and keeps the sub-structure in the same tree as the nav itself —
-   * there is no second registry of what belongs to a section.
+   * Sub-pages of this section. Drives the footer, the BreadcrumbList JSON-LD
+   * and a guide's "keep reading" links, and keeps the sub-structure in the
+   * same tree as the nav itself rather than in a second registry.
+   *
+   * It deliberately does NOT render a tab strip on hub pages: the hubs answer
+   * the question directly and link to the full guides from their document
+   * cards, so a strip repeating those links is noise.
    */
   children?: NavChild[];
 }

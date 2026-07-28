@@ -6,6 +6,10 @@ import { baseFlyers } from '../data/resources';
 /**
  * The crew-discount explorer.
  *
+ * The base switcher lives in the masthead (BaseTabs) rather than here — it
+ * navigates between pages, so it belongs with the page-level navigation, not
+ * inside the view it controls.
+ *
  * In the export this was entirely client state: base, category, filter text and
  * a per-zone open/closed map all lived in React, so all four bases rendered
  * into one hash route and none of it was linkable or indexable.
@@ -26,21 +30,6 @@ const categoryPath = (b: Base, c: Category) =>
   c.key === b.categories[0]?.key ? `/crew-discounts/${b.key}/` : `/crew-discounts/${b.key}/${c.key}/`;
 ---
 
-<div class="tabs">
-  {
-    bases.map((b) => (
-      <a
-        class:list={['tab', `tab-${b.key}`]}
-        href={`/crew-discounts/${b.key}/`}
-        aria-current={b.key === base.key ? 'page' : undefined}
-      >
-        <span class="code">{b.code}</span>
-        <span class="nm">{b.sub}</span>
-      </a>
-    ))
-  }
-</div>
-
 <div class="baseintro">
   <div class="big">{base.code}</div>
   <div>
@@ -50,22 +39,22 @@ const categoryPath = (b: Base, c: Category) =>
 </div>
 
 <div class="explorer" data-explorer>
-  <div class="catbar">
+  <div class="pillbar">
     {
       base.categories.map((c) => (
         <a
-          class="cattab"
+          class="pill"
           href={categoryPath(base, c)}
           aria-current={c.key === category.key ? 'page' : undefined}
         >
           <Icon name={c.icon} />
           {c.label}
-          <span class="cc">{venueCount(c)}</span>
+          <span class="count">{venueCount(c)}</span>
         </a>
       ))
     }
 
-    <div class="dfilter">
+    <div class="filter">
       <Icon name="ph-magnifying-glass" />
       <label class="sr-only" for="venue-filter">
         Filter {base.code} {category.label.toLowerCase()}
@@ -80,11 +69,11 @@ const categoryPath = (b: Base, c: Category) =>
     </div>
   </div>
 
-  <div class="expcta">
-    <div class="expcount" data-count aria-live="polite">
+  <div class="toolrow">
+    <div class="count-label" data-count aria-live="polite">
       {totalVenues} spots · {category.zones.length} areas
     </div>
-    <div class="exptools">
+    <div class="quietbtns">
       <button class="txtbtn" type="button" data-open-all>Open all</button>
       <span class="tdot">·</span>
       <button class="txtbtn" type="button" data-close-all>Close all</button>

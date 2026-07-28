@@ -112,3 +112,29 @@
 .zdo i { flex: none; font-size: 19px; color: var(--red-600); margin-top: 1px; }
 .zdo strong, .zdo b { color: var(--navy-900); }
 .zdo a { color: var(--sky-700); font-weight: 800; }
+
+/* ---------- VIEW PILLS ----------
+   Switching views WITHIN a page (categories). Light surface, so current is a
+   navy fill — distinct from the dark-surface .sectiontabs that switch pages. */
+.pillbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1.5px solid var(--cream-300); background: var(--white); font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--navy-900); cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+.pill i { font-size: 17px; color: var(--sky-700); }
+.pill .count { font-size: 12px; font-weight: 700; color: var(--ink-500); }
+.pill:hover { border-color: var(--navy-700); }
+.pill[aria-current="page"], .pill[aria-selected="true"] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+.pill[aria-current="page"] i, .pill[aria-selected="true"] i { color: var(--gold-500); }
+.pill[aria-current="page"] .count, .pill[aria-selected="true"] .count { color: var(--sky-300); }
+
+.filter { position: relative; display: flex; align-items: center; flex: 1 1 220px; }
+.filter > i { position: absolute; left: 14px; color: var(--ink-300); font-size: 16px; pointer-events: none; }
+.filter input { width: 100%; height: 44px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); padding: 0 16px 0 38px; font-family: var(--font-body); font-size: 15px; color: var(--ink-900); outline: none; transition: border-color .15s; }
+.filter input:focus { border-color: var(--sky-500); }
+@media (min-width: 900px) { .filter { flex: 0 0 260px; margin-left: auto; } }
+
+.toolrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 14px 0 12px; }
+.count-label { font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.quietbtns { display: flex; align-items: center; gap: 8px; }
+
+/* Section-tab code/sub, used by the base switcher. */
+.sectiontabs .st-code { font-family: var(--font-display); font-size: 19px; line-height: 1; }
+.sectiontabs .st-sub { font-family: var(--font-body); font-weight: 400; font-size: 12px; opacity: .8; }

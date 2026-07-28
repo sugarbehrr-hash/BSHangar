@@ -1,0 +1,32 @@
+---
+import { bases } from '../data/bases';
+
+/**
+ * Base switcher for the discount pages, docked in the masthead.
+ *
+ * Uses the same .sectiontabs treatment as the section strip elsewhere: on a
+ * dark surface, switching between sibling PAGES. The category switcher below
+ * it is .pill — light surface, switching VIEWS within a page. Two jobs, two
+ * looks, consistently applied; previously both were pills with different
+ * active colours stacked inches apart.
+ */
+interface Props {
+  current: string;
+}
+
+const { current } = Astro.props;
+---
+
+<nav class="sectiontabs" aria-label="Crew discount bases">
+  {
+    bases.map((base) => (
+      <a
+        href={`/crew-discounts/${base.key}/`}
+        aria-current={base.key === current ? 'page' : undefined}
+      >
+        <span class="st-code">{base.code}</span>
+        <span class="st-sub">{base.sub}</span>
+      </a>
+    ))
+  }
+</nav>

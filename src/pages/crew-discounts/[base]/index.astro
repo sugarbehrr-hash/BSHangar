@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import DiscountExplorer from '../../../components/DiscountExplorer.astro';
+import BaseTabs from '../../../components/BaseTabs.astro';
 import { bases, venueCount } from '../../../data/bases';
 
 /** One route per base, showing that base's first category. */
@@ -29,6 +30,7 @@ const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
         <h1 class="mh-title">{base.code}</h1>
         <p class="mh-sub">{base.name} · {base.sub}</p>
       </div>
+      <BaseTabs current={base.key} />
     </div>
   </div>
 
