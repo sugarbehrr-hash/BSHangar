@@ -108,7 +108,7 @@ const steps = [
 
   <section class="band cream">
     <div class="wrap">
-      <div class="reveal">
+      <div>
         <span class="kicker">Find what you need</span>
         <h2 class="h2">Pick a hangar door.</h2>
         <p class="sectlead">
@@ -121,7 +121,7 @@ const steps = [
         {
           cards.map((card) => (
             <a
-              class="catcard reveal"
+              class="catcard"
               href={card.href}
               style={`--accent: ${card.accent};`}
               target={card.external ? '_blank' : undefined}
@@ -142,7 +142,7 @@ const steps = [
 
   <section class="band paper">
     <div class="wrap">
-      <div class="reveal">
+      <div>
         <span class="kicker">How the hangar works</span>
         <h2 class="h2">One place. Always current.</h2>
       </div>
@@ -150,7 +150,7 @@ const steps = [
       <div class="steprow">
         {
           steps.map((step) => (
-            <div class="stepc reveal">
+            <div class="stepc">
               <div class="n">{step.n}</div>
               <h4>{step.title}</h4>
               <p>{step.body}</p>
@@ -159,7 +159,7 @@ const steps = [
         }
       </div>
 
-      <div class="callout tip reveal">
+      <div class="callout tip">
         <Icon name="ph-lightbulb" />
         <div class="ct">
           <b>Tip:</b> Use the search box up top to jump straight to a topic — try “non-rev”,

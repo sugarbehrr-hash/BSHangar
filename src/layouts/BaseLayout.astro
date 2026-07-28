@@ -83,28 +83,5 @@ const ogImage = new URL(`/og/${ogSlug}.png`, Astro.site ?? SITE.url).href;
       </main>
       <SiteFooter />
     </div>
-
-    <script>
-      // Scroll reveal. Mirrors the export's behaviour, including its
-      // reduced-motion guard: motion.css only defines the hidden start state
-      // inside prefers-reduced-motion:no-preference, so when motion is reduced
-      // there is nothing to reveal and no observer is created.
-      const wantsMotion = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
-
-      if (wantsMotion && 'IntersectionObserver' in window) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('in');
-                io.unobserve(entry.target);
-              }
-            }
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
-        );
-        for (const el of document.querySelectorAll('.reveal')) io.observe(el);
-      }
-    </script>
   </body>
 </html>

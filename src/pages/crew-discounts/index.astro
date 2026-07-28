@@ -25,7 +25,7 @@ const accents = ['var(--red-600)', 'var(--sky-700)', 'var(--gold-600)', 'var(--n
 
   <section class="band cream">
     <div class="wrap">
-      <div class="reveal">
+      <div>
         <span class="kicker">Pick your base</span>
         <h2 class="h2">Where are you flying?</h2>
       </div>
@@ -36,7 +36,7 @@ const accents = ['var(--red-600)', 'var(--sky-700)', 'var(--gold-600)', 'var(--n
             const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
             return (
               <a
-                class="catcard reveal"
+                class="catcard"
                 href={`/crew-discounts/${base.key}/`}
                 style={`--accent: ${accents[i % accents.length]};`}
               >

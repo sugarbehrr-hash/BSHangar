@@ -1,16 +1,13 @@
 /* ============================================================
-   Motion — scroll reveal + float
+   Motion — hero float
    ------------------------------------------------------------
-   Ported verbatim, including the export's reduced-motion guard:
-   the whole block sits inside prefers-reduced-motion:no-preference,
-   so users who ask for less motion get the fully-visible end state
-   with no transition and no observer work.
+   The export's scroll-reveal (content hidden until an observer
+   fired) is gone: on a reference site the content IS the page,
+   and it left blank frames on fast scrolls. Only the ambient
+   hero float remains, still behind the reduced-motion guard.
    ============================================================ */
 
 @media (prefers-reduced-motion: no-preference) {
-  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
-  .reveal.in { opacity: 1; transform: none; }
-
   .float { animation: float 6s ease-in-out infinite; }
   @keyframes float {
     0%, 100% { transform: translateY(0); }

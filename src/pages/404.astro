@@ -54,7 +54,7 @@ const destinations = NAV.filter((item) => item.href !== '/');
           <div class="cols3">
             {
               destinations.map((item) => (
-                <a class="catcard reveal" href={item.href} style="--accent: var(--navy-700);">
+                <a class="catcard" href={item.href} style="--accent: var(--navy-700);">
                   <span class="cb"><Icon name="ph-arrow-right" /></span>
                   <h3>{item.label}</h3>
                   <span class="go">Go <Icon name="ph-arrow-right" /></span>

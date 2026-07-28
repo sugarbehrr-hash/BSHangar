@@ -18,7 +18,7 @@ const { tone = 'danger', icon, text, style } = Astro.props;
 const toneClass = tone === 'danger' ? '' : tone;
 ---
 
-<div class:list={['callout', toneClass, 'reveal']} style={style}>
+<div class:list={['callout', toneClass]} style={style}>
   <Icon name={icon} />
   <div class="ct" set:html={richText(text)}></div>
 </div>

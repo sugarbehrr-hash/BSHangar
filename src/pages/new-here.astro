@@ -57,7 +57,7 @@ const hashtags = [
   <section class="band cream">
     <div class="wrap">
       <div class="cols2">
-        <div class="infocard reveal" style="--accent: var(--red-600);">
+        <div class="infocard" style="--accent: var(--red-600);">
           <div class="ih">
             <span class="b"><Icon name="ph-users-three" /></span>
             <div>
@@ -77,7 +77,7 @@ const hashtags = [
           </ul>
         </div>
 
-        <div class="infocard reveal" style="--accent: var(--sky-700);">
+        <div class="infocard" style="--accent: var(--sky-700);">
           <div class="ih">
             <span class="b"><Icon name="ph-hash" /></span>
             <div>
@@ -91,7 +91,7 @@ const hashtags = [
         </div>
       </div>
 
-      <div class="reveal" style="margin-top:44px;">
+      <div style="margin-top:44px;">
         <span class="kicker">Where to next</span>
         <h2 class="h2">Your first three stops.</h2>
       </div>
@@ -99,7 +99,7 @@ const hashtags = [
       <div class="cols3">
         {
           nextStops.map((stop) => (
-            <a class="catcard reveal" href={stop.href} style={`--accent: ${stop.accent};`}>
+            <a class="catcard" href={stop.href} style={`--accent: ${stop.accent};`}>
               <span class="cb"><Icon name={stop.icon} /></span>
               <h3>{stop.title}</h3>
               <p>{stop.body}</p>
@@ -109,7 +109,7 @@ const hashtags = [
         }
       </div>
 
-      <div class="dlbar reveal">
+      <div class="dlbar">
         <span
           class="mark"
           style="width:52px;height:52px;border-radius:50%;background:var(--red-600);display:flex;align-items:center;justify-content:center;flex:none;"

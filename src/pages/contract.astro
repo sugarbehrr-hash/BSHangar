@@ -26,7 +26,7 @@ import { contractResources, VOTE_GUIDE } from '../data/resources';
 
   <section class="band cream">
     <div class="wrap">
-      <div class="tabanner reveal">
+      <div class="tabanner">
         <div class="in">
           <span class="flag"><Icon name="ph-scales" /> {taBanner.flag}</span>
           <h3>{taBanner.headline}<br /><span class="r">{taBanner.headlineAccent}</span></h3>
@@ -43,7 +43,7 @@ import { contractResources, VOTE_GUIDE } from '../data/resources';
         </div>
       </div>
 
-      <div class="callout tip reveal" style="margin-top:26px;">
+      <div class="callout tip" style="margin-top:26px;">
         <Icon name="ph-scroll" />
         <div class="ct">
           <RichText text={contractCallouts.sectionKey} /> Union Rep Assistance:
@@ -51,7 +51,7 @@ import { contractResources, VOTE_GUIDE } from '../data/resources';
         </div>
       </div>
 
-      <div class="reveal" style="margin-top:40px;">
+      <div style="margin-top:40px;">
         <span class="kicker">Know your rights</span>
         <h2 class="h2">Your contract, in plain language.</h2>
         <p class="sectlead">
@@ -66,7 +66,7 @@ import { contractResources, VOTE_GUIDE } from '../data/resources';
 
       <Callout tone="ok" icon="ph-shield-check" text={contractCallouts.investigatory} />
 
-      <div class="reveal" style="margin-top:46px;">
+      <div style="margin-top:46px;">
         <span class="kicker">Read or download</span>
         <h2 class="h2">The full references.</h2>
         <p class="sectlead">
@@ -78,7 +78,7 @@ import { contractResources, VOTE_GUIDE } from '../data/resources';
       <div class="reslist">
         {
           contractResources.map((res) => (
-            <div class="rescard reveal" style={`--accent: ${res.accent};`}>
+            <div class="rescard" style={`--accent: ${res.accent};`}>
               <div class="rh">
                 <span class="rb"><Icon name={res.icon} /></span>
                 <div>

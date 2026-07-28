@@ -25,7 +25,7 @@ import { products } from '../data/essentials';
       <div class="prodgrid">
         {
           products.map((product) => (
-            <div class="prod reveal">
+            <div class="prod">
               <div class="shot">
                 <span class="tagchip">{product.tag}</span>
                 <Icon name={product.icon} />
@@ -42,7 +42,7 @@ import { products } from '../data/essentials';
         }
       </div>
 
-      <p class="disclosure reveal">{DISCLAIMER.affiliate}</p>
+      <p class="disclosure">{DISCLAIMER.affiliate}</p>
     </div>
   </section>
 </BaseLayout>
