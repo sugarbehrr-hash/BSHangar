@@ -6355,6 +6355,8 @@ try { (() => {
 try { (() => {
 // Root-level DS loader — used by root .dc.html pages
 (() => {
+  if (document.documentElement.dataset.dsBaseLoaded) return;
+  document.documentElement.dataset.dsBaseLoaded = "1";
   const base = '.';
   for (const p of ['styles.css']) {
     const l = document.createElement('link');

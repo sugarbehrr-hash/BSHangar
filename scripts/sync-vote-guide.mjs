@@ -18,6 +18,12 @@
  *    the document URL and the documents are no longer at the site root.
  * 4. Rewrites ds-base.js's `base` constant for the same reason. The file was
  *    written expecting exactly this edit.
+ * 5. Guards the self-loader the DS compiler inlined into _ds_bundle.js. The
+ *    bundle carries an old, unguarded copy of the root-level ds-base loader
+ *    (`base = '.'`) that re-injects ./_ds_bundle.js relative to the DOCUMENT
+ *    url — a guaranteed 404 at /contract/<slug>/ on every page load. The
+ *    current ds-base.js source already has the dsBaseLoaded guard; the
+ *    compiled bundle predates it, and the compiler lives outside this repo.
  *
  * Run: node scripts/sync-vote-guide.mjs
  */
@@ -60,6 +66,40 @@ function log(msg) {
   process.stdout.write(`${msg}\n`);
 }
 
+/**
+ * The DS compiler sweeps every root .js file into the bundle, including the
+ * root-level ds-base loader itself. The inlined copy is an OLD revision without
+ * the dsBaseLoaded double-injection guard, so when the bundle executes it
+ * unconditionally injects `./styles.css` and `./_ds_bundle.js` — both resolve
+ * relative to /contract/<slug>/ and 404 on every visit. The page still renders
+ * because the outer (guarded, absolute-path) loader already did the real work;
+ * this dead re-load is pure console noise. Insert the same guard the current
+ * ds-base.js source carries, so the inlined copy no-ops.
+ *
+ * If a future export drops or fixes the inlined loader, this becomes a clean
+ * pass-through; if it changes shape in a way this doesn't recognize, fail loudly
+ * so a human re-verifies instead of shipping the 404 back.
+ */
+const UNGUARDED_LOADER = "// Root-level DS loader — used by root .dc.html pages\n(() => {\n  const base = '.';";
+const GUARDED_LOADER =
+  "// Root-level DS loader — used by root .dc.html pages\n(() => {\n" +
+  '  if (document.documentElement.dataset.dsBaseLoaded) return;\n' +
+  '  document.documentElement.dataset.dsBaseLoaded = "1";\n' +
+  "  const base = '.';";
+
+function patchBundleSelfLoader(bundle) {
+  if (bundle.includes(UNGUARDED_LOADER)) {
+    return { text: bundle.replace(UNGUARDED_LOADER, GUARDED_LOADER), note: ' (self-loader guarded)' };
+  }
+  if (bundle.includes('Root-level DS loader')) {
+    throw new Error(
+      'sync-vote-guide: _ds_bundle.js contains a root-level DS loader in an unrecognized shape — ' +
+        'verify it no longer re-injects ./_ds_bundle.js, then update patchBundleSelfLoader.'
+    );
+  }
+  return { text: bundle, note: '' };
+}
+
 // --- 1. Shared assets -------------------------------------------------------
 
 ensureDir(ASSETS_DIR);
@@ -75,9 +115,15 @@ for (const file of SHARED) {
     throw new Error(`sync-vote-guide: missing required asset "${file}" (looked in ${source})`);
   }
 
-  copyFileSync(source, join(ASSETS_DIR, file));
   const origin = source === analyzerCopy ? 'analyzer' : 'repo';
-  log(`  asset  ${file.padEnd(24)} <- ${origin}`);
+  if (file === '_ds_bundle.js') {
+    const { text, note } = patchBundleSelfLoader(readFileSync(source, 'utf8'));
+    writeFileSync(join(ASSETS_DIR, file), text);
+    log(`  asset  ${file.padEnd(24)} <- ${origin}${note}`);
+  } else {
+    copyFileSync(source, join(ASSETS_DIR, file));
+    log(`  asset  ${file.padEnd(24)} <- ${origin}`);
+  }
 }
 
 for (const token of TOKENS) {
