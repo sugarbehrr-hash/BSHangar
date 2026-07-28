@@ -40,6 +40,11 @@
 .flist li { position: relative; padding: 7px 0 7px 22px; font-size: 15px; line-height: 1.5; color: var(--ink-700); border-top: 1px solid var(--cream-200); }
 .flist li:first-child { border-top: none; }
 .flist li::before { content: ""; position: absolute; left: 2px; top: 14px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent, var(--red-600)); }
+
+/* Footer link on a summary infocard — same visual grammar as .catcard .go. */
+.infocard .ic-go { margin-top: 14px; font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--accent, var(--red-600)); display: inline-flex; align-items: center; gap: 7px; }
+.infocard .ic-go i { transition: transform .18s; }
+.infocard .ic-go:hover i { transform: translateX(4px); }
 .flist li b { color: var(--navy-900); font-weight: 700; }
 
 /* ---------- CALLOUTS ---------- */

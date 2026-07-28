@@ -4,8 +4,11 @@ import RichText from './RichText.astro';
 
 /**
  * The bordered card with an icon header and a bulleted list.
- * Used by /contract/, /commuting/ and the print artifacts, so the markup lives
- * in one place rather than being retyped per page as it was in the export.
+ * Used by /contract/ and the print artifacts, so the markup lives in one
+ * place rather than being retyped per page as it was in the export.
+ *
+ * With `href` the card gains a footer link — the summary card's road into
+ * the full reference it summarizes.
  */
 interface Props {
   title: string;
@@ -13,9 +16,12 @@ interface Props {
   icon: string;
   accent: string;
   points: string[];
+  href?: string;
+  /** Footer link label; only rendered alongside `href`. */
+  cta?: string;
 }
 
-const { title, ref, icon, accent, points } = Astro.props;
+const { title, ref, icon, accent, points, href, cta = 'Read the full section' } = Astro.props;
 ---
 
 <div class="infocard" style={`--accent: ${accent};`}>
@@ -29,4 +35,11 @@ const { title, ref, icon, accent, points } = Astro.props;
   <ul class="flist" style={`--accent: ${accent};`}>
     {points.map((point) => <RichText as="li" text={point} />)}
   </ul>
+  {
+    href && (
+      <a class="ic-go" href={href}>
+        {cta} <Icon name="ph-arrow-right" />
+      </a>
+    )
+  }
 </div>

@@ -1,10 +1,15 @@
 ---
 import { richText } from '../lib/rich-text';
+import { slugify } from '../lib/slug';
 import type { GuideSection } from '../data/guides/types';
 
 /**
  * One guide section. Extracted from GuideBody so a printable sheet can render
  * exactly one section per page while the web page renders them in sequence.
+ *
+ * The id makes every section a deep-link target — the TOC, search results and
+ * the /contract/ summary cards all point at it. Print sheets carry the same
+ * ids harmlessly (one section per sheet, still unique per document).
  */
 interface Props {
   section: GuideSection;
@@ -13,7 +18,7 @@ interface Props {
 const { section } = Astro.props;
 ---
 
-<section class="gd-section">
+<section class="gd-section" id={slugify(section.title)}>
   <div class="gd-band">
     {section.ref && <span class="gd-band-ref">{section.ref}</span>}
     {section.refLabel && <span class="gd-band-label">{section.refLabel}</span>}

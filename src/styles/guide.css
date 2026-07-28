@@ -279,3 +279,118 @@
 .fm-page .gd-cl-marker { width: 22px; height: 22px; font-size: 12px; }
 .fm-page .gd-cl-group { padding: 9px 11px; }
 .fm-page .gd-checklist { gap: 10px; }
+
+/* ============================================================
+   Article template — TOC rail + long-form body
+   ------------------------------------------------------------
+   One column on narrow screens with a collapsible "On this page"
+   card up top; a sticky right rail from 1100px. The 84px anchor
+   offset clears the sticky site header (68px) with breathing room.
+   ============================================================ */
+
+.gd-section { scroll-margin-top: 84px; }
+
+.ph-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 18px 0 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--sky-300);
+}
+.ph-meta span { display: inline-flex; align-items: center; }
+
+.art-main { min-width: 0; }
+.art-main > .callout:first-child,
+.art-main > .dlbar { margin-top: 0; }
+.art-main > .callout + .dlbar { margin-top: 22px; }
+.art-main .dlbar { margin-bottom: 34px; }
+
+.art-disclaimer {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-500);
+  max-width: 720px;
+  margin: 8px 0 0;
+}
+
+/* --- TOC, narrow layout: collapsible card above the article --- */
+.toc {
+  background: var(--white);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 26px;
+  overflow: hidden;
+}
+
+.toc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--navy-900);
+  text-align: left;
+}
+.toc-toggle i { font-size: 18px; color: var(--red-600); }
+.toc-toggle .toc-chev { margin-left: auto; color: var(--ink-500); transition: transform 0.2s var(--ease-out); }
+.toc[data-open='1'] .toc-toggle .toc-chev { transform: rotate(180deg); }
+
+.toc-head { display: none; }
+
+.toc-list { display: none; list-style: none; margin: 0; padding: 4px 8px 10px; }
+.toc[data-open='1'] .toc-list { display: block; }
+
+.toc-list a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--ink-700);
+  transition: background 0.15s, color 0.15s;
+}
+.toc-list a:hover { background: var(--cream-200); color: var(--navy-900); }
+.toc-list a[aria-current='true'] { background: var(--cream-200); color: var(--navy-900); font-weight: 700; }
+.toc-list .toc-ref {
+  margin-left: auto;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--ink-500);
+  white-space: nowrap;
+}
+
+/* --- Wide layout: content + sticky rail --- */
+@media (min-width: 1100px) {
+  .article { display: grid; grid-template-columns: minmax(0, 1fr) 250px; column-gap: 48px; align-items: start; }
+  .art-main { grid-column: 1; grid-row: 1; }
+  .art-rail { grid-column: 2; grid-row: 1; position: sticky; top: 88px; }
+
+  .toc { margin-bottom: 0; background: none; border: none; box-shadow: none; border-radius: 0; overflow: visible; }
+  .toc-toggle { display: none; }
+  .toc-head {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    padding: 0 10px 8px;
+  }
+  .toc-list { display: block; padding: 0; max-height: calc(100vh - 130px); overflow-y: auto; }
+}

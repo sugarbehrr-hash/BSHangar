@@ -15,6 +15,12 @@ export interface ContractCard {
   /** CSS custom-property value driving the card accent. */
   accent: string;
   points: string[];
+  /**
+   * EXACT title of the CBA Field Manual section this card summarizes. The
+   * contract page derives the deep-link anchor from it and fails the build if
+   * no manual section carries this title, so the link cannot silently rot.
+   */
+  section: string;
 }
 
 export const contractCards: ContractCard[] = [
@@ -28,6 +34,7 @@ export const contractCards: ContractCard[] = [
       '**10 hrs** minimum rest between duty periods.',
       'No contact during rest for scheduling changes (§8.N.3).',
     ],
+    section: 'Duty Time & Rest Limits',
   },
   {
     title: 'Scheduling',
@@ -39,6 +46,7 @@ export const contractCards: ContractCard[] = [
       'Junior assignment: reverse seniority, **1.5× pay**, max 3/mo.',
       'Days off dropped below minimum must be restored.',
     ],
+    section: 'Scheduling Rights',
   },
   {
     title: 'Pay Protections',
@@ -50,6 +58,7 @@ export const contractCards: ContractCard[] = [
       'Minimum day pay: greater of actual or **3.5 hrs**.',
       'Report a pay error in writing within **5 business days**.',
     ],
+    section: 'Pay Protections',
   },
   {
     title: 'Reserve Rights',
@@ -61,6 +70,7 @@ export const contractCards: ContractCard[] = [
       "**Short-call:** report 2 hrs; first-day RAP can't change without consent.",
       'FOLO preference: submit **72 hrs** before your block.',
     ],
+    section: 'Reserve Rights',
   },
   {
     title: 'Sick & Vacation',
@@ -72,6 +82,7 @@ export const contractCards: ContractCard[] = [
       'Vacation earned by longevity — up to **5 weeks**.',
       'Not required to share your whereabouts on vacation.',
     ],
+    section: 'Sick Leave & Vacation',
   },
   {
     title: 'Grievances',
@@ -83,6 +94,7 @@ export const contractCards: ContractCard[] = [
       'File within **15 days** (discipline) / **30 days** (contract).',
       'The **contract prevails** over conflicting Company policy (§24.F).',
     ],
+    section: 'Grievances & Discipline',
   },
 ];
 

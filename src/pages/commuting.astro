@@ -1,58 +1,28 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import GuideArticle from '../components/GuideArticle.astro';
 import Icon from '../components/Icon.astro';
-import GuideBody from '../components/GuideBody.astro';
 import { UNION_REP_PHONE } from '../data/site';
 import { commutingGuide as guide } from '../data/guides/commuting';
 
 /**
- * The full Commuting Guide, not a summary.
- *
- * This page previously rendered a ~420-word précis while the export's actual
- * guide was ~2,450 words across 7 sheets. Same data as
- * /print/commuting-guide/ — the printable is this content set for paper.
+ * The full Commuting Guide, not a summary — ~2,450 words across 7 sections,
+ * rendered through the shared Article template (TOC rail, printable bar,
+ * masthead provenance). Same data as /print/commuting-guide/.
  */
 ---
 
-<BaseLayout
+<GuideArticle
+  guide={guide}
   title="Commuting & Non-Rev Guide"
   description="How PSA flight attendants list, fly and report on time: the Commuter Program, your options when a commute fails, boarding-pass documentation, listing by airline, dress guidelines, and a day-of checklist."
 >
-  <div class="pagehead">
-    <div class="wrap">
-      <div class="ph-eyebrow">Non-Rev · List · Fly · Check In</div>
-      <h1 class="ph-title">{guide.title}</h1>
-      <p class="ph-sub">{guide.intro}</p>
+  <div class="callout">
+    <Icon name="ph-warning" />
+    <div class="ct">
+      <b>This guide assists you and doesn't carry protections.</b> It's plain-language reference
+      from the CBA &amp; Commuting Policy. Always confirm current terms with your Inflight
+      Supervisor or a union rep. Union Rep Assistance:
+      <a href={UNION_REP_PHONE.href}><b>{UNION_REP_PHONE.display}</b></a>.
     </div>
   </div>
-
-  <section class="band cream">
-    <div class="wrap">
-      <div class="callout" style="margin-top:0;">
-        <Icon name="ph-warning" />
-        <div class="ct">
-          <b>This guide assists you and doesn't carry protections.</b> It's plain-language
-          reference from the CBA &amp; Commuting Policy. Always confirm current terms with your
-          Inflight Supervisor or a union rep. Union Rep Assistance:
-          <a href={UNION_REP_PHONE.href}><b>{UNION_REP_PHONE.display}</b></a>.
-        </div>
-      </div>
-
-      <div class="dlbar">
-        <div class="txt">
-          <b>Prefer it on paper?</b>
-          <span>The same guide as a printable you can save or keep in your bag.</span>
-        </div>
-        <a class="btn btn-gold" href="/print/commuting-guide/">
-          <Icon name="ph-printer" /> Printable
-        </a>
-      </div>
-
-      <GuideBody guide={guide} />
-
-      <p style="font-size:13px;color:var(--ink-500);max-width:720px;">
-        {guide.meta.translates}. {guide.meta.revised}.
-      </p>
-    </div>
-  </section>
-</BaseLayout>
+</GuideArticle>

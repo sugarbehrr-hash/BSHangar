@@ -7,6 +7,27 @@ import RichText from '../components/RichText.astro';
 import { UNION_REP_PHONE, DISCLAIMER } from '../data/site';
 import { contractCards, taBanner, contractCallouts } from '../data/contract';
 import { contractResources, VOTE_GUIDE } from '../data/resources';
+import { contractGuide } from '../data/guides/contract';
+import { slugify } from '../lib/slug';
+
+/**
+ * Each summary card deep-links into the CBA Field Manual section it
+ * summarizes. The anchor is derived from the card's `section` title and
+ * checked against the manual's real sections, so a renamed section fails the
+ * build here instead of shipping a dead link.
+ */
+const MANUAL_PATH = '/guides/contract-field-manual/';
+const manualAnchors = new Set(contractGuide.sections.map((s) => slugify(s.title)));
+
+const cards = contractCards.map((card) => {
+  const anchor = slugify(card.section);
+  if (!manualAnchors.has(anchor)) {
+    throw new Error(
+      `Contract card "${card.title}" targets manual section "${card.section}", which does not exist.`
+    );
+  }
+  return { ...card, href: `${MANUAL_PATH}#${anchor}` };
+});
 ---
 
 <BaseLayout
@@ -61,7 +82,7 @@ import { contractResources, VOTE_GUIDE } from '../data/resources';
       </div>
 
       <div class="cols3" style="margin-top:30px;">
-        {contractCards.map((card) => <InfoCard {...card} />)}
+        {cards.map((card) => <InfoCard {...card} />)}
       </div>
 
       <Callout tone="ok" icon="ph-shield-check" text={contractCallouts.investigatory} />
