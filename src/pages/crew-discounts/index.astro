@@ -15,7 +15,7 @@ const accents = ['var(--red-600)', 'var(--sky-700)', 'var(--gold-600)', 'var(--n
   <div class="pagehead">
     <div class="wrap">
       <div class="ph-eyebrow">CLT · DCA · DFW · PHL</div>
-      <h1 class="ph-title">Crew Discounts</h1>
+      <h1 class="ph-title">Discounts</h1>
       <p class="ph-sub">
         Your badge is a discount card. Meals, shops and perks at all four bases, sorted by
         terminal so you can find something in the time you actually have.
@@ -30,19 +30,23 @@ const accents = ['var(--red-600)', 'var(--sky-700)', 'var(--gold-600)', 'var(--n
         <h2 class="h2">Where are you flying?</h2>
       </div>
 
-      <div class="catgrid">
+      {/* Four bases, one row. The blurb that used to sit on each card is the
+          SAME string the destination page shows in its .baseintro, so on the
+          hub it was preamble you read twice; the code, city and spot count are
+          all you need to choose a base. */}
+      <div class="basegrid">
         {
           bases.map((base, i) => {
             const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
             return (
               <a
-                class="catcard"
+                class="basecard"
                 href={`/crew-discounts/${base.key}/`}
                 style={`--accent: ${accents[i % accents.length]};`}
               >
-                <span class="cb"><Icon name="ph-airplane-tilt" /></span>
-                <h3>{base.code} — {base.name}</h3>
-                <p>{base.blurb}</p>
+                <span class="bc-code">{base.code}</span>
+                <span class="bc-name">{base.name}</span>
+                <span class="bc-sub">{base.sub}</span>
                 <span class="go">
                   {total} spots <Icon name="ph-arrow-right" />
                 </span>

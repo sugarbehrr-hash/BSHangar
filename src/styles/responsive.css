@@ -33,9 +33,9 @@
   .estside { position: static; }
 
   .hero-a .inner { grid-template-columns: 1fr; gap: 30px; }
-  .hero-a h1 { font-size: 56px; }
+  .hero-a h1 { font-size: 46px; }
 
-  .catgrid, .cols3, .prodgrid, .reslist { grid-template-columns: 1fr 1fr; }
+  .catgrid, .cols3, .prodgrid, .reslist, .basegrid { grid-template-columns: 1fr 1fr; }
   .steprow { grid-template-columns: 1fr 1fr; }
   .footgrid { grid-template-columns: 1fr; }
 }
@@ -52,7 +52,7 @@
   .fbbtn { padding: 0 12px; }
   .wrap { padding: 0 18px; }
 
-  .catgrid, .cols2, .cols3, .prodgrid, .steprow, .reslist, .egrid { grid-template-columns: 1fr; }
+  .catgrid, .cols2, .cols3, .prodgrid, .steprow, .reslist, .egrid, .basegrid { grid-template-columns: 1fr; }
   .startpick-btns { grid-template-columns: 1fr; }
 
   /* Estimator: stack each label above its input so long field labels

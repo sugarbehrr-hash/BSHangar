@@ -15,7 +15,7 @@ const cards = [
     href: '/tools/',
     accent: 'var(--red-600)',
     icon: 'ph-calculator',
-    title: 'Crew Tools',
+    title: 'Tools',
     body: 'Calculators built from the group’s spreadsheets — see what your check should be before it lands.',
     cta: 'Check your numbers',
   },
@@ -39,7 +39,7 @@ const cards = [
     href: '/crew-discounts/',
     accent: 'var(--gold-600)',
     icon: 'ph-tag',
-    title: 'Crew Discounts',
+    title: 'Discounts',
     body: 'Meals, shops & perks by base — CLT, DCA, DFW & PHL. Flash your crew ID and save on the turn.',
     cta: 'Browse by base',
   },
@@ -47,7 +47,7 @@ const cards = [
     href: '/crew-essentials/',
     accent: 'var(--success-600)',
     icon: 'ph-suitcase-rolling',
-    title: 'Crew Essentials',
+    title: 'Essentials',
     body: 'The bags, socks, chargers & care kit that survive the schedule — vetted picks with links to buy.',
     cta: 'See the gear',
   },
@@ -95,20 +95,18 @@ const steps = [
           </p>
           <div class="cta">
             <a class="btn btn-red" href="#new-here"><Icon name="ph-hand-waving" /> Start here</a>
-            <a class="btn btn-ghost" href="/crew-discounts/"><Icon name="ph-tag" /> Crew discounts</a>
+            <a class="btn btn-ghost" href="/crew-discounts/"><Icon name="ph-tag" /> Discounts</a>
           </div>
         </div>
         <div class="art">
-          <div class="sun float"></div>
-          <div class="logo-card">
-            <img
-              src={brandLogo.src}
-              alt="Blue Streak Hangar — the wordmark with the jet swoosh"
-              width={brandLogo.width}
-              height={brandLogo.height}
-              loading="eager"
-            />
-          </div>
+          <img
+            class="brandmark"
+            src={brandLogo.src}
+            alt="Blue Streak Hangar — the wordmark with the jet swoosh"
+            width={brandLogo.width}
+            height={brandLogo.height}
+            loading="eager"
+          />
         </div>
       </div>
     </div>

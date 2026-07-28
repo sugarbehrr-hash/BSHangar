@@ -52,10 +52,11 @@ export interface NavItem {
   label: string;
   href: string;
   /**
-   * Bar-only label. The header is width-constrained — seven full labels need
-   * 1374px, which collapses the bar to a burger on an ordinary 1280px laptop.
-   * The footer and the 404 destination list are not constrained and keep the
-   * full `label`, where the extra words genuinely help.
+   * Bar-only label, for the rare item whose full label is too long for the
+   * width-constrained header. Only "Your Contract" needs one now: the labels
+   * below dropped their "Crew " prefix, which was doing no disambiguating
+   * work on a site that is entirely for crew, and every other label is now
+   * short enough to render identically everywhere.
    */
   short?: string;
   /**
@@ -78,9 +79,9 @@ export const NAV: NavItem[] = [
       { label: 'Reserve Field Guide', href: '/contract/reserve-guide/' },
     ],
   },
-  { label: 'Crew Discounts', href: '/crew-discounts/', short: 'Discounts' },
-  { label: 'Crew Essentials', href: '/crew-essentials/', short: 'Essentials' },
-  { label: 'Crew Tools', href: '/tools/', short: 'Tools' },
+  { label: 'Discounts', href: '/crew-discounts/' },
+  { label: 'Essentials', href: '/crew-essentials/' },
+  { label: 'Tools', href: '/tools/' },
 ];
 
 /** Standing disclaimers. Carried verbatim from the export. */
