@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#0F1E3D; --navy-700:#1B3461; --navy-600:#294B82; --navy-500:#3A63A3;
+    --sky-700:#1F6FB2; --sky-500:#3B8BD6; --sky-300:#9FD0F0; --sky-100:#E4F2FC;
+    --cream-100:#FBF7EE; --cream-200:#F5EFE1; --cream-300:#ECE3CF; --red-600:#C8102E;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#d9d2c4;font-family:Archivo,sans-serif;padding:40px;color:var(--navy-900)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:1180px;margin:0 auto}
+  .cell{background:var(--cream-100);border:1px solid var(--cream-300);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px}
+  .cell.dark{background:var(--navy-900);border-color:var(--navy-700)}
+  .cap{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#8a8172}
+  .cell.dark .cap{color:#6f83a8}
+  .stage{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .streaktile{border-radius:22px}
+  svg{display:block}
+  .row{display:flex;align-items:center;gap:34px}
+</style>
+</head>
+<body>
+<div class="grid">
+
+  <!-- 1. PRIMARY HORIZONTAL LOCKUP (header) -->
+  <div class="cell">
+    <div class="cap">Primary lockup · header</div>
+    <div class="stage" id="s1"></div>
+  </div>
+
+  <!-- 2. REVERSED on navy -->
+  <div class="cell dark">
+    <div class="cap">Reversed · on navy</div>
+    <div class="stage" id="s2"></div>
+  </div>
+
+  <!-- 3. STACKED (OG / print / square) -->
+  <div class="cell">
+    <div class="cap">Stacked · social / print</div>
+    <div class="stage" id="s3" style="justify-content:center"></div>
+  </div>
+
+  <!-- 4. ICON — favicon test at sizes -->
+  <div class="cell">
+    <div class="cap">Icon only · favicon test</div>
+    <div class="row" id="s4" style="align-items:flex-end"></div>
+  </div>
+
+</div>
+
+<script>
+// ---- Build the multi-band streak icon (concentric arc bands) ----
+// Bands are concentric arcs sharing a center; sweep from lower-left,
+// hooking up to the upper-right. Outer/largest = lightest, inner = darkest.
+function streak(size, opts){
+  opts = opts || {};
+  // Variant B: one smooth convex swoosh. A single curve — horizontal-ish base
+  // on the lower-left sweeping up to a fan on the upper-right — offset into
+  // parallel bands. Lightest band leads on the outer (lower-right) edge.
+  const ramp = opts.reversed
+    ? ['#294B82','#3B8BD6','#7FC0EE','#B9DEF7','#EAF5FD']   // inner -> outer, tuned for navy
+    : ['#0F1E3D','#1B3461','#294B82','#3B8BD6','#9FD0F0'];  // deep navy -> sky on cream
+  const base = 'M 28 132 C 108 132 150 104 192 30';         // k=0 centerline
+  const step = 17, ox = 0.56 * step, oy = 0.83 * step, bw = 14;  // perpendicular offset
+  let paths = '';
+  ramp.forEach((col,k)=>{
+    paths += `<path d="${base}" transform="translate(${(k*ox).toFixed(1)} ${(k*oy).toFixed(1)})" `
+          +  `fill="none" stroke="${col}" stroke-width="${bw}" stroke-linecap="round"/>`;
+  });
+  return `<svg width="${size}" height="${size}" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
+}
+
+// tile-wrapped icon (rounded square background)
+function tile(size, bg, reversed){
+  const inner = streak(size, {reversed});
+  return `<div class="streaktile" style="width:${size}px;height:${size}px;background:${bg};display:flex;align-items:center;justify-content:center;overflow:hidden">${inner}</div>`;
+}
+
+// ---- Wordmark (SVG so it locks exactly; slight skew = "speed") ----
+function wordmark(color, sub){
+  return `
+  <svg width="360" height="120" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+    <g transform="skewX(-7)">
+      <text x="30" y="58" font-family="Anton" font-size="56" fill="${color}" letter-spacing="1">BLUE STREAK</text>
+    </g>
+    <text x="4" y="100" font-family="Archivo" font-weight="800" font-size="30" fill="${sub}" letter-spacing="14.5">HANGAR</text>
+  </svg>`;
+}
+
+function wordmarkStacked(color, sub){
+  return `
+  <svg width="300" height="230" viewBox="0 0 300 230" xmlns="http://www.w3.org/2000/svg">
+    <g transform="skewX(-7)">
+      <text x="40" y="70" font-family="Anton" font-size="72" fill="${color}" text-anchor="start">BLUE</text>
+      <text x="18" y="145" font-family="Anton" font-size="72" fill="${color}" text-anchor="start">STREAK</text>
+    </g>
+    <text x="6" y="205" font-family="Archivo" font-weight="800" font-size="34" fill="${sub}" letter-spacing="24">HANGAR</text>
+  </svg>`;
+}
+
+document.getElementById('s1').innerHTML = tile(96,'transparent',false) + wordmark('#1B3461','#294B82');
+document.getElementById('s2').innerHTML = tile(96,'transparent',true)  + wordmark('#FBF7EE','#9FD0F0');
+document.getElementById('s3').innerHTML =
+  `<div style="display:flex;flex-direction:column;align-items:center;gap:6px">${tile(120,'transparent',false)}${wordmarkStacked('#1B3461','#294B82')}</div>`;
+document.getElementById('s4').innerHTML =
+  tile(96,'var(--navy-900)',true) + tile(48,'var(--navy-900)',true) + tile(32,'var(--navy-900)',true)
+  + tile(64,'var(--cream-100)',false) + tile(32,'var(--cream-100)',false);
+</script>
+</body>
+</html>

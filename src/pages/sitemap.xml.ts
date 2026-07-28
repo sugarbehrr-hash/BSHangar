@@ -23,6 +23,7 @@ function buildEntries(): Entry[] {
   const entries: Entry[] = [
     { path: '/', priority: 1.0, changefreq: 'weekly' },
     { path: '/commuting/', priority: 0.9, changefreq: 'monthly' },
+    { path: '/commuting/guide/', priority: 0.8, changefreq: 'monthly' },
     { path: '/contract/', priority: 0.9, changefreq: 'weekly' },
     { path: '/contract/field-manual/', priority: 0.8, changefreq: 'monthly' },
     { path: '/contract/reserve-guide/', priority: 0.8, changefreq: 'monthly' },

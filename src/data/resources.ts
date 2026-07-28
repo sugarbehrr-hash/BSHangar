@@ -49,12 +49,12 @@ export const contractResources: Resource[] = [
     kind: 'generated',
     links: [
       {
-        label: 'Read',
+        label: 'Read online',
         href: '/contract/field-manual/',
         variant: 'navy',
         icon: 'ph-book-open',
       },
-      { label: 'Print', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Print or save as PDF', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-printer' },
     ],
   },
   {
@@ -68,8 +68,8 @@ export const contractResources: Resource[] = [
     accent: 'var(--sky-700)',
     kind: 'generated',
     links: [
-      { label: 'Read', href: '/contract/reserve-guide/', variant: 'navy', icon: 'ph-book-open' },
-      { label: 'Print', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-printer' },
+      { label: 'Read online', href: '/contract/reserve-guide/', variant: 'navy', icon: 'ph-book-open' },
+      { label: 'Print or save as PDF', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-printer' },
     ],
   },
   {
@@ -85,6 +85,26 @@ export const contractResources: Resource[] = [
     links: [
       { label: 'Read', href: '/contract/2026-ta-vote-guide/', variant: 'red', icon: 'ph-book-open' },
       { label: 'PDF', href: '/contract/2026-ta-report/', variant: 'gold', icon: 'ph-file-pdf' },
+    ],
+  },
+];
+
+
+/** Shown in "Take the guide with you" on /commuting/. */
+export const commutingResources: Resource[] = [
+  {
+    id: 'commuting-guide',
+    title: 'Commuting Guide',
+    format: 'Web guide + printable',
+    blurb:
+      'The full Commuter Program reference — listing, back-ups, what happens when a ' +
+      'commute fails, documentation, dress and the day-of checklist.',
+    icon: 'ph-airplane-takeoff',
+    accent: 'var(--sky-700)',
+    kind: 'generated',
+    links: [
+      { label: 'Read online', href: '/commuting/guide/', variant: 'navy', icon: 'ph-book-open' },
+      { label: 'Print or save as PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-printer' },
     ],
   },
 ];

@@ -106,3 +106,23 @@ section.band.tight { padding-top: 20px; }
    The effects token file defines --focus-ring but nothing in the export ever
    consumed it, so keyboard focus was invisible on every interactive element. */
 :where(a, button, input, summary):focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); }
+
+/* ---------- MASTHEAD TWO-COLUMN ----------
+   Used where a page needs an at-a-glance panel beside the title (the
+   commuting "it's going wrong right now" card). One column until there is
+   genuinely room for two. */
+.mh-grid { display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 1000px) { .mh-grid { grid-template-columns: minmax(0, 1fr) 372px; gap: 44px; align-items: center; } }
+
+.helppanel { max-width: 480px; background: rgba(255,255,255,0.07); border: 1px solid rgba(159,208,240,0.26); border-radius: var(--radius-md); padding: 14px 18px 16px; margin-bottom: 26px; }
+@media (min-width: 1000px) { .helppanel { max-width: none; margin-bottom: 0; } }
+.helppanel .flag { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .13em; text-transform: uppercase; color: var(--navy-900); background: var(--gold-500); padding: 5px 11px; border-radius: var(--radius-pill); }
+.helppanel h2 { font-family: var(--font-heading); font-weight: 800; font-size: 16.5px; line-height: 1.28; color: #fff; margin: 10px 0 2px; }
+.helppanel h2 .r { color: var(--red-500); }
+.hprow { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 7px 0; border-top: 1px solid rgba(159,208,240,0.18); }
+.hprow:first-of-type { border-top: none; }
+.hprow .k { font-size: 13.5px; color: var(--sky-300); }
+.hprow .v { font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: #fff; text-align: right; }
+.hprow .v.live { color: var(--gold-500); }
+.helppanel .cta { display: flex; margin-top: 12px; }
+.helppanel .cta .btn { width: 100%; }

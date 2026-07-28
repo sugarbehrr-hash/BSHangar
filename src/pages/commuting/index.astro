@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import SectionNav from '../../components/SectionNav.astro';
+import FigureLedger from '../../components/FigureLedger.astro';
+import SituationZone from '../../components/SituationZone.astro';
+import { UNION_REP_PHONE, DISCLAIMER } from '../../data/site';
+import {
+  commutingFigures,
+  commutingIntro,
+  commutingSituations,
+  commutingCopy,
+  commutingHelp,
+} from '../../data/commuting-hub';
+import { commutingResources } from '../../data/resources';
+
+/**
+ * The Commuting hub, on the same two patterns as /contract/ — and deliberately
+ * NOT aligned to it beyond that. Four figures rather than six because only
+ * four things are actual program deadlines, and the chips are a timeline
+ * rather than § citations because commuting rules mostly aren't CBA sections.
+ *
+ * The full step-by-step guide stays where it was; this page links to it.
+ */
+---
+
+<BaseLayout
+  title="Commuting & Non-Rev"
+  description="Commuting sorted by the moment you need it: the deadlines that keep you inside the Commuter Program — listing, back-ups, cushion and documentation — and what to do when a commute fails, a gate agent questions your dress, or non-rev travel lands on your paycheck."
+>
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-grid">
+        <div class="mh-body">
+          <div class="mh-eyebrow">{commutingCopy.eyebrow}</div>
+          <h1 class="mh-title" set:html={commutingCopy.title} />
+          <p class="mh-sub">{commutingCopy.sub}</p>
+        </div>
+
+        <aside class="helppanel">
+          <span class="flag"><Icon name="ph-warning" /> {commutingHelp.flag}</span>
+          <h2>
+            {commutingHelp.heading}<br /><span class="r">{commutingHelp.headingAccent}</span>
+          </h2>
+          {
+            commutingHelp.rows.map((row) => (
+              <div class="hprow">
+                <span class="k">{row.k}</span>
+                <span class="v">{row.v}</span>
+              </div>
+            ))
+          }
+          <div class="hprow">
+            <span class="k">Union Rep Assistance</span>
+            <a class="v live" href={UNION_REP_PHONE.href}>{UNION_REP_PHONE.display}</a>
+          </div>
+          <div class="cta">
+            <a class="btn btn-red btn-sm" href={commutingHelp.ctaHref}>
+              <Icon name="ph-list-checks" /> {commutingHelp.ctaLabel}
+            </a>
+          </div>
+        </aside>
+      </div>
+      <SectionNav />
+    </div>
+  </div>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">{commutingCopy.figuresKicker}</span>
+        <h2 class="h2">{commutingCopy.figuresHeading}</h2>
+        <p class="lead">{commutingCopy.figuresLead}</p>
+      </div>
+
+      <FigureLedger figures={commutingFigures} intro={commutingIntro} icon="ph-airplane-takeoff" />
+
+      <div class="band-head" style="margin-top:46px;">
+        <span class="kicker">{commutingCopy.situationsKicker}</span>
+        <h2 class="h2">{commutingCopy.situationsHeading}</h2>
+        <p class="lead">{commutingCopy.situationsLead}</p>
+      </div>
+
+      <div class="situations">
+        {
+          commutingSituations.map((situation) => (
+            <SituationZone situation={situation} id={situation.anchor} />
+          ))
+        }
+      </div>
+
+      <div class="actionbar">
+        <span class="card-badge"><Icon name="ph-headset" /></span>
+        <div class="txt">
+          <b>Commute failed and you're not sure what you're owed?</b>
+          <span>Call a rep before you agree to anything — it's free and it's yours.</span>
+        </div>
+        <a class="btn btn-red" href={UNION_REP_PHONE.href}>
+          <Icon name="ph-phone-call" /> {UNION_REP_PHONE.display}
+        </a>
+      </div>
+
+      <div class="band-head" style="margin-top:46px;">
+        <span class="kicker">{commutingCopy.docsKicker}</span>
+        <h2 class="h2">{commutingCopy.docsHeading}</h2>
+        <p class="lead">{commutingCopy.docsLead}</p>
+      </div>
+
+      <div class="grid two">
+        {
+          commutingResources.map((res) => (
+            <article class="card doc" style={`--accent: ${res.accent};`}>
+              <div class="card-head">
+                <span class="card-badge sq"><Icon name={res.icon} /></span>
+                <div class="card-titles">
+                  <h3 class="card-title">{res.title}</h3>
+                  <div class="card-sub">{res.format}</div>
+                </div>
+              </div>
+              <p class="card-text">{res.blurb}</p>
+              <div class="card-actions">
+                {res.links.map((link) => (
+                  <a class={`btn btn-${link.variant} btn-sm`} href={link.href}>
+                    <Icon name={link.icon} /> {link.label}
+                  </a>
+                ))}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="art-disclaimer">{DISCLAIMER.footer}</p>
+    </div>
+  </section>
+</BaseLayout>
