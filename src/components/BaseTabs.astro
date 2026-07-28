@@ -25,7 +25,7 @@ const { current } = Astro.props;
         aria-current={base.key === current ? 'page' : undefined}
       >
         <span class="st-code">{base.code}</span>
-        <span class="st-sub">{base.name.split(/[ ,]/)[0]}</span>
+        <span class="st-sub">{base.tabLabel}</span>
       </a>
     ))
   }

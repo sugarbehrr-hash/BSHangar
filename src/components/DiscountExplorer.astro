@@ -24,7 +24,9 @@ interface Props {
 
 const { base, category } = Astro.props;
 
-const flyers = baseFlyers[base.key] ?? [];
+// Only the flyer for the category being viewed — one link, not one per
+// category, which put two identical "Full list (PDF)" buttons in the row.
+const flyers = (baseFlyers[base.key] ?? []).filter((f) => f.href.endsWith(`/${category.key}/`));
 const totalVenues = venueCount(category);
 const categoryPath = (b: Base, c: Category) =>
   c.key === b.categories[0]?.key ? `/crew-discounts/${b.key}/` : `/crew-discounts/${b.key}/${c.key}/`;
@@ -49,13 +51,13 @@ const categoryPath = (b: Base, c: Category) =>
     <div class="filter">
       <Icon name="ph-magnifying-glass" />
       <label class="sr-only" for="venue-filter">
-        Filter {base.code} {category.label.toLowerCase()}
+        Filter {base.code} venues
       </label>
       <input
         type="search"
         id="venue-filter"
         data-filter
-        placeholder={`Filter ${base.code} venues`}
+        placeholder="Filter by name…"
         autocomplete="off"
       />
     </div>

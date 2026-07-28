@@ -67,16 +67,16 @@ export const DEDUCTIONS: DeductionField[] = [
   {
     key: 'pretax',
     label: 'Pre-Tax Deductions',
-    note: 'Total per check — medical, dental, vision, etc. Same every check unless benefits change.',
+    note: 'Medical, dental, vision — total per check.',
   },
   {
     key: 'k401',
     label: '401(k) contribution',
-    note: '% of GTD + overages + taxable per diem',
+    note: '% of GTD + overages + taxable per diem.',
     percent: true,
   },
-  { key: 'posttax', label: 'Post-Tax Deductions', note: 'Total per check from your paystub' },
-  { key: 'dues', label: 'Union Dues', note: 'AFA dues per check' },
+  { key: 'posttax', label: 'Post-Tax Deductions', note: 'Total per check from your paystub.' },
+  { key: 'dues', label: 'Union Dues', note: 'AFA dues per check.' },
 ];
 
 export interface Bracket {
@@ -183,7 +183,7 @@ const ALLOWANCE_OTHER = 8_600 / PAY_PERIODS;
 export const FILING: Record<FilingStatus, FilingProfile> = {
   single: {
     label: 'Single or married filing separately',
-    short: 'Single / Married filing separately',
+    short: 'Single / filing separately',
     allowance: ALLOWANCE_OTHER,
     brackets: perCheck(ANNUAL_SCHEDULES.single),
   },

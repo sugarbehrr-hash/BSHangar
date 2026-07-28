@@ -48,6 +48,8 @@ export interface Base {
   code: string;
   name: string;
   sub: string;
+  /** Short city label for the masthead base switcher. */
+  tabLabel: string;
   blurb: string;
   categories: Category[];
 }
@@ -58,7 +60,8 @@ export const bases: Base[] = [
     code: "CLT",
     name: "Charlotte Douglas",
     sub: "Charlotte, NC",
-    blurb: "Start in the Atrium — the central hub feeding all five concourses — then follow your gate. The Atrium boutiques and the D/E Connector brands are the most reliable for a crew discount.",
+    tabLabel: "Charlotte",
+    blurb: "Start in the Atrium — the hub feeding all five concourses — then follow your gate. The Atrium boutiques and the D/E Connector brands are the most reliable for a crew discount.",
     categories: [
       {
         key: "eat", label: "Food & Drink", icon: "ph-fork-knife",
@@ -309,6 +312,7 @@ export const bases: Base[] = [
     code: "DCA",
     name: "Reagan National",
     sub: "Washington, DC",
+    tabLabel: "Washington",
     blurb: "Compact and quick — perfect for a tight turn. Show your AA badge and ask for the crew rate before you order; it varies by spot. National Hall (Terminal 2) has the widest spread.",
     categories: [
       {
@@ -506,6 +510,7 @@ export const bases: Base[] = [
     code: "DFW",
     name: "Dallas / Fort Worth",
     sub: "Dallas, TX",
+    tabLabel: "Dallas–Ft Worth",
     blurb: "Big airport, real deals — many spots have a set crew price or 10–20% off with your AA badge. Terminals A & C have printed crew menus; E & B have the percentage discounts. Prices change, so confirm at the register. Most don't apply if you dine in.",
     categories: [
       {
@@ -619,6 +624,7 @@ export const bases: Base[] = [
     code: "PHL",
     name: "Philadelphia Int'l",
     sub: "Philadelphia, PA",
+    tabLabel: "Philadelphia",
     blurb: "Terminals A–F with a long connector — everything's airside and connected, so walk the B/C connector (the classic crew stop) if your terminal's quiet. Show your AA badge and ask; the rate varies by spot.",
     categories: [
       {

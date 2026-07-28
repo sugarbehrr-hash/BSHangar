@@ -91,7 +91,7 @@ export const contractFigures: ContractFigure[] = [
     "unit": "hrs",
     "label": "Max duty day",
     "caption": "Between rest periods — a ceiling, not a target",
-    "ref": "",
+    "ref": "§7",
     "pane": {
       "actionIcon": "ph-microphone",
       "title": "Max duty day",
@@ -111,7 +111,7 @@ export const contractFigures: ContractFigure[] = [
     "unit": "hrs",
     "label": "Minimum rest",
     "caption": "Between duty periods, measured at the hotel",
-    "ref": "",
+    "ref": "§7",
     "pane": {
       "actionIcon": "ph-envelope-simple",
       "title": "Minimum rest",
@@ -130,7 +130,7 @@ export const contractFigures: ContractFigure[] = [
     "unit": "hrs",
     "label": "Monthly guarantee",
     "caption": "When you're available the whole month",
-    "ref": "",
+    "ref": "§3",
     "pane": {
       "actionIcon": "ph-calculator",
       "title": "Monthly guarantee",
@@ -149,7 +149,7 @@ export const contractFigures: ContractFigure[] = [
     "unit": "hrs",
     "label": "Minimum day pay",
     "caption": "Actual or 3.5, whichever is greater",
-    "ref": "",
+    "ref": "§3",
     "pane": {
       "actionIcon": "ph-note-pencil",
       "title": "Minimum day pay",
@@ -168,7 +168,7 @@ export const contractFigures: ContractFigure[] = [
     "unit": "hrs",
     "label": "Short-call report",
     "caption": "Clock starts when the phone rings",
-    "ref": "",
+    "ref": "§9",
     "pane": {
       "actionIcon": "ph-clock-countdown",
       "title": "Short-call report",
@@ -187,7 +187,7 @@ export const contractFigures: ContractFigure[] = [
     "unit": "days",
     "label": "To file a grievance",
     "caption": "15 days if it's discipline",
-    "ref": "",
+    "ref": "§16",
     "pane": {
       "actionIcon": "ph-paper-plane-tilt",
       "title": "To file a grievance",

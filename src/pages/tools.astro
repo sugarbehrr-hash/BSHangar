@@ -129,7 +129,7 @@ const money = (n: number) =>
               <span class="card-badge num">3</span>
               <div class="card-titles">
                 <h3 class="card-title">Fill in your earnings</h3>
-                <div class="card-sub">Straight off your Time Summary</div>
+                <div class="card-sub">From your Time Summary · leave anything you don't have at 0</div>
               </div>
             </div>
 
@@ -163,7 +163,7 @@ const money = (n: number) =>
               <span class="card-badge num">4</span>
               <div class="card-titles">
                 <h3 class="card-title">Fill in your deductions</h3>
-                <div class="card-sub">From your last paystub — these rarely change</div>
+                <div class="card-sub">From your last paystub · usually the same every check</div>
               </div>
             </div>
 
@@ -195,7 +195,7 @@ const money = (n: number) =>
               <input type="checkbox" id="ficaChk" checked />
               <span>
                 <b>Estimate Social Security &amp; Medicare (7.65%)</b> — leave this on unless you've
-                already included FICA in your Post-Tax Deductions number.
+                already included FICA in your post-tax number.
               </span>
             </label>
           </div>
@@ -226,11 +226,12 @@ const money = (n: number) =>
             </div>
 
             <p class="card-text" style="margin-top:14px; font-size:13.5px; color:var(--ink-500);">
-              Married filing <em>separately</em> uses the same table as Single.
+              Married filing <em>separately</em>? Pick the first one — the IRS puts it in the same
+              table as Single. That's their grouping, not ours.
             </p>
 
             <details class="reftable-wrap">
-              <summary><Icon name="ph-caret-right" /> Show the withholding table</summary>
+              <summary><Icon name="ph-caret-right" /> Federal withholding table (tap to view)</summary>
               <div class="reftable-body">
                 <p style="margin:0 0 10px; font-size:13px; color:var(--ink-500);">
                   Showing the <strong id="filingName">{FILING[DEFAULT_FILING].label}</strong> table.
@@ -263,7 +264,7 @@ const money = (n: number) =>
                 <div class="field" style="border-top:none; padding-top:14px;">
                   <label>
                     Withholding allowance
-                    <small>Per-check allowance from the IRS tables.</small>
+                    <small>Standard deduction per check, set by the status above.</small>
                   </label>
                   <div class="money">
                     <input
@@ -281,7 +282,7 @@ const money = (n: number) =>
                 <Notice
                   tone="warn"
                   icon="ph-warning"
-                  text="**Current as of the 2026 IRS tables.** If the year has turned over, check the numbers against Publication 15-T before you rely on them."
+                  text="**Current as of the 2026 IRS tables.** Official 2026 Publication 15-T percentage-method values (Standard withholding, W-4 Step 2 unchecked), divided to per-semimonthly-check amounts. Reference only — switch tables by picking a filing status."
                 />
               </div>
             </details>
@@ -305,7 +306,7 @@ const money = (n: number) =>
 
           <Notice
             icon="ph-info"
-            text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
+            text="**How it works:** taxable earnings minus pre-tax deductions, 401(k) and your withholding allowance give federal taxable income for the check. The tool finds your bracket, figures the withholding, subtracts everything, then adds back non-taxable per diem. **It's an estimate, not a guarantee** — state/local tax varies by base and isn't included. Always verify against your paystub."
           />
 
           <div class="card" id="soon" style="margin-top:18px;">
@@ -331,8 +332,7 @@ const money = (n: number) =>
             </div>
             <div class="answer-net" id="netBig">$0.00</div>
             <div class="answer-sub">
-              This is what should hit your bank account. It updates by itself as you fill in the
-              steps — no button to press. If your real paystub doesn't match, something changed.
+              What should hit your bank. Updates by itself as you fill in the steps.
             </div>
             <div class="answer-break" id="breakBody"></div>
           </div>
