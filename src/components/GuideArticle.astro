@@ -4,6 +4,7 @@ import Icon from './Icon.astro';
 import GuideBody from './GuideBody.astro';
 import GuideToc from './GuideToc.astro';
 import SectionNav from './SectionNav.astro';
+import { NAV } from '../data/site';
 import type { Guide } from '../data/guides/types';
 
 /**
@@ -25,12 +26,33 @@ interface Props {
   description: string;
   /** Standing disclaimer under the article, e.g. DISCLAIMER.contract. */
   disclaimer?: string;
+  /**
+   * "Keep reading" links at the end of the article. Defaults to the other
+   * pages of this article's nav section, so section articles cross-link
+   * without any page declaring it. Pass explicitly for articles whose nav
+   * section has no children (commuting).
+   */
+  related?: { label: string; href: string }[];
 }
 
-const { guide, title, description, disclaimer } = Astro.props;
+const { guide, title, description, disclaimer, related } = Astro.props;
 
 const printHref = `/print/${guide.slug}/`;
 const provenance = [guide.meta.translates, guide.meta.revised].filter(Boolean);
+
+const path = Astro.url.pathname;
+const section = NAV.find(
+  (item) => item.href !== '/' && item.children?.length && path.startsWith(item.href)
+);
+
+const relatedLinks =
+  related ??
+  (section
+    ? [
+        { label: `${section.label} overview`, href: section.href },
+        ...(section.children ?? []).filter((child) => child.href !== path),
+      ].filter((link) => link.href !== path)
+    : []);
 ---
 
 <BaseLayout title={title} description={description}>
@@ -76,6 +98,21 @@ const provenance = [guide.meta.translates, guide.meta.revised].filter(Boolean);
         <GuideBody guide={guide} />
 
         {disclaimer && <p class="art-disclaimer">{disclaimer}</p>}
+
+        {
+          relatedLinks.length > 0 && (
+            <div class="art-next">
+              <span class="kicker">Keep reading</span>
+              <div class="art-next-row">
+                {relatedLinks.map((link) => (
+                  <a class="btn btn-navy btn-sm" href={link.href}>
+                    {link.label} <Icon name="ph-arrow-right" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )
+        }
       </div>
     </div>
   </section>

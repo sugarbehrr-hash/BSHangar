@@ -393,3 +393,7 @@
   }
   .toc-list { display: block; padding: 0; max-height: calc(100vh - 130px); overflow-y: auto; }
 }
+
+/* --- End-of-article cross-links --- */
+.art-next { margin-top: 44px; }
+.art-next-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
