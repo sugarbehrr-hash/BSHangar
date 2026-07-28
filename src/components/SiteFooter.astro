@@ -1,14 +1,7 @@
 ---
 import Icon from './Icon.astro';
-import {
-  BRAND,
-  SITE,
-  NAV,
-  FACEBOOK_GROUP,
-  EXTERNAL,
-  UNION_REP_PHONE,
-  DISCLAIMER,
-} from '../data/site';
+import { SITE, NAV, FACEBOOK_GROUP, EXTERNAL, UNION_REP_PHONE, DISCLAIMER } from '../data/site';
+import brandLogo from '../assets/brand-logo.svg';
 
 /**
  * Site footer.
@@ -32,8 +25,13 @@ const footerNav = NAV.filter((item) => item.href !== '/');
     <div class="footgrid">
       <div class="fcol fabout">
         <a href="/" class="brand">
-          <span class="mark"><Icon name="ph-airplane-tilt" /></span>
-          <span class="wm">{BRAND.line1}<small>{BRAND.line2}</small></span>
+          <img
+            class="logo"
+            src={brandLogo.src}
+            alt={SITE.name}
+            width={brandLogo.width}
+            height={brandLogo.height}
+          />
         </a>
         <p>{SITE.description}</p>
       </div>

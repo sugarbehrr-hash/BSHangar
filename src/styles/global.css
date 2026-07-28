@@ -1,32 +1,26 @@
 /* ============================================================
    Blue Streak Hangar — global stylesheet entry
    ------------------------------------------------------------
-   Import order is load-bearing. Tokens first (everything below
-   consumes them), components in the export's original order, and
-   responsive.css LAST so its breakpoint overrides win on source
-   order the way they did in the single-file export.
+   Tokens first (everything below consumes them), then the design
+   system, then the handful of site-only rules the prototypes
+   don't have. Imported once by BaseLayout.astro.
 
-   Imported once by BaseLayout.astro; Astro bundles and hashes it.
+   system.css IS the design system, taken from the hub-redesign
+   handoff. It replaced the eleven per-component stylesheets that
+   preceded it — those had drifted into five card families, three
+   tab families and four "selected" colours. Change the design
+   here, in one file.
    ============================================================ */
 
-/* --- Tokens --- */
+/* --- Tokens (unchanged by the redesign) --- */
 @import './tokens/fonts.css';
 @import './tokens/colors.css';
 @import './tokens/typography.css';
 @import './tokens/spacing.css';
 @import './tokens/effects.css';
 
-/* --- Components (export order) --- */
-@import './base.css';
-@import './nav.css';
-@import './buttons.css';
-@import './hero.css';
-@import './cards.css';
-@import './explorer.css';
-@import './products.css';
-@import './footer.css';
-@import './guide.css';
-@import './tools.css';
+/* --- The design system --- */
+@import './system.css';
 
-/* --- Breakpoints (must stay last) --- */
-@import './responsive.css';
+/* --- Site-only chrome --- */
+@import './site-local.css';

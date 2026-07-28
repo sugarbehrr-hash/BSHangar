@@ -2,67 +2,72 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, FACEBOOK_GROUP } from '../data/site';
-import brandLogo from '../assets/brand-logo.svg';
+import { bases, venueCount } from '../data/bases';
+import { products } from '../data/essentials';
+import { commutingGuide } from '../data/guides/commuting';
 
 /**
  * The real homepage, extracted from src/pages/index.astro so it can render at
  * two routes: `/` once PRELAUNCH is off, and the unlinked PREVIEW_PATH while
  * the curtain is up (see src/data/prelaunch.ts).
+ *
+ * Card sub-lines carry counts derived from the data they describe, so the
+ * spot and pick totals can't go stale the way a hardcoded number would.
  */
 
-const cards = [
+const spotCount = bases.reduce(
+  (total, base) => total + base.categories.reduce((n, c) => n + venueCount(c), 0),
+  0
+);
+
+const doors = [
   {
     href: '/tools/',
-    accent: 'var(--red-600)',
+    accent: 'var(--navy-700)',
     icon: 'ph-calculator',
-    title: 'Tools',
-    body: 'Calculators built from the group’s spreadsheets — see what your check should be before it lands.',
-    cta: 'Check your numbers',
+    title: 'Paycheck & Tools',
+    sub: '1 calculator · more coming',
+    text: 'Check what your 5th or 20th should be before it lands — GTD, overages, per diem, 401(k), federal withholding and dues.',
+    go: 'Check your numbers',
   },
   {
     href: '/commuting/',
     accent: 'var(--sky-700)',
     icon: 'ph-airplane-takeoff',
-    title: 'Commuting & Non-Rev',
-    body: 'List, fly, and report on time — plus your protections when a commute falls apart. The full field guide.',
-    cta: 'Learn to commute',
+    title: 'Commuting',
+    sub: `Guide · ${commutingGuide.sections.length} sections`,
+    text: 'List, fly and report on time — plus exactly what protects you when the commute falls apart at 4am.',
+    go: 'Read the guide',
   },
   {
     href: '/contract/',
-    accent: 'var(--navy-700)',
+    accent: 'var(--red-600)',
     icon: 'ph-scroll',
     title: 'Your Contract',
-    body: 'Duty, rest, pay, scheduling & reserve rights — the CBA translated into plain language you can actually use.',
-    cta: 'Know your rights',
+    sub: 'Hub · 2 field guides',
+    text: 'Duty, rest, pay, scheduling and reserve rights — the CBA in plain language, each line sourced to its section.',
+    go: 'Know your rights',
   },
   {
     href: '/crew-discounts/',
     accent: 'var(--gold-600)',
     icon: 'ph-tag',
     title: 'Discounts',
-    body: 'Meals, shops & perks by base — CLT, DCA, DFW & PHL. Flash your crew ID and save on the turn.',
-    cta: 'Browse by base',
+    sub: `${bases.length} bases · ${spotCount} spots`,
+    text: "Meals and shops by terminal at CLT, DCA, DFW and PHL. Filter by name when you've got twenty minutes.",
+    go: 'Browse by base',
   },
   {
     href: '/crew-essentials/',
     accent: 'var(--success-600)',
     icon: 'ph-suitcase-rolling',
     title: 'Essentials',
-    body: 'The bags, socks, chargers & care kit that survive the schedule — vetted picks with links to buy.',
-    cta: 'See the gear',
-  },
-  {
-    href: FACEBOOK_GROUP,
-    external: true,
-    accent: 'var(--sky-500)',
-    icon: 'ph-chats-circle',
-    title: 'Ask the Group',
-    body: "Something not covered here? The hangar's full of senior FAs happy to help. Post it — we've got you.",
-    cta: 'Open Facebook',
+    sub: `${products.length} vetted picks`,
+    text: 'The bags, socks, chargers and care kit that survive the schedule. No sponsored fluff.',
+    go: 'See the gear',
   },
 ];
 
-/** The four hashtags that organize the Facebook group, from the old New Here page. */
 const hashtags = [
   ['#FAQuestions', "anything you're unsure about, just ask."],
   ['#nonREVtips', 'commuting, listing & standby wisdom.'],
@@ -71,10 +76,10 @@ const hashtags = [
 ];
 
 const steps = [
-  { n: 1, title: 'We fly it first', body: 'Every guide comes from FAs living the schedule — not a policy binder.' },
-  { n: 2, title: 'We write it plain', body: 'Real examples over legalese. If it needs a translation, we translate it.' },
-  { n: 3, title: 'We keep it fresh', body: 'Spot something outdated? Post in the group and we update the master sheet.' },
-  { n: 4, title: 'You just show up', body: 'Bookmark this, search it before a trip, and land ready.' },
+  ['We fly it first', 'Every guide comes from FAs living the schedule — not a policy binder.'],
+  ['We write it plain', 'Real examples over legalese. If it needs a translation, we translate it.'],
+  ['We keep it fresh', 'Spot something outdated? Post in the group and we update the master sheet.'],
+  ['You just show up', 'Bookmark this, search it before a trip, and land ready.'],
 ];
 ---
 
@@ -83,65 +88,73 @@ const steps = [
   description={SITE.description}
   suffix={false}
 >
-  <div class="hero">
-    <div class="hero-a">
-      <div class="inner">
-        <div>
-          <span class="kick"><Icon name="ph-airplane-tilt" /> {SITE.tagline}</span>
-          <h1>Your home base for <span class="r">everything crew.</span></h1>
-          <p class="lead">
-            Non-rev commuting, your contract in plain language, crew discounts by base, and the
-            gear that actually lasts — all in one place, from FAs who fly it every day.
-          </p>
-          <div class="cta">
-            <a class="btn btn-red" href="#new-here"><Icon name="ph-hand-waving" /> Start here</a>
-            <a class="btn btn-ghost" href="/crew-discounts/"><Icon name="ph-tag" /> Discounts</a>
-          </div>
-        </div>
-        <div class="art">
-          <img
-            class="brandmark"
-            src={brandLogo.src}
-            alt="Blue Streak Hangar — the wordmark with the jet swoosh"
-            width={brandLogo.width}
-            height={brandLogo.height}
-            loading="eager"
-          />
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-body">
+        <div class="mh-eyebrow">{SITE.tagline}</div>
+        <h1 class="mh-title">Look it up.<br /><span class="r">Get back to work.</span></h1>
+        <p class="mh-sub">
+          Non-rev commuting, your contract in plain language, discounts by base, and a paycheck
+          estimator — written by PSA flight attendants who fly the same schedule you do.
+        </p>
+        <div class="mh-actions">
+          <a class="btn primary" href="#answers">
+            <Icon name="ph-magnifying-glass" /> Find an answer
+          </a>
+          <a class="btn onnavy" href="#new-here">
+            <Icon name="ph-hand-waving" /> New here?
+          </a>
         </div>
       </div>
     </div>
   </div>
 
-  <section class="band cream">
+  <section class="band" id="answers">
     <div class="wrap">
       <div class="band-head">
-        <span class="kicker">Find what you need</span>
-        <h2 class="h2">Pick a hangar door.</h2>
+        <span class="kicker">{doors.length} doors</span>
+        <h2 class="h2">What are you looking up?</h2>
         <p class="lead">
-          Six shelves, everything labeled. Tap in — each one pulls from the guides we post in the
-          group, kept current so you don't have to dig through the feed.
+          Each one is the whole reference, not a teaser — kept current so you don't have to scroll
+          the group feed to find it again.
         </p>
       </div>
 
-      <div class="catgrid">
+      <div class="grid three">
         {
-          cards.map((card) => (
-            <a
-              class="catcard"
-              href={card.href}
-              style={`--accent: ${card.accent};`}
-              target={card.external ? '_blank' : undefined}
-              rel={card.external ? 'noopener' : undefined}
-            >
-              <span class="cb"><Icon name={card.icon} /></span>
-              <h3>{card.title}</h3>
-              <p>{card.body}</p>
-              <span class="go">
-                {card.cta} <Icon name={card.external ? 'ph-arrow-up-right' : 'ph-arrow-right'} />
+          doors.map((door) => (
+            <a class="card" href={door.href} style={`--accent: ${door.accent};`}>
+              <div class="card-head">
+                <span class="card-badge"><Icon name={door.icon} /></span>
+                <div class="card-titles">
+                  <h3 class="card-title">{door.title}</h3>
+                  <div class="card-sub">{door.sub}</div>
+                </div>
+              </div>
+              <p class="card-text">{door.text}</p>
+              <span class="card-go">
+                {door.go} <Icon name="ph-arrow-right" />
               </span>
             </a>
           ))
         }
+
+        <a class="card inverse" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <div class="card-head">
+            <span class="card-badge"><Icon name="ph-chats-circle" /></span>
+            <div class="card-titles">
+              <h3 class="card-title">Ask the Group</h3>
+              <div class="card-sub">Facebook · answered by crew</div>
+            </div>
+          </div>
+          <p class="card-text">
+            Not here? Post it. The hangar's full of senior FAs happy to help — and good questions
+            become guides.
+          </p>
+          <span class="card-go" style="color: var(--gold-500);">
+            Open Facebook <Icon name="ph-arrow-up-right" />
+          </span>
+        </a>
       </div>
     </div>
   </section>
@@ -153,39 +166,39 @@ const steps = [
         <h2 class="h2">Welcome aboard.</h2>
         <p class="lead">
           This is the all-in-one place PSA flight attendants turn to for the things we need every
-          day — commuting, contract, discounts, and community. Here's how the group works.
+          day. Here's how the group works.
         </p>
       </div>
 
-      <div class="cols2" style="margin-top:30px;">
-        <div class="infocard" style="--accent: var(--red-600);">
-          <div class="ih">
-            <span class="b"><Icon name="ph-users-three" /></span>
-            <div>
-              <h3>What this is</h3>
-              <div class="ref">A community group, run by crew</div>
+      <div class="grid two">
+        <div class="card flat" style="--accent: var(--navy-700);">
+          <div class="card-head">
+            <span class="card-badge"><Icon name="ph-users-three" /></span>
+            <div class="card-titles">
+              <h3 class="card-title">What this is</h3>
+              <div class="card-sub">A community group, run by crew</div>
             </div>
           </div>
-          <p class="ic-p">
-            Blue Streak Hangar is a warm, no-drama space for PSA Airlines flight attendants.
-            Whether you're brand new or a 20-year senior mama, you'll find people happy to help.
+          <p class="card-text">
+            A warm, no-drama space for PSA Airlines flight attendants. Whether you're brand new or
+            a 20-year senior mama, you'll find people happy to help.
           </p>
-          <ul class="flist" style="--accent: var(--red-600);">
+          <ul class="rows" style="margin-top:14px;">
             <li><b>Everyone's welcome</b> — new hires and seasoned crew alike.</li>
             <li><b>Be kind &amp; respectful</b> — we lift each other up here.</li>
             <li><b>Real answers</b> from FAs who've actually been there.</li>
           </ul>
         </div>
 
-        <div class="infocard" style="--accent: var(--sky-700);">
-          <div class="ih">
-            <span class="b"><Icon name="ph-hash" /></span>
-            <div>
-              <h3>The four hashtags</h3>
-              <div class="ref">Post &amp; search by topic</div>
+        <div class="card flat" style="--accent: var(--sky-700);">
+          <div class="card-head">
+            <span class="card-badge"><Icon name="ph-hash" /></span>
+            <div class="card-titles">
+              <h3 class="card-title">The four hashtags</h3>
+              <div class="card-sub">Post &amp; search by topic</div>
             </div>
           </div>
-          <ul class="flist" style="--accent: var(--sky-700);">
+          <ul class="rows" style="margin-top:16px;">
             {hashtags.map(([tag, desc]) => <li><b>{tag}</b> — {desc}</li>)}
           </ul>
         </div>
@@ -193,30 +206,34 @@ const steps = [
     </div>
   </section>
 
-  <section class="band cream">
+  <section class="band">
     <div class="wrap">
       <div class="band-head">
         <span class="kicker">How the hangar works</span>
         <h2 class="h2">One place. Always current.</h2>
       </div>
 
-      <div class="steprow">
+      <div class="grid four">
         {
-          steps.map((step) => (
-            <div class="stepc">
-              <div class="n">{step.n}</div>
-              <h4>{step.title}</h4>
-              <p>{step.body}</p>
+          steps.map(([title, body], i) => (
+            <div class="card flat">
+              <div class="card-head">
+                <span class="card-badge num">{i + 1}</span>
+                <div class="card-titles">
+                  <h3 class="card-title">{title}</h3>
+                </div>
+              </div>
+              <p class="card-text" style="margin-top:14px;">{body}</p>
             </div>
           ))
         }
       </div>
 
-      <div class="callout tip">
+      <div class="notice spaced">
         <Icon name="ph-lightbulb" />
-        <div class="ct">
-          <b>Tip:</b> Use the search box up top to jump straight to a topic — try “non-rev”,
-          “reserve”, “CLT meals”, or “compression socks”.
+        <div class="nt">
+          <b>Tip:</b> the search box up top goes straight to a topic — try “non-rev”, “reserve”,
+          “CLT meals”, or “compression socks”.
         </div>
       </div>
     </div>

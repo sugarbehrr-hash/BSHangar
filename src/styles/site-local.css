@@ -1,0 +1,22 @@
+/* ============================================================
+   Site-local — the few things system.css doesn't cover
+   ------------------------------------------------------------
+   system.css is the design system and owns everything visual.
+   This file is only for chrome that exists in the built site but
+   not in the prototypes: the keyboard bypass and the pre-launch
+   curtain. Nothing here should duplicate a system.css rule.
+   ============================================================ */
+
+/* Keyboard bypass — the prototypes have no <main> skip target. */
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 100; padding: 12px 20px; background: var(--gold-500); color: var(--navy-900);
+             font-family: var(--font-heading); font-weight: 800; font-size: 14px; border-radius: 0 0 var(--radius-sm) 0; }
+.skip-link:focus { left: 0; }
+
+/* Pre-launch curtain (src/data/prelaunch.ts). Deleted at launch. */
+body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--navy-900); color: var(--cream-100); }
+.curtain-main { max-width: 620px; padding: 48px 24px; text-align: center; }
+.curtain-main .brand { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 34px; }
+.curtain-main h1 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(44px, 9vw, 64px); line-height: .92; margin: 0 0 18px; color: var(--cream-100); }
+.curtain-main h1 .r { color: var(--red-500); }
+.curtain-main .curtain-copy { font-size: var(--fs-lead); line-height: var(--lh-normal); color: var(--cream-300); margin: 0 0 30px; }
+.curtain-main .cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
