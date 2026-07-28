@@ -38,9 +38,9 @@ import { commutingResources } from '../../data/resources';
 
         <aside class="tapanel">
           <span class="flag"><Icon name="ph-warning" /> {commutingHelp.flag}</span>
-          <h2>
+          <h4>
             {commutingHelp.heading}<br /><span class="r">{commutingHelp.headingAccent}</span>
-          </h2>
+          </h4>
           {
             commutingHelp.rows.map((row) =>
               'phone' in row && row.phone ? (

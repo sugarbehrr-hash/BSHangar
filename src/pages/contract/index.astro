@@ -49,11 +49,11 @@ const docs = contractResources.filter((res) => res.kind === 'generated');
               <span class="flag">
                 <Icon name={ta.flagIcon} /> {ta.flag}
               </span>
-              <h2>
+              <h4>
                 {ta.heading}
                 <br />
                 <span class="r">{ta.headingAccent}</span>
-              </h2>
+              </h4>
               {ta.rows.map((row) => (
                 <div class="tarow">
                   <span class="k">{row.k}</span>

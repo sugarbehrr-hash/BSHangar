@@ -30,14 +30,6 @@ const categoryPath = (b: Base, c: Category) =>
   c.key === b.categories[0]?.key ? `/crew-discounts/${b.key}/` : `/crew-discounts/${b.key}/${c.key}/`;
 ---
 
-<div class="baseintro">
-  <div class="big">{base.code}</div>
-  <div>
-    <h3>{base.name}<span class="bsub">{base.sub}</span></h3>
-    <p>{base.blurb}</p>
-  </div>
-</div>
-
 <div class="explorer" data-explorer>
   <div class="pillbar">
     {
@@ -82,7 +74,7 @@ const categoryPath = (b: Base, c: Category) =>
           <>
             <span class="tdot">·</span>
             {flyers.map((f) => (
-              <a class="btn gold sm" href={f.href}>{f.label}</a>
+              <a class="txtbtn" href={f.href}>{f.label}</a>
             ))}
           </>
         )
@@ -91,8 +83,8 @@ const categoryPath = (b: Base, c: Category) =>
   </div>
 
   {
-    category.zones.map((zone, i) => (
-      <details class="zone" data-zone open={i === 0}>
+    category.zones.map((zone) => (
+      <details class="zone" data-zone>
         <summary class="zhead">
           <span class="zbadge">{zone.badge}</span>
           <span class="ztitle">
