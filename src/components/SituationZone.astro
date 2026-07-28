@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+import { richText } from '../lib/rich-text';
+import type { ContractSituation } from '../data/contract-hub';
+
+/**
+ * One "find your situation" accordion — plain-language situation on the
+ * summary, what's true plus one thing to do inside.
+ *
+ * Native <details>, so open/closed needs no JavaScript. The urgent variant is
+ * red-bordered and open on load; there should be at most one per page.
+ *
+ * Shares the .zone family with the discount explorer rather than forking it.
+ */
+interface Props {
+  situation: ContractSituation;
+  /** Anchor target, e.g. "failed" so a masthead button can jump here. */
+  id?: string;
+}
+
+const { situation, id } = Astro.props;
+---
+
+<details class:list={['zone', situation.urgent && 'urgent']} id={id} open={situation.urgent}>
+  <summary class="zhead">
+    <span class="zbadge">{situation.badge}</span>
+    <span class="ztitle">
+      {situation.title}
+      <span class="znote">{situation.note}</span>
+    </span>
+    {situation.flag && <span class="zflag">{situation.flag}</span>}
+    <Icon name="ph-caret-down" class="zchev" />
+  </summary>
+
+  <div class="zbody">
+    {
+      situation.rows.map((row) => (
+        <div class="zrow">
+          <span class="zn">
+            <span set:html={richText(row.statement)} />
+            {row.detail && <span class="zd" set:html={richText(row.detail)} />}
+          </span>
+          <span class="zs ref">{row.ref}</span>
+        </div>
+      ))
+    }
+
+    {
+      situation.action && (
+        <div class="zdo">
+          <Icon name="ph-phone-call" />
+          <div set:html={richText(situation.action)} />
+        </div>
+      )
+    }
+  </div>
+</details>

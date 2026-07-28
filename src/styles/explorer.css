@@ -97,3 +97,18 @@
 .basecard .go { margin-top: 14px; font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--accent, var(--red-600)); display: inline-flex; align-items: center; gap: 7px; }
 .basecard .go i { transition: transform .18s; }
 .basecard:hover .go i { transform: translateX(4px); }
+
+/* ---------- SITUATION ZONES ----------
+   The .zone family above is the discount explorer's; these are the
+   additions the situation accordions need on top of it. Same
+   component, so the two can never drift apart. */
+.zone.urgent { border-color: var(--red-600); box-shadow: var(--shadow-card); }
+.zone.urgent .zbadge { background: var(--red-600); }
+.zflag { flex: none; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--red-600); border-radius: var(--radius-pill); padding: 5px 11px; }
+.zs.ref { color: var(--ink-500); font-size: 12.5px; letter-spacing: .06em; font-weight: 700; }
+
+/* The one "do this" line closing a zone or a detail pane. */
+.zdo { display: flex; gap: 11px; align-items: flex-start; margin: 12px 0 4px; padding: 13px 15px; background: var(--cream-100); border-radius: var(--radius-sm); font-size: 14.5px; line-height: 1.5; color: var(--ink-700); }
+.zdo i { flex: none; font-size: 19px; color: var(--red-600); margin-top: 1px; }
+.zdo strong, .zdo b { color: var(--navy-900); }
+.zdo a { color: var(--sky-700); font-weight: 800; }

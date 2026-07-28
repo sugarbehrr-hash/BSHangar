@@ -65,7 +65,15 @@
 .snone { padding: 20px 16px; font-size: 13.5px; color: var(--ink-500); }
 
 
-/* ---------- SECTION SUB-NAV ----------
-   The .cattab pills from the discounts explorer, used as a section tab strip
-   ("Overview · CBA Field Manual · Reserve Field Guide"). */
-.sectnav { margin-bottom: 26px; }
+
+/* ---------- SECTION TABS ----------
+   Switching between the pages of a section. Docked in the navy masthead, so
+   current state is white text + a gold rule — it can never be mistaken for
+   the light-surface view pills that switch views WITHIN a page. */
+.sectiontabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin: 0 -18px; padding: 0 18px; border-top: 1px solid rgba(159,208,240,0.22); }
+.sectiontabs::-webkit-scrollbar { display: none; }
+@media (min-width: 700px) { .sectiontabs { margin: 0 -28px; padding: 0 28px; } }
+.sectiontabs a { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 14px; font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--sky-300); white-space: nowrap; transition: color .16s, background .16s; }
+.sectiontabs a:hover { color: #fff; background: rgba(159,208,240,0.10); }
+.sectiontabs a[aria-current="page"] { color: #fff; }
+.sectiontabs a[aria-current="page"]::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 0; height: 3px; background: var(--gold-500); }

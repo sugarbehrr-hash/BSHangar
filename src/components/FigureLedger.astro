@@ -1,0 +1,125 @@
+---
+import Icon from './Icon.astro';
+import RichText from './RichText.astro';
+import { richText } from '../lib/rich-text';
+import type { ContractFigure, ContractIntro } from '../data/contract-hub';
+
+/**
+ * The figure ledger and its detail panel.
+ *
+ * The rows are buttons rather than accordions on purpose: the ledger stays a
+ * scannable set of numbers and the explanation loads into the panel beside it,
+ * so the reader never loses their place among the figures.
+ *
+ * Height is locked by src/lib/panel-lock.ts — see that file for why.
+ */
+interface Props {
+  figures: ContractFigure[];
+  intro: ContractIntro;
+  /** Icon for every pane's badge. */
+  icon?: string;
+}
+
+const { figures, intro, icon = 'ph-scroll' } = Astro.props;
+---
+
+<div class="figrow">
+  <div class="numledger" role="group" aria-label="Key figures">
+    {
+      figures.map((figure) => (
+        <button
+          class="nlrow"
+          type="button"
+          data-row={figure.key}
+          aria-pressed="false"
+          aria-controls={`dp-${figure.key}`}
+        >
+          <span class="fig">
+            {figure.value}
+            {figure.unit && <span>{figure.unit}</span>}
+          </span>
+          <span>
+            <span class="lb">{figure.label}</span>
+            <span class="cap">{figure.caption}</span>
+          </span>
+          <span class="rf">{figure.ref}</span>
+          <Icon name="ph-arrow-right" class="nlgo" />
+        </button>
+      ))
+    }
+  </div>
+
+  <aside class="card flat detailpanel" data-panel>
+    <div class="dp" data-row="intro">
+      <div class="card-head">
+        <span class="card-badge"><Icon name={icon} /></span>
+        <div class="card-titles">
+          <h3 class="card-title">{intro.title}</h3>
+          <div class="card-sub">{intro.sub}</div>
+        </div>
+      </div>
+      {intro.paras.map((p) => <p set:html={richText(p)} />)}
+      {
+        intro.action && (
+          <div class="zdo">
+            <Icon name="ph-chat-teardrop-text" />
+            <div set:html={richText(intro.action)} />
+          </div>
+        )
+      }
+      <div class="dphint">
+        <Icon name="ph-hand-tap" /> Tap a number for the detail
+      </div>
+    </div>
+
+    {
+      figures.map((figure) => (
+        <div class="dp" id={`dp-${figure.key}`} data-row={figure.key} hidden>
+          <div class="card-head">
+            <span class="card-badge"><Icon name={icon} /></span>
+            <div class="card-titles">
+              <h3 class="card-title">{figure.pane.title}</h3>
+              <div class="card-sub">{figure.pane.sub}</div>
+            </div>
+          </div>
+          {figure.pane.paras.map((p) => <p set:html={richText(p)} />)}
+          {figure.pane.action && (
+            <div class="zdo">
+              <Icon name="ph-envelope-simple" />
+              <div set:html={richText(figure.pane.action)} />
+            </div>
+          )}
+        </div>
+      ))
+    }
+  </aside>
+</div>
+
+<script>
+  import { lockPanelHeight } from '../lib/panel-lock';
+
+  const ledger = document.querySelector<HTMLElement>('.numledger');
+  const panel = document.querySelector<HTMLElement>('[data-panel]');
+
+  if (ledger && panel) {
+    const rows = [...ledger.querySelectorAll<HTMLButtonElement>('.nlrow')];
+    const panes = [...panel.querySelectorAll<HTMLElement>('.dp')];
+
+    const show = (key: string) => {
+      for (const pane of panes) pane.hidden = pane.dataset.row !== key;
+      for (const row of rows) {
+        row.setAttribute('aria-pressed', String(row.dataset.row === key));
+      }
+    };
+
+    for (const row of rows) {
+      row.addEventListener('click', () => {
+        // Clicking the open row again returns to the intro pane.
+        const isOpen = row.getAttribute('aria-pressed') === 'true';
+        show(isOpen ? 'intro' : (row.dataset.row ?? 'intro'));
+      });
+    }
+
+    lockPanelHeight(panel, panes);
+  }
+</script>

@@ -7,8 +7,10 @@ import { NAV } from '../data/site';
  * on pages whose section has no children, so templates can include it
  * unconditionally.
  *
- * Reuses the .catbar/.cattab family the discounts explorer established:
- * same shape and size, active state by color only.
+ * Docked at the bottom of the navy masthead, so it uses the dark-surface
+ * .sectiontabs treatment (white text + gold underline for current) rather
+ * than the light .pill family used for switching views within a page. The
+ * two can then never be confused for one another.
  */
 const path = Astro.url.pathname;
 
@@ -23,9 +25,9 @@ const tabs = section
 
 {
   section && (
-    <nav class="catbar sectnav" aria-label={`${section.label} section`}>
+    <nav class="sectiontabs" aria-label={`${section.label} section`}>
       {tabs.map((tab) => (
-        <a class="cattab" href={tab.href} aria-current={path === tab.href ? 'page' : undefined}>
+        <a href={tab.href} aria-current={path === tab.href ? 'page' : undefined}>
           {tab.label}
         </a>
       ))}

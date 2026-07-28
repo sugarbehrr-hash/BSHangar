@@ -24,9 +24,29 @@ function escapeHtml(input: string): string {
 }
 
 /**
- * Escape `text`, then turn **bold** runs into <strong>.
- * Returns an HTML string intended for set:html.
+ * Only schemes we ever author. Anything else is dropped rather than emitted,
+ * so a typo can't become a javascript: link.
+ */
+const SAFE_HREF = /^(\/|https:\/\/|tel:|mailto:|#)/;
+
+/**
+ * Escape `text`, then turn **bold** runs into <strong> and [label](href) into
+ * links. Returns an HTML string intended for set:html.
+ *
+ * Links were added for the hub redesign, whose action lines point at the
+ * Paycheck Estimator, the union number and the guides. The alternative was
+ * storing raw anchors in src/data, which is what the marker syntax exists to
+ * avoid.
  */
 export function richText(text: string): string {
-  return escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  return escapeHtml(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (whole, label: string, href: string) => {
+      // The href arrives HTML-escaped; compare on the decoded form.
+      const raw = href.replace(/&amp;/g, '&').replace(/&#39;/g, "'");
+      if (!SAFE_HREF.test(raw)) return label;
+      const external = raw.startsWith('https://');
+      const rel = external ? ' target="_blank" rel="noopener"' : '';
+      return `<a href="${href}"${rel}>${label}</a>`;
+    });
 }
