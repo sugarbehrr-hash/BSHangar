@@ -8,6 +8,10 @@
  *
  * Runs after the build, over the emitted HTML. Anchors, external URLs, mailto:
  * and tel: are ignored; everything site-absolute must resolve to a real file.
+ * Document-relative hrefs ("./foo.html", "foo.html") are resolved against the
+ * linking file's own directory and checked the same way — added after a
+ * vendored TA report page shipped `href="CbaVoteGuideV2.dc.html"`, a name that
+ * never existed at that route, and this check's absolute-only scope missed it.
  *
  * Run: node scripts/check-links.mjs   (wired into `npm run build`)
  */
@@ -56,14 +60,20 @@ for (const file of pages) {
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const href = match[1];
 
-    // Only site-absolute paths are ours to verify.
-    if (!href.startsWith('/')) continue;
     // Protocol-relative //cdn... is external.
     if (href.startsWith('//')) continue;
+    // Scheme-prefixed (http:, mailto:, tel:, data:, javascript:) is not ours.
+    if (/^[a-z][a-z0-9+.-]*:/i.test(href)) continue;
+    // In-page anchor only, or a client-side template placeholder ("{{ x }}").
+    if (href.startsWith('#') || href.includes('{')) continue;
 
-    if (!resolves(href)) {
-      if (!broken.has(href)) broken.set(href, new Set());
-      broken.get(href).add(from);
+    const target = href.startsWith('/')
+      ? href
+      : '/' + join(dirname(from), href).split(sep).join('/');
+
+    if (!resolves(target)) {
+      if (!broken.has(target)) broken.set(target, new Set());
+      broken.get(target).add(from);
     }
   }
 }
