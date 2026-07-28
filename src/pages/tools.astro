@@ -30,357 +30,313 @@ const money = (n: number) =>
     maximumFractionDigits: 2,
   });
 ---
-
 <BaseLayout
-  title="Crew Tools"
+  title="Paycheck Estimator"
   description="Crew calculators built from the group's spreadsheets. The Paycheck Estimator shows what your PSA check should be before it lands — GTD, overages, per diem, 401(k), federal withholding and dues."
 >
   <div class="masthead">
     <div class="wrap">
       <div class="mh-body">
         <div class="mh-eyebrow">Crew calculators &amp; utilities</div>
-        <h1 class="mh-title">Tools</h1>
+        <h1 class="mh-title">Paycheck Estimator</h1>
         <p class="mh-sub">
-          Calculators built from the group's spreadsheets, so you can check the numbers yourself.
+          Built from the group's own spreadsheet. Five steps, top to bottom — the answer fills in
+          by itself as you go. There's no calculate button.
         </p>
       </div>
+
+      <nav class="sectiontabs" aria-label="Tools">
+        <a href="/tools/" aria-current="page">
+          <Icon name="ph-calculator" /> Paycheck Estimator
+        </a>
+        <a href="#soon">
+          <Icon name="ph-clock-countdown" /> Time Out Estimator
+        </a>
+      </nav>
     </div>
   </div>
 
-  <section class="band toolband">
+  <section class="band tight">
     <div class="wrap">
-      <div class="tooltabs" role="tablist" aria-label="Tools">
-        <button type="button" role="tab" id="tab-pay" data-tool="pay" aria-selected="true" aria-controls="tool-pay">
-          <Icon name="ph-calculator" /> Paycheck Estimator
-        </button>
-        <button type="button" role="tab" id="tab-time" data-tool="time" aria-selected="false" aria-controls="tool-time">
-          <Icon name="ph-clock-countdown" /> Time Out Estimator
-          <span class="soonpill">Soon</span>
-        </button>
-      </div>
-
-      <div id="tool-pay" role="tabpanel" aria-labelledby="tab-pay">
-        <p class="estintro">
-          Five quick steps, top to bottom. Do them in order — the answer on the right fills in by
-          itself as you go. There is no calculate button.
-        </p>
-        <div class="estlayout">
-          <div class="estmain">
-      <div class="startpick" role="group" aria-label="Step 1: How do you want to put your numbers in?">
-        <div class="stephead">
-          <span class="stepnum">1</span>
-          <div class="stephead-txt">
-            <h3>How do you want to put your numbers in?</h3>
-            <p>Pick one. Both get you the same answer — uploading just does the typing for you.</p>
-          </div>
-        </div>
-        <div class="startpick-btns">
-          <button type="button" data-start="upload" aria-pressed="false" aria-controls="slipcard">
-            <Icon name="ph-file-pdf" />
-            <span>
-              Upload my payslip PDF
-              <small>Easiest. We read the file and fill in the boxes for you.</small>
-            </span>
-          </button>
-          <button type="button" data-start="manual" aria-pressed="false">
-            <Icon name="ph-keyboard" />
-            <span>
-              Type them in myself
-              <small>Copy the numbers from your Time Summary, one box at a time.</small>
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <div class="slipcard" id="slipcard" hidden>
-        <div class="slip-head">
-          <Icon name="ph-file-pdf" class="slip-icon" />
-          <div>
-            <h3>Upload your payslip here</h3>
-            <p>
-              In Workday, download the <strong>Payslip to Print</strong> PDF, then choose it below.
-              The boxes in Steps 2–4 fill themselves. Your deductions are remembered on this
-              device, so next check you only type the earnings that changed.
-            </p>
-          </div>
-        </div>
-
-        <label class="slip-drop" for="slipFile">
-          <Icon name="ph-upload-simple" />
-          <span><strong>Choose a payslip PDF</strong> or drop one here</span>
-        </label>
-        <input type="file" id="slipFile" accept="application/pdf,.pdf" class="sr-only" />
-
-        <p class="slip-privacy">
-          <Icon name="ph-lock-simple" />
-          Read entirely on your own device. The file is never uploaded — this site has no server to
-          send it to.
-        </p>
-
-        <div id="slipStatus" class="slip-status" role="status" hidden></div>
-
-        <button type="button" id="slipForget" class="slip-forget" hidden>
-          Forget my saved deductions
-        </button>
-      </div>
-
-      <div class="stepcard">
-        <div class="stephead">
-          <span class="stepnum">2</span>
-          <div class="stephead-txt">
-            <h3>Which paycheck are you checking?</h3>
-            <p>
-              Look at the date the money lands (or will land) in your bank. On or near the 5th?
-              Pick the first button. On or near the 20th? Pick the second.
-            </p>
-          </div>
-        </div>
-        <div class="esttoggle" role="tablist" aria-label="Step 2: Which check">
-          <button type="button" role="tab" data-check="5" aria-selected="true">
-            My check comes on the 5th<small>Pays your 2 Half GTD</small>
-          </button>
-          <button type="button" role="tab" data-check="20" aria-selected="false">
-            My check comes on the 20th<small>Pays your 1 Half GTD + overages + crew cash</small>
-          </button>
-        </div>
-      </div>
-
-      <div class="toolcard">
-        <div class="tc-head">
-          <div class="stephead">
-            <span class="stepnum">3</span>
-            <div class="stephead-txt">
-              <h3>Fill in your earnings</h3>
-              <p>
-                Open your <strong>Time Summary</strong> and copy each number into the box with the
-                same name. If a line isn't on your Time Summary, leave the box at 0 — that's fine.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="tc-body" id="earnBody">
-          {
-            initialEarnings.map((f) => (
-              <div class="efield">
-                <label>
-                  {f.label}
-                  {f.note && <small>{f.note}</small>}
-                </label>
-                <div class="emoney">
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    inputmode="decimal"
-                    value={DEFAULTS[f.key]}
-                    data-k={f.key}
-                    aria-label={f.label}
-                  />
-                </div>
+      <div class="toollayout">
+        <div class="stepstack">
+          <div class="card" role="group" aria-label="Step 1">
+            <div class="card-head">
+              <span class="card-badge num">1</span>
+              <div class="card-titles">
+                <h3 class="card-title">How do you want to put your numbers in?</h3>
+                <div class="card-sub">Both get the same answer</div>
               </div>
-            ))
-          }
-        </div>
-      </div>
+            </div>
 
-      <div class="toolcard">
-        <div class="tc-head">
-          <div class="stephead">
-            <span class="stepnum">4</span>
-            <div class="stephead-txt">
-              <h3>Fill in your deductions</h3>
-              <p>
-                These come from your <strong>last paystub</strong>, and they're usually the same
-                every check — so once you've typed them once, you rarely touch them again.
+            <div class="choice" style="margin-top:16px;">
+              <button type="button" data-start="upload" aria-pressed="false" aria-controls="slipcard">
+                <Icon name="ph-file-pdf" />
+                <span>
+                  Upload my payslip PDF
+                  <small>Easiest. We read the file and fill in the boxes for you.</small>
+                </span>
+              </button>
+              <button type="button" data-start="manual" aria-pressed="false">
+                <Icon name="ph-keyboard" />
+                <span>
+                  Type them in myself
+                  <small>Copy from your Time Summary, one box at a time.</small>
+                </span>
+              </button>
+            </div>
+
+            <div id="slipcard">
+              <label class="dropzone" for="slipFile">
+                <Icon name="ph-upload-simple" />
+                <span>
+                  <strong>Choose a payslip PDF</strong> or drop one here — Workday › Payslip to Print
+                </span>
+              </label>
+              <input type="file" id="slipFile" accept="application/pdf,.pdf" class="sr-only" />
+
+              <p class="privacy">
+                <Icon name="ph-lock-simple" />
+                Read entirely on your own device. The file is never uploaded — this site has no server to send it to.
               </p>
+
+              <div id="slipStatus" class="statusbox" role="status" hidden></div>
+              <button type="button" id="slipForget" class="txtbtn" hidden></button>
             </div>
           </div>
-        </div>
-        <div class="tc-body">
-          <div class="egrid" id="dedBody">
-            {
-              DEDUCTIONS.map((f) => (
-                <div class="efield">
+
+          <div class="card" role="group" aria-label="Step 2">
+            <div class="card-head">
+              <span class="card-badge num">2</span>
+              <div class="card-titles">
+                <h3 class="card-title">Which paycheck are you checking?</h3>
+                <div class="card-sub">Go by the date it lands in your bank</div>
+              </div>
+            </div>
+
+            <div class="choice" role="tablist" aria-label="Which check" style="margin-top:16px;">
+              <button type="button" role="tab" data-check="5" aria-selected="true">
+                <span>My check comes on the 5th<small>Pays your 2 Half GTD</small></span>
+              </button>
+              <button type="button" role="tab" data-check="20" aria-selected="false">
+                <span>My check comes on the 20th<small>Pays 1 Half GTD + overages + crew cash</small></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card" role="group" aria-label="Step 3">
+            <div class="card-head">
+              <span class="card-badge num">3</span>
+              <div class="card-titles">
+                <h3 class="card-title">Fill in your earnings</h3>
+                <div class="card-sub">Straight off your Time Summary</div>
+              </div>
+            </div>
+
+            <div class="fieldgrid" id="earnBody" style="margin-top:16px;">
+              {
+                initialEarnings.map((f) => (
+                  <div class="field">
+                    <label>
+                      {f.label}
+                      {f.note && <small>{f.note}</small>}
+                    </label>
+                    <div class="money">
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        inputmode="decimal"
+                        value={DEFAULTS[f.key]}
+                        data-k={f.key}
+                        aria-label={f.label}
+                      />
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="card" role="group" aria-label="Step 4">
+            <div class="card-head">
+              <span class="card-badge num">4</span>
+              <div class="card-titles">
+                <h3 class="card-title">Fill in your deductions</h3>
+                <div class="card-sub">From your last paystub — these rarely change</div>
+              </div>
+            </div>
+
+            <div class="fieldgrid" id="dedBody" style="margin-top:16px;">
+              {
+                DEDUCTIONS.map((f) => (
+                  <div class="field">
+                    <label>
+                      {f.label}
+                      {f.note && <small>{f.note}</small>}
+                    </label>
+                    <div class:list={['money', f.percent && 'pct']}>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        inputmode="decimal"
+                        value={DEFAULTS[f.key]}
+                        data-k={f.key}
+                        aria-label={f.label}
+                      />
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+
+            <label class="check">
+              <input type="checkbox" id="ficaChk" checked />
+              <span>
+                <b>Estimate Social Security &amp; Medicare (7.65%)</b> — leave this on unless you've
+                already included FICA in your Post-Tax Deductions number.
+              </span>
+            </label>
+          </div>
+
+          <div class="card" role="group" aria-label="Step 5">
+            <div class="card-head">
+              <span class="card-badge num">5</span>
+              <div class="card-titles">
+                <h3 class="card-title">Pick how you file your taxes</h3>
+                <div class="card-sub">The box on your W-4, Step 1(c)</div>
+              </div>
+            </div>
+
+            <div class="pillbar" role="tablist" aria-label="Filing status" style="margin-top:16px;">
+              {
+                (['single', 'mfj', 'hoh'] as const).map((key) => (
+                  <button
+                    class="pill"
+                    type="button"
+                    role="tab"
+                    data-filing={key}
+                    aria-selected={key === DEFAULT_FILING}
+                  >
+                    {FILING[key].short}
+                  </button>
+                ))
+              }
+            </div>
+
+            <p class="card-text" style="margin-top:14px; font-size:13.5px; color:var(--ink-500);">
+              Married filing <em>separately</em> uses the same table as Single.
+            </p>
+
+            <details class="reftable-wrap">
+              <summary><Icon name="ph-caret-right" /> Show the withholding table</summary>
+              <div class="reftable-body">
+                <p style="margin:0 0 10px; font-size:13px; color:var(--ink-500);">
+                  Showing the <strong id="filingName">{FILING[DEFAULT_FILING].label}</strong> table.
+                </p>
+                <div class="reftable-scroll">
+                  <table class="reftable">
+                    <thead>
+                      <tr>
+                        <th>Bracket (per check)</th>
+                        <th>Add (+)</th>
+                        <th>Multiply (×)</th>
+                        <th>Subtract (−)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="brBody">
+                      {
+                        FILING[DEFAULT_FILING].brackets.map((b) => (
+                          <tr>
+                            <td>{bracketRange(b)}</td>
+                            <td>{money(b.add)}</td>
+                            <td>{b.pct}%</td>
+                            <td>{money(b.sub)}</td>
+                          </tr>
+                        ))
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="field" style="border-top:none; padding-top:14px;">
                   <label>
-                    {f.label}
-                    {f.note && <small>{f.note}</small>}
+                    Withholding allowance
+                    <small>Per-check allowance from the IRS tables.</small>
                   </label>
-                  <div class:list={['emoney', f.percent && 'pct']}>
+                  <div class="money">
                     <input
                       type="number"
                       step="0.01"
                       min="0"
                       inputmode="decimal"
-                      value={DEFAULTS[f.key]}
-                      data-k={f.key}
-                      aria-label={f.label}
+                      value={DEFAULTS.allow}
+                      data-k="allow"
+                      aria-label="Withholding allowance"
                     />
                   </div>
                 </div>
-              ))
-            }
-          </div>
 
-          <label class="echeck">
-            <input type="checkbox" id="ficaChk" checked />
-            <span>
-              <b>Estimate Social Security &amp; Medicare (7.65%)</b> — leave this on unless you've
-              already included FICA in your Post-Tax Deductions number.
-            </span>
-          </label>
-        </div>
-
-      </div>
-
-      <div class="toolcard">
-        <div class="tc-head">
-          <div class="stephead">
-            <span class="stepnum">5</span>
-            <div class="stephead-txt">
-              <h3>Pick how you file your taxes</h3>
-              <p>
-                This is the box you checked on your <strong>W-4, Step 1(c)</strong> — the same way
-                you file your tax return every spring. It decides how much federal tax comes out.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="tc-body filingrow">
-          <div class="filingpick" role="tablist" aria-label="Step 5: Filing status">
-            {
-              (['single', 'mfj', 'hoh'] as const).map((key) => (
-                <button
-                  type="button"
-                  role="tab"
-                  data-filing={key}
-                  aria-selected={key === DEFAULT_FILING ? 'true' : 'false'}
-                >
-                  {FILING[key].short}
-                </button>
-              ))
-            }
-          </div>
-          <div class="filinglabel">
-            <small>
-              Married filing <em>separately</em>? Pick the first button — the IRS puts it in the
-              same table as Single. That's their grouping, not ours.
-            </small>
-          </div>
-        </div>
-
-        <details class="esttable-wrap">
-          <summary>
-            <Icon name="ph-caret-right" /> Federal withholding table (tap to view)
-          </summary>
-          <div class="tc-body" style="padding-top: 0;">
-            <p class="esttable-for">
-              Showing the <strong id="filingName">{FILING[DEFAULT_FILING].label}</strong> table.
-            </p>
-            <div class="esttable-scroll">
-              <table class="esttable">
-                <thead>
-                  <tr>
-                    <th>Bracket (per check)</th>
-                    <th>Add (+)</th>
-                    <th>Multiply (×)</th>
-                    <th>Subtract (−)</th>
-                  </tr>
-                </thead>
-                <tbody id="brBody">
-                  {
-                    FILING[DEFAULT_FILING].brackets.map((b) => (
-                      <tr>
-                        <td>{bracketRange(b)}</td>
-                        <td>{money(b.add)}</td>
-                        <td>{b.pct}%</td>
-                        <td>{money(b.sub)}</td>
-                      </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
-            </div>
-
-            <div class="efield" style="margin-top: 10px; border-top: none;">
-              <label>
-                Withholding allowance<small
-                  >Standard deduction per check, set by your filing status above. Change it only if
-                  your W-4 does something unusual.</small
-                >
-              </label>
-              <div class="emoney">
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  inputmode="decimal"
-                  value={DEFAULTS.allow.toFixed(2)}
-                  data-k="allow"
-                  aria-label="Withholding allowance"
+                <Notice
+                  tone="warn"
+                  icon="ph-warning"
+                  text="**Current as of the 2026 IRS tables.** If the year has turned over, check the numbers against Publication 15-T before you rely on them."
                 />
               </div>
-            </div>
-
-            <Notice
-              tone="warn"
-              icon="ph-warning"
-              text="**Current as of the 2026 IRS tables.** These are the official 2026 Publication 15-T percentage-method values (Standard withholding, W-4 Step 2 box unchecked), divided down to per-semimonthly-check amounts. They are shown for reference and are not editable — pick your filing status above to switch tables."
-              style="margin-top: 16px;"
-            />
-          </div>
-        </details>
-      </div>
-
-            <div id="reconcile" class="toolcard reconcile" hidden>
-              <div class="tc-head">
-                <h3>Estimate vs. your actual payslip</h3>
-                <span class="hint" id="reconcileFor"></span>
-              </div>
-              <div class="tc-body">
-                <div id="reconcileRows"></div>
-                <p class="rec-note">
-                  Small differences are normal — state and local tax, mid-period benefit changes,
-                  and rounding all move the number. A large gap on Federal Income Tax usually means
-                  the filing status you picked in Step 5 doesn't match your W-4.
-                </p>
-              </div>
-            </div>
-
-            <Notice
-              icon="ph-info"
-              text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
-            />
+            </details>
           </div>
 
-          <aside class="estside">
-            <div class="estresult" aria-live="polite">
-              <div class="gl"></div>
-              <div class="est-top">
-                <span class="est-lbl">Your answer</span>
-                <span class="est-lbl alt" id="checkLbl">Check of the 5th</span>
+          <div id="reconcile" class="card" hidden>
+            <div class="card-head">
+              <span class="card-badge"><Icon name="ph-scales" /></span>
+              <div class="card-titles">
+                <h3 class="card-title">Estimate vs. your actual payslip</h3>
+                <div class="card-sub" id="reconcileFor"></div>
               </div>
-              <div class="est-net" id="netBig">$0.00</div>
-              <div class="est-sub">
-                This is what should hit your bank account. It updates by itself as you fill in the
-                steps — no button to press. If your real paystub doesn't match, something changed.
-              </div>
-              <div class="est-break" id="breakBody"></div>
             </div>
-          </aside>
-        </div>
-      </div>
+            <div id="reconcileRows" style="margin-top:16px;"></div>
+            <p class="card-text" style="margin-top:12px; font-size:13.5px; color:var(--ink-500);">
+              Small differences are normal — state and local tax, mid-period benefit changes, and
+              rounding all move the number. A large gap on Federal Income Tax usually means the
+              filing status you picked in Step 5 doesn't match your W-4.
+            </p>
+          </div>
 
-      <div id="tool-time" role="tabpanel" aria-labelledby="tab-time" hidden>
-        <div class="toolcard" style="margin-top: 0;">
-          <div class="tc-body" style="padding: 44px 26px; text-align: center;">
-            <Icon name="ph-clock-countdown" class="soon-icon" />
-            <p class="soon-title">Coming soon</p>
-            <p class="soon-body">
+          <Notice
+            icon="ph-info"
+            text="**How it works:** taxable earnings (GTD + overages + taxable per diem + crew cash + misc) minus pre-tax deductions, 401(k), and your withholding allowance gives your federal taxable income for the check. The tool finds your bracket, figures the withholding, then subtracts everything (and adds back your non-taxable per diem). **It's an estimate, not a guarantee** — state/local taxes vary by base and aren't included; add them to Post-Tax Deductions if they apply to you. Always verify against your actual paystub."
+          />
+
+          <div class="card" id="soon" style="margin-top:18px;">
+            <div class="card-head">
+              <span class="card-badge"><Icon name="ph-clock-countdown" /></span>
+              <div class="card-titles">
+                <h3 class="card-title">Time Out Estimator</h3>
+                <div class="card-sub">Coming soon</div>
+              </div>
+            </div>
+            <p class="card-text" style="margin-top:14px;">
               This one's still on the bench. Got the duty-limit rules or a spreadsheet for it? Send
               them in the group and we'll build it faster.
             </p>
           </div>
         </div>
+
+        <aside class="toolside">
+          <div class="answer" aria-live="polite">
+            <div class="answer-top">
+              <span class="answer-lbl">Your answer</span>
+              <span class="answer-lbl alt" id="checkLbl">Check of the 5th</span>
+            </div>
+            <div class="answer-net" id="netBig">$0.00</div>
+            <div class="answer-sub">
+              This is what should hit your bank account. It updates by itself as you fill in the
+              steps — no button to press. If your real paystub doesn't match, something changed.
+            </div>
+            <div class="answer-break" id="breakBody"></div>
+          </div>
+        </aside>
       </div>
     </div>
   </section>
@@ -396,23 +352,6 @@ const money = (n: number) =>
     bracketRange,
     type FilingStatus,
   } from '../data/paycheck';
-
-  // Tool picker. Panels use [hidden] rather than a display style so a tool
-  // that is not on screen is also out of the accessibility tree.
-  const toolTabs = document.querySelector<HTMLElement>('.tooltabs');
-  if (toolTabs) {
-    toolTabs.addEventListener('click', (event) => {
-      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-tool]');
-      if (!button) return;
-
-      for (const tab of toolTabs.querySelectorAll<HTMLButtonElement>('button[data-tool]')) {
-        const selected = tab === button;
-        tab.setAttribute('aria-selected', String(selected));
-        const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '');
-        if (panel) panel.hidden = !selected;
-      }
-    });
-  }
 
   const earnBody = document.getElementById('earnBody');
   const dedBody = document.getElementById('dedBody');
