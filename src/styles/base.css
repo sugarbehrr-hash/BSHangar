@@ -9,6 +9,8 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+/* Anchor targets land clear of the 68px sticky header. */
+[id] { scroll-margin-top: 84px; }
 body { margin: 0; background: var(--cream-200); }
 a { text-decoration: none; color: inherit; }
 

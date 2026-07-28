@@ -13,12 +13,12 @@ import airportScene from '../assets/airport-scene.jpg';
 
 const cards = [
   {
-    href: '/new-here/',
+    href: '/tools/',
     accent: 'var(--red-600)',
-    icon: 'ph-hand-waving',
-    title: 'New Here?',
-    body: 'Just joined? Start with how the group works, what to post where, and the four hashtags that run the hangar.',
-    cta: 'Get oriented',
+    icon: 'ph-calculator',
+    title: 'Crew Tools',
+    body: 'Calculators built from the group’s spreadsheets — see what your check should be before it lands.',
+    cta: 'Check your numbers',
   },
   {
     href: '/commuting/',
@@ -63,6 +63,14 @@ const cards = [
   },
 ];
 
+/** The four hashtags that organize the Facebook group, from the old New Here page. */
+const hashtags = [
+  ['#FAQuestions', "anything you're unsure about, just ask."],
+  ['#nonREVtips', 'commuting, listing & standby wisdom.'],
+  ['#CrewDiscounts', 'deals, perks & where to save.'],
+  ['#ContractualKnowledge', 'your rights, sourced to the CBA.'],
+];
+
 const steps = [
   { n: 1, title: 'We fly it first', body: 'Every guide comes from FAs living the schedule — not a policy binder.' },
   { n: 2, title: 'We write it plain', body: 'Real examples over legalese. If it needs a translation, we translate it.' },
@@ -87,7 +95,7 @@ const steps = [
             gear that actually lasts — all in one place, from FAs who fly it every day.
           </p>
           <div class="cta">
-            <a class="btn btn-red" href="/new-here/"><Icon name="ph-hand-waving" /> Start here</a>
+            <a class="btn btn-red" href="#new-here"><Icon name="ph-hand-waving" /> Start here</a>
             <a class="btn btn-ghost" href="/crew-discounts/"><Icon name="ph-tag" /> Crew discounts</a>
           </div>
         </div>
@@ -140,7 +148,54 @@ const steps = [
     </div>
   </section>
 
-  <section class="band paper">
+  <section class="band paper" id="new-here">
+    <div class="wrap">
+      <div>
+        <span class="kicker">New here?</span>
+        <h2 class="h2">Welcome aboard.</h2>
+        <p class="sectlead">
+          This is the all-in-one place PSA flight attendants turn to for the things we need every
+          day — commuting, contract, discounts, and community. Here's how the group works.
+        </p>
+      </div>
+
+      <div class="cols2" style="margin-top:30px;">
+        <div class="infocard" style="--accent: var(--red-600);">
+          <div class="ih">
+            <span class="b"><Icon name="ph-users-three" /></span>
+            <div>
+              <h3>What this is</h3>
+              <div class="ref">A community group, run by crew</div>
+            </div>
+          </div>
+          <p class="ic-p">
+            Blue Streak Hangar is a warm, no-drama space for PSA Airlines flight attendants.
+            Whether you're brand new or a 20-year senior mama, you'll find people happy to help.
+          </p>
+          <ul class="flist" style="--accent: var(--red-600);">
+            <li><b>Everyone's welcome</b> — new hires and seasoned crew alike.</li>
+            <li><b>Be kind &amp; respectful</b> — we lift each other up here.</li>
+            <li><b>Real answers</b> from FAs who've actually been there.</li>
+          </ul>
+        </div>
+
+        <div class="infocard" style="--accent: var(--sky-700);">
+          <div class="ih">
+            <span class="b"><Icon name="ph-hash" /></span>
+            <div>
+              <h3>The four hashtags</h3>
+              <div class="ref">Post &amp; search by topic</div>
+            </div>
+          </div>
+          <ul class="flist" style="--accent: var(--sky-700);">
+            {hashtags.map(([tag, desc]) => <li><b>{tag}</b> — {desc}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band cream">
     <div class="wrap">
       <div>
         <span class="kicker">How the hangar works</span>

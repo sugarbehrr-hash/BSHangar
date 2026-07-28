@@ -68,7 +68,6 @@ export interface NavItem {
 
 export const NAV: NavItem[] = [
   { label: 'Home', href: '/' },
-  { label: 'New Here', href: '/new-here/' },
   { label: 'Commuting', href: '/commuting/' },
   {
     label: 'Your Contract',
