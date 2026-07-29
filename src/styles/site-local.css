@@ -52,3 +52,11 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 
 /* Situation stack spacing — the zones are system.css, the stack is ours. */
 .situations { margin-bottom: 26px; }
+
+/* Home masthead lockup. The design's home masthead is text-only; the logo
+   sits beside it on wide screens and is dropped on narrow ones, where the
+   topbar mark is already in view and vertical space is the scarce thing. */
+.mh-logo { display: none; }
+@media (min-width: 1000px) {
+  .mh-logo { display: block; width: 100%; max-width: 340px; height: auto; justify-self: end; }
+}

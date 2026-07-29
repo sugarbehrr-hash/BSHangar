@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, FACEBOOK_GROUP } from '../data/site';
 import { bases, venueCount } from '../data/bases';
+import brandLogo from '../assets/brand-logo.svg';
 import { products } from '../data/essentials';
 import { commutingGuide } from '../data/guides/commuting';
 
@@ -90,21 +91,32 @@ const steps = [
 >
   <div class="masthead">
     <div class="wrap">
-      <div class="mh-body">
-        <div class="mh-eyebrow">{SITE.tagline}</div>
-        <h1 class="mh-title">Look it up.<br /><span class="r">Get back to work.</span></h1>
-        <p class="mh-sub">
-          Non-rev commuting, your contract in plain language, discounts by base, and a paycheck
-          estimator — written by PSA flight attendants who fly the same schedule you do.
-        </p>
-        <div class="mh-actions">
-          <a class="btn primary" href="#answers">
-            <Icon name="ph-magnifying-glass" /> Find an answer
-          </a>
-          <a class="btn onnavy" href="#new-here">
-            <Icon name="ph-hand-waving" /> New here?
-          </a>
+      <div class="mh-grid">
+        <div class="mh-body">
+          <div class="mh-eyebrow">{SITE.tagline}</div>
+          <h1 class="mh-title">Look it up.<br /><span class="r">Get back to work.</span></h1>
+          <p class="mh-sub">
+            Non-rev commuting, your contract in plain language, discounts by base, and a paycheck
+            estimator — written by PSA flight attendants who fly the same schedule you do.
+          </p>
+          <div class="mh-actions">
+            <a class="btn primary" href="#answers">
+              <Icon name="ph-magnifying-glass" /> Find an answer
+            </a>
+            <a class="btn onnavy" href="#new-here">
+              <Icon name="ph-hand-waving" /> New here?
+            </a>
+          </div>
         </div>
+
+        <img
+          class="mh-logo"
+          src={brandLogo.src}
+          alt=""
+          width={brandLogo.width}
+          height={brandLogo.height}
+          loading="eager"
+        />
       </div>
     </div>
   </div>
