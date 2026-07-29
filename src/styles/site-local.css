@@ -47,7 +47,7 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 
 /* Curtain lockup — larger than the topbar's, since it is the only thing
    on the page above the headline. */
-.curtain .brand .logo { display: block; height: 82px; width: auto; }
+.curtain .brand .logo { display: block; height: 132px; width: auto; max-width: 100%; }
 
 
 /* Situation stack spacing — the zones are system.css, the stack is ours. */
