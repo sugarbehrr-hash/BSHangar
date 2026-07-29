@@ -91,7 +91,8 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 /* Drop target while a file is over it. */
 .dropzone.dragging { border-color: var(--sky-500); background: var(--white); }
 
-/* "Forget my saved deductions" sits under the status box and was flush
-   against it. The design has no equivalent control, so it stays a .txtbtn
-   and just takes the gap. */
-#slipForget { margin-top: 12px; }
+/* "Forget my saved deductions" closes the upload card. .txtbtn carries 8px of
+   its own vertical padding, which made the gap below it larger than the gap
+   above. Dropping that padding and setting the margin to the card's own 24px
+   puts equal space on both sides. */
+#slipForget { padding: 0 4px; margin-top: 24px; }
