@@ -63,3 +63,23 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
   .mh-grid.home { grid-template-columns: minmax(0, 1.05fr) 0.95fr; gap: 44px; }
   .mh-logo { display: block; width: 100%; height: auto; }
 }
+
+/* ---------- PAYSLIP RECONCILE ----------
+   Site-only: the design has no reconcile view, so system.css carries no rule
+   for it. Recovered from tools.css, which went out with the stylesheet swap
+   and left this table rendering as run-on text. The script builds these rows
+   at runtime, which is why no build check saw them. */
+.rec-head { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 6px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.rec-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--cream-200); font-size: 14.5px; }
+.rec-row:first-child { border-top: none; }
+.rec-row .rec-label { color: var(--ink-900); font-weight: 600; }
+.rec-figs { display: flex; gap: 18px; font-variant-numeric: tabular-nums; }
+.rec-figs span { min-width: 92px; text-align: right; }
+.rec-est { color: var(--ink-500); }
+.rec-act { color: var(--navy-900); font-weight: 600; }
+.rec-diff.close { color: #1B7F4C; }
+.rec-diff.off { color: var(--red-600); font-weight: 700; }
+
+/* The payslip status box lists what was filled and what was skipped. */
+.statusbox ul { margin: 8px 0 0; padding-left: 18px; }
+.statusbox li { padding: 2px 0; }

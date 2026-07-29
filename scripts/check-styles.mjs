@@ -61,8 +61,26 @@ for (const file of walk(DIST, '.html')) {
   }
 }
 
+// Classes the page never renders but a script builds at runtime — the
+// reconcile table, the answer breakdown, re-rendered form fields. check-styles
+// reads dist/, so these are invisible to it; scan the source scripts too.
+// Every one of these has shipped unstyled at least once.
+for (const file of walk('src', '.astro')) {
+  const src = readFileSync(file, 'utf8');
+  const script = src.indexOf('<script>');
+  if (script < 0) continue;
+  for (const m of src.slice(script).matchAll(/class="([^"$]*)"/g)) {
+    for (const cls of m[1].split(/\s+/)) {
+      if (!cls || styled.has(cls)) continue;
+      if (IGNORE.some((re) => re.test(cls))) continue;
+      if (!offenders.has(cls)) offenders.set(cls, new Set());
+      offenders.get(cls).add(`${file} (runtime)`);
+    }
+  }
+}
+
 if (offenders.size === 0) {
-  console.log(`check-styles: every class in ${DIST} has a rule`);
+  console.log(`check-styles: every class in ${DIST} and in runtime scripts has a rule`);
   process.exit(0);
 }
 
