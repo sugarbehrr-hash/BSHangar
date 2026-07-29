@@ -47,7 +47,10 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 
 /* Curtain lockup — larger than the topbar's, since it is the only thing
    on the page above the headline. */
-.curtain .brand .logo { display: block; height: 132px; width: auto; max-width: 100%; }
+/* The brand leads on the curtain; the status line under it is secondary. At
+   132px tall the logo was 289px wide against a 572px headline, which read the
+   other way round. Sized by width so it scales with the headline's measure. */
+.curtain .brand .logo { display: block; width: min(400px, 100%); height: auto; margin: 0 auto; }
 
 
 /* Situation stack spacing — the zones are system.css, the stack is ours. */
