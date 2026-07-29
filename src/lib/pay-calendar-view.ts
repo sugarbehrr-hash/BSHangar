@@ -101,7 +101,7 @@ export function renderCalendar(state: CalendarState): string {
     `<div class="paycal-key">` +
     `<span class="paycal-keyitem"><span class="paycal-chip half1"></span>1st – 15th</span>` +
     `<span class="paycal-keyitem"><span class="paycal-chip half2"></span>16th – end</span>` +
-    `<span class="paycal-keyitem"><span class="paycal-dot solo" aria-hidden="true"></span>Payday</span>` +
+    `<span class="paycal-keyitem"><span class="paycal-chip pay"></span>Payday</span>` +
     `</div>`;
 
   return head + `<div class="paycal-grid">${dow}${cells}</div>` + key;

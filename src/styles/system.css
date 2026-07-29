@@ -584,21 +584,37 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .paycal-day { position: relative; display: grid; place-items: center; min-height: 44px; padding: 4px 0 9px; border: 1.5px solid transparent; border-radius: var(--radius-xs); font-family: var(--font-body); font-size: 14px; color: var(--ink-900); cursor: pointer; transition: background .12s, border-color .12s, color .12s; }
 .paycal-day.half1 { background: var(--cream-200); }
 .paycal-day.half2 { background: var(--sky-100); }
+/* The days the picked check actually pays for — a deeper shade of the same
+   half tint, so the band reads as "these ones" without adding a new colour.
+   The half is matched inside :where() so it adds no specificity: written as
+   .inperiod.half2 this would be three classes and would beat .pay below,
+   stripping the gold off any payday that fell inside the banded period. */
+.paycal-day.inperiod:where(.half1) { background: var(--cream-300); }
+.paycal-day.inperiod:where(.half2) { background: #CDE6F8; }
 .paycal-day.out { opacity: .38; }
-.paycal-day.pay { font-weight: 700; color: var(--navy-900); }
+/* PAYDAY. The whole cell, not a 6px dot: it is the one date in the grid
+   someone is looking for, and it has to win against both half tints from
+   across the room. Ordered after the tints and the band so it beats them. */
+.paycal-day.pay { background: var(--gold-500); color: var(--navy-900); font-weight: 800; }
+.paycal-day.pay .paycal-num { font-size: 15.5px; }
 .paycal-day:hover { border-color: var(--navy-700); }
 .paycal-day.today { border-color: var(--sky-500); font-weight: 700; }
-.paycal-day.on { background: var(--navy-900); border-color: var(--navy-900); color: #fff; font-weight: 700; }
+/* Selected — either the check being estimated or a flown day being explained.
+   Last, so it overrides the payday fill. */
+.paycal-day.on { background: var(--navy-900); border-color: var(--navy-900); color: #fff; font-weight: 800; }
 .paycal-num { line-height: 1; }
-.paycal-dot { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--gold-600); }
-.paycal-day.on .paycal-dot { background: var(--gold-500); }
+/* The dot survives only on a selected cell, where it is the one thing still
+   saying "and this one is a payday" under the navy fill. On a gold cell it
+   would be gold on gold. */
+.paycal-dot { display: none; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--gold-500); }
+.paycal-day.on .paycal-dot { display: block; }
 
 .paycal-key { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 12.5px; color: var(--ink-500); }
 .paycal-keyitem { display: flex; align-items: center; gap: 7px; }
 .paycal-chip { width: 14px; height: 14px; border-radius: 4px; flex: none; }
 .paycal-chip.half1 { background: var(--cream-200); border: 1.5px solid var(--cream-300); }
 .paycal-chip.half2 { background: var(--sky-100); border: 1.5px solid #C9E3F7; }
-.paycal-dot.solo { position: static; transform: none; flex: none; }
+.paycal-chip.pay { background: var(--gold-500); border: 1.5px solid var(--gold-600); }
 
 .paycal-hint { display: flex; align-items: flex-start; gap: 9px; padding: 13px 15px; border-radius: var(--radius-sm); background: var(--cream-100); border: 1.5px solid var(--cream-300); font-size: 13.5px; line-height: 1.5; color: var(--ink-700); }
 .paycal-hint i { font-size: 17px; color: var(--sky-700); flex: none; margin-top: 1px; }
