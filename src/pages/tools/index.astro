@@ -585,7 +585,7 @@ const money = (n: number) =>
 
     function setStatus(html: string, tone: 'ok' | 'bad' | '') {
       if (!slipStatus) return;
-      slipStatus.className = `slip-status${tone ? ' ' + tone : ''}`;
+      slipStatus.className = `statusbox${tone ? ' ' + tone : ''}`;
       slipStatus.innerHTML = html;
       slipStatus.hidden = false;
     }

@@ -69,8 +69,16 @@ for (const file of walk('src', '.astro')) {
   const src = readFileSync(file, 'utf8');
   const script = src.indexOf('<script>');
   if (script < 0) continue;
-  for (const m of src.slice(script).matchAll(/class="([^"$]*)"/g)) {
-    for (const cls of m[1].split(/\s+/)) {
+  // Literal class="..." plus names assigned through className / classList,
+  // which is how .slip-status and .warn got past the literal-only scan.
+  const names = [
+    ...[...src.slice(script).matchAll(/class="([^"$]*)"/g)].map((m) => m[1]),
+    ...[...src.slice(script).matchAll(/className\s*=\s*[`'"]([^`'"$]*)/g)].map((m) => m[1]),
+    ...[...src.slice(script).matchAll(/classList\.(?:add|toggle|remove)\(([^)]*)\)/g)]
+      .flatMap((m) => [...m[1].matchAll(/['"]([\w-]+)['"]/g)].map((q) => q[1])),
+  ];
+  for (const group of names) {
+    for (const cls of group.split(/\s+/)) {
       if (!cls || styled.has(cls)) continue;
       if (IGNORE.some((re) => re.test(cls))) continue;
       if (!offenders.has(cls)) offenders.set(cls, new Set());

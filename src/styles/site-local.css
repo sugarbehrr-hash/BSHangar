@@ -80,6 +80,13 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 .rec-diff.close { color: #1B7F4C; }
 .rec-diff.off { color: var(--red-600); font-weight: 700; }
 
-/* The payslip status box lists what was filled and what was skipped. */
+/* Payslip status box. system.css styles the neutral state; the tones and the
+   list of what was filled or skipped are ours — the design has no upload. */
+.statusbox.ok { border-color: #9FE0BC; background: #F2FBF6; }
+.statusbox.bad { border-color: #F3A8A0; background: #FEF4F3; }
 .statusbox ul { margin: 8px 0 0; padding-left: 18px; }
-.statusbox li { padding: 2px 0; }
+.statusbox li { margin-top: 3px; }
+.statusbox .warn { color: var(--ink-700); }
+
+/* Drop target while a file is over it. */
+.dropzone.dragging { border-color: var(--sky-500); background: var(--white); }
