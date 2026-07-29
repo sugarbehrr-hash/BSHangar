@@ -457,7 +457,12 @@ a.card:hover .card-go i { transform: translateX(4px); }
    a finished step swaps its subtitle for a summary of what it decided, so the
    collapsed stack still says what you told it. */
 .stepstack.accordion { gap: 8px; }
-.step { background: var(--white); border: var(--border-card); border-radius: var(--radius-md); overflow: hidden; }
+/* scroll-margin-top: advancing a step scrolls it to the top, and .topbar is
+   sticky over that spot — 64px on a phone, 70px wide — so without it the
+   step's own header lands underneath and you arrive looking at a headless
+   form. Same job as the [id] rule above; these are scrolled to by script
+   rather than by anchor, so they miss it. */
+.step { background: var(--white); border: var(--border-card); border-radius: var(--radius-md); overflow: hidden; scroll-margin-top: 84px; }
 .step.open { border-color: var(--navy-700); box-shadow: 0 10px 26px rgba(15, 30, 61, .09); }
 .step-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; background: none; border: 0; text-align: left; cursor: pointer; font-family: var(--font-body); min-height: 60px; }
 .step-head:hover, .step.open .step-head { background: var(--cream-100); }
