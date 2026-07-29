@@ -59,7 +59,7 @@ export const NAV: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Commuting', href: '/commuting/' },
   { label: 'Your Contract', href: '/contract/', short: 'Contract' },
-  { label: 'Discounts', href: '/crew-discounts/' },
+  { label: 'Discounts', href: '/crew-discounts/clt/' },
   { label: 'Essentials', href: '/crew-essentials/' },
   { label: 'Tools', href: '/tools/' },
 ];

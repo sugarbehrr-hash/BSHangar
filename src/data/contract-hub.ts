@@ -75,6 +75,7 @@ export const contractFigures: ContractFigure[] = [
     "caption": "The most they can build into your day",
     "ref": "§7.A.1",
     "pane": {
+      "actionIcon": "ph-note-pencil",
       "title": "Scheduled duty",
       "sub": "§7.A.1 · 14 hrs",
       "paras": [

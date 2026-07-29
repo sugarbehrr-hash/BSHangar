@@ -14,7 +14,6 @@ export const getStaticPaths = (() =>
   }))) satisfies GetStaticPaths;
 
 const { base } = Astro.props;
-const category = base.categories[0]!;
 const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
 ---
 
@@ -37,7 +36,7 @@ const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
 
   <section class="band tight">
     <div class="wrap">
-      <DiscountExplorer base={base} category={category} />
+      <DiscountExplorer base={base} />
 
       <Notice
         tone="info"

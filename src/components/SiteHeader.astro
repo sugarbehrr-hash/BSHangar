@@ -22,7 +22,10 @@ const { path } = Astro.props;
 /** A nav item is current if it matches exactly, or owns the section. */
 function isCurrent(href: string): boolean {
   if (href === '/') return path === '/';
-  return path === href || path.startsWith(href);
+  // Discounts points at a base, so match the section it belongs to rather
+  // than that one page — otherwise DCA/DFW/PHL leave the nav unlit.
+  const section = href.startsWith('/crew-discounts/') ? '/crew-discounts/' : href;
+  return path === href || path.startsWith(section);
 }
 ---
 

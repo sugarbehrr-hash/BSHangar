@@ -47,21 +47,3 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 
 /* Situation stack spacing — the zones are system.css, the stack is ours. */
 .situations { margin-bottom: 26px; }
-
-/* ---------- BASE PICKER (/crew-discounts/) ----------
-   Site-only: the design handoff has no hub page — its Discounts screen is a
-   base directly — so system.css carries no rule for this. Kept exactly as it
-   rendered before the stylesheet swap. */
-.basegrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 34px; }
-.basecard { display: flex; flex-direction: column; gap: 2px; background: var(--white); border: 1.5px solid var(--cream-300);
-            border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-card);
-            transition: transform .22s var(--ease-out), box-shadow .22s, border-color .22s; }
-.basecard:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--accent, var(--red-600)); }
-.basecard .bc-code { font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--accent, var(--red-600)); }
-.basecard .bc-name { font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--navy-900); margin-top: 8px; }
-.basecard .bc-sub { font-size: 13px; color: var(--ink-500); }
-.basecard .go { margin-top: 14px; font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--accent, var(--red-600)); display: inline-flex; align-items: center; gap: 7px; }
-.basecard .go i { transition: transform .18s; }
-.basecard:hover .go i { transform: translateX(4px); }
-@media (max-width: 960px) { .basegrid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 620px) { .basegrid { grid-template-columns: 1fr; } }
