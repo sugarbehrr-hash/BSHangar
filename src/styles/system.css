@@ -479,6 +479,12 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .step.open .step-caret { transform: rotate(90deg); }
 .step-body { display: none; padding: 2px 16px 18px; }
 .step.open .step-body { display: block; }
+/* The BODY owns the rhythm between its blocks, not each block itself. The
+   Notice carries no margin of its own — it used to sit in .stepstack, a flex
+   container with a gap — so when every sibling brought its own margin-top and
+   it did not, it ended up flush against the panel above it. One rule here
+   means a new block cannot arrive spacingless again. */
+.step-body > * + * { margin-top: 14px; }
 .step-next { margin-top: 16px; width: 100%; min-height: 46px; padding: 12px 18px; border: 0; border-radius: var(--radius-sm); background: var(--navy-900); color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; cursor: pointer; }
 .step-next:hover { background: var(--navy-700); }
 
@@ -594,11 +600,11 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .paycal-chip.half2 { background: var(--sky-100); border: 1.5px solid #C9E3F7; }
 .paycal-dot.solo { position: static; transform: none; flex: none; }
 
-.paycal-hint { display: flex; align-items: flex-start; gap: 9px; margin-top: 14px; padding: 13px 15px; border-radius: var(--radius-sm); background: var(--cream-100); border: 1.5px solid var(--cream-300); font-size: 13.5px; line-height: 1.5; color: var(--ink-700); }
+.paycal-hint { display: flex; align-items: flex-start; gap: 9px; padding: 13px 15px; border-radius: var(--radius-sm); background: var(--cream-100); border: 1.5px solid var(--cream-300); font-size: 13.5px; line-height: 1.5; color: var(--ink-700); }
 .paycal-hint i { font-size: 17px; color: var(--sky-700); flex: none; margin-top: 1px; }
 .paycal-hint strong { color: var(--navy-900); }
 
-.paycal-answer, .paycal-summary { margin-top: 14px; padding: 15px 16px; border-radius: var(--radius-sm); background: var(--sky-100); border: 1.5px solid #C9E3F7; }
+.paycal-answer, .paycal-summary { padding: 15px 16px; border-radius: var(--radius-sm); background: var(--sky-100); border: 1.5px solid #C9E3F7; }
 .paycal-answer-head, .paycal-summary-head { font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--navy-900); margin-bottom: 10px; }
 .paycal-answer-head strong, .paycal-summary-head strong { color: var(--sky-700); }
 .paycal-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 9px 0; border-top: 1px solid #C9E3F7; }

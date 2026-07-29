@@ -40,9 +40,11 @@ export interface Stepper {
 /**
  * Wire up every `[data-step]` inside `root`.
  *
- * `scrollIntoView` is deliberately conditional: bringing a step to the top of
- * the viewport is right when the reader has just finished the one above it,
- * and jarring when they have simply tapped a header to look at something.
+ * Opening a step ALWAYS brings it to the top, however it was opened. Tapping a
+ * header near the bottom of the screen otherwise expands a tall body — the
+ * calendar especially — entirely below the fold, so the reader is looking at
+ * the step they just left. `.step` carries a scroll-margin-top for the sticky
+ * topbar, so "the top" means under the header rather than behind it.
  */
 export function createStepper(root: HTMLElement): Stepper {
   const steps: Step[] = [...root.querySelectorAll<HTMLElement>('[data-step]')]
@@ -72,12 +74,18 @@ export function createStepper(root: HTMLElement): Stepper {
     }
   }
 
-  function open(index: number, scroll = false) {
+  function open(index: number) {
     paint(index);
-    if (!scroll) return;
     const step = find(index);
-    // A step opened by finishing the previous one is usually below the fold.
-    step?.root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!step) return;
+
+    // paint() has just changed which bodies are displayed, so the step's final
+    // position is not known until the browser has laid out again. Scrolling in
+    // the same frame aims at where the step WAS — which, with the step above
+    // it collapsing, is further down the page than where it ends up.
+    requestAnimationFrame(() => {
+      step.root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   function closeAll() {
@@ -99,7 +107,7 @@ export function createStepper(root: HTMLElement): Stepper {
     if (step.badge) step.badge.innerHTML = '<i class="ph-fill ph-check" aria-hidden="true"></i>';
 
     const next = steps.find((s) => s.index > index && !s.root.classList.contains('done'));
-    if (next) open(next.index, true);
+    if (next) open(next.index);
     else closeAll();
   }
 
