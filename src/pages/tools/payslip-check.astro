@@ -171,19 +171,23 @@ import ToolTabs from '../../components/ToolTabs.astro';
             .join('') +
           `<div class="brw total"><span>Net pay</span><span>${money(report.netPrinted ?? report.netExpected)}</span></div>`;
 
+        const FLAG = { ok: 'OK', check: 'Check', error: 'Error' } as const;
+
         const rows = report.findings
           .map((f) => {
             const tone = f.severity === 'ok' ? 'close' : 'off';
+            // Empty cells still have to be emitted, or the grid pulls the flag
+            // left into the figure columns on a row that has no figures.
             const figures =
               f.actual === null || f.expected === null
-                ? ''
-                : `<span class="rec-figs"><span class="rec-est">${money(f.expected)}</span>` +
-                  `<span class="rec-act">${money(f.actual)}</span></span>`;
+                ? `<span class="audit-figs"><span class="audit-exp"></span><span class="audit-act"></span></span>`
+                : `<span class="audit-figs"><span class="audit-exp">${money(f.expected)}</span>` +
+                  `<span class="audit-act">${money(f.actual)}</span></span>`;
             return (
-              `<div class="rec-row"><span class="rec-label">${f.label}` +
-              `<small class="audit-detail">${f.detail}</small></span>` +
+              `<div class="audit-row"><span class="audit-what">${f.label}</span>` +
               figures +
-              `<span class="audit-flag ${tone}">${f.severity === 'ok' ? 'OK' : f.severity === 'check' ? 'CHECK' : 'ERROR'}</span></div>`
+              `<span class="audit-flag ${tone}">${FLAG[f.severity]}</span>` +
+              `<span class="audit-detail">${f.detail}</span></div>`
             );
           })
           .join('');
@@ -197,8 +201,11 @@ import ToolTabs from '../../components/ToolTabs.astro';
           `<div class="card"><div class="card-head">` +
           `<span class="card-badge"><i class="ph-fill ph-scales" aria-hidden="true"></i></span>` +
           `<div class="card-titles"><h3 class="card-title">Line by line</h3>${period}</div></div>` +
-          `<div style="margin-top:16px;">` +
-          `<div class="rec-head"><span>What was checked</span><span class="rec-figs"><span>Expected</span><span>On the slip</span></span><span class="audit-flag">Result</span></div>` +
+          `<div class="audit-table" style="margin-top:16px;">` +
+          `<div class="audit-head"><span>What was checked</span>` +
+          `<span class="audit-figs"><span class="audit-exp">Expected</span>` +
+          `<span class="audit-act">On the slip</span></span>` +
+          `<span class="audit-flag">Result</span></div>` +
           rows +
           `</div></div>`;
         result!.hidden = false;

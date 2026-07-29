@@ -80,15 +80,47 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 .rec-diff.close { color: #1B7F4C; }
 .rec-diff.off { color: var(--red-600); font-weight: 700; }
 
-/* Payslip Check. Reuses the reconcile row — same shape, "expected vs printed"
-   instead of "estimated vs actual" — plus a verdict flag per line. The flag is
-   a word, not a colour alone, so the result survives being read in sunlight on
-   a jetbridge. */
-.audit-detail { display: block; font-weight: 400; font-size: 12px; line-height: 1.45; color: var(--ink-500); margin-top: 3px; max-width: 46ch; }
-.audit-flag { flex: none; min-width: 58px; text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+/* Payslip Check.
+   A GRID, not the reconcile flex row. That row is `justify-content:
+   space-between` over three children, so the figures land wherever the label's
+   intrinsic width leaves them — fine when every label is a short phrase, wrong
+   here where each row carries an explanation and the header does not. Header
+   and rows now share one set of column tracks, so the columns cannot drift.
+   The flag is a word, not a colour alone, so the result survives being read in
+   sunlight on a jetbridge. */
+.audit-table { --audit-cols: minmax(0, 1fr) 96px 96px 58px; }
+.audit-head,
+.audit-row { display: grid; grid-template-columns: var(--audit-cols); gap: 2px 14px; align-items: baseline; }
+.audit-head { padding-bottom: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.audit-row { padding: 10px 0; border-top: 1px solid var(--cream-200); }
+.audit-what { font-size: 14.5px; font-weight: 600; color: var(--ink-900); }
+.audit-exp,
+.audit-act { text-align: right; font-variant-numeric: tabular-nums; font-size: 14.5px; }
+.audit-head .audit-exp,
+.audit-head .audit-act { font-size: 11px; }
+.audit-exp { color: var(--ink-500); }
+.audit-act { color: var(--navy-900); font-weight: 600; }
+.audit-flag { text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
 .audit-flag.close { color: #1B7F4C; }
 .audit-flag.off { color: var(--red-600); }
-.rec-row:has(.audit-detail) { align-items: flex-start; }
+/* The explanation sits under its own row, spanning every column. */
+.audit-detail { grid-column: 1 / -1; font-size: 12px; line-height: 1.45; color: var(--ink-500); margin-top: 2px; max-width: 52ch; }
+/* `display: contents` lets the two figures be grid items on wide screens and
+   collapse into one labelled line on a phone, from a single bit of markup. */
+.audit-figs { display: contents; }
+
+@media (max-width: 559px) {
+  .audit-head { display: none; }
+  .audit-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .audit-figs { display: flex; grid-column: 1 / -1; gap: 16px; margin-top: 5px; }
+  .audit-exp, .audit-act { text-align: left; font-size: 14px; }
+  .audit-exp::before,
+  .audit-act::before { font-family: var(--font-heading); font-weight: 800; font-size: 10px;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); margin-right: 6px; }
+  .audit-exp::before { content: 'Expected'; }
+  .audit-act::before { content: 'On slip'; }
+  .audit-detail { order: 9; }
+}
 
 /* Payslip status box. system.css styles the neutral state; the tones and the
    list of what was filled or skipped are ours — the design has no upload. */
