@@ -93,7 +93,7 @@ export const commutingResources: Resource[] = [
       'The whole program in full — listing, the four steps, commute-fail protections, ' +
       "dress guidelines and the pro tips that don't fit on a page.",
     icon: 'ph-airplane-takeoff',
-    accent: 'var(--sky-700)',
+    accent: 'var(--navy-700)',
     kind: 'generated',
     links: [
       { label: 'Download PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-file-pdf' },
@@ -107,7 +107,7 @@ export const commutingResources: Resource[] = [
       'Screen-by-screen listing for every carrier we have an agreement with, including ' +
       'which system to use and what to enter.',
     icon: 'ph-list-numbers',
-    accent: 'var(--navy-700)',
+    accent: 'var(--sky-700)',
     kind: 'generated',
     // TODO: this has no artifact of its own yet — the listing tables live inside
     // the commuting guide, so it points there until one is authored.
