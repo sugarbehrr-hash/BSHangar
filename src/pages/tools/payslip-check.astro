@@ -1,0 +1,243 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Notice from '../../components/Notice.astro';
+import ToolTabs from '../../components/ToolTabs.astro';
+
+/**
+ * Payslip Check — the auditor.
+ *
+ * Its own route because it is a different job from the estimator: that one
+ * predicts a check you have not been paid yet, this one grades one you have.
+ * It asks for nothing but the file — every figure it needs is printed on the
+ * slip, which is also why it is more reliable than typing numbers in.
+ *
+ * The rules live in lib/payslip-audit.ts, derived from five consecutive real
+ * slips and exact on all of them. Nothing here computes anything itself.
+ */
+---
+<BaseLayout
+  title="Payslip Check"
+  description="Upload your PSA payslip and see whether it adds up. Checks net pay, Social Security, Medicare and federal withholding against the figures printed on the slip — entirely on your own device."
+>
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-body">
+        <div class="mh-eyebrow">Crew calculators &amp; utilities</div>
+        <h1 class="mh-title">Payslip Check</h1>
+        <p class="mh-sub">
+          Upload your payslip and it grades itself. No typing, no numbers to copy — everything
+          it needs is already printed on the file.
+        </p>
+      </div>
+
+      <ToolTabs />
+    </div>
+  </div>
+
+  <section class="band tight">
+    <div class="wrap">
+      <div class="toollayout">
+        <div class="stepstack">
+          <div class="card">
+            <div class="card-head">
+              <span class="card-badge"><Icon name="ph-file-magnifying-glass" /></span>
+              <div class="card-titles">
+                <h3 class="card-title">Your payslip</h3>
+                <div class="card-sub">Workday › Pay › Payslip to Print</div>
+              </div>
+            </div>
+
+            <label class="dropzone" data-slip-drop for="auditFile">
+              <Icon name="ph-upload-simple" />
+              <span>
+                <strong>Choose a payslip PDF</strong> or drop one here
+              </span>
+            </label>
+            <input type="file" id="auditFile" accept="application/pdf,.pdf" class="sr-only" />
+
+            <p class="privacy">
+              <Icon name="ph-lock-simple" />
+              Read entirely on your own device. The file is never uploaded — this site has no
+              server to send it to.
+            </p>
+
+            <div id="auditStatus" class="statusbox" role="status" hidden></div>
+          </div>
+
+          <div id="auditResult" hidden></div>
+
+          <Notice
+            icon="ph-info"
+            text="**What it can and can't tell you.** Net pay, Social Security and Medicare are pure arithmetic — if those disagree with the slip, the slip is wrong. Federal withholding is compared against the IRS table for a Single filer, so extra withholding on your W-4 will show a difference that isn't an error. State and local tax aren't checked at all."
+          />
+        </div>
+
+        <aside class="toolside">
+          <div class="answer" aria-live="polite">
+            <div class="answer-top">
+              <span class="answer-lbl">Verdict</span>
+              <span class="answer-lbl alt" id="auditFor">No file yet</span>
+            </div>
+            <div class="answer-net" id="auditVerdict">—</div>
+            <div class="answer-sub" id="auditVerdictSub">
+              Upload a payslip and the result appears here.
+            </div>
+            <div class="answer-break" id="auditTotals"></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const fileInput = document.getElementById('auditFile') as HTMLInputElement | null;
+  const drop = document.querySelector<HTMLElement>('[data-slip-drop]');
+  const status = document.getElementById('auditStatus');
+  const result = document.getElementById('auditResult');
+  const verdictEl = document.getElementById('auditVerdict');
+  const verdictSub = document.getElementById('auditVerdictSub');
+  const totalsEl = document.getElementById('auditTotals');
+  const forEl = document.getElementById('auditFor');
+
+  if (fileInput && status && result && verdictEl && verdictSub && totalsEl && forEl) {
+    const money = (n: number) =>
+      (n < 0 ? '-$' : '$') +
+      Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function setStatus(html: string, tone: 'ok' | 'bad' | '') {
+      status!.className = `statusbox${tone ? ' ' + tone : ''}`;
+      status!.innerHTML = html;
+      status!.hidden = false;
+    }
+
+    /** Headline wording per verdict. Plain, and never alarming without cause. */
+    const HEADLINE = {
+      ok: { big: 'Adds up', sub: 'Every figure this tool can check matches the slip.' },
+      check: {
+        big: 'Worth a look',
+        sub: 'The arithmetic is right, but something is worth checking against your W-4 or your month.',
+      },
+      error: {
+        big: "Doesn't add up",
+        sub: 'At least one figure on this slip is arithmetically wrong. Raise it with payroll — §3.P gives you 5 business days.',
+      },
+    } as const;
+
+    async function handleFile(file: File) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        setStatus("That doesn't look like a PDF. Use the <strong>Payslip to Print</strong> download from Workday.", 'bad');
+        return;
+      }
+
+      setStatus('Reading your payslip…', '');
+
+      try {
+        const [{ parsePayslip }, { auditPayslip }] = await Promise.all([
+          import('../../lib/payslip'),
+          import('../../lib/payslip-audit'),
+        ]);
+
+        const slip = await parsePayslip(file);
+        if (slip.earnings.length === 0) {
+          setStatus(
+            "Couldn't find any pay lines in that PDF. If it opens fine in a reader, it may be a different report — this expects Workday's <strong>Payslip to Print</strong>.",
+            'bad'
+          );
+          return;
+        }
+
+        const report = auditPayslip(slip, { filing: 'single' });
+        const head = HEADLINE[report.verdict];
+
+        verdictEl!.textContent = head.big;
+        verdictSub!.textContent = head.sub;
+        forEl!.textContent = slip.checkDate ? `Check ${slip.checkDate}` : 'Payslip';
+
+        totalsEl!.innerHTML =
+          [
+            ['Gross earnings', report.gross, 'pos'],
+            ...(report.imputed > 0
+              ? [['Less imputed (not cash)', -report.imputed, 'neg'] as const]
+              : []),
+            ['Deductions', -report.deductions, 'neg'],
+            ['Taxes', -report.taxes, 'neg'],
+          ]
+            .map(
+              ([label, amount, tone]) =>
+                `<div class="brw"><span>${label}</span><span class="${tone}">${money(amount as number)}</span></div>`
+            )
+            .join('') +
+          `<div class="brw total"><span>Net pay</span><span>${money(report.netPrinted ?? report.netExpected)}</span></div>`;
+
+        const rows = report.findings
+          .map((f) => {
+            const tone = f.severity === 'ok' ? 'close' : 'off';
+            const figures =
+              f.actual === null || f.expected === null
+                ? ''
+                : `<span class="rec-figs"><span class="rec-est">${money(f.expected)}</span>` +
+                  `<span class="rec-act">${money(f.actual)}</span></span>`;
+            return (
+              `<div class="rec-row"><span class="rec-label">${f.label}` +
+              `<small class="audit-detail">${f.detail}</small></span>` +
+              figures +
+              `<span class="audit-flag ${tone}">${f.severity === 'ok' ? 'OK' : f.severity === 'check' ? 'CHECK' : 'ERROR'}</span></div>`
+            );
+          })
+          .join('');
+
+        const period =
+          slip.periodStart && slip.periodEnd
+            ? `<div class="card-sub">Period ${slip.periodStart} – ${slip.periodEnd}</div>`
+            : '';
+
+        result!.innerHTML =
+          `<div class="card"><div class="card-head">` +
+          `<span class="card-badge"><i class="ph-fill ph-scales" aria-hidden="true"></i></span>` +
+          `<div class="card-titles"><h3 class="card-title">Line by line</h3>${period}</div></div>` +
+          `<div style="margin-top:16px;">` +
+          `<div class="rec-head"><span>What was checked</span><span class="rec-figs"><span>Expected</span><span>On the slip</span></span><span class="audit-flag">Result</span></div>` +
+          rows +
+          `</div></div>`;
+        result!.hidden = false;
+
+        const bad = report.findings.filter((f) => f.severity !== 'ok').length;
+        setStatus(
+          `<strong>Checked ${report.findings.length} figure${report.findings.length === 1 ? '' : 's'}</strong>` +
+            (slip.checkDate ? ` on your check dated ${slip.checkDate}` : '') +
+            (bad === 0 ? ' — everything matched.' : ` — ${bad} need${bad === 1 ? 's' : ''} a look.`),
+          bad === 0 ? 'ok' : 'bad'
+        );
+      } catch (error) {
+        setStatus(
+          `Could not read that PDF. ${error instanceof Error ? error.message : 'Unknown error'}`,
+          'bad'
+        );
+      }
+    }
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files?.[0];
+      if (file) void handleFile(file);
+    });
+
+    if (drop) {
+      for (const type of ['dragenter', 'dragover'] as const) {
+        drop.addEventListener(type, (e) => {
+          e.preventDefault();
+          drop.classList.add('dragging');
+        });
+      }
+      for (const type of ['dragleave', 'drop'] as const) {
+        drop.addEventListener(type, () => drop.classList.remove('dragging'));
+      }
+      drop.addEventListener('drop', (event) => {
+        event.preventDefault();
+        const file = (event as DragEvent).dataTransfer?.files?.[0];
+        if (file) void handleFile(file);
+      });
+    }
+  }
+</script>
