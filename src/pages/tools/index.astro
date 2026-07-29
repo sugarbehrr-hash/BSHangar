@@ -76,15 +76,18 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
   <section class="band tight">
     <div class="wrap">
       <div class="toollayout">
-        <div class="stepstack">
-          <div class="card" role="group" aria-label="Step 1">
-            <div class="card-head">
-              <span class="card-badge num">1</span>
-              <div class="card-titles">
-                <h3 class="card-title">How do you want to put your numbers in?</h3>
-                <div class="card-sub">Both get the same answer</div>
-              </div>
-            </div>
+        <div class="stepstack accordion" id="stepstack">
+          <section class="step open" data-step="1">
+            <button class="step-head" type="button" aria-expanded="true" aria-controls="stepbody-1">
+              <span class="step-badge">1</span>
+              <span class="step-txt">
+                <span class="step-title">How do you want to put your numbers in?</span>
+                <span class="step-sub">Both get the same answer</span>
+                <span class="step-resume" data-resume></span>
+              </span>
+              <Icon name="ph-caret-right" class="step-caret" />
+            </button>
+            <div class="step-body" id="stepbody-1">
 
             <div class="choice" data-start-pick style="margin-top:16px;">
               <button type="button" data-start="upload" aria-pressed="false" aria-controls="slipcard">
@@ -122,52 +125,41 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
                 Forget my saved deductions
               </button>
             </div>
-          </div>
-
-          <div class="card" role="group" aria-label="Step 2">
-            <div class="card-head">
-              <span class="card-badge num">2</span>
-              <div class="card-titles">
-                <h3 class="card-title">Which paycheck are you checking?</h3>
-                <div class="card-sub">Go by the date it lands in your bank</div>
-              </div>
             </div>
+          </section>
 
-            <div class="choice" role="tablist" aria-label="Which check" data-check-toggle style="margin-top:16px;">
-              <button type="button" role="tab" data-check="5" aria-selected="true">
-                <span>My check comes on the 5th<small>Guarantee only — 40 hrs</small></span>
-              </button>
-              <button type="button" role="tab" data-check="20" aria-selected="false">
-                <span>My check comes on the 20th<small>35 hrs + last month's overages</small></span>
-              </button>
+          <section class="step" data-step="2">
+            <button class="step-head" type="button" aria-expanded="false" aria-controls="stepbody-2">
+              <span class="step-badge">2</span>
+              <span class="step-txt">
+                <span class="step-title">Which paycheck are you checking?</span>
+                <span class="step-sub">Tap a payday — or any day you flew</span>
+                <span class="step-resume" data-resume></span>
+              </span>
+              <Icon name="ph-caret-right" class="step-caret" />
+            </button>
+            <div class="step-body" id="stepbody-2">
+              <div class="paycal" id="paycal" set:html={initialCalendar} />
+              <div id="paycalAnswer" set:html={initialDayAnswer} />
+              <div id="checkSummary" set:html={initialSummary} />
+              <Notice
+                icon="ph-calendar-check"
+                text="**Pay lands on the 5th and the 20th.** Around a weekend or a bank holiday it can arrive a day or two *early* — June 2026's 20th paid on the 18th, ahead of Juneteenth. Never later, so these dates are the ones to plan against."
+              />
             </div>
+          </section>
 
-            <div id="checkSummary" set:html={initialSummary} />
-
-            <details class="reftable-wrap" id="paycalWrap">
-              <summary>
-                <Icon name="ph-caret-right" />
-                When does the flying I did actually get paid?
-              </summary>
-              <div class="reftable-body">
-                <div class="paycal" id="paycal" set:html={initialCalendar} />
-                <div id="paycalAnswer" set:html={initialDayAnswer} />
-                <Notice
-                  icon="ph-calendar-check"
-                  text="**Pay lands on the 5th and the 20th.** Around a weekend or a bank holiday it can arrive a day or two *early* — June 2026's 20th paid on the 18th, ahead of Juneteenth. Never later, so these dates are the ones to plan against."
-                />
-              </div>
-            </details>
-          </div>
-
-          <div class="card" role="group" aria-label="Step 3">
-            <div class="card-head">
-              <span class="card-badge num">3</span>
-              <div class="card-titles">
-                <h3 class="card-title">Fill in your earnings</h3>
-                <div class="card-sub">From your Time Summary · leave anything you don't have at 0</div>
-              </div>
-            </div>
+          <section class="step" data-step="3">
+            <button class="step-head" type="button" aria-expanded="false" aria-controls="stepbody-3">
+              <span class="step-badge">3</span>
+              <span class="step-txt">
+                <span class="step-title">Fill in your earnings</span>
+                <span class="step-sub">From your Time Summary · leave anything you don't have at 0</span>
+                <span class="step-resume" data-resume></span>
+              </span>
+              <Icon name="ph-caret-right" class="step-caret" />
+            </button>
+            <div class="step-body" id="stepbody-3">
 
             <div class="fieldgrid" id="earnBody" style="margin-top:16px;">
               {
@@ -192,16 +184,22 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
                 ))
               }
             </div>
-          </div>
 
-          <div class="card" role="group" aria-label="Step 4">
-            <div class="card-head">
-              <span class="card-badge num">4</span>
-              <div class="card-titles">
-                <h3 class="card-title">Fill in your deductions</h3>
-                <div class="card-sub">From your last paystub · usually the same every check</div>
-              </div>
+            <button type="button" class="step-next" data-next="3">Next — deductions</button>
             </div>
+          </section>
+
+          <section class="step" data-step="4">
+            <button class="step-head" type="button" aria-expanded="false" aria-controls="stepbody-4">
+              <span class="step-badge">4</span>
+              <span class="step-txt">
+                <span class="step-title">Fill in your deductions</span>
+                <span class="step-sub">From your last paystub · usually the same every check</span>
+                <span class="step-resume" data-resume></span>
+              </span>
+              <Icon name="ph-caret-right" class="step-caret" />
+            </button>
+            <div class="step-body" id="stepbody-4">
 
             <div class="fieldgrid" id="dedBody" style="margin-top:16px;">
               {
@@ -234,16 +232,22 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
                 already included FICA in your post-tax number.
               </span>
             </label>
-          </div>
 
-          <div class="card" role="group" aria-label="Step 5">
-            <div class="card-head">
-              <span class="card-badge num">5</span>
-              <div class="card-titles">
-                <h3 class="card-title">Pick how you file your taxes</h3>
-                <div class="card-sub">The box on your W-4, Step 1(c)</div>
-              </div>
+            <button type="button" class="step-next" data-next="4">Next — how you file</button>
             </div>
+          </section>
+
+          <section class="step" data-step="5">
+            <button class="step-head" type="button" aria-expanded="false" aria-controls="stepbody-5">
+              <span class="step-badge">5</span>
+              <span class="step-txt">
+                <span class="step-title">Pick how you file your taxes</span>
+                <span class="step-sub">The box on your W-4, Step 1(c)</span>
+                <span class="step-resume" data-resume></span>
+              </span>
+              <Icon name="ph-caret-right" class="step-caret" />
+            </button>
+            <div class="step-body" id="stepbody-5">
 
             <div class="pillbar" role="tablist" aria-label="Filing status" data-filing-pick style="margin-top:16px;">
               {
@@ -322,7 +326,8 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
                 />
               </div>
             </details>
-          </div>
+            </div>
+          </section>
 
           <div id="reconcile" class="card" hidden>
             <div class="card-head">
@@ -362,6 +367,20 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
       </div>
     </div>
   </section>
+
+  {/* Phone-only. The sidebar answer is below five steps on a narrow screen,
+      which is exactly where nobody looks while still filling them in. */}
+  <div class="answerdock" id="answerDock">
+    <button class="dock-bar" type="button" id="dockBar" aria-expanded="false" aria-controls="dockBody">
+      <span>
+        <span class="dock-lbl">Your answer</span>
+        <span class="dock-date" id="dockDate"></span>
+      </span>
+      <span class="dock-net" id="dockNet">$0.00</span>
+      <Icon name="ph-caret-up" class="dock-caret" />
+    </button>
+    <div class="dock-body" id="dockBody"></div>
+  </div>
 </BaseLayout>
 
 <script>
@@ -375,7 +394,16 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
     bracketRange,
     type FilingStatus,
   } from '../../data/paycheck';
-  import { nextCheckOfType, fromKey, dayKey, DAY_LABEL } from '../../data/pay-calendar';
+  import {
+    nextCheckOfType,
+    checkOn,
+    fromKey,
+    dayKey,
+    DAY_LABEL,
+    MONTH_NAME,
+    type PayCheck,
+  } from '../../data/pay-calendar';
+  import { createStepper } from '../../lib/stepper';
   import {
     renderCalendar,
     renderDayAnswer,
@@ -388,10 +416,10 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
   const netBig = document.getElementById('netBig');
   const checkLbl = document.getElementById('checkLbl');
   const ficaChk = document.getElementById('ficaChk') as HTMLInputElement | null;
-  const toggle = document.querySelector<HTMLElement>('[data-check-toggle]');
   const checkSummary = document.getElementById('checkSummary');
+  const stack = document.getElementById('stepstack');
 
-  if (earnBody && dedBody && breakBody && netBig && checkLbl && ficaChk && toggle) {
+  if (earnBody && dedBody && breakBody && netBig && checkLbl && ficaChk && stack) {
     // Working copy of the user's own figures. The withholding brackets are not
     // in here on purpose: they are the published IRS values, displayed as text
     // and read straight from BRACKETS, so nothing on the page can alter them.
@@ -399,6 +427,30 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
     let check: 5 | 20 = DEFAULT_CHECK;
     let fica = true;
     let filing: FilingStatus = DEFAULT_FILING;
+
+    /**
+     * The check being estimated, as a date rather than "the 5th". Step 2 sets
+     * it by tapping a payday on the calendar; until then it is the next one of
+     * the default kind, so the estimate is never waiting on a decision.
+     */
+    let picked: PayCheck = nextCheckOfType(new Date(), DEFAULT_CHECK);
+
+    const stepper = createStepper(stack);
+
+    // Set once the calendar is wired, so adopting a check from an import can
+    // repaint the grid's banding without the calendar owning that decision.
+    let calendarRedraw: (() => void) | null = null;
+
+    const dockNet = document.getElementById('dockNet');
+    const dockBody = document.getElementById('dockBody');
+    const dockDate = document.getElementById('dockDate');
+    const dock = document.getElementById('answerDock');
+    const dockBar = document.getElementById('dockBar');
+
+    dockBar?.addEventListener('click', () => {
+      const open = dock?.classList.toggle('open') ?? false;
+      dockBar.setAttribute('aria-expanded', String(open));
+    });
 
     const money = (n: number) =>
       (n < 0 ? '-$' : '$') +
@@ -462,9 +514,12 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
       // (the default deductions alone), which reads as "broken" to someone
       // still on step 1. Hold the answer until there is something to add up.
       if (taxableEarn === 0 && values.pdno === 0) {
-        netBig!.textContent = '$0.00';
-        breakBody!.innerHTML =
+        const empty =
           '<div class="answer-empty">Nothing to add up yet — your number appears here as soon as you fill in your earnings (Step 3).</div>';
+        netBig!.textContent = '$0.00';
+        breakBody!.innerHTML = empty;
+        if (dockNet) dockNet.textContent = '$0.00';
+        if (dockBody) dockBody.innerHTML = empty;
         return;
       }
 
@@ -478,8 +533,7 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
       if (ficaAmt > 0) rows.push(['Social Security & Medicare', -ficaAmt, 'neg']);
       rows.push(['Post-tax deductions', -values.posttax, 'neg'], ['Union dues', -values.dues, 'neg']);
 
-      netBig!.textContent = money(net);
-      breakBody!.innerHTML =
+      const breakdown =
         rows
           .filter(([label, amount]) => amount !== 0 || label === 'Taxable earnings')
           .map(
@@ -488,6 +542,12 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
           )
           .join('') +
         `<div class="brw total"><span>Expected net</span><span>${money(net)}</span></div>`;
+
+      netBig!.textContent = money(net);
+      breakBody!.innerHTML = breakdown;
+      // The dock is the same answer, on a screen too narrow for the sidebar.
+      if (dockNet) dockNet.textContent = money(net);
+      if (dockBody) dockBody.innerHTML = breakdown;
     }
 
     /** One delegated handler covers the server-rendered fields and the
@@ -499,37 +559,75 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
       const key = input.dataset.k;
       if (key) values[key] = parseFloat(input.value) || 0;
       calc();
+      // Reopening a finished step and editing it must not leave the collapsed
+      // summary quoting the old figures.
+      refreshResumes();
     }
 
     document.addEventListener('input', onInput);
 
-    // Narrowing from the guard above does not survive into these function
-    // declarations, so hold the checked references directly.
-    const checkToggle = toggle;
+    /* ---------- Step summaries ---------- */
 
-    /** Shared by the toggle and by payslip import, which also picks a check. */
-    function setCheck(next: 5 | 20) {
-      check = next;
-      for (const b of checkToggle.querySelectorAll<HTMLButtonElement>('button[data-check]')) {
-        b.setAttribute('aria-selected', String(Number(b.dataset.check) === next));
-      }
+    /**
+     * Steps 3 and 4 are free number entry, so there is no moment that means
+     * "done" the way picking an option does. They get an explicit Next, which
+     * is also the only honest way to let someone leave every field at zero.
+     */
+    const earnResume = () => {
+      const total = EARNINGS.filter((f) => f.on === 'both' || f.on === check).reduce(
+        (running, f) => running + (values[f.key] || 0),
+        0
+      );
+      return total === 0 ? 'Nothing entered yet' : `${money(total)} in earnings`;
+    };
 
-      // Name the actual next payday rather than "the 5th" — a date is
-      // something you can plan around, and it is what the whole calendar
-      // panel below is trying to make concrete.
-      const upcoming = nextCheckOfType(new Date(), next);
-      checkLbl!.textContent = DAY_LABEL(upcoming.payDate);
-      if (checkSummary) checkSummary.innerHTML = renderCheckSummary(upcoming);
+    const dedResume = () =>
+      `${money(values.pretax)} pre-tax · ${values.k401}% 401(k) · ${money(values.dues)} dues`;
+
+    for (const button of stack.querySelectorAll<HTMLButtonElement>('button[data-next]')) {
+      button.addEventListener('click', () => {
+        const index = Number(button.dataset.next);
+        stepper.complete(index, index === 3 ? earnResume() : dedResume());
+      });
+    }
+
+    // A finished step still has to tell the truth when its figures change —
+    // an import fills every one of these behind a collapsed header.
+    function refreshResumes() {
+      if (stepper.isDone(3)) stepper.setResume(3, earnResume());
+      if (stepper.isDone(4)) stepper.setResume(4, dedResume());
+    }
+
+    /** What a collapsed step 2 says it decided. */
+    const checkResume = (c: PayCheck) =>
+      `${DAY_LABEL(c.payDate)} · ${c.guaranteeHours} hrs` +
+      (c.settles ? ` + ${MONTH_NAME(c.settles)}'s overages` : ', guarantee only');
+
+    /**
+     * Adopt a check. Called by the calendar and by payslip import, which also
+     * knows which check it is looking at.
+     *
+     * `markDone` is off for the initial paint and for an import: neither is the
+     * reader answering step 2, and marking it done would collapse a step they
+     * never opened.
+     */
+    function setCheck(next: PayCheck, markDone = true) {
+      picked = next;
+      check = next.payDay;
+
+      // Name the actual payday rather than "the 5th" — a date is something you
+      // can plan around, which is the whole point of the calendar above it.
+      checkLbl!.textContent = DAY_LABEL(next.payDate);
+      if (dockDate) dockDate.textContent = DAY_LABEL(next.payDate);
+      if (checkSummary) checkSummary.innerHTML = renderCheckSummary(next);
 
       renderEarnings();
       calc();
-    }
+      calendarRedraw?.();
 
-    toggle.addEventListener('click', (event) => {
-      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-check]');
-      if (!button) return;
-      setCheck(Number(button.dataset.check) === 20 ? 20 : 5);
-    });
+      if (markDone) stepper.complete(2, checkResume(next));
+      else stepper.setResume(2, checkResume(next));
+    }
 
     ficaChk.addEventListener('change', () => {
       fica = ficaChk.checked;
@@ -586,17 +684,21 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
     filingPick?.addEventListener('click', (event) => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-filing]');
       if (!button) return;
-      const picked = button.dataset.filing;
-      if (picked === 'mfj' || picked === 'hoh' || picked === 'single') setFiling(picked);
+      const chosen = button.dataset.filing;
+      if (chosen === 'mfj' || chosen === 'hoh' || chosen === 'single') {
+        setFiling(chosen);
+        // Last step: completing it collapses the stack and leaves the answer.
+        stepper.complete(5, FILING[chosen].short);
+      }
     });
 
     /* ---------- Pay calendar ---------- */
 
     /**
-     * The calendar answers a different question from Step 2's toggle — "when
-     * does the flying I did get paid", not "which check am I estimating" — so
-     * it owns only its own month and selection. The toggle stays the single
-     * owner of `check`; tapping a day never moves it.
+     * The calendar IS step 2 — it answers "which check am I estimating" by
+     * tapping a payday, and the secondary question "when does the flying I did
+     * get paid" by tapping any other day. One control, so there is nothing for
+     * a separate toggle to disagree with.
      */
     const paycal = document.getElementById('paycal');
     const paycalAnswer = document.getElementById('paycalAnswer');
@@ -614,8 +716,12 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
           month: calMonth,
           today,
           selected,
+          picked,
         });
       }
+
+      /** Redrawn whenever the picked check changes, not only on a day tap. */
+      calendarRedraw = drawCalendar;
 
       paycal.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
@@ -630,10 +736,22 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
         const dayButton = target.closest<HTMLButtonElement>('button[data-day]');
         if (!dayButton?.dataset.day) return;
 
-        const picked = fromKey(dayButton.dataset.day);
+        const day = fromKey(dayButton.dataset.day);
+        const isPayday = day.getDate() === 5 || day.getDate() === 20;
+
+        if (isPayday) {
+          // Picking the check the estimate is for. The day answer goes away —
+          // it would be describing a different question than the one just asked.
+          selected = null;
+          paycalAnswer!.innerHTML = '';
+          setCheck(checkOn(day.getFullYear(), day.getMonth(), day.getDate() === 5 ? 5 : 20));
+          drawCalendar();
+          return;
+        }
+
         // Tapping the selected day again clears it, so the panel can go back
         // to the hint rather than being stuck on one date.
-        selected = selected && dayKey(selected) === dayButton.dataset.day ? null : picked;
+        selected = selected && dayKey(selected) === dayButton.dataset.day ? null : day;
 
         // A day borrowed from an adjacent month should show that month, or the
         // answer refers to a date the grid is no longer displaying.
@@ -771,8 +889,25 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
         }
 
         applyValues(mapped.values);
-        if (mapped.check) setCheck(mapped.check);
-        else calc();
+
+        // The slip names its own check date, so the estimate can point at the
+        // exact check rather than "a 20th". Not marked done: the reader has
+        // not answered step 2, they handed over a file.
+        const stamped = slip.checkDate ? slip.checkDate.split('/').map(Number) : null;
+        if (mapped.check && stamped && stamped.length === 3) {
+          setCheck(checkOn(stamped[2], stamped[0] - 1, mapped.check), false);
+        } else if (mapped.check) {
+          setCheck(nextCheckOfType(new Date(), mapped.check), false);
+        } else {
+          calc();
+        }
+
+        // An import answers steps 1, 3 and 4 outright, so they collapse to
+        // what it filled in rather than sitting open and empty-looking.
+        stepper.complete(1, slip.checkDate ? `Payslip dated ${slip.checkDate}` : 'Payslip uploaded');
+        stepper.complete(3, earnResume());
+        stepper.complete(4, dedResume());
+        stepper.open(2);
 
         writeStore(mapped.values);
 
@@ -862,9 +997,12 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
       chooseStart(mode);
 
       if (mode === 'manual') {
-        // Drop them straight onto the first thing they need to type.
-        earnBody.querySelector<HTMLInputElement>('input[data-k]')?.focus();
+        // Typing is a decision that finishes step 1, so move them on.
+        stepper.complete(1, 'Typing the numbers in');
       } else {
+        // Uploading is not finished until a file has actually been read — the
+        // dropzone lives in this step, so advancing now would hide it.
+        stepper.setResume(1, 'Uploading a payslip PDF');
         slipInput?.focus();
       }
     });
@@ -890,7 +1028,8 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
     }
 
     // Not calc() — the server could only name the BUILD date in the answer
-    // header and the check summary. This redraws both against the real today.
-    setCheck(check);
+    // header and the check summary. This redraws both against the real today,
+    // without marking step 2 answered: nobody has picked a check yet.
+    setCheck(nextCheckOfType(new Date(), check), false);
   }
 </script>

@@ -451,6 +451,49 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .toollayout { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: start; }
 @media (min-width: 1000px) { .toollayout { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 24px; } .toolside { position: sticky; top: 90px; } }
 .stepstack { display: flex; flex-direction: column; gap: 16px; }
+
+/* --- Accordion stepper -----------------------------------------------------
+   One step open at a time. The header is always visible and is the control;
+   a finished step swaps its subtitle for a summary of what it decided, so the
+   collapsed stack still says what you told it. */
+.stepstack.accordion { gap: 8px; }
+.step { background: var(--white); border: var(--border-card); border-radius: var(--radius-md); overflow: hidden; }
+.step.open { border-color: var(--navy-700); box-shadow: 0 10px 26px rgba(15, 30, 61, .09); }
+.step-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; background: none; border: 0; text-align: left; cursor: pointer; font-family: var(--font-body); min-height: 60px; }
+.step-head:hover, .step.open .step-head { background: var(--cream-100); }
+.step-badge { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--cream-300); color: var(--navy-900); display: grid; place-items: center; font-family: var(--font-display); font-size: 15px; line-height: 1; }
+.step.open .step-badge { background: var(--navy-900); color: #fff; }
+.step.done .step-badge { background: #1E9E63; color: #fff; font-size: 15px; }
+.step-txt { flex: 1; min-width: 0; }
+.step-title { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--navy-900); line-height: 1.25; }
+.step-sub { display: block; font-size: 12.5px; color: var(--ink-500); margin-top: 2px; line-height: 1.4; }
+.step-resume { display: none; margin-top: 3px; font-size: 13px; font-weight: 600; color: var(--sky-700); line-height: 1.4; }
+.step.done:not(.open) .step-resume { display: block; }
+.step.done:not(.open) .step-sub { display: none; }
+.step-caret { flex: none; color: var(--ink-300); font-size: 17px; transition: transform .2s; }
+.step.open .step-caret { transform: rotate(90deg); }
+.step-body { display: none; padding: 2px 16px 18px; }
+.step.open .step-body { display: block; }
+.step-next { margin-top: 16px; width: 100%; min-height: 46px; padding: 12px 18px; border: 0; border-radius: var(--radius-sm); background: var(--navy-900); color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; cursor: pointer; }
+.step-next:hover { background: var(--navy-700); }
+
+/* The answer follows you on a phone. Without this it sits below five steps,
+   where nobody scrolls to it while they are still typing into them. */
+.answerdock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--navy-900); color: #fff; box-shadow: 0 -10px 30px rgba(15, 30, 61, .28); border-top: 1px solid rgba(159, 208, 240, .2); }
+.dock-bar { display: flex; align-items: center; gap: 12px; padding: 11px 16px; width: 100%; background: none; border: 0; cursor: pointer; text-align: left; min-height: 56px; }
+.dock-lbl { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-500); }
+.dock-date { display: block; font-size: 11.5px; color: var(--sky-300); margin-top: 1px; }
+.dock-net { margin-left: auto; font-family: var(--font-display); font-size: 26px; line-height: 1; color: #fff; }
+.dock-caret { color: var(--sky-300); font-size: 15px; transition: transform .2s; }
+.answerdock.open .dock-caret { transform: rotate(180deg); }
+.dock-body { display: none; padding: 2px 16px 16px; max-height: 46vh; overflow: auto; background: var(--navy-800); border-top: 1px solid rgba(159, 208, 240, .25); }
+.answerdock.open .dock-body { display: block; }
+/* Room to scroll past the docked bar. */
+.stepstack.accordion { padding-bottom: 68px; }
+@media (min-width: 1000px) {
+  .answerdock { display: none; }
+  .stepstack.accordion { padding-bottom: 0; }
+}
 .choice { display: grid; grid-template-columns: 1fr; gap: 10px; }
 @media (min-width: 560px) { .choice { grid-template-columns: 1fr 1fr; } }
 .choice button { display: flex; align-items: flex-start; gap: 11px; text-align: left; padding: 15px 16px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--cream-100); font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; color: var(--navy-900); cursor: pointer; min-height: 44px; transition: background .15s, border-color .15s; }

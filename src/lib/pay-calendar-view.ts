@@ -34,6 +34,12 @@ export interface CalendarState {
   today: Date;
   /** The day whose payout is being explained, if any. */
   selected: Date | null;
+  /**
+   * The check being estimated. Its payday is marked selected and the period it
+   * pays for is banded, so the link between the two is visible rather than
+   * something the reader has to hold in their head.
+   */
+  picked?: PayCheck | null;
 }
 
 /**
@@ -43,7 +49,9 @@ export interface CalendarState {
  * asking a legitimate question, and so is one looking back at last month's.
  */
 export function renderCalendar(state: CalendarState): string {
-  const { year, month, today, selected } = state;
+  const { year, month, today, selected, picked = null } = state;
+  const inPickedPeriod = (d: Date) =>
+    picked !== null && d >= picked.periodStart && d <= picked.periodEnd;
 
   const head =
     `<div class="paycal-bar">` +
@@ -59,19 +67,24 @@ export function renderCalendar(state: CalendarState): string {
   const cells = monthGrid(year, month)
     .flat()
     .map((cell) => {
-      const isSelected = selected !== null && sameDay(cell.date, selected);
+      const isPicked = picked !== null && sameDay(cell.date, picked.payDate);
+      const isSelected =
+        isPicked || (selected !== null && sameDay(cell.date, selected));
       const isToday = sameDay(cell.date, today);
 
       const classes = ['paycal-day', `half${cell.half}`];
       if (!cell.inMonth) classes.push('out');
       if (cell.check) classes.push('pay');
       if (isToday) classes.push('today');
+      if (inPickedPeriod(cell.date)) classes.push('inperiod');
       if (isSelected) classes.push('on');
 
       // The dot and the ring are visual; the label carries the same facts for
       // anyone who is not looking at the colours.
       const said = [DAY_LABEL(cell.date)];
       if (cell.check) said.push(`payday, ${cell.check.guaranteeHours} hour guarantee`);
+      if (isPicked) said.push('the check being estimated');
+      else if (inPickedPeriod(cell.date)) said.push('paid by the selected check');
       if (isToday) said.push('today');
 
       return (
