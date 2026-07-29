@@ -1,7 +1,8 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Icon from '../components/Icon.astro';
-import Notice from '../components/Notice.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Notice from '../../components/Notice.astro';
+import ToolTabs from '../../components/ToolTabs.astro';
 import {
   EARNINGS,
   DEDUCTIONS,
@@ -10,7 +11,7 @@ import {
   DEFAULTS,
   bracketRange,
   type CheckDay,
-} from '../data/paycheck';
+} from '../../data/paycheck';
 
 /**
  * Crew Tools.
@@ -45,14 +46,7 @@ const money = (n: number) =>
         </p>
       </div>
 
-      <nav class="sectiontabs" aria-label="Tools">
-        <a href="/tools/" aria-current="page">
-          <Icon name="ph-calculator" /> Paycheck Estimator
-        </a>
-        <a href="#soon">
-          <Icon name="ph-clock-countdown" /> Time Out Estimator
-        </a>
-      </nav>
+      <ToolTabs />
     </div>
   </div>
 
@@ -69,7 +63,7 @@ const money = (n: number) =>
               </div>
             </div>
 
-            <div class="choice" style="margin-top:16px;">
+            <div class="choice" data-start-pick style="margin-top:16px;">
               <button type="button" data-start="upload" aria-pressed="false" aria-controls="slipcard">
                 <Icon name="ph-file-pdf" />
                 <span>
@@ -87,7 +81,7 @@ const money = (n: number) =>
             </div>
 
             <div id="slipcard">
-              <label class="dropzone" for="slipFile">
+              <label class="dropzone" data-slip-drop for="slipFile">
                 <Icon name="ph-upload-simple" />
                 <span>
                   <strong>Choose a payslip PDF</strong> or drop one here — Workday › Payslip to Print
@@ -114,7 +108,7 @@ const money = (n: number) =>
               </div>
             </div>
 
-            <div class="choice" role="tablist" aria-label="Which check" style="margin-top:16px;">
+            <div class="choice" role="tablist" aria-label="Which check" data-check-toggle style="margin-top:16px;">
               <button type="button" role="tab" data-check="5" aria-selected="true">
                 <span>My check comes on the 5th<small>Pays your 2 Half GTD</small></span>
               </button>
@@ -209,7 +203,7 @@ const money = (n: number) =>
               </div>
             </div>
 
-            <div class="pillbar" role="tablist" aria-label="Filing status" style="margin-top:16px;">
+            <div class="pillbar" role="tablist" aria-label="Filing status" data-filing-pick style="margin-top:16px;">
               {
                 (['single', 'mfj', 'hoh'] as const).map((key) => (
                   <button
@@ -308,20 +302,6 @@ const money = (n: number) =>
             icon="ph-info"
             text="**How it works:** taxable earnings minus pre-tax deductions, 401(k) and your withholding allowance give federal taxable income for the check. The tool finds your bracket, figures the withholding, subtracts everything, then adds back non-taxable per diem. **It's an estimate, not a guarantee** — state/local tax varies by base and isn't included. Always verify against your paystub."
           />
-
-          <div class="card" id="soon" style="margin-top:18px;">
-            <div class="card-head">
-              <span class="card-badge"><Icon name="ph-clock-countdown" /></span>
-              <div class="card-titles">
-                <h3 class="card-title">Time Out Estimator</h3>
-                <div class="card-sub">Coming soon</div>
-              </div>
-            </div>
-            <p class="card-text" style="margin-top:14px;">
-              This one's still on the bench. Got the duty-limit rules or a spreadsheet for it? Send
-              them in the group and we'll build it faster.
-            </p>
-          </div>
         </div>
 
         <aside class="toolside">
@@ -351,7 +331,7 @@ const money = (n: number) =>
     FICA_RATE,
     bracketRange,
     type FilingStatus,
-  } from '../data/paycheck';
+  } from '../../data/paycheck';
 
   const earnBody = document.getElementById('earnBody');
   const dedBody = document.getElementById('dedBody');
@@ -359,7 +339,7 @@ const money = (n: number) =>
   const netBig = document.getElementById('netBig');
   const checkLbl = document.getElementById('checkLbl');
   const ficaChk = document.getElementById('ficaChk') as HTMLInputElement | null;
-  const toggle = document.querySelector<HTMLElement>('.esttoggle');
+  const toggle = document.querySelector<HTMLElement>('[data-check-toggle]');
 
   if (earnBody && dedBody && breakBody && netBig && checkLbl && ficaChk && toggle) {
     // Working copy of the user's own figures. The withholding brackets are not
@@ -502,7 +482,7 @@ const money = (n: number) =>
     /* ---------- Filing status ---------- */
 
     const FILING_KEY = 'bsh.paycheck.filing.v1';
-    const filingPick = document.querySelector<HTMLElement>('.filingpick');
+    const filingPick = document.querySelector<HTMLElement>('[data-filing-pick]');
     const brBody = document.getElementById('brBody');
     const filingName = document.getElementById('filingName');
 
@@ -566,7 +546,7 @@ const money = (n: number) =>
     const STABLE_KEYS = ['pretax', 'k401', 'posttax', 'dues'] as const;
 
     const slipInput = document.getElementById('slipFile') as HTMLInputElement | null;
-    const slipDrop = document.querySelector<HTMLElement>('.slip-drop');
+    const slipDrop = document.querySelector<HTMLElement>('[data-slip-drop]');
     const slipStatus = document.getElementById('slipStatus');
     const slipForget = document.getElementById('slipForget') as HTMLButtonElement | null;
     const reconcile = document.getElementById('reconcile');
@@ -659,8 +639,8 @@ const money = (n: number) =>
 
       try {
         const [{ parsePayslip }, { mapPayslip }] = await Promise.all([
-          import('../lib/payslip'),
-          import('../lib/payslip-map'),
+          import('../../lib/payslip'),
+          import('../../lib/payslip-map'),
         ]);
 
         const slip = await parsePayslip(file);
@@ -733,7 +713,7 @@ const money = (n: number) =>
 
     /* ---------- How to start ---------- */
 
-    const startPick = document.querySelector<HTMLElement>('.startpick');
+    const startPick = document.querySelector<HTMLElement>('[data-start-pick]');
     const slipCard = document.getElementById('slipcard');
 
     /**

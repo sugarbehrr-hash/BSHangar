@@ -7,6 +7,12 @@
    curtain. Nothing here should duplicate a system.css rule.
    ============================================================ */
 
+/* The hidden attribute has to beat component display rules. .card sets
+   display:flex, which outranks the UA stylesheet's [hidden]{display:none} —
+   so filtered-out cards stayed on screen while the script thought they were
+   hidden. Everything that filters (essentials, discount zones) relies on this. */
+[hidden] { display: none !important; }
+
 /* Keyboard bypass — the prototypes have no <main> skip target. */
 .skip-link { position: absolute; left: -9999px; top: 0; z-index: 100; padding: 12px 20px; background: var(--gold-500); color: var(--navy-900);
              font-family: var(--font-heading); font-weight: 800; font-size: 14px; border-radius: 0 0 var(--radius-sm) 0; }

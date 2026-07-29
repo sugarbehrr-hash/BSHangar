@@ -313,7 +313,7 @@ export const bases: Base[] = [
     name: "Reagan National",
     sub: "Washington, DC",
     tabLabel: "Washington",
-    blurb: "Compact and quick — perfect for a tight turn. Show your AA badge and ask for the crew rate before you order; it varies by spot. National Hall (Terminal 2) has the widest spread.",
+    blurb: "Compact and quick — good for a tight turn. Show your AA badge and ask for the crew rate; National Hall (Terminal 2) has the widest spread.",
     categories: [
       {
         key: "eat", label: "Food & Drink", icon: "ph-fork-knife",
@@ -511,7 +511,7 @@ export const bases: Base[] = [
     name: "Dallas / Fort Worth",
     sub: "Dallas, TX",
     tabLabel: "Dallas–Ft Worth",
-    blurb: "Big airport, real deals — many spots have a set crew price or 10–20% off with your AA badge. Terminals A & C have printed crew menus; E & B have the percentage discounts. Prices change, so confirm at the register. Most don't apply if you dine in.",
+    blurb: "Big airport, real deals — a set crew price or 10–20% off at many spots. A & C have printed crew menus; E & B do percentages. Confirm at the register.",
     categories: [
       {
         key: "eat", label: "Meal Deals", icon: "ph-fork-knife",

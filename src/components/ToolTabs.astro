@@ -1,0 +1,26 @@
+---
+/**
+ * The tools switcher, docked in the masthead.
+ *
+ * Each tool is its own page — a tab strip switches views, so a second tool
+ * belongs at its own route rather than appended to the first one's page.
+ */
+import Icon from './Icon.astro';
+
+export const TOOLS = [
+  { label: 'Paycheck Estimator', href: '/tools/', icon: 'ph-calculator' },
+  { label: 'Time Out Estimator', href: '/tools/time-out/', icon: 'ph-clock-countdown' },
+] as const;
+
+const path = Astro.url.pathname;
+---
+
+<nav class="sectiontabs" aria-label="Tools">
+  {
+    TOOLS.map((tool) => (
+      <a href={tool.href} aria-current={path === tool.href ? 'page' : undefined}>
+        <Icon name={tool.icon} /> {tool.label}
+      </a>
+    ))
+  }
+</nav>

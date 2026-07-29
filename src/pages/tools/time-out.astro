@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import ToolTabs from '../../components/ToolTabs.astro';
+
+/**
+ * Time Out Estimator — the second tool, not built yet.
+ *
+ * It has its own route because the masthead strip is a tab strip: each tab is
+ * a view. The placeholder lives here rather than at the bottom of the Paycheck
+ * Estimator, where it had nothing to do with the page it was sitting on.
+ */
+---
+
+<BaseLayout
+  title="Time Out Estimator"
+  description="A duty-limit calculator for PSA flight attendants — how long they can keep you and when your day has to end. Not built yet."
+>
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-body">
+        <div class="mh-eyebrow">Crew calculators &amp; utilities</div>
+        <h1 class="mh-title">Time Out Estimator</h1>
+        <p class="mh-sub">
+          How long they can keep you, and when your day has to end. This one is still on the
+          bench — the rules are in the contract, the calculator isn't built yet.
+        </p>
+      </div>
+
+      <ToolTabs />
+    </div>
+  </div>
+
+  <section class="band tight">
+    <div class="wrap">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-badge"><Icon name="ph-clock-countdown" /></span>
+          <div class="card-titles">
+            <h3 class="card-title">Time Out Estimator</h3>
+            <div class="card-sub">Coming soon</div>
+          </div>
+        </div>
+        <p class="card-text" style="margin-top:14px;">
+          This one's still on the bench. Got the duty-limit rules or a spreadsheet for it? Send
+          them in the group and we'll build it faster.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
