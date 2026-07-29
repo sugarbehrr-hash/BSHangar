@@ -72,6 +72,15 @@ const texts = (html) =>
     .map((t) => decode(t).replace(/\s+/g, ' ').trim())
     .filter(Boolean);
 
+/** Every inline custom property and colour, in order — accents live here.
+    They were invisible before, so two cards with swapped --accent values
+    read as identical on every other pass. */
+const styles = (html) =>
+  [...html.matchAll(/style="([^"]*)"/g)]
+    .flatMap((m) => m[1].split(';'))
+    .map((d) => d.trim())
+    .filter((d) => /^(--|color|background)/.test(d));
+
 /** Every element as tag.class, in order. */
 const elements = (html) =>
   [...html.matchAll(/<([a-zA-Z][\w-]*)([^>]*)>/g)]
@@ -113,6 +122,7 @@ for (const [proto, built] of PAGES) {
     ['ICONS', icons, 40],
     ['TEXT', texts, 40],
     ['ELEMENTS', elements, 30],
+    ['STYLES', styles, 24],
   ]) {
     const { missing, extra } = diff(fn(P), fn(M));
     totalIssues += missing.length + extra.length;
