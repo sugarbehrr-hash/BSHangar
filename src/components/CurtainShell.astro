@@ -1,6 +1,6 @@
 ---
-import Icon from './Icon.astro';
-import { BRAND } from '../data/site';
+import { SITE } from '../data/site';
+import brandLogo from '../assets/brand-logo.svg';
 import '../styles/global.css';
 
 /**
@@ -33,9 +33,14 @@ const { title, description } = Astro.props;
 
   <body class="curtain">
     <main class="curtain-main">
-      <div class="brand" aria-hidden="true">
-        <span class="mark"><Icon name="ph-airplane-tilt" /></span>
-        <span class="wm">{BRAND.line1}<small>{BRAND.line2}</small></span>
+      <div class="brand">
+        <img
+          class="logo"
+          src={brandLogo.src}
+          alt={SITE.name}
+          width={brandLogo.width}
+          height={brandLogo.height}
+        />
       </div>
 
       <slot />
