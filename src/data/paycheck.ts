@@ -11,6 +11,9 @@
 /** Which check a field applies to. 'both' shows on the 5th and the 20th. */
 export type CheckDay = 5 | 20 | 'both';
 
+/** The check the page opens on. Server render and client start must agree. */
+export const DEFAULT_CHECK: 5 | 20 = 5;
+
 export interface EarnField {
   key: string;
   label: string;
@@ -36,11 +39,21 @@ export const EARNINGS: EarnField[] = [
   {
     key: 'over',
     label: 'Balance Paid at Overages',
-    note: 'From Time Summary, paid on the 20th',
+    note: "From LAST month's Time Summary — overages settle a bid month behind",
     on: 20,
   },
-  { key: 'pdtax', label: 'Per Diem — taxable (PD $ Tax)', on: 'both' },
-  { key: 'pdno', label: 'Per Diem — non-taxable (PD $ No Tax)', on: 'both' },
+  {
+    key: 'pdtax',
+    label: 'Per Diem — taxable (PD $ Tax)',
+    note: "Last month's per diem. The 5th never carries any.",
+    on: 20,
+  },
+  {
+    key: 'pdno',
+    label: 'Per Diem — non-taxable (PD $ No Tax)',
+    note: "Last month's per diem. The 5th never carries any.",
+    on: 20,
+  },
   {
     key: 'crew',
     label: 'Crew Cash',

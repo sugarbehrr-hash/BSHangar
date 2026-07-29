@@ -514,6 +514,58 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .privacy { display: flex; align-items: flex-start; gap: 8px; margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-500); }
 .privacy i { font-size: 15px; color: var(--sky-700); flex: none; margin-top: 1px; }
 
+/* --- Pay calendar ---------------------------------------------------------
+   The two pay periods are told apart by BACKGROUND TINT, not by a rule or a
+   stripe: the tint is the information, so it is the only decoration here.
+   Selected days reuse the navy fill that means "current" everywhere else. */
+.paycal { margin-top: 16px; }
+.paycal-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.paycal-title { font-family: var(--font-heading); font-weight: 800; font-size: 15.5px; color: var(--navy-900); }
+.paycal-nav { width: 44px; height: 44px; display: grid; place-items: center; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--cream-100); color: var(--navy-900); cursor: pointer; transition: background .15s, border-color .15s; }
+.paycal-nav:hover { border-color: var(--navy-700); background: var(--white); }
+.paycal-nav i { font-size: 16px; }
+
+.paycal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.paycal-dow { text-align: center; padding: 4px 0 6px; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.paycal-day { position: relative; display: grid; place-items: center; min-height: 44px; padding: 4px 0 9px; border: 1.5px solid transparent; border-radius: var(--radius-xs); font-family: var(--font-body); font-size: 14px; color: var(--ink-900); cursor: pointer; transition: background .12s, border-color .12s, color .12s; }
+.paycal-day.half1 { background: var(--cream-200); }
+.paycal-day.half2 { background: var(--sky-100); }
+.paycal-day.out { opacity: .38; }
+.paycal-day.pay { font-weight: 700; color: var(--navy-900); }
+.paycal-day:hover { border-color: var(--navy-700); }
+.paycal-day.today { border-color: var(--sky-500); font-weight: 700; }
+.paycal-day.on { background: var(--navy-900); border-color: var(--navy-900); color: #fff; font-weight: 700; }
+.paycal-num { line-height: 1; }
+.paycal-dot { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--gold-600); }
+.paycal-day.on .paycal-dot { background: var(--gold-500); }
+
+.paycal-key { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 12.5px; color: var(--ink-500); }
+.paycal-keyitem { display: flex; align-items: center; gap: 7px; }
+.paycal-chip { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+.paycal-chip.half1 { background: var(--cream-200); border: 1.5px solid var(--cream-300); }
+.paycal-chip.half2 { background: var(--sky-100); border: 1.5px solid #C9E3F7; }
+.paycal-dot.solo { position: static; transform: none; flex: none; }
+
+.paycal-hint { display: flex; align-items: flex-start; gap: 9px; margin-top: 14px; padding: 13px 15px; border-radius: var(--radius-sm); background: var(--cream-100); border: 1.5px solid var(--cream-300); font-size: 13.5px; line-height: 1.5; color: var(--ink-700); }
+.paycal-hint i { font-size: 17px; color: var(--sky-700); flex: none; margin-top: 1px; }
+.paycal-hint strong { color: var(--navy-900); }
+
+.paycal-answer, .paycal-summary { margin-top: 14px; padding: 15px 16px; border-radius: var(--radius-sm); background: var(--sky-100); border: 1.5px solid #C9E3F7; }
+.paycal-answer-head, .paycal-summary-head { font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--navy-900); margin-bottom: 10px; }
+.paycal-answer-head strong, .paycal-summary-head strong { color: var(--sky-700); }
+.paycal-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 9px 0; border-top: 1px solid #C9E3F7; }
+.paycal-row:first-of-type { border-top: none; padding-top: 0; }
+.paycal-what { font-size: 14px; font-weight: 600; color: var(--ink-900); }
+.paycal-what small { display: block; font-weight: 400; font-size: 12px; line-height: 1.45; color: var(--ink-500); margin-top: 2px; }
+.paycal-when { flex: none; text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--navy-900); }
+.paycal-when em { display: block; font-style: normal; font-family: var(--font-body); font-weight: 400; font-size: 11.5px; color: var(--ink-500); }
+.paycal-gap { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid #C9E3F7; font-size: 12.5px; line-height: 1.5; color: var(--ink-700); }
+.paycal-gap strong { color: var(--navy-900); }
+.paycal-summary ul { margin: 0; padding-left: 18px; }
+.paycal-summary li { font-size: 13.5px; line-height: 1.5; color: var(--ink-700); margin-top: 5px; }
+.paycal-summary li:first-child { margin-top: 0; }
+.paycal-summary strong { color: var(--navy-900); }
+
 /* ============================================================
    12 · FOOTER
    ============================================================ */

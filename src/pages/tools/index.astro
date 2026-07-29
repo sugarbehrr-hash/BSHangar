@@ -9,9 +9,16 @@ import {
   FILING,
   DEFAULT_FILING,
   DEFAULTS,
+  DEFAULT_CHECK,
   bracketRange,
   type CheckDay,
 } from '../../data/paycheck';
+import { nextCheckOfType } from '../../data/pay-calendar';
+import {
+  renderCalendar,
+  renderDayAnswer,
+  renderCheckSummary,
+} from '../../lib/pay-calendar-view';
 
 /**
  * Crew Tools.
@@ -20,7 +27,7 @@ import {
  * so the page is readable and indexable without JS; the client script takes
  * over from there and re-renders the earnings list when the check changes.
  */
-const shownOn = (on: CheckDay) => on === 'both' || on === 5;
+const shownOn = (on: CheckDay) => on === 'both' || on === DEFAULT_CHECK;
 const initialEarnings = EARNINGS.filter((f) => shownOn(f.on));
 
 /** Withholding-table amounts. Whole dollars print bare, cents print in full. */
@@ -30,6 +37,22 @@ const money = (n: number) =>
     minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
     maximumFractionDigits: 2,
   });
+
+/**
+ * The calendar's first paint. A static build can only know the BUILD date, so
+ * these are a placeholder the client immediately replaces with the reader's
+ * real today — the same trick the earnings list uses. Rendering it server-side
+ * anyway keeps the panel readable without JS and visible to Pagefind.
+ */
+const buildToday = new Date();
+const initialCalendar = renderCalendar({
+  year: buildToday.getFullYear(),
+  month: buildToday.getMonth(),
+  today: buildToday,
+  selected: null,
+});
+const initialDayAnswer = renderDayAnswer(null);
+const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CHECK));
 ---
 <BaseLayout
   title="Paycheck Estimator"
@@ -112,12 +135,29 @@ const money = (n: number) =>
 
             <div class="choice" role="tablist" aria-label="Which check" data-check-toggle style="margin-top:16px;">
               <button type="button" role="tab" data-check="5" aria-selected="true">
-                <span>My check comes on the 5th<small>Pays your 2 Half GTD</small></span>
+                <span>My check comes on the 5th<small>Guarantee only — 40 hrs</small></span>
               </button>
               <button type="button" role="tab" data-check="20" aria-selected="false">
-                <span>My check comes on the 20th<small>Pays 1 Half GTD + overages + crew cash</small></span>
+                <span>My check comes on the 20th<small>35 hrs + last month's overages</small></span>
               </button>
             </div>
+
+            <div id="checkSummary" set:html={initialSummary} />
+
+            <details class="reftable-wrap" id="paycalWrap">
+              <summary>
+                <Icon name="ph-caret-right" />
+                When does the flying I did actually get paid?
+              </summary>
+              <div class="reftable-body">
+                <div class="paycal" id="paycal" set:html={initialCalendar} />
+                <div id="paycalAnswer" set:html={initialDayAnswer} />
+                <Notice
+                  icon="ph-calendar-check"
+                  text="**Pay lands on the 5th and the 20th.** Around a weekend or a bank holiday it can arrive a day or two *early* — June 2026's 20th paid on the 18th, ahead of Juneteenth. Never later, so these dates are the ones to plan against."
+                />
+              </div>
+            </details>
           </div>
 
           <div class="card" role="group" aria-label="Step 3">
@@ -329,11 +369,18 @@ const money = (n: number) =>
     EARNINGS,
     FILING,
     DEFAULT_FILING,
+    DEFAULT_CHECK,
     DEFAULTS,
     FICA_RATE,
     bracketRange,
     type FilingStatus,
   } from '../../data/paycheck';
+  import { nextCheckOfType, fromKey, dayKey, DAY_LABEL } from '../../data/pay-calendar';
+  import {
+    renderCalendar,
+    renderDayAnswer,
+    renderCheckSummary,
+  } from '../../lib/pay-calendar-view';
 
   const earnBody = document.getElementById('earnBody');
   const dedBody = document.getElementById('dedBody');
@@ -342,13 +389,14 @@ const money = (n: number) =>
   const checkLbl = document.getElementById('checkLbl');
   const ficaChk = document.getElementById('ficaChk') as HTMLInputElement | null;
   const toggle = document.querySelector<HTMLElement>('[data-check-toggle]');
+  const checkSummary = document.getElementById('checkSummary');
 
   if (earnBody && dedBody && breakBody && netBig && checkLbl && ficaChk && toggle) {
     // Working copy of the user's own figures. The withholding brackets are not
     // in here on purpose: they are the published IRS values, displayed as text
     // and read straight from BRACKETS, so nothing on the page can alter them.
     const values: Record<string, number> = { ...DEFAULTS };
-    let check: 5 | 20 = 5;
+    let check: 5 | 20 = DEFAULT_CHECK;
     let fica = true;
     let filing: FilingStatus = DEFAULT_FILING;
 
@@ -465,7 +513,14 @@ const money = (n: number) =>
       for (const b of checkToggle.querySelectorAll<HTMLButtonElement>('button[data-check]')) {
         b.setAttribute('aria-selected', String(Number(b.dataset.check) === next));
       }
-      checkLbl!.textContent = next === 5 ? 'Check of the 5th' : 'Check of the 20th';
+
+      // Name the actual next payday rather than "the 5th" — a date is
+      // something you can plan around, and it is what the whole calendar
+      // panel below is trying to make concrete.
+      const upcoming = nextCheckOfType(new Date(), next);
+      checkLbl!.textContent = DAY_LABEL(upcoming.payDate);
+      if (checkSummary) checkSummary.innerHTML = renderCheckSummary(upcoming);
+
       renderEarnings();
       calc();
     }
@@ -534,6 +589,65 @@ const money = (n: number) =>
       const picked = button.dataset.filing;
       if (picked === 'mfj' || picked === 'hoh' || picked === 'single') setFiling(picked);
     });
+
+    /* ---------- Pay calendar ---------- */
+
+    /**
+     * The calendar answers a different question from Step 2's toggle — "when
+     * does the flying I did get paid", not "which check am I estimating" — so
+     * it owns only its own month and selection. The toggle stays the single
+     * owner of `check`; tapping a day never moves it.
+     */
+    const paycal = document.getElementById('paycal');
+    const paycalAnswer = document.getElementById('paycalAnswer');
+
+    if (paycal && paycalAnswer) {
+      // The server could only bake in the BUILD date. This is the reader's.
+      const today = new Date();
+      let calYear = today.getFullYear();
+      let calMonth = today.getMonth();
+      let selected: Date | null = null;
+
+      function drawCalendar() {
+        paycal!.innerHTML = renderCalendar({
+          year: calYear,
+          month: calMonth,
+          today,
+          selected,
+        });
+      }
+
+      paycal.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+
+        const step = target.closest<HTMLButtonElement>('button[data-cal-step]');
+        if (step) {
+          calMonth += Number(step.dataset.calStep);
+          drawCalendar();
+          return;
+        }
+
+        const dayButton = target.closest<HTMLButtonElement>('button[data-day]');
+        if (!dayButton?.dataset.day) return;
+
+        const picked = fromKey(dayButton.dataset.day);
+        // Tapping the selected day again clears it, so the panel can go back
+        // to the hint rather than being stuck on one date.
+        selected = selected && dayKey(selected) === dayButton.dataset.day ? null : picked;
+
+        // A day borrowed from an adjacent month should show that month, or the
+        // answer refers to a date the grid is no longer displaying.
+        if (selected && selected.getMonth() !== ((calMonth % 12) + 12) % 12) {
+          calYear = selected.getFullYear();
+          calMonth = selected.getMonth();
+        }
+
+        drawCalendar();
+        paycalAnswer!.innerHTML = renderDayAnswer(selected);
+      });
+
+      drawCalendar();
+    }
 
     /* ---------- Payslip import ---------- */
 
@@ -775,6 +889,8 @@ const money = (n: number) =>
       /* no stored preference */
     }
 
-    calc();
+    // Not calc() — the server could only name the BUILD date in the answer
+    // header and the check summary. This redraws both against the real today.
+    setCheck(check);
   }
 </script>
