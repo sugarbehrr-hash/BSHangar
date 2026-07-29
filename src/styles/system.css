@@ -443,7 +443,10 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .gd-cl-items li::before { content: ""; position: absolute; left: 2px; top: 10px; width: 13px; height: 13px; border: 1.5px solid var(--ink-300); border-radius: 3px; background: var(--white); }
 .gd-cl-items li strong { color: var(--navy-900); }
 
-.art-disclaimer { font-size: 13.5px; line-height: 1.55; color: var(--ink-500); max-width: 720px; margin: 8px 0 0; }
+/* 520px, not the 720px the other leads use: this is 13.5px text, so the
+   same width would run ~104 characters a line against their ~78. The cap
+   exists to hold a readable measure, and measure is what it should match. */
+.art-disclaimer { font-size: 13.5px; line-height: 1.55; color: var(--ink-500); max-width: 520px; margin: 8px 0 0; }
 
 /* ============================================================
    11 · TOOL TEMPLATE — stepped cards + sticky answer
