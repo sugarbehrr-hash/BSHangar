@@ -81,8 +81,12 @@ const docs = contractResources.filter((res) => res.kind === 'generated');
       </div>
 
       <FigureLedger figures={contractFigures} intro={contractIntro} />
+    </div>
+  </section>
 
-      <div class="band-head" style="margin-top:46px;">
+  <section class="band paper">
+    <div class="wrap">
+      <div class="band-head">
         <span class="kicker">{contractCopy.situationsKicker}</span>
         <h2 class="h2">{contractCopy.situationsHeading}</h2>
         <p class="lead">{contractCopy.situationsLead}</p>
@@ -102,8 +106,12 @@ const docs = contractResources.filter((res) => res.kind === 'generated');
           <Icon name="ph-phone-call" /> {UNION_REP_PHONE.display}
         </a>
       </div>
+    </div>
+  </section>
 
-      <div class="band-head" style="margin-top:46px;">
+  <section class="band">
+    <div class="wrap">
+      <div class="band-head">
         <span class="kicker">{contractCopy.docsKicker}</span>
         <h2 class="h2">{contractCopy.docsHeading}</h2>
         <p class="lead">{contractCopy.docsLead}</p>
