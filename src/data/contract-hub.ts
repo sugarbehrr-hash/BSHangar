@@ -69,6 +69,7 @@ export interface ContractSituation {
 export const contractFigures: ContractFigure[] = [
   {
     "key": "scheduled",
+    "icon": "ph-scroll",
     "value": "14",
     "unit": "hrs",
     "label": "Scheduled duty",
