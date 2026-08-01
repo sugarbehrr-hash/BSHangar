@@ -509,16 +509,6 @@ a.card:hover .card-go i { transform: translateX(4px); }
   .answerdock { display: none; }
   .stepstack.accordion { padding-bottom: 0; }
 }
-.choice { display: grid; grid-template-columns: 1fr; gap: 10px; }
-@media (min-width: 560px) { .choice { grid-template-columns: 1fr 1fr; } }
-.choice button { display: flex; align-items: flex-start; gap: 11px; text-align: left; padding: 15px 16px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--cream-100); font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; color: var(--navy-900); cursor: pointer; min-height: 44px; transition: background .15s, border-color .15s; }
-.choice button i { font-size: 21px; color: var(--sky-700); flex: none; margin-top: 1px; }
-.choice button small { display: block; margin-top: 4px; font-family: var(--font-body); font-weight: 400; font-size: 12.5px; line-height: 1.45; color: var(--ink-500); }
-.choice button:hover { border-color: var(--navy-700); background: var(--white); }
-.choice button[aria-pressed="true"], .choice button[aria-selected="true"] { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
-.choice button[aria-pressed="true"] i, .choice button[aria-selected="true"] i { color: var(--gold-500); }
-.choice button[aria-pressed="true"] small, .choice button[aria-selected="true"] small { color: var(--sky-300); }
-
 .field { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 12px 0; border-top: 1px solid var(--cream-200); flex-direction: column; }
 .field:first-child { border-top: none; padding-top: 0; }
 .field label { font-size: 15.5px; font-weight: 600; color: var(--ink-900); }
@@ -1110,8 +1100,26 @@ a.tiercol:hover { background: var(--cream-100); }
   .pillrail { flex: 1 1 100%; display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; margin: 0 -18px; padding: 2px 18px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .pillrail::-webkit-scrollbar { display: none; }
   .pillrail .pill { flex: none; }
-
-  /* The Tools step-5 filing pillbar sits inside .step-body, whose side
-     padding is 16px, not the page-level .wrap's 18px — bleed to match. */
-  .step-body .pillrail { margin: 0 -16px; padding: 2px 16px; }
 }
+
+/* ============================================================
+   22 · SEGMENTED TOGGLE — 2-3 mutually exclusive inline options.
+   A third switcher job, distinct from the other two:
+     .sectiontabs — switches between sibling PAGES (dark masthead)
+     .pillbar/.pill — filters a VIEW within a page (many items, counts)
+     .segtoggle — picks one of 2-3 SETTINGS inline, where the pick
+       changes adjacent content (e.g. "upload vs type in", filing
+       status). One bordered track, equal-width segments, the active
+       one gets a solid fill — never content-hugging pills in a row,
+       never a page navigation.
+   Works with either toggle-button (aria-pressed) or tab (role="tab" +
+   aria-selected) semantics — whichever the control's interaction
+   actually is; the visual treatment doesn't care which.
+   ============================================================ */
+.segtoggle { display: flex; background: var(--cream-100); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); padding: 4px; gap: 4px; }
+.segtoggle button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 8px 10px; border: none; border-radius: var(--radius-sm); background: none; text-align: center; font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; line-height: 1.25; color: var(--navy-900); cursor: pointer; transition: background .15s, color .15s; }
+.segtoggle button i { font-size: 16px; color: var(--sky-700); flex: none; }
+.segtoggle button:hover { background: rgba(15,30,61,0.06); }
+.segtoggle button[aria-pressed="true"], .segtoggle button[aria-selected="true"] { background: var(--navy-900); color: #fff; }
+.segtoggle button[aria-pressed="true"] i, .segtoggle button[aria-selected="true"] i { color: var(--gold-500); }
+.segtoggle-hint { margin-top: 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink-500); }

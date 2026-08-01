@@ -89,22 +89,26 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
             </button>
             <div class="step-body" id="stepbody-1">
 
-            <div class="choice" data-start-pick style="margin-top:16px;">
-              <button type="button" data-start="upload" aria-pressed="false" aria-controls="slipcard">
-                <Icon name="ph-file-pdf" />
-                <span>
-                  Upload my payslip PDF
-                  <small>Easiest. We read the file and fill in the boxes for you.</small>
-                </span>
+            <div class="segtoggle" role="group" aria-label="How you want to put your numbers in" data-start-pick style="margin-top:16px;">
+              <button
+                type="button"
+                data-start="upload"
+                data-hint="Easiest. We read the file and fill in the boxes for you."
+                aria-pressed="false"
+                aria-controls="slipcard"
+              >
+                <Icon name="ph-file-pdf" /> Upload PDF
               </button>
-              <button type="button" data-start="manual" aria-pressed="false">
-                <Icon name="ph-keyboard" />
-                <span>
-                  Type them in myself
-                  <small>Copy from your Time Summary, one box at a time.</small>
-                </span>
+              <button
+                type="button"
+                data-start="manual"
+                data-hint="Copy from your Time Summary, one box at a time."
+                aria-pressed="false"
+              >
+                <Icon name="ph-keyboard" /> Type it in
               </button>
             </div>
+            <p class="segtoggle-hint" data-start-hint hidden></p>
 
             <div id="slipcard">
               <label class="dropzone" data-slip-drop for="slipFile">
@@ -249,22 +253,19 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
             </button>
             <div class="step-body" id="stepbody-5">
 
-            <div class="pillbar" role="tablist" aria-label="Filing status" data-filing-pick style="margin-top:16px;">
-              <div class="pillrail">
-                {
-                  (['single', 'mfj', 'hoh'] as const).map((key) => (
-                    <button
-                      class="pill"
-                      type="button"
-                      role="tab"
-                      data-filing={key}
-                      aria-selected={key === DEFAULT_FILING}
-                    >
-                      {FILING[key].short}
-                    </button>
-                  ))
-                }
-              </div>
+            <div class="segtoggle" role="tablist" aria-label="Filing status" data-filing-pick style="margin-top:16px;">
+              {
+                (['single', 'mfj', 'hoh'] as const).map((key) => (
+                  <button
+                    type="button"
+                    role="tab"
+                    data-filing={key}
+                    aria-selected={key === DEFAULT_FILING}
+                  >
+                    {FILING[key].short}
+                  </button>
+                ))
+              }
             </div>
 
             <p class="card-text" style="margin-top:14px; font-size:13.5px; color:var(--ink-500);">
@@ -968,6 +969,7 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
 
     const startPick = document.querySelector<HTMLElement>('[data-start-pick]');
     const slipCard = document.getElementById('slipcard');
+    const startHint = document.querySelector<HTMLElement>('[data-start-hint]');
 
     /**
      * Typing the numbers in is a first-class path. The upload panel stays
@@ -978,7 +980,12 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
       if (!startPick) return;
 
       for (const b of startPick.querySelectorAll<HTMLButtonElement>('button[data-start]')) {
-        b.setAttribute('aria-pressed', String(b.dataset.start === mode));
+        const picked = b.dataset.start === mode;
+        b.setAttribute('aria-pressed', String(picked));
+        if (picked && startHint) {
+          startHint.textContent = b.dataset.hint ?? '';
+          startHint.hidden = false;
+        }
       }
       if (slipCard) slipCard.hidden = mode !== 'upload';
 
