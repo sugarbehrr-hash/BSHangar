@@ -76,37 +76,44 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
    A GRID on the same principle as .audit-table below: header and rows share
    one set of column tracks so the figures cannot drift, and `display:
    contents` on .rec-figs lets the three numbers be grid items on wide screens
-   and collapse into one labelled line on a phone, from one bit of markup.
+   and become their own labelled block on a phone, from one bit of markup.
    Three money columns don't fit beside a label at 360px — they used to run
-   off the right edge, taking the Difference column with them. */
-.rec-head,
-.rec-row { display: grid; grid-template-columns: minmax(0, 1fr) 88px 88px 88px; gap: 2px 12px; align-items: baseline; }
-.rec-head { padding-bottom: 6px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
-.rec-head .rec-figs span { text-align: right; }
-.rec-row { padding: 9px 0; border-top: 1px solid var(--cream-200); font-size: 14.5px; }
-.rec-row:first-child { border-top: none; }
-.rec-row .rec-label { color: var(--ink-900); font-weight: 600; }
-.rec-figs { display: contents; font-variant-numeric: tabular-nums; }
-.rec-row .rec-figs span { text-align: right; font-variant-numeric: tabular-nums; }
-.rec-est { color: var(--ink-500); }
-.rec-act { color: var(--navy-900); font-weight: 600; }
-.rec-diff.close { color: #1B7F4C; }
-.rec-diff.off { color: var(--red-600); font-weight: 700; }
+   off the right edge, taking the Difference column with them.
 
-/* Phone: the header goes, each figure names itself, and the three sit on
-   their own line under the label — same collapse as .audit-row. */
+   The money is set in Anton, like every other figure that matters on this
+   site (.answer-net, .dock-net, .buyprice, .nlrow .fig). Body font at body
+   size made the numbers read as more sentence, which is the one thing a
+   reconcile table cannot afford: the reader is scanning for a gap, so the
+   figures have to separate from the prose at a glance. */
+.rec-head,
+.rec-row { display: grid; grid-template-columns: minmax(0, 1fr) 92px 92px 92px; gap: 2px 14px; align-items: baseline; }
+.rec-head { padding-bottom: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.rec-head .rec-figs span { text-align: right; }
+.rec-row { padding: 11px 0; border-top: 1px solid var(--cream-200); }
+.rec-row:first-child { border-top: none; }
+.rec-row .rec-label { font-family: var(--font-heading); font-weight: 700; font-size: 14px; line-height: 1.35; color: var(--ink-900); }
+.rec-figs { display: contents; }
+.rec-row .rec-figs span { text-align: right; font-family: var(--font-display); font-size: 19px; line-height: 1; font-variant-numeric: tabular-nums; }
+.rec-est { color: var(--ink-500); }
+.rec-act { color: var(--navy-900); }
+.rec-diff.close { color: #1B7F4C; }
+.rec-diff.off { color: var(--red-600); }
+
+/* Phone: the header goes and each figure carries its own micro-label above
+   it — three stat blocks on one row under the line name, so the numbers stay
+   a block of data rather than wrapping into the text. */
 @media (max-width: 639px) {
   .rec-head { display: none; }
-  .rec-row { grid-template-columns: minmax(0, 1fr); }
-  .rec-figs { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 5px; }
-  .rec-row .rec-figs span { text-align: left; font-size: 14px; }
+  .rec-row { grid-template-columns: minmax(0, 1fr); padding: 13px 0; }
+  .rec-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 9px; }
+  .rec-row .rec-figs span { text-align: left; font-size: 20px; }
   .rec-est::before,
   .rec-act::before,
-  .rec-diff::before { font-family: var(--font-heading); font-weight: 800; font-size: 10px;
-    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); margin-right: 6px; }
-  .rec-est::before { content: 'Est'; }
+  .rec-diff::before { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 9.5px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 4px; }
+  .rec-est::before { content: 'Estimated'; }
   .rec-act::before { content: 'Actual'; }
-  .rec-diff::before { content: 'Diff'; }
+  .rec-diff::before { content: 'Difference'; }
 }
 
 /* Payslip Check.
