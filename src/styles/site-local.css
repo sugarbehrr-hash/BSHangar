@@ -138,11 +138,16 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 .audit-row { display: grid; grid-template-columns: var(--audit-cols); gap: 2px 14px; align-items: baseline; }
 .audit-head { padding-bottom: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
 .audit-row { padding: 10px 0; border-top: 1px solid var(--cream-200); }
-.audit-what { font-size: 14.5px; font-weight: 600; color: var(--ink-900); }
+.audit-what { font-family: var(--font-heading); font-weight: 700; font-size: 14.5px; color: var(--ink-900); }
 .audit-exp,
 .audit-act { text-align: right; font-variant-numeric: tabular-nums; font-size: 14.5px; }
 .audit-head .audit-exp,
 .audit-head .audit-act { font-size: 11px; }
+/* Money is set in Anton, like every other figure that matters on this site
+   (.answer-net, .rec-est/.rec-act on the estimator's own reconcile card) —
+   the header keeps Archivo so only the values read as data, not the labels. */
+.audit-row .audit-exp,
+.audit-row .audit-act { font-family: var(--font-display); font-size: 17px; line-height: 1; }
 .audit-exp { color: var(--ink-500); }
 .audit-act { color: var(--navy-900); font-weight: 600; }
 .audit-flag { text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
@@ -151,20 +156,34 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 /* The explanation sits under its own row, spanning every column. */
 .audit-detail { grid-column: 1 / -1; font-size: 12px; line-height: 1.45; color: var(--ink-500); margin-top: 2px; max-width: 52ch; }
 /* `display: contents` lets the two figures be grid items on wide screens and
-   collapse into one labelled line on a phone, from a single bit of markup. */
+   join the same tile row as .audit-flag on a phone, from a single bit of markup. */
 .audit-figs { display: contents; }
 
+/* Phone: the same three-tile treatment as the estimator's reconcile card
+   (.rec-*) — Expected / On slip / Result side by side under the line name,
+   each its own tile. .audit-flag used to be left to grid auto-placement here,
+   which stranded it alone on an unlabeled line below the figures instead of
+   sitting with them; it now joins the same flex row as a third tile, with the
+   verdict as a background tint like .rec-diff. */
 @media (max-width: 559px) {
   .audit-head { display: none; }
-  .audit-row { grid-template-columns: minmax(0, 1fr) auto; }
-  .audit-figs { display: flex; grid-column: 1 / -1; gap: 16px; margin-top: 5px; }
-  .audit-exp, .audit-act { text-align: left; font-size: 14px; }
+  .audit-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 13px 0; }
+  .audit-what { flex: 1 1 100%; }
+  .audit-exp,
+  .audit-act,
+  .audit-flag { flex: 1 1 0; text-align: right; background: var(--cream-100); border-radius: var(--radius-sm); padding: 8px 9px 9px; margin-top: 4px; }
   .audit-exp::before,
-  .audit-act::before { font-family: var(--font-heading); font-weight: 800; font-size: 10px;
-    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); margin-right: 6px; }
+  .audit-act::before,
+  .audit-flag::before { display: block; text-align: left; font-family: var(--font-heading); font-weight: 800; font-size: 9.5px;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 5px; }
   .audit-exp::before { content: 'Expected'; }
   .audit-act::before { content: 'On slip'; }
-  .audit-detail { order: 9; }
+  .audit-flag::before { content: 'Result'; }
+  .audit-flag { font-size: 14px; }
+  .audit-flag.close { background: var(--success-100); }
+  .audit-flag.off { background: var(--danger-100); }
+  .audit-flag.close::before, .audit-flag.off::before { color: inherit; opacity: .75; }
+  .audit-detail { flex: 1 1 100%; order: 9; margin-top: 2px; }
 }
 
 /* Payslip status box. system.css styles the neutral state; the tones and the

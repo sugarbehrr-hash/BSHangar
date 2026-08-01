@@ -682,8 +682,13 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
 .nlrow { width: 100%; display: grid; grid-template-columns: 92px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; padding: 14px 18px; min-height: 64px;
          background: none; border: none; border-top: 1px solid var(--cream-200); font: inherit; text-align: left; cursor: pointer; transition: background .14s; }
 .nlrow:first-child { border-top: none; }
+/* Three readable tiers, not one: a mouse preview (hover) is lighter and
+   temporary; the row that's actually open (pressed) is a full step darker
+   and persists; a finger mid-tap (active) reads the same as open, since on
+   touch there's no separate hover to preview with first. */
 .nlrow:hover { background: var(--cream-100); }
-.nlrow[aria-pressed="true"] { background: var(--cream-100); }
+.nlrow:active,
+.nlrow[aria-pressed="true"] { background: var(--cream-200); }
 .nlrow[aria-pressed="true"] .rf { background: var(--navy-900); color: #fff; }
 .nlgo { color: var(--ink-300); font-size: 16px; transition: transform .18s, color .18s; }
 .nlrow:hover .nlgo { transform: translateX(3px); color: var(--navy-700); }
@@ -1054,8 +1059,12 @@ a.tiercol:hover { background: var(--cream-100); }
    ============================================================ */
 @media (max-width: 999px) {
   .figrow .detailpanel { display: none; }
-  .numledger .dp { display: block; padding: 4px 18px 18px; background: var(--cream-100); border-top: 1px solid var(--cream-200); }
-  .numledger .dp .card-head { padding-top: 12px; }
+  /* The open row above (now --cream-200) and this pane need to read as two
+     different surfaces, not one blob — the pane sits a shade lighter, and
+     its own header gets a hairline rule so "what this is" (badge + title)
+     separates from "the explanation" (the paragraphs) inside the same pane. */
+  .numledger .dp { display: block; padding: 4px 18px 18px; background: var(--cream-100); border-top: 1px solid var(--cream-300); }
+  .numledger .dp .card-head { padding: 12px 0 13px; border-bottom: 1px solid var(--cream-300); }
   .numledger .dp .dphint { display: none; }
   .nlrow[aria-pressed="true"] .nlgo { transform: rotate(90deg); }
 }
