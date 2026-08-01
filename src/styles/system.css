@@ -850,18 +850,21 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 
 /* Photo set — one main frame, three supports. Slots the group fills. */
 .gallery { display: grid; gap: 12px; }
-.gmain { aspect-ratio: 4 / 3; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--white); overflow: hidden; }
+.gmain { position: relative; aspect-ratio: 4 / 3; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--sky-100); overflow: hidden; }
 .gthumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.gthumb { aspect-ratio: 1 / 1; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--white); overflow: hidden; }
+.gthumb { position: relative; aspect-ratio: 1 / 1; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--sky-100); overflow: hidden; }
 .gcap { font-size: 12.5px; line-height: 1.45; color: var(--ink-500); }
 /* Small print closing a column — where to read the long version. */
 .footnote { font-size: 13.5px; line-height: 1.5; color: var(--ink-500); margin: 14px 0 0; }
 
-/* Press shots are square products on a white cyc, so the frames fit rather
-   than crop — a 5/3 crop of a standing bag cuts its wheels off. The white
-   frame makes the letterboxing invisible until a crew photo replaces it. */
-.gmain img, .gthumb img, .tier-shot img, .shot.photo img { width: 100%; height: 100%; object-fit: contain; display: block; }
-.shot.photo { background: var(--white); }
+/* Photo frames are FILLED, not fitted. A square press shot covers its frame
+   and is cropped top and bottom, so the product reads at the full width of
+   its tile rather than sitting small in a letterbox. Absolutely positioned
+   because a square source given height:100% resolves against a height the
+   frame is still deriving from aspect-ratio, and stretches the tile instead. */
+.gmain img, .gthumb img, .tier-shot img, .card.product .shot img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+}
 
 /* Verdict — the one sentence a reader can repeat to a colleague. */
 .verdict { font-family: var(--font-heading); font-weight: 800; font-size: 21px; line-height: 1.35; color: var(--navy-900); margin: 0; text-wrap: pretty; }
@@ -927,7 +930,7 @@ a.tiercol:hover { background: var(--cream-100); }
 /* Ladder extras for the browse grid: a photo frame per tier column, and a
    go-link that is always visible — showing it on hover only shifted the
    column height, so it stays. */
-.tier-shot { position: relative; width: 100%; aspect-ratio: 5 / 3; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); margin-bottom: 14px; }
+.tier-shot { position: relative; width: 100%; aspect-ratio: 5 / 3; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--sky-100); margin-bottom: 14px; }
 .tier-go { display: inline-flex; margin-top: 14px; font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--navy-700); align-items: center; gap: 7px; }
 .tier-go i { transition: transform .18s; }
 .tiercol:hover .tier-go i { transform: translateX(4px); }

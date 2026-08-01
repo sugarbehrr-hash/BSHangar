@@ -77,7 +77,7 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
                 aria-expanded="false"
                 aria-label={`${category.label} — see all three tiers`}
               >
-                <div class="shot photo">
+                <div class="shot">
                   <img src={category.picks.at(-1)?.image} alt={category.picks.at(-1)?.imageAlt} />
                   <span class="tagchip">{category.picks.length} picks</span>
                   <span class="stampmini">
@@ -268,21 +268,24 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
         }
       }
 
-      // Flush the "no transition" state so the release below actually animates.
+      // Forcing layout commits the transforms above as the animation's first
+      // frame, so releasing them on the very next line animates rather than
+      // jumping. Deliberately NOT deferred to requestAnimationFrame: rAF does
+      // not fire in a background tab, and a card that is toggled and then
+      // backgrounded would keep the scale forever.
       grid.getBoundingClientRect();
 
-      requestAnimationFrame(() => {
+      for (const item of moved) {
+        item.style.transition = `transform ${MORPH_MS}ms var(--ease-out)`;
+        item.style.transform = '';
+      }
+
+      window.setTimeout(() => {
         for (const item of moved) {
-          item.style.transition = `transform ${MORPH_MS}ms var(--ease-out)`;
-          item.style.transform = '';
+          item.style.transition = '';
+          item.style.transformOrigin = '';
         }
-        window.setTimeout(() => {
-          for (const item of moved) {
-            item.style.transition = '';
-            item.style.transformOrigin = '';
-          }
-        }, MORPH_MS + 60);
-      });
+      }, MORPH_MS + 60);
     };
 
     face.addEventListener('click', () => setOpen(true));
