@@ -453,7 +453,10 @@ a.card:hover .card-go i { transform: translateX(4px); }
    11 · TOOL TEMPLATE — stepped cards + sticky answer
    ============================================================ */
 .toollayout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: start; }
-@media (min-width: 1000px) { .toollayout { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 24px; } .toolside { position: sticky; top: 90px; } }
+/* The sidebar answer is .answerdock's desktop counterpart — each hides
+   where the other one is the right fit (system.css line ~508). */
+.toolside { display: none; }
+@media (min-width: 1000px) { .toollayout { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 24px; } .toolside { display: block; position: sticky; top: 90px; } }
 .stepstack { display: flex; flex-direction: column; gap: 16px; }
 
 /* --- Accordion stepper -----------------------------------------------------
