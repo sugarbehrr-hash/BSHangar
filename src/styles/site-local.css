@@ -99,21 +99,29 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 .rec-diff.close { color: #1B7F4C; }
 .rec-diff.off { color: var(--red-600); }
 
-/* Phone: the header goes and each figure carries its own micro-label above
-   it — three stat blocks on one row under the line name, so the numbers stay
-   a block of data rather than wrapping into the text. */
+/* Phone: three tiles per line, not a run of text. The header row goes and
+   each figure becomes its own labelled tile on a tinted surface, so a row
+   reads as [name] + [three blocks] instead of one paragraph-shaped smear.
+   The Difference tile carries the verdict as a background tint — green when
+   the slip matches, red when it doesn't — so the answer is legible before
+   any of the numbers are actually read. */
 @media (max-width: 639px) {
   .rec-head { display: none; }
-  .rec-row { grid-template-columns: minmax(0, 1fr); padding: 13px 0; }
-  .rec-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 9px; }
-  .rec-row .rec-figs span { text-align: left; font-size: 20px; }
+  .rec-row { grid-template-columns: minmax(0, 1fr); padding: 0; border-top: none; margin-top: 16px; }
+  .rec-row:first-child { margin-top: 0; }
+  .rec-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+  .rec-row .rec-figs span { display: block; text-align: left; font-size: 18px;
+    background: var(--cream-100); border-radius: var(--radius-sm); padding: 8px 9px 9px; }
   .rec-est::before,
   .rec-act::before,
   .rec-diff::before { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 9.5px;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 4px; }
+    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 5px; }
   .rec-est::before { content: 'Estimated'; }
   .rec-act::before { content: 'Actual'; }
   .rec-diff::before { content: 'Difference'; }
+  .rec-row .rec-diff.close { background: var(--success-100); }
+  .rec-row .rec-diff.off { background: var(--danger-100); }
+  .rec-diff.close::before, .rec-diff.off::before { color: inherit; opacity: .75; }
 }
 
 /* Payslip Check.
