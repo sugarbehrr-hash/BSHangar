@@ -110,8 +110,9 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
   .rec-row { grid-template-columns: minmax(0, 1fr); padding: 0; border-top: none; margin-top: 16px; }
   .rec-row:first-child { margin-top: 0; }
   .rec-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
-  .rec-row .rec-figs span { display: block; text-align: left; font-size: 18px;
+  .rec-row .rec-figs span { display: block; text-align: right; font-size: 18px;
     background: var(--cream-100); border-radius: var(--radius-sm); padding: 8px 9px 9px; }
+  .rec-est::before, .rec-act::before, .rec-diff::before { text-align: left; }
   .rec-est::before,
   .rec-act::before,
   .rec-diff::before { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 9.5px;
