@@ -53,15 +53,20 @@ export interface NavItem {
    * short enough to render identically everywhere.
    */
   short?: string;
+  /**
+   * Phosphor icon name (e.g. "ph-house"), used by the mobile tab bar and the
+   * "More" sheet — the desktop nav is text-only and ignores this.
+   */
+  icon: string;
 }
 
 export const NAV: NavItem[] = [
-  { label: 'Home', href: '/' },
-  { label: 'Commuting', href: '/commuting/' },
-  { label: 'Your Contract', href: '/contract/', short: 'Contract' },
-  { label: 'Discounts', href: '/crew-discounts/clt/' },
-  { label: 'Essentials', href: '/crew-essentials/' },
-  { label: 'Tools', href: '/tools/' },
+  { label: 'Home', href: '/', icon: 'ph-house' },
+  { label: 'Commuting', href: '/commuting/', icon: 'ph-airplane-takeoff' },
+  { label: 'Your Contract', href: '/contract/', short: 'Contract', icon: 'ph-scroll' },
+  { label: 'Discounts', href: '/crew-discounts/clt/', icon: 'ph-tag' },
+  { label: 'Essentials', href: '/crew-essentials/', icon: 'ph-suitcase-rolling' },
+  { label: 'Tools', href: '/tools/', icon: 'ph-calculator' },
 ];
 
 /** Standing disclaimers. Carried verbatim from the export. */

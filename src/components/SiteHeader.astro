@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import { SITE, NAV, FACEBOOK_GROUP } from '../data/site';
+import { isCurrentSection } from '../lib/nav';
 import brandLogo from '../assets/brand-logo.svg';
 
 /**
@@ -11,6 +12,9 @@ import brandLogo from '../assets/brand-logo.svg';
  * build time, so it is marked with aria-current="page" — which both styles the
  * link and tells a screen reader which page you are on. The export conveyed
  * that with colour alone.
+ *
+ * Below 1100px the mobile tab bar (MobileNav) replaces this nav entirely —
+ * see BaseLayout.
  */
 interface Props {
   /** Pathname of the current page, e.g. "/commuting/". */
@@ -18,15 +22,7 @@ interface Props {
 }
 
 const { path } = Astro.props;
-
-/** A nav item is current if it matches exactly, or owns the section. */
-function isCurrent(href: string): boolean {
-  if (href === '/') return path === '/';
-  // Discounts points at a base, so match the section it belongs to rather
-  // than that one page — otherwise DCA/DFW/PHL leave the nav unlit.
-  const section = href.startsWith('/crew-discounts/') ? '/crew-discounts/' : href;
-  return path === href || path.startsWith(section);
-}
+const isCurrent = (href: string) => isCurrentSection(path, href);
 ---
 
 <header class="topbar">
@@ -81,28 +77,11 @@ function isCurrent(href: string): boolean {
         <Icon name="ph-facebook-logo" />
         <span>Facebook Group</span>
       </a>
-
-      <button class="burger" type="button" aria-expanded="false" aria-controls="mainnav">
-        <span class="sr-only">Menu</span>
-        <Icon name="ph-list" weight="bold" />
-      </button>
     </div>
   </div>
 </header>
 
 <script>
-  // Mobile menu toggle. Replaces the export's React state with the smallest
-  // thing that works; the open state lives on .site so responsive.css can
-  // key off it exactly as it did before.
-  const burger = document.querySelector<HTMLButtonElement>('.burger');
-  const site = document.querySelector<HTMLElement>('.site');
-
-  burger?.addEventListener('click', () => {
-    const open = site?.dataset.menu === '1';
-    if (site) site.dataset.menu = open ? '' : '1';
-    burger.setAttribute('aria-expanded', String(!open));
-  });
-
   // ---------------------------------------------------------------------
   // Search, backed by Pagefind.
   //

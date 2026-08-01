@@ -84,12 +84,6 @@ img, svg, video { max-width: 100%; height: auto; }
 .fbbtn span { display: none; }
 @media (min-width: 900px) { .fbbtn span { display: inline; } }
 
-.burger { width: 44px; height: 44px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 22px; cursor: pointer; display: grid; place-items: center; }
-@media (min-width: 1100px) { .burger { display: none; } }
-.site[data-menu="1"] .mainnav { display: flex; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; background: var(--navy-800); padding: 10px; gap: 2px; box-shadow: var(--shadow-lg); }
-.site[data-menu="1"] .mainnav a { font-size: 16px; padding: 15px 16px; }
-.site[data-menu="1"] .mainnav a[aria-current="page"]::after { left: 16px; right: auto; width: 26px; bottom: 8px; }
-
 /* ============================================================
    2 · MASTHEAD — every page opens the same way.
    Breadcrumb, eyebrow, title, sub, optional meta, and (when the
@@ -145,6 +139,9 @@ img, svg, video { max-width: 100%; height: auto; }
    Light surface, so current = navy fill. One row per page, max.
    ============================================================ */
 .pillbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* Below 700px this becomes the swiping pill rail (system.css §21); on desktop
+   it's invisible in the box tree so the pills sit directly in .pillbar. */
+.pillrail { display: contents; }
 .pill { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1.5px solid var(--cream-300); background: var(--white); font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--navy-900); cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
 .pill i { font-size: 17px; color: var(--sky-700); }
 .pill .count { font-size: 12px; font-weight: 700; color: var(--ink-500); }
@@ -259,7 +256,7 @@ img, svg, video { max-width: 100%; height: auto; }
 .gd-stat-caption { flex: 1 1 260px; font-size: 14.5px; line-height: 1.45; }
 .gd-stat-caption strong { color: #fff; }
 
-@media print { .secnav, .topbar, .footer { display: none !important; } }
+@media print { .secnav, .topbar, .footer, .tabbar, .moresheet, .sheet-scrim, .answerdock { display: none !important; } }
 
 /* ============================================================
    6 · THE CARD — one spec. Variants change weight only.
@@ -455,7 +452,7 @@ a.card:hover .card-go i { transform: translateX(4px); }
 /* ============================================================
    11 · TOOL TEMPLATE — stepped cards + sticky answer
    ============================================================ */
-.toollayout { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: start; }
+.toollayout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; align-items: start; }
 @media (min-width: 1000px) { .toollayout { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 24px; } .toolside { position: sticky; top: 90px; } }
 .stepstack { display: flex; flex-direction: column; gap: 16px; }
 
@@ -967,4 +964,154 @@ a.tiercol:hover { background: var(--cream-100); }
   .tiermorph .tiercol { transition: transform .55s var(--ease-out), background .2s, opacity .2s; }
   .tiermorph .tiercol:nth-child(2) { transition-delay: .07s, 0s, 0s; }
   .tiermorph .tiercol:nth-child(3) { transition-delay: .14s, 0s, 0s; }
+}
+
+/* ============================================================
+   18 · MOBILE TAB BAR — app-style primary navigation on phones.
+   Replaces the burger below 1100px: the five doors are always
+   visible and thumb-reachable. Dark-surface current state =
+   white + gold rule (top edge), same as the desktop mainnav.
+   Tab 5 is "More" — a bottom sheet with the remaining sections,
+   which also replaces the footer below this width.
+   ============================================================ */
+@media (max-width: 1099px) {
+  .site { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
+  /* the Tools answer dock rides on top of the tab bar */
+  .answerdock { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
+  .footer { display: none; }
+}
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--navy-900); border-top: 1px solid rgba(159,208,240,0.22); box-shadow: 0 -6px 20px rgba(15,30,61,0.35); padding-bottom: env(safe-area-inset-bottom, 0px); }
+@media (min-width: 1100px) { .tabbar, .moresheet, .sheet-scrim { display: none !important; } }
+.tabbar a, .tabbar button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 58px; padding: 9px 2px 7px; background: none; border: none; cursor: pointer; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .02em; color: var(--sky-300); }
+.tabbar i { font-size: 23px; line-height: 1; }
+.tabbar a:hover, .tabbar button:hover { color: #fff; }
+.tabbar a[aria-current="page"], .tabbar .tab-more.here, .tabbar .tab-more[aria-expanded="true"] { color: #fff; }
+.tabbar a[aria-current="page"]::before, .tabbar .tab-more.here::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 34px; height: 3px; border-radius: 0 0 2px 2px; background: var(--gold-500); }
+
+/* More sheet — slides up from the tab bar. */
+.sheet-scrim { position: fixed; inset: 0; z-index: 68; background: rgba(15,30,61,0.5); opacity: 0; pointer-events: none; }
+.site[data-sheet="1"] .sheet-scrim { opacity: 1; pointer-events: auto; }
+.moresheet { position: fixed; left: 0; right: 0; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 69; background: var(--navy-800); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 8px 10px 12px; box-shadow: 0 -12px 34px rgba(15,30,61,0.5); transform: translateY(14px); opacity: 0; pointer-events: none; }
+.site[data-sheet="1"] .moresheet { transform: none; opacity: 1; pointer-events: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .sheet-scrim { transition: opacity .2s; }
+  .moresheet { transition: opacity .22s var(--ease-out), transform .22s var(--ease-out); }
+}
+.moresheet .ms-head { font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-500); padding: 10px 12px 6px; }
+.moresheet a { display: flex; align-items: center; gap: 13px; min-height: 54px; padding: 6px 12px; border-radius: var(--radius-sm); color: var(--cream-100); font-family: var(--font-heading); font-weight: 800; font-size: 15px; }
+.moresheet a:hover { background: rgba(159,208,240,0.12); }
+.moresheet a[aria-current="page"] { background: rgba(159,208,240,0.16); }
+.moresheet .msb { flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--navy-700); display: grid; place-items: center; }
+.moresheet .msb i { color: #fff; font-size: 20px; }
+.moresheet .ms-fb-icon { color: var(--navy-900); }
+.moresheet small { display: block; font-family: var(--font-body); font-weight: 400; font-size: 12px; color: var(--sky-300); margin-top: 1px; }
+
+/* More sheet: occasional links + the legal line, replacing the footer. */
+.ms-links { border-top: 1px solid rgba(159,208,240,0.18); margin-top: 8px; padding-top: 4px; }
+.ms-links a { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: var(--radius-sm); font-family: var(--font-heading); font-weight: 700; font-size: 13.5px; color: var(--sky-300); }
+.ms-links a:hover { background: rgba(159,208,240,0.12); color: #fff; }
+.ms-legal { padding: 8px 12px 2px; font-size: 11px; line-height: 1.5; color: rgba(159,208,240,0.65); }
+
+/* ============================================================
+   19 · MOBILE DENSITY — phone proportions.
+   The desktop chrome was shrinking to fit, not reformatting:
+   header and hero kept desktop-scale padding and type and
+   burned most of the first screen. These overrides give phones
+   their own proportions; ≥700px is untouched. (The footer's own
+   mobile density is moot — it's hidden below 1100px, §18.)
+   ============================================================ */
+@media (max-width: 699px) {
+  /* Header: one slim bar. The Facebook pill collapses to an icon-size
+     chip — the full link lives in the More sheet. */
+  .topbar-inner { padding: 7px 14px; gap: 10px; }
+  .brand .logo { height: 30px; }
+  .fbbtn { height: 38px; padding: 0 11px; font-size: 12px; }
+  .fbbtn i { font-size: 18px; }
+
+  /* Hero: headline scale, not billboard scale. */
+  .mh-body { padding: 16px 0 20px; }
+  .mh-eyebrow { font-size: 11.5px; margin-bottom: 8px; }
+  .mh-title { font-size: 33px; }
+  .mh-sub { font-size: 15.5px; line-height: 1.5; margin-top: 10px; }
+  .mh-meta { font-size: 11.5px; margin-top: 10px; }
+  .mh-actions { margin-top: 14px; }
+  .sectiontabs a { min-height: 46px; font-size: 13px; }
+
+  /* Content rhythm: tighter bands, tighter cards. */
+  .band { padding: 24px 0; }
+  .masthead + .band, .masthead + .band.tight { padding-top: 18px; }
+  .band-head + * { margin-top: 16px; }
+  .h2 { font-size: 27px; }
+  .lead { font-size: 15.5px; margin-top: 10px; }
+  .kicker { font-size: 11.5px; }
+  .card { padding: 18px; }
+  .card.doc { padding: 20px; }
+  .grid { gap: 12px; }
+  .btn { min-height: 44px; padding: 0 18px; font-size: 14px; }
+  .notice { padding: 14px 16px; }
+  .notice .nt { font-size: 14px; }
+}
+
+/* ============================================================
+   20 · FIGURE LEDGER — no side panel on a phone.
+   The desktop detail panel doesn't exist below 1000px; each .dp
+   pane is relocated under its own row instead (see FigureLedger's
+   script), so a tap answers where the thumb is, never below the
+   fold. Ledger rows also drop the desktop columns that squish.
+   ============================================================ */
+@media (max-width: 999px) {
+  .figrow .detailpanel { display: none; }
+  .numledger .dp { display: block; padding: 4px 18px 18px; background: var(--cream-100); border-top: 1px solid var(--cream-200); }
+  .numledger .dp .card-head { padding-top: 12px; }
+  .numledger .dp .dphint { display: none; }
+  .nlrow[aria-pressed="true"] .nlgo { transform: rotate(90deg); }
+}
+@media (max-width: 699px) {
+  .nlrow { grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; padding: 12px 14px; min-height: 56px; }
+  .nlrow .fig { font-size: 23px; }
+  .nlrow .rf { display: none; }
+  .nlrow .lb { font-size: 14.5px; }
+  .nlrow .cap { font-size: 12.5px; }
+  .numledger .dp { padding: 2px 14px 16px; }
+}
+
+/* ============================================================
+   21 · MOBILE COLUMN RULE — designed to 360px.
+   On phones NOTHING sits beside running text except one glyph.
+   Metadata stacks: chips/badges ABOVE the title, references
+   BELOW the text. Anything with 3+ side-by-side segments
+   becomes a vertical stack. (The one exception: a numeric
+   matrix keeps horizontal scroll — .reftable-scroll.)
+   ============================================================ */
+@media (max-width: 699px) {
+  /* Situation accordion header: when a flag chip shares the row, chips go
+     above and the title gets its own full-width line. Plain zone headers
+     (Discounts: badge · short name · count) stay on ONE line — there isn't
+     enough content there to warrant three rows. */
+  .zhead:has(.zflag) { flex-wrap: wrap; row-gap: 9px; padding: 12px 46px 12px 16px; position: relative; }
+  .zhead:has(.zflag) .ztitle { flex: 1 1 100%; order: 10; }
+  .zhead:has(.zflag) .zchev { position: absolute; right: 16px; top: 17px; }
+
+  /* Accordion body rows: the reference is a tag UNDER the text,
+     never a column beside it. */
+  .zrow { flex-direction: column; align-items: flex-start; gap: 7px; }
+  .zs { white-space: normal; }
+  .zs.ref { background: var(--cream-200); border-radius: var(--radius-pill); padding: 3px 10px; font-size: 11px; }
+
+  /* Action bar: badge + text row, then a full-width button. */
+  .actionbar { padding: 18px; gap: 14px; }
+  .actionbar .btn { width: 100%; }
+  .buybar .buyactions { flex-direction: column; align-items: stretch; }
+
+  /* Category pill rail — the app pattern: ONE horizontal row, full-bleed,
+     swipes sideways, never wraps into a pill cloud. The filter takes its
+     own full-width row above the rail. */
+  .pillbar .filter { flex: 1 1 100%; order: -1; }
+  .pillrail { flex: 1 1 100%; display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; margin: 0 -18px; padding: 2px 18px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .pillrail::-webkit-scrollbar { display: none; }
+  .pillrail .pill { flex: none; }
+
+  /* The Tools step-5 filing pillbar sits inside .step-body, whose side
+     padding is 16px, not the page-level .wrap's 18px — bleed to match. */
+  .step-body .pillrail { margin: 0 -16px; padding: 2px 16px; }
 }

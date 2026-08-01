@@ -34,20 +34,22 @@ const zoneId = (categoryKey: string, zoneName: string) =>
 
 <div data-explorer>
   <div class="pillbar">
-    {
-      base.categories.map((c) => (
-        <button
-          class="pill"
-          type="button"
-          data-cat={c.key}
-          aria-current={c.key === firstCategory.key ? 'page' : undefined}
-        >
-          <Icon name={c.icon} />
-          {c.label}
-          <span class="count">{venueCount(c)}</span>
-        </button>
-      ))
-    }
+    <div class="pillrail">
+      {
+        base.categories.map((c) => (
+          <button
+            class="pill"
+            type="button"
+            data-cat={c.key}
+            aria-current={c.key === firstCategory.key ? 'page' : undefined}
+          >
+            <Icon name={c.icon} />
+            {c.label}
+            <span class="count">{venueCount(c)}</span>
+          </button>
+        ))
+      }
+    </div>
 
     <div class="filter">
       <Icon name="ph-magnifying-glass" />

@@ -45,14 +45,16 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
   <section class="band">
     <div class="wrap">
       <div class="pillbar" id="catbar">
-        {
-          productCategories.map((cat, i) => (
-            <button class="pill" type="button" data-cat={cat.key} aria-pressed={i === 0}>
-              <Icon name={cat.icon} />
-              {cat.label} <span class="count">{countFor(cat.key)}</span>
-            </button>
-          ))
-        }
+        <div class="pillrail">
+          {
+            productCategories.map((cat, i) => (
+              <button class="pill" type="button" data-cat={cat.key} aria-pressed={i === 0}>
+                <Icon name={cat.icon} />
+                {cat.label} <span class="count">{countFor(cat.key)}</span>
+              </button>
+            ))
+          }
+        </div>
       </div>
 
       <div class="toolrow">

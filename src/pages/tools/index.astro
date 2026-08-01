@@ -250,19 +250,21 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
             <div class="step-body" id="stepbody-5">
 
             <div class="pillbar" role="tablist" aria-label="Filing status" data-filing-pick style="margin-top:16px;">
-              {
-                (['single', 'mfj', 'hoh'] as const).map((key) => (
-                  <button
-                    class="pill"
-                    type="button"
-                    role="tab"
-                    data-filing={key}
-                    aria-selected={key === DEFAULT_FILING}
-                  >
-                    {FILING[key].short}
-                  </button>
-                ))
-              }
+              <div class="pillrail">
+                {
+                  (['single', 'mfj', 'hoh'] as const).map((key) => (
+                    <button
+                      class="pill"
+                      type="button"
+                      role="tab"
+                      data-filing={key}
+                      aria-selected={key === DEFAULT_FILING}
+                    >
+                      {FILING[key].short}
+                    </button>
+                  ))
+                }
+              </div>
             </div>
 
             <p class="card-text" style="margin-top:14px; font-size:13.5px; color:var(--ink-500);">

@@ -122,6 +122,28 @@ const { figures, intro } = Astro.props;
       });
     }
 
+    // Below 1000px the side panel doesn't exist (system.css §20) — each pane
+    // relocates to sit directly under its own row, so a tap answers where the
+    // thumb is instead of scrolling to one shared block at the bottom of the
+    // list. The intro pane has no row of its own; it just stays put, unseen,
+    // inside the now-hidden panel.
+    const mqMobile = window.matchMedia('(max-width: 999px)');
+
+    const placePanes = () => {
+      if (mqMobile.matches) {
+        for (const row of rows) {
+          const pane = panes.find((p) => p.dataset.row === row.dataset.row);
+          if (pane) row.insertAdjacentElement('afterend', pane);
+        }
+      } else {
+        for (const pane of panes) panel.appendChild(pane);
+        show('intro');
+      }
+    };
+
+    placePanes();
+    mqMobile.addEventListener('change', placePanes);
+
     lockPanelHeight(panel, panes);
   }
 </script>

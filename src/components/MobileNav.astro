@@ -1,0 +1,127 @@
+---
+import Icon from './Icon.astro';
+import { SITE, NAV, FACEBOOK_GROUP, EXTERNAL, UNION_REP_PHONE, DISCLAIMER } from '../data/site';
+import { isCurrentSection } from '../lib/nav';
+
+/**
+ * Mobile app shell: bottom tab bar + "More" sheet.
+ *
+ * Below 1100px this replaces SiteHeader's `.mainnav` entirely (see its own
+ * comment) — five always-visible, thumb-reachable destinations instead of a
+ * burger-hidden dropdown. The footer is also hidden below 1100px (system.css
+ * §18); its occasional links move into `.ms-links` below.
+ */
+interface Props {
+  /** Pathname of the current page, e.g. "/commuting/". */
+  path: string;
+}
+
+const { path } = Astro.props;
+const isCurrent = (href: string) => isCurrentSection(path, href);
+
+/** The four tabs shown in the bar; everything else lives behind "More". */
+const TABS = NAV.slice(0, 4);
+const toolsNav = NAV.find((item) => item.href === '/tools/')!;
+const essentialsNav = NAV.find((item) => item.href === '/crew-essentials/')!;
+
+/** "More" lights up whenever the current page isn't one of the four tabs. */
+const moreActive = !TABS.some((item) => isCurrent(item.href));
+
+const year = new Date().getFullYear();
+---
+
+<div class="sheet-scrim"></div>
+
+<nav class="moresheet" id="moresheet" aria-label="More sections">
+  <div class="ms-head">More from the hangar</div>
+
+  <a href={toolsNav.href} aria-current={isCurrent(toolsNav.href) ? 'page' : undefined}>
+    <span class="msb" style="background: var(--navy-700);">
+      <Icon name={toolsNav.icon} />
+    </span>
+    <span>
+      Paycheck &amp; Tools
+      <small>Estimate your 5th &amp; 20th</small>
+    </span>
+  </a>
+
+  <a href={essentialsNav.href} aria-current={isCurrent(essentialsNav.href) ? 'page' : undefined}>
+    <span class="msb" style="background: var(--success-600);">
+      <Icon name={essentialsNav.icon} />
+    </span>
+    <span>
+      Essentials
+      <small>Gear that survives the schedule</small>
+    </span>
+  </a>
+
+  <a href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+    <span class="msb" style="background: var(--gold-500);">
+      <Icon name="ph-facebook-logo" class="ms-fb-icon" />
+    </span>
+    <span>
+      Facebook Group
+      <small>Ask the crew anything</small>
+    </span>
+  </a>
+
+  <div class="ms-links">
+    <a href="/commuting/">StaffTraveler — non-rev loads</a>
+    <a href={EXTERNAL.flyzed} target="_blank" rel="noopener">flyzed.info</a>
+    <a href={UNION_REP_PHONE.href}>Union Rep · {UNION_REP_PHONE.display}</a>
+  </div>
+  <div class="ms-legal">© {year} {SITE.name} · {DISCLAIMER.footer}</div>
+</nav>
+
+<nav class="tabbar" aria-label="Primary">
+  {
+    TABS.map((item) => (
+      <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+        <Icon name={item.icon} />
+        <span>{item.short ?? item.label}</span>
+      </a>
+    ))
+  }
+  <button
+    class:list={['tab-more', moreActive && 'here']}
+    type="button"
+    aria-expanded="false"
+    aria-controls="moresheet"
+  >
+    <Icon name="ph-squares-four" />
+    <span>More</span>
+  </button>
+</nav>
+
+<script>
+  // Sheet toggle: one delegated handler on the document. More opens/closes
+  // the sheet by toggling data-sheet on .site (same attribute pattern the
+  // desktop mainnav used to use for data-menu); scrim tap and Escape close.
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    const site = document.querySelector<HTMLElement>('.site');
+    if (!site) return;
+
+    const more = target.closest<HTMLElement>('.tab-more');
+    if (more) {
+      const open = site.dataset.sheet === '1';
+      site.dataset.sheet = open ? '' : '1';
+      more.setAttribute('aria-expanded', String(!open));
+      return;
+    }
+
+    if (target.closest('.sheet-scrim')) {
+      site.dataset.sheet = '';
+      document.querySelector('.tab-more')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const site = document.querySelector<HTMLElement>('.site');
+    if (site?.dataset.sheet === '1') {
+      site.dataset.sheet = '';
+      document.querySelector('.tab-more')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>
