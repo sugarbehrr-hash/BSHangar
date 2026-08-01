@@ -1,0 +1,85 @@
+---
+import Icon from './Icon.astro';
+import { TIERS, TIER_ORDER, type TierCategory, type TierKey } from '../data/essentials';
+
+/**
+ * The tier ladder: one card, three columns, read left to right as a price
+ * progression. The bars step 1-2-3 like a signal meter.
+ *
+ * No column carries a selected or focused state. That was tried and removed —
+ * every pick here already cleared the same gate, so highlighting one of them
+ * reads as a grade, which is the one thing the tiers are not.
+ */
+interface Props {
+  category: TierCategory;
+  /**
+   * Browse-card variant: a photo per column and the prose dropped, since the
+   * card is one third of a grid row rather than the width of the page. The
+   * pick that has its own page becomes the link out.
+   */
+  compact?: boolean;
+  /** The tier whose column is the page being read. Flags it "This page". */
+  here?: TierKey;
+}
+
+const { category, compact = false, here } = Astro.props;
+
+/** Ordered here rather than trusted from the data — the ladder IS the order. */
+const picks = [...category.picks].sort(
+  (a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier)
+);
+---
+
+<div class="tierscard">
+  {
+    picks.map((pick) => {
+      const tier = TIERS[pick.tier];
+      const linked = compact && pick.href;
+      const Column = linked ? 'a' : 'div';
+
+      return (
+        <Column
+          class="tiercol"
+          data-tier={pick.tier}
+          style={`--tc: ${tier.color};`}
+          {...(linked ? { href: pick.href } : {})}
+        >
+          {here === pick.tier && <span class="tier-here">This page</span>}
+
+          {compact && (
+            <div class="tier-shot">
+              <img src={pick.image} alt={pick.imageAlt} loading="lazy" />
+            </div>
+          )}
+
+          <div class="tbars">
+            {[0, 1, 2].map((i) => (
+              <b class:list={[i < tier.bars && 'on']} />
+            ))}
+          </div>
+
+          <span class:list={['stampchip', tier.chip]}>
+            <Icon name={tier.icon} /> {tier.label}
+          </span>
+
+          <div class="tier-price">${pick.price}<span>USD</span></div>
+          <h3 class="tier-name">{pick.name}</h3>
+          <div class="tier-stat">{pick.stat}</div>
+
+          {!compact && <p class="tier-text">{pick.text}</p>}
+
+          <div class="tier-comp">
+            <Icon name="ph-scales" />
+            <div><b>Your compromise:</b> {pick.compromise}</div>
+          </div>
+
+          {linked && (
+            <span class="tier-go">
+              Read the full pick <Icon name="ph-arrow-right" />
+            </span>
+          )}
+        </Column>
+      );
+    })
+  }
+</div>

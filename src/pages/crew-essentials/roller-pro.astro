@@ -1,0 +1,285 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Stamp from '../../components/Stamp.astro';
+import FigureLedger from '../../components/FigureLedger.astro';
+import TierLadder from '../../components/TierLadder.astro';
+import { richText } from '../../lib/rich-text';
+import { SITE, FACEBOOK_GROUP } from '../../data/site';
+import { products, TIERS } from '../../data/essentials';
+import {
+  rollingBags,
+  rollerPro,
+  rollerProCopy,
+  rollerProGallery,
+  rollerProIntro,
+  rollerProFigures,
+  rollerProVerdictCards,
+  rollerProCriteria,
+  rollerProVerdict,
+  rollerProRelated,
+} from '../../data/roller-pro';
+
+/**
+ * The first item page.
+ *
+ * A product page here is a document, not a listing: the same figure ledger the
+ * contract hub uses, the honest downsides beside the wins, and the compromise
+ * stated in one sentence in three places that all read it from the same field.
+ * There is no score anywhere on this page, deliberately.
+ */
+const [hero, ...supports] = rollerProGallery;
+
+/** Icon and tag come from the product's own entry, so the tiles cannot drift. */
+const related = rollerProRelated.map((entry) => {
+  const product = products.find((candidate) => candidate.title === entry.title);
+  if (!product) throw new Error(`roller-pro: no product named "${entry.title}"`);
+  return { ...product, blurb: entry.blurb };
+});
+
+/** A price checked in July 2026 is worth trusting until July 2027, not forever. */
+const [checkedYear, checkedMonth] = rollingBags.checked.split('-');
+const priceValidUntil = `${Number(checkedYear) + 1}-${checkedMonth}-01`;
+
+/** Product schema. No aggregateRating — the system deliberately has no scores. */
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Peak Design Roller Pro Carry-On',
+  brand: { '@type': 'Brand', name: 'Peak Design' },
+  image: new URL(rollerPro.image, Astro.site ?? SITE.url).href,
+  description: rollerProCopy.sub,
+  offers: {
+    '@type': 'Offer',
+    price: rollerPro.price,
+    priceCurrency: 'USD',
+    // Prices are re-verified by hand, so this says how long to trust this one.
+    priceValidUntil: priceValidUntil,
+    url: rollerProCopy.buyDirect,
+    availability: 'https://schema.org/InStock',
+  },
+};
+---
+
+<BaseLayout
+  title="Peak Design Roller Pro"
+  description="The First Class pick for crew rolling bags: 8.6 lb empty, 34 L, 0.2 in of sizer clearance, 60 mm wheels you replace yourself, $599. Six numbers, the honest downsides, and what earns the Flight Attendant Approved stamp."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} slot="head" />
+
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-grid">
+        <div class="mh-body">
+          <div class="mh-eyebrow">{rollerProCopy.eyebrow}</div>
+          <h1 class="mh-title">
+            {rollerProCopy.title}<br />{rollerProCopy.titleLine2}
+          </h1>
+          <p class="mh-sub">{rollerProCopy.sub}</p>
+          <div class="mh-meta">
+            {rollerProCopy.meta.map((item) => <span>{item}</span>)}
+          </div>
+          <div class="mh-actions">
+            <a class="btn onnavy" href="/crew-essentials/">
+              <Icon name="ph-arrow-left" /> {rollerProCopy.backLabel}
+            </a>
+          </div>
+        </div>
+
+        <div class="mh-mark">
+          <a class="stamplink" href="/fa-approved/" title="What the stamp means">
+            <Stamp />
+          </a>
+          <span class:list={['stampchip', TIERS[rollerPro.tier].chip]}>
+            <Icon name={TIERS[rollerPro.tier].icon} /> {rollerProCopy.stampChip}
+          </span>
+          <div class="stampnote">
+            <Icon name="ph-scales" /> Your compromise: {rollerPro.compromise}
+          </div>
+          <a href="/fa-approved/" class="txtbtn onnavy">{rollerProCopy.stampLink}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="band paper">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">{rollerProCopy.figuresKicker}</span>
+        <h2 class="h2">{rollerProCopy.figuresHeading}</h2>
+        <p class="lead">{rollerProCopy.figuresLead}</p>
+      </div>
+
+      <FigureLedger figures={rollerProFigures} intro={rollerProIntro} />
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="grid two">
+        <div class="gallery">
+          <div class="gmain"><img src={hero.src} alt={hero.alt} /></div>
+          <div class="gthumbs">
+            {
+              supports.map((shot) => (
+                <div class="gthumb">
+                  <img src={shot.src} alt={shot.alt} loading="lazy" />
+                </div>
+              ))
+            }
+          </div>
+          <p class="gcap">{rollerProCopy.galleryCaption}</p>
+        </div>
+
+        <div>
+          {
+            [rollerProVerdictCards.keep, rollerProVerdictCards.headsUp].map((card, i) => (
+              <div class="card" style={i > 0 ? 'margin-top:18px;' : undefined}>
+                <div class="card-head">
+                  <span class="card-badge" style={`--accent: ${card.accent};`}>
+                    <Icon name={card.icon} />
+                  </span>
+                  <div class="card-titles">
+                    <h3 class="card-title">{card.title}</h3>
+                    <div class="card-sub">{card.sub}</div>
+                  </div>
+                </div>
+                <ul class="rows">
+                  {card.rows.map((row) => (
+                    <li set:html={richText(row)} />
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band paper">
+    <div class="wrap">
+      <div class="grid two">
+        <div>
+          <span class="kicker">{rollerProCopy.standardKicker}</span>
+          <h2 class="h2">{rollerProCopy.standardHeading}</h2>
+          <p class="lead">{rollerProCopy.standardLead}</p>
+          <div style="margin-top:22px;">
+            <a class="stamplink" href="/fa-approved/" title="The full standard">
+              <Stamp ink sm />
+            </a>
+          </div>
+          <p class="footnote" set:html={richText(rollerProCopy.standardNote)} />
+        </div>
+
+        <div class="card">
+          <ul class="crit">
+            {
+              rollerProCriteria.map((point) => (
+                <li class:list={['flag' in point && point.flag && 'flag']}>
+                  <Icon
+                    name={'flag' in point && point.flag ? 'ph-warning-circle' : 'ph-check-circle'}
+                  />
+                  <div set:html={richText(point.text)} />
+                </li>
+              ))
+            }
+          </ul>
+          <p class="card-text" style="margin-top:16px;">{rollerProCopy.standardFooter}</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <p class="verdict">{rollerProVerdict.quote}</p>
+        <div class="byline">
+          <span class="card-badge sm" style="--accent: var(--sky-700);">
+            <Icon name="ph-user" />
+          </span>
+          <span><b>The admin</b> · {rollerProVerdict.byline}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">{rollerProCopy.tiersKicker}</span>
+        <h2 class="h2">{rollerProCopy.tiersHeading}</h2>
+        <p class="lead" set:html={richText(rollerProCopy.tiersLead)} />
+      </div>
+
+      <TierLadder category={rollingBags} here={rollerPro.tier} />
+
+      <div class="notice warn spaced">
+        <Icon name="ph-hourglass-medium" />
+        <div class="nt" set:html={richText(rollingBags.provisionalNotice)} />
+      </div>
+
+      <div class="buybar" style="margin-top:26px;">
+        <div class="buyprice">
+          <small>{rollerProCopy.buyLabel}</small>${rollerPro.price}
+        </div>
+        <div class="buymeta" set:html={richText(rollerProCopy.buyMeta)} />
+        <div class="buyactions">
+          <a class="btn primary" href={rollerProCopy.buyDirect} target="_blank" rel="noopener">
+            <Icon name="ph-arrow-up-right" /> Buy direct
+          </a>
+          <a
+            class="btn onnavy"
+            href={rollerProCopy.buyAmazon}
+            target="_blank"
+            rel="noopener sponsored"
+          >
+            <Icon name="ph-amazon-logo" /> On Amazon
+          </a>
+        </div>
+      </div>
+
+      <div class="notice warn spaced">
+        <Icon name="ph-hand-heart" />
+        <div class="nt" set:html={richText(rollerProCopy.affiliate)} />
+      </div>
+    </div>
+  </section>
+
+  <section class="band paper">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">{rollerProCopy.relatedKicker}</span>
+        <h2 class="h2">{rollerProCopy.relatedHeading}</h2>
+      </div>
+
+      <div class="grid three">
+        {
+          related.map((product) => (
+            <div class="card product">
+              <div class="shot">
+                <span class="tagchip">{product.tag}</span>
+                <Icon name={product.icon} />
+              </div>
+              <div class="pbody">
+                <h3 class="card-title">{product.title}</h3>
+                <p class="card-text">{product.blurb}</p>
+                <a class="btn quiet sm" href="/crew-essentials/">
+                  <Icon name="ph-arrow-right" /> See the pick
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="actionbar quiet" style="margin-top:20px; --accent: var(--sky-700);">
+        <span class="card-badge"><Icon name="ph-chats-circle" /></span>
+        <div class="txt">
+          <b>{rollerProCopy.actionTitle}</b>
+          <span>{rollerProCopy.actionBody}</span>
+        </div>
+        <a class="btn quiet" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <Icon name="ph-facebook-logo" /> Open the group
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

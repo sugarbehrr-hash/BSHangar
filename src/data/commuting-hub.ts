@@ -18,10 +18,11 @@
    is 844-423-2232 and pages should render it from that constant.
    ============================================================ */
 
-import type { ContractFigure, ContractIntro, ContractSituation } from './contract-hub';
+import type { LedgerFigure, LedgerIntro } from './figure-ledger';
+import type { ContractSituation } from './contract-hub';
 
 /** Same shapes as the contract hub — the patterns are shared, the content is not. */
-export type CommutingFigure = ContractFigure;
+export type CommutingFigure = LedgerFigure;
 export type CommutingSituation = ContractSituation & { anchor?: string };
 
 export const commutingFigures: CommutingFigure[] = [
@@ -104,7 +105,7 @@ export const commutingFigures: CommutingFigure[] = [
   }
 ];
 
-export const commutingIntro: ContractIntro = {
+export const commutingIntro: LedgerIntro = {
   "icon": "ph-airplane-tilt",
   "actionIcon": "ph-chat-teardrop-text",
   "title": "Why the program matters",

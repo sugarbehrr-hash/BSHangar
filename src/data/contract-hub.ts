@@ -16,38 +16,7 @@
    already moving.
    ============================================================ */
 
-/** One row of the figure ledger, plus the pane it loads. */
-export interface ContractFigure {
-  /** Stable key; ties a row to its detail pane. */
-  key: string;
-  /** Badge glyph on this figure's detail pane. */
-  icon: string;
-  value: string;
-  unit: string;
-  label: string;
-  caption: string;
-  /** CBA citation shown as the row's chip. */
-  ref: string;
-  pane: {
-    title: string;
-    sub: string;
-    paras: string[];
-    /** The single "do this" line closing the pane. */
-    action: string;
-    /** Glyph on that line. Each pane has its own. */
-    actionIcon: string;
-  };
-}
-
-/** The pane shown before any figure is chosen. */
-export interface ContractIntro {
-  icon: string;
-  actionIcon: string;
-  title: string;
-  sub: string;
-  paras: string[];
-  action: string;
-}
+import type { LedgerFigure, LedgerIntro } from './figure-ledger';
 
 /** One "find your situation" accordion. */
 export interface ContractSituation {
@@ -66,7 +35,7 @@ export interface ContractSituation {
   action: string;
 }
 
-export const contractFigures: ContractFigure[] = [
+export const contractFigures: LedgerFigure[] = [
   {
     "key": "scheduled",
     "icon": "ph-scroll",
@@ -203,7 +172,7 @@ export const contractFigures: ContractFigure[] = [
   }
 ];
 
-export const contractIntro: ContractIntro = {
+export const contractIntro: LedgerIntro = {
   "icon": "ph-scroll",
   "actionIcon": "ph-chat-teardrop-text",
   "title": "Reading the citations",

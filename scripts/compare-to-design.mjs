@@ -30,6 +30,8 @@ const PAGES = [
   ['Commuting Guide.dc.html', 'dist/commuting/index.html'],
   ['CLT Discounts.dc.html', 'dist/crew-discounts/clt/index.html'],
   ['Essentials.dc.html', 'dist/crew-essentials/index.html'],
+  ['Essentials Item.dc.html', 'dist/crew-essentials/roller-pro/index.html'],
+  ['FA Approved.dc.html', 'dist/fa-approved/index.html'],
   ['Tools.dc.html', 'dist/tools/index.html'],
 ];
 

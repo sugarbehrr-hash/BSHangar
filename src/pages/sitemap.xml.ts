@@ -25,6 +25,8 @@ function buildEntries(): Entry[] {
     { path: '/commuting/', priority: 0.9, changefreq: 'monthly' },
     { path: '/contract/', priority: 0.9, changefreq: 'weekly' },
     { path: '/crew-essentials/', priority: 0.6, changefreq: 'monthly' },
+    { path: '/crew-essentials/roller-pro/', priority: 0.6, changefreq: 'monthly' },
+    { path: '/fa-approved/', priority: 0.5, changefreq: 'monthly' },
     { path: '/tools/', priority: 0.7, changefreq: 'monthly' },
     { path: '/tools/time-out/', priority: 0.4, changefreq: 'monthly' },
   ];

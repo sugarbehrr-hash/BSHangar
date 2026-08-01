@@ -1,0 +1,33 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * The Flight Attendant Approved mark.
+ *
+ * A rubber stamp pressed onto the page, never a floating sticker — which is
+ * why it is built from type and a keyline rather than an image, and why it
+ * sits at a slight angle. The wordmark lives here so the places it appears
+ * cannot drift apart.
+ *
+ * The stamp does not link itself. Every page except the standard itself wraps
+ * it in `<a class="stamplink" href="/fa-approved/">`, and that page would be
+ * linking to itself.
+ */
+interface Props {
+  /** Red keyline, navy title — the variant for light bands. Default is gold on navy. */
+  ink?: boolean;
+  /** Inline in a body column. */
+  sm?: boolean;
+  /** Hero scale, for a masthead where the stamp is the art. */
+  lg?: boolean;
+}
+
+const { ink = false, sm = false, lg = false } = Astro.props;
+---
+
+<div class:list={['stamp', ink && 'ink', sm && 'sm', lg && 'lg']}>
+  <div class="st-top"><Icon name="ph-airplane-tilt" /> Blue Streak Hangar</div>
+  <div class="st-rule"></div>
+  <p class="st-title">Flight Attendant<br />Approved</p>
+  <div class="st-foot">Flown · Not sponsored</div>
+</div>

@@ -1,8 +1,7 @@
 ---
 import Icon from './Icon.astro';
-import RichText from './RichText.astro';
 import { richText } from '../lib/rich-text';
-import type { ContractFigure, ContractIntro } from '../data/contract-hub';
+import type { LedgerFigure, LedgerIntro } from '../data/figure-ledger';
 
 /**
  * The figure ledger and its detail panel.
@@ -14,8 +13,8 @@ import type { ContractFigure, ContractIntro } from '../data/contract-hub';
  * Height is locked by src/lib/panel-lock.ts — see that file for why.
  */
 interface Props {
-  figures: ContractFigure[];
-  intro: ContractIntro;
+  figures: LedgerFigure[];
+  intro: LedgerIntro;
 }
 
 const { figures, intro } = Astro.props;
@@ -58,7 +57,7 @@ const { figures, intro } = Astro.props;
       </div>
       {intro.paras.map((p) => <p set:html={richText(p)} />)}
       {
-        intro.action && (
+        intro.action && intro.actionIcon && (
           <div class="zdo">
             <Icon name={intro.actionIcon} />
             <div set:html={richText(intro.action)} />
@@ -74,7 +73,12 @@ const { figures, intro } = Astro.props;
       figures.map((figure) => (
         <div class="dp" id={`dp-${figure.key}`} data-row={figure.key} hidden>
           <div class="card-head">
-            <span class="card-badge"><Icon name={figure.icon} /></span>
+            <span
+              class="card-badge"
+              style={figure.pane.accent && `--accent: ${figure.pane.accent};`}
+            >
+              <Icon name={figure.icon} />
+            </span>
             <div class="card-titles">
               <h3 class="card-title">{figure.pane.title}</h3>
               <div class="card-sub">{figure.pane.sub}</div>

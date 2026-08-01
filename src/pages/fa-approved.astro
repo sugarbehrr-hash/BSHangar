@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Stamp from '../components/Stamp.astro';
+import { richText } from '../lib/rich-text';
+import { FACEBOOK_GROUP } from '../data/site';
+import { TIERS, TIER_ORDER } from '../data/essentials';
+import { faCopy, faAuthority, faCriteria, faHonesty } from '../data/fa-approved';
+
+/**
+ * The standard behind the stamp.
+ *
+ * Every stamp on the site links here, so this page has to answer the two
+ * questions a stamp raises on its own: what did it have to clear, and can a
+ * brand buy it. The tier ladder here is the only one on the site that shows
+ * no products — it explains what the three levels mean before any pick is
+ * attached to them.
+ */
+---
+
+<BaseLayout
+  title="Flight Attendant Approved"
+  description="What the Flight Attendant Approved stamp means: 90 days flown in a real rotation by crew who paid for it, a compromise named in one sentence on every pick, and three price tiers — Economy, Main Cabin and First Class. The stamp is never sold."
+>
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-grid">
+        <div class="mh-body">
+          <div class="mh-eyebrow">{faCopy.eyebrow}</div>
+          <h1 class="mh-title">
+            {faCopy.title}<br /><span class="r">{faCopy.titleAccent}</span>
+          </h1>
+          <p class="mh-sub">{faCopy.sub}</p>
+          <div class="mh-actions">
+            <a class="btn onnavy" href="/crew-essentials/">
+              <Icon name="ph-arrow-left" /> {faCopy.backLabel}
+            </a>
+          </div>
+        </div>
+
+        <div class="mh-mark center">
+          <Stamp lg />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="band paper">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">{faCopy.whyKicker}</span>
+        <h2 class="h2">{faCopy.whyHeading}</h2>
+        <p class="lead">{faCopy.whyLead}</p>
+      </div>
+
+      <div class="grid three">
+        {
+          faAuthority.map((card) => (
+            <div class="card">
+              <div class="card-head">
+                <span class="card-badge" style={`--accent: ${card.accent};`}>
+                  <Icon name={card.icon} />
+                </span>
+                <div class="card-titles">
+                  <h3 class="card-title">{card.title}</h3>
+                </div>
+              </div>
+              <p class="card-text" set:html={richText(card.text)} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="grid two">
+        <div>
+          <span class="kicker">{faCopy.standardKicker}</span>
+          <h2 class="h2">{faCopy.standardHeading}</h2>
+          <p class="lead">{faCopy.standardLead}</p>
+        </div>
+
+        <div class="card">
+          <ul class="crit">
+            {
+              faCriteria.map((point) => (
+                <li class:list={['flag' in point && point.flag && 'flag']}>
+                  <Icon name={'flag' in point && point.flag ? 'ph-warning-circle' : 'ph-check-circle'} />
+                  <div set:html={richText(point.text)} />
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band paper">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">{faCopy.tiersKicker}</span>
+        <h2 class="h2">{faCopy.tiersHeading}</h2>
+        <p class="lead">{faCopy.tiersLead}</p>
+      </div>
+
+      {/* The one ladder with no products in it — the tiers themselves. */}
+      <div class="tierscard">
+        {
+          TIER_ORDER.map((key) => {
+            const tier = TIERS[key];
+            return (
+              <div class="tiercol" data-tier={key} style={`--tc: ${tier.color};`}>
+                <div class="tbars">
+                  {[0, 1, 2].map((i) => (
+                    <b class:list={[i < tier.bars && 'on']} />
+                  ))}
+                </div>
+                <span class:list={['stampchip', tier.chip]}>
+                  <Icon name={tier.icon} /> {tier.label}
+                </span>
+                <h3 class="tier-name">{tier.explain.headline}</h3>
+                <p class="tier-text">{tier.explain.text}</p>
+                <div class="tier-comp">
+                  <Icon name="ph-scales" />
+                  <div set:html={richText(tier.explain.compromise)} />
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
+
+      <div class="notice spaced">
+        <Icon name="ph-users-three" />
+        <div class="nt" set:html={richText(faCopy.tiersNote)} />
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-badge" style={`--accent: ${faHonesty.losing.accent};`}>
+              <Icon name={faHonesty.losing.icon} />
+            </span>
+            <div class="card-titles">
+              <h3 class="card-title">{faHonesty.losing.title}</h3>
+              <div class="card-sub">{faHonesty.losing.sub}</div>
+            </div>
+          </div>
+          <ul class="rows">
+            {faHonesty.losing.rows.map((row) => <li set:html={richText(row)} />)}
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-badge" style={`--accent: ${faHonesty.brands.accent};`}>
+              <Icon name={faHonesty.brands.icon} />
+            </span>
+            <div class="card-titles">
+              <h3 class="card-title">{faHonesty.brands.title}</h3>
+              <div class="card-sub">{faHonesty.brands.sub}</div>
+            </div>
+          </div>
+          <p class="card-text">{faHonesty.brands.text}</p>
+          <div class="card-actions">
+            <a class="btn quiet sm" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+              <Icon name="ph-facebook-logo" /> {faHonesty.brands.ctaLabel}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="actionbar" style="margin-top:22px; --accent: var(--sky-700);">
+        <span class="card-badge"><Icon name="ph-chats-circle" /></span>
+        <div class="txt">
+          <b>{faCopy.actionTitle}</b>
+          <span>{faCopy.actionBody}</span>
+        </div>
+        <a class="btn gold" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <Icon name="ph-arrow-up-right" /> Open the group
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

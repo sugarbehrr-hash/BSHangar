@@ -38,8 +38,8 @@ html { scroll-behavior: smooth; }
 [id] { scroll-margin-top: 140px; }
 body { margin: 0; background: var(--cream-200); }
 a { text-decoration: none; color: inherit; }
-a.inline, .prose a { color: var(--sky-700); text-decoration: underline; text-underline-offset: 2px; }
-a.inline:hover, .prose a:hover { color: var(--navy-900); }
+a.inline, .prose a, .lead a, .footnote a { color: var(--sky-700); text-decoration: underline; text-underline-offset: 2px; }
+a.inline:hover, .prose a:hover, .lead a:hover, .footnote a:hover { color: var(--navy-900); }
 img, svg, video { max-width: 100%; height: auto; }
 
 .site { font-family: var(--font-body); color: var(--ink-900); min-height: 100vh; overflow-x: clip; }
@@ -47,7 +47,7 @@ img, svg, video { max-width: 100%; height: auto; }
 @media (min-width: 700px) { .wrap { padding: 0 28px; } }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
-:where(a, button, input, summary):focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); }
+:where(a, button, input, summary, [role="button"]):focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); }
 
 /* ============================================================
    1 · SITE BAR — the only always-present navigation
@@ -165,6 +165,8 @@ img, svg, video { max-width: 100%; height: auto; }
 .quietbtns { display: flex; align-items: center; gap: 8px; }
 .txtbtn { background: none; border: none; cursor: pointer; font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: var(--sky-700); padding: 8px 4px; }
 .txtbtn:hover { color: var(--navy-900); text-decoration: underline; }
+.txtbtn.onnavy { color: var(--sky-300); padding-left: 0; }
+.txtbtn.onnavy:hover { color: #fff; }
 .tdot { color: var(--ink-300); }
 
 /* ============================================================
@@ -293,6 +295,8 @@ a.card:hover .card-go i { transform: translateX(4px); }
 /* Rounded-square badge — the design system's document-card mark (.rescard .rb) */
 .card-badge.sq { width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 16px rgba(15,30,61,0.18); }
 .card-badge.sq i { font-size: 28px; }
+.card-badge.sm { width: 36px; height: 36px; }
+.card-badge.sm i { font-size: 19px; }
 
 /* Document card — .rescard metrics */
 .card.doc { padding: 26px; border-radius: var(--radius-lg); }
@@ -364,6 +368,9 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .actionbar .txt { flex: 1 1 220px; }
 .actionbar .txt b { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 17px; color: #fff; }
 .actionbar .txt span { font-size: 14px; color: var(--sky-300); }
+.actionbar.quiet { background: var(--white); border: 1.5px solid var(--cream-300); box-shadow: var(--shadow-sm); color: var(--ink-700); }
+.actionbar.quiet .txt b { color: var(--navy-900); }
+.actionbar.quiet .txt span { color: var(--ink-700); }
 
 /* ============================================================
    9 · BROWSE — zone accordions (native <details>)
@@ -793,3 +800,168 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
    ============================================================ */
 .masthead + .band, .masthead + .band.tight { padding-top: 24px; }
 @media (min-width: 700px) { .masthead + .band, .masthead + .band.tight { padding-top: 32px; } }
+
+
+/* ============================================================
+   17 · PRODUCT PAGE — one item, one verdict.
+   The stamp is the brand: a printed rubber stamp, never a
+   floating sticker. Everything else is the existing card,
+   ledger and notice vocabulary — a product page is a document.
+   ============================================================ */
+.stamp { display: inline-block; text-align: center; padding: 15px 20px 13px; border: 2.5px solid var(--gold-500); border-radius: 7px; color: var(--gold-500); box-shadow: inset 0 0 0 1.5px rgba(232,163,61,0.4); transform: rotate(-3deg); }
+.stamp .st-top { display: flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; }
+.stamp .st-top i { font-size: 14px; }
+.stamp .st-rule { height: 1.5px; background: currentColor; opacity: .45; margin: 9px 0; }
+.stamp .st-title { font-family: var(--font-display); text-transform: uppercase; font-size: 34px; line-height: .92; color: #fff; margin: 0; }
+.stamp .st-foot { font-family: var(--font-heading); font-weight: 700; font-size: 10px; letter-spacing: .17em; text-transform: uppercase; margin-top: 9px; opacity: .9; }
+.stamp.ink { border-color: var(--red-600); color: var(--red-600); box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32); }
+.stamp.ink .st-title { color: var(--navy-900); }
+.stamp.sm { padding: 11px 15px 10px; }
+.stamp.sm .st-title { font-size: 23px; }
+.stamp.sm .st-top, .stamp.sm .st-foot { font-size: 9.5px; }
+/* Hero scale, for the one masthead where the stamp IS the art. Only once the
+   masthead is two columns — at 375px the stamp already fills the width. */
+@media (min-width: 1000px) { .stamp.lg { transform: rotate(-3deg) scale(1.15); } }
+a.stamplink { display: inline-block; color: inherit; }
+a.stamplink:hover .stamp { box-shadow: inset 0 0 0 1.5px rgba(232,163,61,0.4), 0 6px 18px rgba(15,30,61,0.3); }
+a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32), var(--shadow-card); }
+
+/* The stamp as masthead art, in the second column of .mh-grid. Left-aligned
+   under the lockup it belongs to; centred on the standard page, where the
+   stamp is the subject rather than a mark on something. */
+.mh-mark { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 22px; }
+.mh-mark.center { align-items: center; }
+.mh-mark .stampchip { margin-top: 12px; }
+@media (min-width: 1000px) { .mh-mark { margin-top: 0; } }
+
+/* Inline mark for grids and cards — the stamp, compressed to a chip. */
+.stampchip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: var(--radius-pill); background: var(--navy-900); color: var(--gold-500); font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.stampchip i { font-size: 14px; }
+
+/* A stamp that is honest about its reservation. */
+.stampnote { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: .06em; color: var(--sky-300); }
+.stampnote i { color: var(--gold-500); font-size: 15px; }
+
+/* Miniature stamp for grid tiles — the real mark, small, slightly askew,
+   like it was pressed onto the product photo. Replaces the chip there. */
+.stampmini { position: absolute; bottom: 10px; left: 10px; z-index: 2; pointer-events: none; transform: rotate(-4deg); text-align: center; padding: 6px 10px 5px; border: 2px solid var(--red-600); border-radius: 5px; color: var(--red-600); background: rgba(251,247,239,0.88); box-shadow: inset 0 0 0 1px rgba(198,32,52,0.28); }
+.stampmini .t { font-family: var(--font-display); text-transform: uppercase; font-size: 13px; line-height: .95; letter-spacing: .03em; color: var(--navy-900); }
+.stampmini .s { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 7.5px; letter-spacing: .18em; text-transform: uppercase; margin-top: 2px; }
+
+/* Photo set — one main frame, three supports. Slots the group fills. */
+.gallery { display: grid; gap: 12px; }
+.gmain { aspect-ratio: 4 / 3; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--white); overflow: hidden; }
+.gthumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.gthumb { aspect-ratio: 1 / 1; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--white); overflow: hidden; }
+.gcap { font-size: 12.5px; line-height: 1.45; color: var(--ink-500); }
+/* Small print closing a column — where to read the long version. */
+.footnote { font-size: 13.5px; line-height: 1.5; color: var(--ink-500); margin: 14px 0 0; }
+
+/* Press shots are square products on a white cyc, so the frames fit rather
+   than crop — a 5/3 crop of a standing bag cuts its wheels off. The white
+   frame makes the letterboxing invisible until a crew photo replaces it. */
+.gmain img, .gthumb img, .tier-shot img, .shot.photo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.shot.photo { background: var(--white); }
+
+/* Verdict — the one sentence a reader can repeat to a colleague. */
+.verdict { font-family: var(--font-heading); font-weight: 800; font-size: 21px; line-height: 1.35; color: var(--navy-900); margin: 0; text-wrap: pretty; }
+@media (min-width: 700px) { .verdict { font-size: 24px; } }
+.verdict + .byline { margin-top: 14px; }
+.byline { display: flex; align-items: center; gap: 11px; font-size: 13.5px; color: var(--ink-500); }
+.byline b { color: var(--navy-900); font-family: var(--font-heading); font-weight: 800; }
+
+/* The standard, spelled out. Checks are the point — no decoration. */
+.crit { list-style: none; margin: 0; padding: 0; }
+.crit li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--cream-200); font-size: 15px; line-height: 1.5; color: var(--ink-700); }
+.crit li:first-child { border-top: none; padding-top: 0; }
+.crit li > i { flex: none; font-size: 21px; color: var(--success-600); margin-top: 1px; }
+.crit li.flag > i { color: var(--gold-600); }
+.crit li b { color: var(--navy-900); }
+
+/* Buy block — price, one primary action, and the honesty note under it. */
+.buybar { display: grid; gap: 18px; align-items: center; padding: 22px 24px; background: var(--navy-900); border-radius: var(--radius-lg); color: var(--cream-100); box-shadow: var(--shadow-lg); }
+@media (min-width: 800px) { .buybar { grid-template-columns: auto 1fr auto; gap: 26px; padding: 24px 28px; } }
+.buyprice { font-family: var(--font-display); font-size: 44px; line-height: .9; color: #fff; }
+.buyprice small { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-500); margin-bottom: 7px; }
+.buymeta { font-size: 14px; line-height: 1.5; color: var(--sky-300); }
+.buymeta b { color: #fff; }
+.buyactions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* Tier chips — three price levels, one gate. Main Cabin is the default
+   recommendation and the only gold chip, so it reads as "start here". */
+.stampchip.eco { background: var(--sky-700); color: #fff; }
+.stampchip.main { background: var(--gold-500); color: var(--navy-900); }
+.stampchip.first { background: var(--navy-700); color: var(--gold-500); border: 1.5px solid var(--gold-500); }
+
+/* Tier ladder — ONE card, three columns, read as a progression. Price bars
+   step up 1-2-3 like a signal meter. The columns carry no selected state:
+   a focus treatment was tried and removed, because every tier clears the
+   same bar and highlighting one of them reads as a grade. */
+.tierscard { display: grid; grid-template-columns: 1fr; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
+@media (min-width: 880px) { .tierscard { grid-template-columns: repeat(3, 1fr); } }
+.tiercol { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 0; text-align: left; background: none; border: none; font: inherit; color: inherit; padding: 22px 22px 20px; border-top: 1px solid var(--cream-200); box-shadow: inset 0 3.5px 0 var(--tc, var(--navy-900)); transition: background .2s; }
+.tiercol:first-child { border-top: none; }
+@media (min-width: 880px) {
+  .tiercol { border-top: none; border-left: 1px solid var(--cream-200); }
+  .tiercol:first-child { border-left: none; }
+}
+a.tiercol { cursor: pointer; }
+a.tiercol:hover { background: var(--cream-100); }
+.tbars { display: flex; align-items: flex-end; gap: 4px; height: 18px; margin-bottom: 14px; }
+.tbars b { width: 15px; border-radius: 2.5px; background: var(--cream-300); height: 6px; }
+.tbars b.on { background: var(--tc, var(--navy-900)); }
+.tbars b:nth-child(2) { height: 12px; }
+.tbars b:nth-child(3) { height: 18px; }
+.tier-price { font-family: var(--font-display); font-size: 34px; line-height: .9; color: var(--navy-900); margin: 14px 0 2px; }
+.tier-price span { font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); margin-left: 5px; }
+.tier-name { font-family: var(--font-heading); font-weight: 800; font-size: 16.5px; color: var(--navy-900); margin: 6px 0 0; }
+/* The standard page's ladder has no price, so the name takes its air. */
+.stampchip + .tier-name { margin-top: 14px; }
+.tier-stat { font-family: var(--font-heading); font-weight: 700; font-size: 12px; letter-spacing: .04em; color: var(--ink-500); margin-top: 3px; }
+.tier-text { font-size: 14px; line-height: 1.5; color: var(--ink-700); margin: 10px 0 0; text-wrap: pretty; }
+.tier-comp { display: flex; gap: 9px; align-items: flex-start; margin-top: 14px; padding: 11px 13px; background: var(--white); border: 1px solid var(--cream-300); border-radius: var(--radius-sm); font-size: 13px; line-height: 1.45; color: var(--ink-700); }
+.tier-comp i { flex: none; font-size: 16px; color: var(--tc, var(--navy-900)); margin-top: 1px; }
+.tier-comp b { color: var(--navy-900); }
+.tier-here { position: absolute; top: 16px; right: 16px; font-family: var(--font-heading); font-weight: 800; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-500); background: var(--navy-900); border-radius: var(--radius-pill); padding: 4px 10px; }
+
+/* Ladder extras for the browse grid: a photo frame per tier column, and a
+   go-link that is always visible — showing it on hover only shifted the
+   column height, so it stays. */
+.tier-shot { position: relative; width: 100%; aspect-ratio: 5 / 3; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); margin-bottom: 14px; }
+.tier-go { display: inline-flex; margin-top: 14px; font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--navy-700); align-items: center; gap: 7px; }
+.tier-go i { transition: transform .18s; }
+.tiercol:hover .tier-go i { transform: translateX(4px); }
+
+/* Header of the expanded morph card — a slim masthead for the ladder. */
+.tierfold-head { display: flex; align-items: center; gap: 20px; width: 100%; padding: 18px 22px 18px 18px; background: none; border: none; font: inherit; text-align: left; cursor: pointer; transition: background .2s; }
+.tierfold-head:hover { background: var(--cream-100); }
+.tf-main { flex: 1; min-width: 0; }
+.tf-kicker { font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--red-600); }
+.tf-title { font-family: var(--font-display); text-transform: uppercase; font-size: 26px; line-height: .95; color: var(--navy-900); margin: 4px 0 0; }
+.tf-sub { font-family: var(--font-heading); font-weight: 700; font-size: 12.5px; color: var(--ink-500); margin-top: 6px; }
+.tf-cta { flex: none; display: flex; align-items: center; gap: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 13.5px; color: var(--navy-700); }
+@media (max-width: 700px) { .tf-cta span { display: none; } }
+.tf-note { font-size: 13.5px; line-height: 1.5; color: var(--ink-500); margin: 0; padding: 16px 22px 20px; border-top: 1px solid var(--cream-200); }
+
+/* Tier morph — the category is a NORMAL grid card that GROWS to the
+   full row when opened. The layout jump is animated FLIP-style from
+   the page script; these rules only define the two states and the
+   content crossfade. */
+.tiermorph { position: relative; }
+.tiermorph .tm-face { display: flex; flex-direction: column; flex: 1; cursor: pointer; }
+.tiermorph:not(.open) { transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
+.tiermorph:not(.open):hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--navy-700); }
+.tiermorph:not(.open):hover .card-go i { transform: translateX(4px); }
+.tiermorph.open { grid-column: 1 / -1; border-color: var(--navy-700); }
+.tiermorph .tm-full { display: none; opacity: 0; }
+.tiermorph.open .tm-face { display: none; }
+.tiermorph.open .tm-full { display: block; opacity: 1; }
+.tiermorph .tierscard { border: none; border-radius: 0; box-shadow: none; border-top: 1px solid var(--cream-200); }
+.tiermorph .tiercol { transform: translateY(18px); }
+.tiermorph.open .tiercol { transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .tiermorph.open .tm-full { transition: opacity .38s ease .08s; }
+  .tiermorph .tiercol { transition: transform .55s var(--ease-out), background .2s, opacity .2s; }
+  .tiermorph .tiercol:nth-child(2) { transition-delay: .07s, 0s, 0s; }
+  .tiermorph .tiercol:nth-child(3) { transition-delay: .14s, 0s, 0s; }
+}
