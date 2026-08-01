@@ -67,7 +67,7 @@ export const rollerProCopy = {
     "Nothing on this page is sponsored. Where we earn a small commission, it's the note at " +
     'the bottom — and it never decides what gets the stamp.',
 
-  tiersKicker: 'Pick your compromise',
+  tiersKicker: 'Same bar, three prices',
   tiersHeading: 'Rolling bags — all three tiers',
   tiersLead:
     'Every pick clears the same bar. The tiers are price levels, and each one tells you what ' +
