@@ -14,6 +14,9 @@
 
 /* --- Tokens (unchanged by the redesign) --- */
 @import './tokens/fonts.css';
+/* Generated — see scripts/gen-icons.mjs. Sits with the tokens so the design
+   system's own `… i { font-size }` rules come after it and win the cascade. */
+@import './tokens/icons.css';
 @import './tokens/colors.css';
 @import './tokens/typography.css';
 @import './tokens/spacing.css';

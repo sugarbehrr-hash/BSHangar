@@ -23,7 +23,6 @@ const IGNORE = [
   /^(sr-only|skip-link)$/,
   /^pagefind/,
   /^astro-/,
-  /^ph-/, // icon font
 ];
 
 function walk(dir, ext, out = []) {

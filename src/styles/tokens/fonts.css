@@ -1,12 +1,44 @@
 /* ============================================================
    Blue Streak Hangar — Webfonts
    ------------------------------------------------------------
-   Loaded from Google Fonts. The @import pulls in the @font-face
-   rules the compiler ships to consumers.
+   Self-hosted from public/fonts/. This used to be an @import of
+   fonts.googleapis.com, which cost a render-blocking round trip
+   to a third party and left the site unstyled with no network —
+   the one condition this audience is most often in. Crew read
+   this at altitude and in hotels, so the fonts have to be local.
+
+   Re-download with `node scripts/fetch-fonts.mjs`. The woff2
+   files are committed on purpose; the build never reaches out.
 
    Anton          — big, bold, condensed display headlines (UPPERCASE)
-   Archivo        — confident subheads + UI labels (600–800)
-   Libre Franklin — body + long-form copy, highly legible
+   Archivo        — confident subheads + UI labels (400–800)
+   Libre Franklin — body + long-form copy, highly legible (400–700)
+
+   Archivo and Libre Franklin are variable: one file each spans
+   the whole weight range, so a new weight costs no extra bytes.
+   Only the latin subset ships — the site is English-only.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=Libre+Franklin:wght@400;500;600;700&display=swap');
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/anton-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/archivo-latin-var.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Libre Franklin';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/libre-franklin-latin-var.woff2') format('woff2');
+}

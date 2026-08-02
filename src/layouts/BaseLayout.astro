@@ -67,12 +67,6 @@ const ogImage = new URL(`/og/${ogSlug}.png`, Astro.site ?? SITE.url).href;
     {/* Page-specific head content — today only the Roller Pro's Product schema,
         which is about one product and so cannot live in the site-wide block. */}
     <slot name="head" />
-
-    <!-- TODO Phase 9: replace the Phosphor CDN webfont with a self-hosted SVG
-         sprite of only the icons this site uses, and self-host the four
-         Google families that tokens/fonts.css currently @imports. Both are
-         render-blocking third-party requests today. -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1" is:inline></script>
   </head>
 
   <body>
