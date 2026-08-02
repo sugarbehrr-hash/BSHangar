@@ -99,51 +99,29 @@ export const contractCards: ContractCard[] = [
 ];
 
 /**
- * The 2026 Tentative Agreement panel in the masthead's second column.
+ * The contract-status panel in the masthead's second column.
  *
- * TEMPORARY SCAFFOLDING. The redesign ships it behind this flag; when the
- * ratification vote closes, switch `phase` to 'ratified', and once that is old
- * news set `show: false` and delete this block with the panel markup.
+ * This is live status content, not structure: edit the rows as real news
+ * lands (afapsa.org/negotiations/ is the primary source), and set
+ * `show: false` if the situation ever goes quiet enough that a status
+ * panel would just be noise.
+ *
+ * Current state (verified Aug 2026): the Feb 19 TA was rejected ~60/40 in
+ * the vote that closed Mar 6, 2026. The 2019 CBA remains in force and AFA
+ * is back in negotiations ("TA2"); no new agreement or vote is scheduled.
  */
 export const taPanel = {
   show: true,
-  phase: 'voting' as 'voting' | 'ratified',
-  voting: {
-    flagIcon: 'ph-scales',
-    flag: 'On the table now · 2026 TA',
-    heading: 'A tentative agreement is out.',
-    headingAccent: 'Read it before you vote.',
-    rows: [
-      { k: 'Voting closes', v: 'Aug 25 · 1700 ET' },
-      { k: 'Time left', v: '21 days', live: true },
-      { k: 'Town halls', v: 'Jul 30 CLT · Aug 6 PHL' },
-    ],
-    ctaLabel: 'Read the vote guide',
-  },
-  ratified: {
-    flagIcon: 'ph-seal-check',
-    flag: 'Ratified · 2026 contract',
-    heading: 'The 2026 agreement passed.',
-    headingAccent: "Here's what changed.",
-    rows: [
-      { k: 'Voted yes', v: '61%', live: true },
-      { k: 'Turnout', v: '84% of members' },
-      { k: 'In force', v: 'Sep 1, 2026' },
-    ],
-    ctaLabel: 'See what changed',
-  },
-} as const;
-
-/** The featured 2026 Tentative Agreement banner at the top of /contract/. */
-export const taBanner = {
-  flag: 'On the table now · 2026 TA',
-  headline: 'A tentative agreement is out.',
-  headlineAccent: 'Read it before you vote.',
-  body:
-    'An independent, plain-language look at the PSA AFA 2026 Tentative Agreement — ' +
-    'what you have today, what would change, and what it actually means for your ' +
-    'paycheck, reserve life and schedule. It does not tell you how to vote.',
-  note: 'Built from the contract itself and public filings — not a union or company summary.',
+  flagIcon: 'ph-scales',
+  flag: 'TA voted down · back at the table',
+  heading: 'The 2026 TA was rejected.',
+  headingAccent: 'AFA is negotiating TA2 now.',
+  rows: [
+    { k: 'Vote result', v: '60% no · Mar 6', live: true },
+    { k: 'Contract today', v: '2019 CBA stays in force' },
+    { k: 'TA2 status', v: 'In negotiations' },
+  ],
+  ctaLabel: 'What was in the TA',
 } as const;
 
 /** Standing callouts on the contract page. */
