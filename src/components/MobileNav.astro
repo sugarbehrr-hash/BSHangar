@@ -1,15 +1,31 @@
 ---
 import Icon from './Icon.astro';
 import { SITE, NAV, FACEBOOK_GROUP, EXTERNAL, UNION_REP_PHONE, DISCLAIMER } from '../data/site';
+import { SITE_QR } from '../data/qr-site';
 import { isCurrentSection } from '../lib/nav';
 
 /**
- * Mobile app shell: bottom tab bar + "More" sheet.
+ * Mobile app shell: bottom tab bar, the "More" sheet, and the QR sheet.
  *
  * Below 1100px this replaces SiteHeader's `.mainnav` entirely (see its own
  * comment) — five always-visible, thumb-reachable destinations instead of a
  * burger-hidden dropdown. The footer is also hidden below 1100px (system.css
- * §18); its occasional links move into `.ms-links` below.
+ * §18); its occasional links move into `.ms-chips` below.
+ *
+ * THE SHEET NEVER COVERS THE TAB BAR. It stops at the bar's top edge, because
+ * the More button is the sheet's open/close control and hiding your only way
+ * out under the thing it opened is how you strand someone. The button's glyph
+ * turns into a close mark while the sheet is up.
+ *
+ * WHAT'S ON IT, AND WHAT ISN'T
+ *
+ * Only the two sections the tab bar can't fit — Tools and Essentials. The
+ * other four are live buttons forty pixels below; repeating them as tiles is
+ * duplicating a control the reader can already see.
+ *
+ * Surfaces are cream with navy `.card.inverse` blocks on top, so the gold and
+ * red buttons have something to sit against. A navy sheet put navy buttons on
+ * navy on navy, and an all-cream one dissolved the cards into the surface.
  */
 interface Props {
   /** Pathname of the current page, e.g. "/commuting/". */
@@ -21,8 +37,12 @@ const isCurrent = (href: string) => isCurrentSection(path, href);
 
 /** The four tabs shown in the bar; everything else lives behind "More". */
 const TABS = NAV.slice(0, 4);
-const toolsNav = NAV.find((item) => item.href === '/tools/')!;
-const essentialsNav = NAV.find((item) => item.href === '/crew-essentials/')!;
+
+/** The sections that don't fit in the bar — the entire reason the sheet exists. */
+const SHEET_SECTIONS = [
+  { item: NAV.find((n) => n.href === '/tools/')!, blurb: '5th & 20th estimate' },
+  { item: NAV.find((n) => n.href === '/crew-essentials/')!, blurb: 'Gear that lasts' },
+];
 
 /** "More" lights up whenever the current page isn't one of the four tabs. */
 const moreActive = !TABS.some((item) => isCurrent(item.href));
@@ -31,46 +51,113 @@ const year = new Date().getFullYear();
 ---
 
 <div class="sheet-scrim"></div>
+<div class="qr-scrim"></div>
 
 <nav class="moresheet" id="moresheet" aria-label="More sections">
-  <div class="ms-head">More from the hangar</div>
+  <div class="ms-grab"><span></span></div>
 
-  <a href={toolsNav.href} aria-current={isCurrent(toolsNav.href) ? 'page' : undefined}>
-    <span class="msb">
-      <Icon name={toolsNav.icon} />
-    </span>
-    <span>
-      Paycheck &amp; Tools
-      <small>Estimate your 5th &amp; 20th</small>
-    </span>
-  </a>
+  <div class="ms-scroll">
+    <div class="ms-group">More sections</div>
+    <div class="ms-grid">
+      {
+        SHEET_SECTIONS.map(({ item, blurb }) => (
+          <a
+            class="card inverse ms-tile"
+            href={item.href}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+          >
+            <span class="ms-badge">
+              <Icon name={item.icon} />
+            </span>
+            <strong>
+              {item.label}
+              <small>{blurb}</small>
+            </strong>
+          </a>
+        ))
+      }
+    </div>
 
-  <a href={essentialsNav.href} aria-current={isCurrent(essentialsNav.href) ? 'page' : undefined}>
-    <span class="msb" style="background: var(--success-600);">
-      <Icon name={essentialsNav.icon} />
-    </span>
-    <span>
-      Essentials
-      <small>Gear that survives the schedule</small>
-    </span>
-  </a>
+    <div class="ms-group">Share the hangar</div>
+    <div class="card inverse ms-share">
+      <strong>Send it to a crewmember</strong>
+      <span class="ms-url">{SITE.url.replace('https://', '')}</span>
+      <div class="ms-actions">
+        <button class="btn gold sm" type="button" data-share-act="share">
+          <Icon name="ph-share-network" />
+          Share
+        </button>
+        <button class="btn onnavy sm" type="button" data-share-act="copy">
+          <Icon name="ph-copy" />
+          Copy
+        </button>
+        <button class="btn onnavy sm" type="button" data-share-act="qr" aria-controls="qrsheet">
+          <Icon name="ph-qr-code" />
+          QR
+        </button>
+      </div>
+    </div>
 
-  <a href={FACEBOOK_GROUP} target="_blank" rel="noopener">
-    <span class="msb" style="background: var(--gold-500);">
-      <Icon name="ph-facebook-logo" class="ms-fb-icon" />
-    </span>
-    <span>
-      Facebook Group
-      <small>Ask the crew anything</small>
-    </span>
-  </a>
-
-  <div class="ms-links">
-    <a href="/commuting/">StaffTraveler — non-rev loads</a>
-    <a href={EXTERNAL.flyzed} target="_blank" rel="noopener">flyzed.info</a>
-    <a href={UNION_REP_PHONE.href}>Union Rep · {UNION_REP_PHONE.display}</a>
+    <div class="ms-group">Quick links</div>
+    <div class="ms-chips">
+      <a class="ms-chip" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+        <Icon name="ph-facebook-logo" />
+        Facebook
+        <Icon name="ph-arrow-up-right" class="go" />
+      </a>
+      <a class="ms-chip" href="/commuting/">
+        <Icon name="ph-list-magnifying-glass" />
+        StaffTraveler
+        <Icon name="ph-caret-right" class="go" />
+      </a>
+      <a class="ms-chip" href={EXTERNAL.flyzed} target="_blank" rel="noopener">
+        <Icon name="ph-airplane-in-flight" />
+        flyzed.info
+        <Icon name="ph-arrow-up-right" class="go" />
+      </a>
+      <a class="ms-chip" href={UNION_REP_PHONE.href}>
+        <Icon name="ph-phone-call" />
+        Union Rep
+      </a>
+    </div>
   </div>
-  <div class="ms-legal">© {year} {SITE.name} · {DISCLAIMER.footer}</div>
+
+  <div class="ms-foot">© {year} {SITE.name} · {DISCLAIMER.footer}</div>
+</nav>
+
+{/* Second sheet, stacked on the first: one job, the code at a size a camera
+    can read. Share and Copy are not repeated here — they are on the sheet
+    directly underneath, and reappear the moment this one is dismissed. */}
+<nav class="qrsheet" id="qrsheet" aria-label="Site QR code">
+  <div class="qs-grab"><span></span></div>
+
+  <div class="qs-head">
+    <span class="ms-group">Scan to open the hangar</span>
+    <button class="qs-close" type="button" aria-label="Close the QR code">
+      <Icon name="ph-x" weight="bold" />
+    </button>
+  </div>
+
+  <div class="qs-body">
+    <div class="qs-code">
+      <svg
+        viewBox={`0 0 ${SITE_QR.side} ${SITE_QR.side}`}
+        shape-rendering="crispEdges"
+        role="img"
+        aria-label={`QR code for ${SITE_QR.url}`}
+      >
+        <path
+          fill="currentColor"
+          transform={`translate(${SITE_QR.quiet} ${SITE_QR.quiet})`}
+          d={SITE_QR.path}
+        />
+      </svg>
+    </div>
+    <div class="qs-cap">
+      <strong>{SITE_QR.url.replace('https://', '')}</strong>
+      <span>Point a camera at it — nothing to type</span>
+    </div>
+  </div>
 </nav>
 
 <nav class="tabbar" aria-label="Primary">
@@ -88,40 +175,173 @@ const year = new Date().getFullYear();
     aria-expanded="false"
     aria-controls="moresheet"
   >
-    <Icon name="ph-squares-four" />
+    <Icon name="ph-squares-four" class="ic-open" />
+    <Icon name="ph-x" weight="bold" class="ic-close" />
     <span>More</span>
   </button>
 </nav>
 
 <script>
-  // Sheet toggle: one delegated handler on the document. More opens/closes
-  // the sheet by toggling data-sheet on .site (same attribute pattern the
-  // desktop mainnav used to use for data-menu); scrim tap and Escape close.
-  document.addEventListener('click', (event) => {
-    const target = event.target as HTMLElement;
-    const site = document.querySelector<HTMLElement>('.site');
-    if (!site) return;
+  import { SITE } from '../data/site';
 
-    const more = target.closest<HTMLElement>('.tab-more');
-    if (more) {
-      const open = site.dataset.sheet === '1';
-      site.dataset.sheet = open ? '' : '1';
-      more.setAttribute('aria-expanded', String(!open));
-      return;
-    }
+  /**
+   * Two stacked sheets, dismissed one layer at a time.
+   *
+   * State lives in two data attributes on `.site` (the same pattern the sheet
+   * has always used), so CSS owns every transition and this file only ever
+   * flips a flag. `inert` follows the flags: a sheet that is off-screen, or
+   * buried under the QR sheet, is not reachable by tab or screen reader.
+   */
+  const site = document.querySelector<HTMLElement>('.site');
+  const sheet = document.querySelector<HTMLElement>('.moresheet');
+  const qrsheet = document.querySelector<HTMLElement>('.qrsheet');
+  const more = document.querySelector<HTMLButtonElement>('.tab-more');
+  if (site && sheet && qrsheet && more) {
+    const sync = () => {
+      const sheetOpen = site.dataset.sheet === '1';
+      const qrOpen = site.dataset.qr === '1';
+      more.setAttribute('aria-expanded', String(sheetOpen));
+      sheet.inert = !sheetOpen || qrOpen;
+      qrsheet.inert = !qrOpen;
+    };
 
-    if (target.closest('.sheet-scrim')) {
+    const openSheet = () => {
+      site.dataset.sheet = '1';
+      sync();
+    };
+    const closeQr = () => {
+      site.dataset.qr = '';
+      sync();
+    };
+    const closeAll = () => {
       site.dataset.sheet = '';
-      document.querySelector('.tab-more')?.setAttribute('aria-expanded', 'false');
-    }
-  });
+      site.dataset.qr = '';
+      sync();
+      more.focus();
+    };
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') return;
-    const site = document.querySelector<HTMLElement>('.site');
-    if (site?.dataset.sheet === '1') {
-      site.dataset.sheet = '';
-      document.querySelector('.tab-more')?.setAttribute('aria-expanded', 'false');
+    sync();
+
+    document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+
+      if (target.closest('.tab-more')) {
+        return site.dataset.sheet === '1' ? closeAll() : openSheet();
+      }
+      // Top sheet first: a tap on the More sheet while the QR is up drops the
+      // QR rather than firing whatever link sits under the finger.
+      if (target.closest('.qs-close') || target.closest('.qr-scrim')) return closeQr();
+      if (target.closest('.sheet-scrim')) return closeAll();
+
+      const action = target.closest<HTMLElement>('[data-share-act]')?.dataset.shareAct;
+      if (!action) return;
+      if (action === 'qr') {
+        site.dataset.qr = '1';
+        sync();
+      }
+      if (action === 'share') void shareSite();
+      if (action === 'copy') void copyLink(target.closest<HTMLButtonElement>('button'));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (site.dataset.qr === '1') return closeQr();
+      if (site.dataset.sheet === '1') closeAll();
+    });
+
+    /** Drag a handle down far enough and the sheet it belongs to goes away. */
+    const dragToDismiss = (grab: HTMLElement, panel: HTMLElement, dismiss: () => void) => {
+      let startY: number | null = null;
+      grab.addEventListener('pointerdown', (event) => {
+        startY = event.clientY;
+        grab.setPointerCapture(event.pointerId);
+        panel.classList.add('dragging');
+      });
+      grab.addEventListener('pointermove', (event) => {
+        if (startY === null) return;
+        panel.style.transform = `translateY(${Math.max(0, event.clientY - startY)}px)`;
+      });
+      const release = (event: PointerEvent) => {
+        if (startY === null) return;
+        const dy = Math.max(0, event.clientY - startY);
+        startY = null;
+        panel.classList.remove('dragging');
+        panel.style.transform = '';
+        if (dy > 70) dismiss();
+      };
+      grab.addEventListener('pointerup', release);
+      grab.addEventListener('pointercancel', release);
+    };
+
+    const msGrab = sheet.querySelector<HTMLElement>('.ms-grab');
+    const qsGrab = qrsheet.querySelector<HTMLElement>('.qs-grab');
+    if (msGrab) dragToDismiss(msGrab, sheet, closeAll);
+    if (qsGrab) dragToDismiss(qsGrab, qrsheet, closeQr);
+  }
+
+  /**
+   * The OS share sheet — Messages, AirDrop, WhatsApp — which is how this
+   * audience actually passes a link on. Only Safari and Chrome on mobile have
+   * it; everywhere else the button falls back to the clipboard rather than
+   * doing nothing.
+   */
+  async function shareSite() {
+    const payload = { title: SITE.name, text: SITE.tagline, url: SITE.url };
+    if (navigator.share) {
+      try {
+        await navigator.share(payload);
+        return;
+      } catch (error) {
+        // AbortError is the reader closing the share sheet — not a failure.
+        if ((error as Error)?.name === 'AbortError') return;
+      }
     }
-  });
+    await copyLink(document.querySelector<HTMLButtonElement>('[data-share-act="copy"]'));
+  }
+
+  /**
+   * Clipboard, with the button itself as the receipt — the site has no toast.
+   *
+   * The async API refuses outright in a few real situations (older iOS Safari,
+   * any non-secure context, a browser that hasn't granted the permission), so
+   * there is a fallback, and if that fails too the button says so. A Copy
+   * button that quietly does nothing is worse than one that admits it.
+   */
+  async function copyLink(button: HTMLButtonElement | null) {
+    const copied = await writeClipboard(SITE.url);
+    if (!button || button.dataset.busy === '1') return;
+    const original = button.innerHTML;
+    button.dataset.busy = '1';
+    button.innerHTML = copied
+      ? '<i class="ph-bold ph-check" aria-hidden="true"></i> Copied'
+      : '<i class="ph-fill ph-warning" aria-hidden="true"></i> Failed';
+    button.classList.add(copied ? 'done' : 'failed');
+    setTimeout(() => {
+      button.innerHTML = original;
+      button.classList.remove('done', 'failed');
+      button.dataset.busy = '';
+    }, 1600);
+  }
+
+  async function writeClipboard(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      /* fall through to the old selection-based copy */
+    }
+    try {
+      const field = document.createElement('textarea');
+      field.value = text;
+      field.setAttribute('readonly', '');
+      field.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.append(field);
+      field.select();
+      const ok = document.execCommand('copy');
+      field.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  }
 </script>

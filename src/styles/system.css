@@ -256,7 +256,7 @@ img, svg, video { max-width: 100%; height: auto; }
 .gd-stat-caption { flex: 1 1 260px; font-size: 0.90625rem; line-height: 1.45; }
 .gd-stat-caption strong { color: #fff; }
 
-@media print { .secnav, .topbar, .footer, .tabbar, .moresheet, .sheet-scrim, .answerdock { display: none !important; } }
+@media print { .secnav, .topbar, .footer, .tabbar, .moresheet, .qrsheet, .sheet-scrim, .qr-scrim, .answerdock { display: none !important; } }
 
 /* ============================================================
    6 · THE CARD — one spec. Variants change weight only.
@@ -1011,43 +1011,91 @@ a.tiercol:hover { background: var(--cream-100); }
   .answerdock { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
   .footer { display: none; }
 }
-.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--navy-900); border-top: 1px solid rgba(159,208,240,0.22); box-shadow: 0 -6px 20px rgba(15,30,61,0.35); padding-bottom: env(safe-area-inset-bottom, 0px); }
-@media (min-width: 1100px) { .tabbar, .moresheet, .sheet-scrim { display: none !important; } }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 75; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--navy-900); border-top: 1px solid rgba(159,208,240,0.22); box-shadow: 0 -6px 20px rgba(15,30,61,0.35); padding-bottom: env(safe-area-inset-bottom, 0px); }
+@media (min-width: 1100px) { .tabbar, .moresheet, .qrsheet, .sheet-scrim, .qr-scrim { display: none !important; } }
 .tabbar a, .tabbar button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 76px; padding: 14px 2px 11px; background: none; border: none; cursor: pointer; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .02em; color: var(--sky-300); }
 .tabbar i { font-size: 25px; line-height: 1; }
+.tab-more .ic-close { display: none; }
+.tab-more[aria-expanded="true"] .ic-open { display: none; }
+.tab-more[aria-expanded="true"] .ic-close { display: inline-block; }
 .tabbar a:hover, .tabbar button:hover { color: #fff; }
 .tabbar a[aria-current="page"], .tabbar .tab-more.here, .tabbar .tab-more[aria-expanded="true"] { color: #fff; }
-.tabbar a[aria-current="page"]::before, .tabbar .tab-more.here::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 34px; height: 3px; border-radius: 0 0 2px 2px; background: var(--gold-500); }
+.tabbar a[aria-current="page"]::before, .tabbar .tab-more.here::before, .tabbar .tab-more[aria-expanded="true"]::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 34px; height: 3px; border-radius: 0 0 2px 2px; background: var(--gold-500); }
 
-/* More sheet — slides up from the tab bar.
+/* More sheet — rises to the tab bar's top edge, never over it.
 
-   It has to read as a surface lifted ABOVE two navies at once: the
-   navy-900 tab bar it sits on and the scrimmed page behind it. So the
-   sheet is the lightest navy of the three (700), the scrim is deep
-   enough to kill the page contrast under it, and a sky keyline traces
-   the sheet's visible edge — the same outline .tabbar and .swbar use. */
-.sheet-scrim { position: fixed; inset: 0; z-index: 68; background: rgba(15,30,61,0.68); opacity: 0; pointer-events: none; }
+   PAPER SHEET, NAVY BLOCKS. Two earlier attempts put the sheet in the
+   same value family as everything around it: navy-700 on a navy bar
+   over a navy hero, then cream on a cream page. Both read as one flat
+   field. The surface is cream and every block on it is a .card.inverse,
+   so the gold and red buttons have something to sit against, and the
+   dark scrim makes the whole sheet the brightest thing on screen.
+
+   The More button stays visible and is still the open/close control,
+   which is why the sheet stops at 76px and not at 0. */
+.sheet-scrim { position: fixed; inset: 0; z-index: 68; background: rgba(9,18,38,0.6); opacity: 0; pointer-events: none; }
 .site[data-sheet="1"] .sheet-scrim { opacity: 1; pointer-events: auto; }
-.moresheet { position: fixed; left: 0; right: 0; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); z-index: 69; background: var(--navy-700); border-top: 1px solid rgba(159,208,240,0.28); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 8px 10px 12px; box-shadow: 0 -18px 44px rgba(9,18,38,0.62); transform: translateY(14px); opacity: 0; pointer-events: none; }
-.site[data-sheet="1"] .moresheet { transform: none; opacity: 1; pointer-events: auto; }
-@media (prefers-reduced-motion: no-preference) {
-  .sheet-scrim { transition: opacity .2s; }
-  .moresheet { transition: opacity .22s var(--ease-out), transform .22s var(--ease-out); }
-}
-.moresheet .ms-head { font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-500); padding: 10px 12px 6px; }
-.moresheet a { display: flex; align-items: center; gap: 13px; min-height: 54px; padding: 6px 12px; border-radius: var(--radius-sm); color: var(--cream-100); font-family: var(--font-heading); font-weight: 800; font-size: 15px; }
-.moresheet a:hover { background: rgba(159,208,240,0.12); }
-.moresheet a[aria-current="page"] { background: rgba(159,208,240,0.16); }
-.moresheet .msb { flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--navy-900); display: grid; place-items: center; }
-.moresheet .msb i { color: #fff; font-size: 20px; }
-.moresheet .ms-fb-icon { color: var(--navy-900); }
-.moresheet small { display: block; font-family: var(--font-body); font-weight: 400; font-size: 12px; color: var(--sky-300); margin-top: 1px; }
+.moresheet { position: fixed; left: 0; right: 0; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); z-index: 69; max-height: calc(100% - 76px - 34px); display: flex; flex-direction: column; background: var(--cream-100); border-radius: var(--radius-xl) var(--radius-xl) 0 0; box-shadow: 0 -14px 40px rgba(9,18,38,0.5); transform: translateY(calc(100% + 76px)); overscroll-behavior: contain; }
+.site[data-sheet="1"] .moresheet { transform: none; }
 
-/* More sheet: occasional links + the legal line, replacing the footer. */
-.ms-links { border-top: 1px solid rgba(159,208,240,0.18); margin-top: 8px; padding-top: 4px; }
-.ms-links a { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: var(--radius-sm); font-family: var(--font-heading); font-weight: 700; font-size: 13.5px; color: var(--sky-300); }
-.ms-links a:hover { background: rgba(159,208,240,0.12); color: #fff; }
-.ms-legal { padding: 8px 12px 2px; font-size: 11px; line-height: 1.5; color: rgba(159,208,240,0.65); }
+/* Over the More sheet, under the QR sheet: a tap on the sheet below
+   dismisses the sheet above instead of firing a link under the finger. */
+.qr-scrim { position: fixed; inset: 0; z-index: 71; background: rgba(9,18,38,0.34); opacity: 0; pointer-events: none; }
+.site[data-qr="1"] .qr-scrim { opacity: 1; pointer-events: auto; }
+.qrsheet { position: fixed; left: 0; right: 0; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); z-index: 72; max-height: calc(100% - 76px - 34px); display: flex; flex-direction: column; background: var(--cream-100); border-radius: var(--radius-xl) var(--radius-xl) 0 0; box-shadow: 0 -14px 40px rgba(9,18,38,0.5); transform: translateY(calc(100% + 76px)); }
+.site[data-qr="1"] .qrsheet { transform: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sheet-scrim, .qr-scrim { transition: opacity .22s; }
+  .moresheet, .qrsheet { transition: transform .3s var(--ease-out); }
+  /* a dragged sheet tracks the finger — no easing between frames */
+  .moresheet.dragging, .qrsheet.dragging { transition: none; }
+}
+
+.ms-grab, .qs-grab { flex: none; display: grid; place-items: center; padding: 10px 0 4px; cursor: grab; touch-action: none; }
+.ms-grab span, .qs-grab span { display: block; width: 40px; height: 4px; border-radius: 2px; background: var(--cream-300); }
+.ms-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 14px; }
+/* red kicker: the label colour every cream section already uses */
+.ms-group { font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--red-600); padding: 12px 2px 8px; }
+.ms-foot { flex: none; padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px)); background: var(--cream-200); font-size: 10.5px; line-height: 1.5; color: var(--ink-500); }
+
+/* Sections — .card.inverse at sheet scale. Only the two the tab bar
+   can't fit; the other four are live buttons 40px below. */
+.ms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.ms-tile { gap: 9px; padding: 13px; }
+.ms-badge { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--gold-500); display: grid; place-items: center; }
+.ms-badge i { font-size: 19px; color: var(--navy-900); }
+.ms-tile strong { font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; line-height: 1.2; color: #fff; }
+.ms-tile small { display: block; font-family: var(--font-body); font-weight: 400; font-size: 11.5px; color: var(--sky-300); margin-top: 3px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ms-tile[aria-current="page"] { border-color: var(--gold-500); }
+
+/* Share — the OS share sheet, the clipboard, and the code. */
+.ms-share { padding: 14px; }
+.ms-share strong { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: #fff; }
+.ms-url { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 12px; letter-spacing: .04em; color: var(--sky-300); margin: 2px 0 11px; }
+.ms-actions { display: flex; gap: 7px; }
+.ms-actions .btn { flex: none; padding: 0 13px; }
+.ms-actions .btn.done { color: #6FD79E; border-color: rgba(111,215,158,0.55); }
+.ms-actions .btn.failed { color: #FFA7B4; border-color: rgba(255,167,180,0.55); }
+
+/* Quick links, replacing the footer. Square, not .pill — a pill on this
+   site filters a view, and these are outbound links. */
+.ms-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ms-chip { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: var(--radius-sm); background: var(--white); border: 1.5px solid var(--cream-300); color: var(--navy-900); font-family: var(--font-heading); font-weight: 800; font-size: 12.5px; }
+.ms-chip i:first-child { font-size: 16px; flex: none; color: var(--sky-700); }
+.ms-chip .go { margin-left: auto; font-size: 11px; color: var(--ink-500); }
+.ms-chip:hover { border-color: var(--navy-700); }
+
+/* QR sheet — sized to the code, not to the screen. */
+.qs-head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 14px 0; }
+.qs-head .ms-group { padding: 8px 0; }
+.qs-close { width: 40px; height: 40px; flex: none; border: none; border-radius: 50%; background: var(--cream-200); color: var(--navy-900); font-size: 17px; display: grid; place-items: center; cursor: pointer; }
+.qs-body { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 4px 20px calc(20px + env(safe-area-inset-bottom, 0px)); }
+.qs-code { width: min(64%, 236px); background: var(--white); border-radius: var(--radius-lg); padding: 14px; box-shadow: var(--shadow-card); }
+.qs-code svg { width: 100%; height: auto; display: block; color: var(--navy-900); }
+.qs-cap { text-align: center; }
+.qs-cap strong { display: block; font-family: var(--font-display); font-size: 1.375rem; text-transform: uppercase; color: var(--navy-900); }
+.qs-cap span { display: block; font-size: 0.78125rem; color: var(--ink-500); margin-top: 5px; }
 
 /* ============================================================
    19 · MOBILE DENSITY — phone proportions.
