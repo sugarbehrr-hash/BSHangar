@@ -25,7 +25,7 @@ const { situation, id } = Astro.props;
   <summary class="zhead">
     <span class="zbadge">{situation.badge}</span>
     <span class="ztitle">
-      {situation.title}
+      <span class="zname">{situation.title}</span>
       <span class="znote">{situation.note}</span>
     </span>
     {situation.flag && <span class="zflag">{situation.flag}</span>}

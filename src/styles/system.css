@@ -378,6 +378,9 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .zhead:hover { background: var(--cream-100); }
 .zbadge { flex: none; min-width: 46px; height: 30px; padding: 0 10px; border-radius: var(--radius-sm); background: var(--navy-900); color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; display: grid; place-items: center; }
 .ztitle { flex: 1; min-width: 0; font-family: var(--font-heading); font-weight: 800; font-size: 16.5px; color: var(--navy-900); display: flex; flex-direction: column; gap: 2px; }
+/* The title text is its own element so the phone layout can lift it out
+   of .ztitle and place it independently of the note (see §21). */
+.zname { min-width: 0; text-wrap: pretty; }
 .znote { font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
 .znote:empty { display: none; }
 .zcount { flex: none; font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: var(--ink-500); background: var(--cream-200); border-radius: var(--radius-pill); padding: 3px 11px; }
@@ -1124,24 +1127,45 @@ a.tiercol:hover { background: var(--cream-100); }
    matrix keeps horizontal scroll — .reftable-scroll.)
    ============================================================ */
 @media (max-width: 699px) {
-  /* Situation accordion headers stack per the mobile column rule: chip row
-     (badge, plus the flag when there is one) with the chevron on its far
-     right, then the title full-width, then the note as a sentence-case
-     caption — the uppercase kicker treatment reads as shouting once it
-     wraps at phone width. EVERY situation header stacks, not just the
-     flagged one: their titles are full sentences that wrap beside a badge,
-     and two layouts in one list is worse than either. Discount explorer
-     headers (badge · short name · count) keep their single line — that
-     content fits it. */
-  .zone.situation > .zhead { flex-wrap: wrap; row-gap: 10px; padding: 14px 46px 14px 16px; position: relative; }
-  .zone.situation > .zhead .ztitle { flex: 1 1 100%; order: 10; gap: 4px; }
-  .zone.situation > .zhead .ztitle { font-size: 16px; line-height: 1.3; }
-  .zone.situation > .zhead .znote { font-family: var(--font-body); font-weight: 400; font-size: 13px; letter-spacing: 0; text-transform: none; line-height: 1.4; }
-  .zone.situation > .zhead .zchev { position: absolute; right: 16px; top: 20px; }
+  /* Situation accordion header on a phone. The TITLE leads at full width —
+     it is the only thing being scanned — and the section chip and note
+     pair off on ONE metadata line beneath it. Neither gets a line of its
+     own: a 46px chip alone on a row is 300px of empty card, which is what
+     made these read as oversized. The note also drops the uppercase
+     kicker treatment, which reads as shouting once it wraps at this width.
 
-  /* Accordion body rows: the reference is a tag UNDER the text,
-     never a column beside it. */
+     .ztitle goes display:contents so its two children can be placed as
+     siblings of the badge; the header is a grid so DOM order (badge
+     first) doesn't dictate visual order. Discount explorer headers
+     (badge · short name · count) are untouched — that content fits one
+     line. */
+  .zone.situation > .zhead {
+    display: grid; grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "name name" "badge note";
+    align-items: center; column-gap: 9px; row-gap: 8px;
+    padding: 13px 46px 13px 15px; position: relative;
+  }
+  .zone.situation > .zhead .ztitle { display: contents; }
+  .zone.situation > .zhead .zname { grid-area: name; font-size: 16px; line-height: 1.3; }
+  .zone.situation > .zhead .zbadge { grid-area: badge; min-width: 0; height: 23px; padding: 0 8px; font-size: 11.5px; }
+  .zone.situation > .zhead .znote { grid-area: note; font-family: var(--font-body); font-weight: 400; font-size: 13px; letter-spacing: 0; text-transform: none; line-height: 1.35; }
+  /* The flag chip never shares the metadata line — beside the badge it
+     leaves the note nowhere to sit and wrings it out into a 3-line
+     column. It takes the top line instead, where it reads as the alert
+     label it is and pairs with the chevron across the row, so the line
+     carries content at both ends rather than trailing off into space. */
+  .zone.situation > .zhead:has(.zflag) {
+    grid-template-areas: "flag flag" "name name" "badge note";
+  }
+  .zone.situation > .zhead .zflag { grid-area: flag; justify-self: start; padding: 4px 10px; font-size: 10.5px; }
+  .zone.situation > .zhead .zchev { position: absolute; right: 15px; top: 14px; }
+
+  /* Accordion body rows: the reference is a tag UNDER the text, never a
+     column beside it — and it sits at the right edge, where the eye is
+     already returning at the end of a line, so it reads as a footnote on
+     the statement instead of competing with it for the left margin. */
   .zrow { flex-direction: column; align-items: flex-start; gap: 7px; }
+  .zrow .zs { align-self: flex-end; }
   .zs { white-space: normal; }
   .zs.ref { background: var(--cream-200); border-radius: var(--radius-pill); padding: 3px 10px; font-size: 11px; }
 
