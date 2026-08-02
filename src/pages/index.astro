@@ -3,7 +3,7 @@ import CurtainShell from '../components/CurtainShell.astro';
 import HomePage from '../components/HomePage.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, FACEBOOK_GROUP } from '../data/site';
-import { PRELAUNCH } from '../data/prelaunch';
+import { PRELAUNCH, PREVIEW_PATH } from '../data/prelaunch';
 
 /**
  * Site root. While PRELAUNCH is on (see src/data/prelaunch.ts) this is a
@@ -19,6 +19,7 @@ import { PRELAUNCH } from '../data/prelaunch';
     <CurtainShell
       title={`${SITE.name} — Coming Soon`}
       description="The crew hub for PSA flight attendants is under construction. The 2026 TA vote guide is already open."
+      standaloneRedirect={PREVIEW_PATH}
     >
       <h1>
         Boarding <span class="r">soon.</span>

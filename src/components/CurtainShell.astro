@@ -15,9 +15,11 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  /** Opt-in only — see the script below. 404 doesn't pass this. */
+  standaloneRedirect?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, standaloneRedirect } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,6 +27,23 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* An installed PWA's start_url is "/", and the real site's header brand
+        link also points at "/" — so without this, launching the installed app
+        (or tapping the logo mid-session) lands back on the curtain. Blocking
+        and this early in <head> so it fires before anything paints. Checking
+        both signals because that's how a launched home-screen app reports
+        itself: display-mode on Android/desktop, navigator.standalone on iOS. */}
+    {standaloneRedirect && (
+      <script define:vars={{ dest: standaloneRedirect }}>
+        if (
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true
+        ) {
+          location.replace(dest);
+        }
+      </script>
+    )}
 
     <title>{title}</title>
     <meta name="description" content={description} />

@@ -13,6 +13,8 @@
      - robots.txt allows only /contract/ (src/pages/robots.txt.ts)
      - the real homepage stays reachable at PREVIEW_PATH —
        unlinked and unguessable, for internal review only
+     - an installed PWA redirects straight past the curtain to
+       PREVIEW_PATH instead (src/components/CurtainShell.astro)
 
    Launch day: flip PRELAUNCH to false and delete the preview
    directory under src/pages/. Nothing else to touch.
