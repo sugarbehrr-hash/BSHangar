@@ -37,6 +37,17 @@ self.addEventListener('install', (event) => {
   );
 });
 
+/**
+ * The page asks for the new worker when the reader accepts the update prompt.
+ *
+ * This is the only route past the deliberate lack of skipWaiting on install:
+ * the swap happens because someone chose it and the page reloads immediately
+ * after, so nothing is left running against the previous deploy's assets.
+ */
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {

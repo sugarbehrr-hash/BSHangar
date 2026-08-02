@@ -1,28 +1,173 @@
 ---
+import Icon from './Icon.astro';
+
 /**
- * Registers the offline service worker.
+ * Registers the offline service worker and reports on it.
  *
- * Lives in every shell — BaseLayout, CurtainShell and PrintLayout — because any
- * of them can be the first page someone opens, and the site is only downloaded
- * once a worker is installed. One component so there is one copy of the logic
- * to change.
+ * Sits at the end of the body in every shell — BaseLayout, CurtainShell and
+ * PrintLayout — because any of them can be the first page someone opens, and
+ * the site is only downloaded once a worker is installed.
  *
- * The worker is built by scripts/gen-sw.mjs and only exists in dist/, so
- * registration is gated on PROD: under `astro dev` there is no /sw.js, and
- * registering would log a failure on every page load.
+ * Two things get said, and nothing else:
+ *
+ *   ready   once, after the first install finishes. This is the whole point of
+ *           the feature for this audience: the useful moment is knowing you can
+ *           put the phone in airplane mode and still have the contract. It
+ *           auto-dismisses, because after the first time it is noise.
+ *
+ *   update  whenever a new deploy is installed and waiting. The worker is
+ *           cache-first with no revalidation, so without this a reader sits on
+ *           the old contract text until every tab is closed. That is the
+ *           failure that actually matters here, so the prompt is persistent
+ *           and only leaves when it is acted on or dismissed.
  */
 ---
 
+<div class="swbar" id="swbar" role="status" aria-live="polite" hidden>
+  <span class="swbar-icon" data-swbar-ready><Icon name="ph-cloud-check" /></span>
+  <span class="swbar-icon" data-swbar-update hidden><Icon name="ph-arrows-clockwise" /></span>
+
+  <p class="swbar-text" id="swbar-text"></p>
+
+  <button class="btn gold sm" type="button" id="swbar-action" hidden>Reload</button>
+  <button class="swbar-close" type="button" id="swbar-close" aria-label="Dismiss">
+    <Icon name="ph-x" />
+  </button>
+</div>
+
 <script>
-  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-    // After load, not during: precaching the whole site is a few MB of
-    // requests, and they should not compete with the page being read right now.
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        // Non-fatal — the site works online without it. Worth surfacing,
-        // because silently having no offline copy is the failure that matters.
-        console.error('Offline service worker failed to register:', err);
+  const bar = document.getElementById('swbar');
+  const text = document.getElementById('swbar-text');
+  const action = document.getElementById('swbar-action');
+  const close = document.getElementById('swbar-close');
+  const readyIcon = document.querySelector('[data-swbar-ready]');
+  const updateIcon = document.querySelector('[data-swbar-update]');
+
+  if (bar && text && action && close && readyIcon && updateIcon) {
+    let hideTimer = 0;
+
+    /** @param {'ready'|'update'} kind */
+    function show(kind, message) {
+      clearTimeout(hideTimer);
+      text.textContent = message;
+      readyIcon.hidden = kind !== 'ready';
+      updateIcon.hidden = kind !== 'update';
+      action.hidden = kind !== 'update';
+      bar.hidden = false;
+      // Next frame, so the transition has a state to animate away from.
+      requestAnimationFrame(() => bar.classList.add('is-open'));
+
+      // The offline confirmation is a fact, not a decision — it should not need
+      // dismissing. The update prompt is a decision, so it waits.
+      if (kind === 'ready') hideTimer = window.setTimeout(hide, 7000);
+    }
+
+    function hide() {
+      clearTimeout(hideTimer);
+      bar.classList.remove('is-open');
+      // Match the CSS transition, then take it out of the tree entirely so it
+      // cannot catch a tap or a tab stop while invisible.
+      window.setTimeout(() => {
+        bar.hidden = true;
+      }, 260);
+    }
+
+    close.addEventListener('click', hide);
+
+    /**
+     * Marks that this device has been told, once, that the site is downloaded.
+     *
+     * navigator.serviceWorker.controller looks like the obvious signal for
+     * "was this a first install?" and is not one: the worker calls
+     * clients.claim(), so controller flips from null to set while the page is
+     * still open, and whether it is read before or after that is a race with
+     * how fast the install runs. A stored flag has no timing to get wrong.
+     */
+    const READY_FLAG = 'bsh-offline-ready';
+
+    /** Storage throws in some private-browsing modes; the bar is not worth a crash. */
+    function seenReady() {
+      try {
+        return !!localStorage.getItem(READY_FLAG);
+      } catch {
+        return true;
+      }
+    }
+    function markReady() {
+      try {
+        localStorage.setItem(READY_FLAG, '1');
+      } catch {
+        /* storage unavailable — the announcement just repeats next visit */
+      }
+    }
+
+    if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+      // After load, not during: precaching the whole site is a few MB of
+      // requests, and they should not compete with the page being read now.
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('/sw.js');
+
+          /** The waiting worker is a build the reader has not accepted yet. */
+          const offerUpdate = (waiting) => {
+            if (!waiting) return;
+            show('update', 'A newer version of the hangar is ready.');
+            action.onclick = () => {
+              action.disabled = true;
+              waiting.postMessage({ type: 'SKIP_WAITING' });
+            };
+          };
+
+          // Reload once the new worker has actually taken over, so the page
+          // comes back against a cache that is fully swapped.
+          let reloading = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (reloading) return;
+            reloading = true;
+            window.location.reload();
+          });
+
+          /** Said once per device, the first time a worker finishes activating. */
+          const announceReady = () => {
+            if (seenReady()) return;
+            markReady();
+            // Activation is downstream of cache.addAll, so by here the whole
+            // site really is on the device.
+            show('ready', 'Downloaded. The whole hangar works offline now.');
+          };
+
+          /**
+           * Watch one worker to the state that matters for it.
+           *
+           * The current state is evaluated immediately and not only on change:
+           * registering is asynchronous, and against a fast server a worker can
+           * be installed and activated before this code ever runs. Waiting only
+           * for statechange misses the first install entirely.
+           *
+           * `reg.waiting === worker` is what makes a replacement a replacement.
+           * A worker only waits when another is already active; on a first
+           * install there is nothing to wait behind and it activates straight
+           * through, so the two cases cannot be confused.
+           */
+          const track = (worker) => {
+            if (!worker) return;
+            const evaluate = () => {
+              if (worker.state === 'installed' && reg.waiting === worker) offerUpdate(worker);
+              else if (worker.state === 'activated') announceReady();
+            };
+            evaluate();
+            worker.addEventListener('statechange', evaluate);
+          };
+
+          // Whatever is already in flight, plus anything that turns up later.
+          track(reg.installing || reg.waiting || reg.active);
+          reg.addEventListener('updatefound', () => track(reg.installing));
+        } catch (err) {
+          // Non-fatal — the site works online without it. Worth surfacing,
+          // because silently having no offline copy is the failure that matters.
+          console.error('Offline service worker failed to register:', err);
+        }
       });
-    });
+    }
   }
 </script>

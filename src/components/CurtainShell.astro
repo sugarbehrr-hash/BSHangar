@@ -2,6 +2,7 @@
 import { SITE } from '../data/site';
 import brandLogo from '../assets/brand-logo.svg';
 import ServiceWorker from './ServiceWorker.astro';
+import PwaHead from './PwaHead.astro';
 import '../styles/global.css';
 
 /**
@@ -28,7 +29,7 @@ const { title, description } = Astro.props;
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content="noindex, nofollow" />
-    <ServiceWorker />
+    <PwaHead />
   </head>
 
   <body class="curtain">
@@ -45,6 +46,7 @@ const { title, description } = Astro.props;
 
       <slot />
     </main>
+    <ServiceWorker />
   </body>
 </html>
 

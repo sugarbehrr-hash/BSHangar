@@ -1,0 +1,32 @@
+---
+/**
+ * Install and icon metadata, in every shell.
+ *
+ * Separate from ServiceWorker.astro on purpose: this is head metadata the
+ * browser reads before anything runs, that one is a script and a status bar
+ * that live at the end of the body.
+ *
+ * The site had no favicon at all before this — every tab showed the browser's
+ * blank-page glyph.
+ */
+---
+
+{/* SVG first: browsers that support it use it and ignore the PNG, and it stays
+    sharp on any tab density. The 32px PNG is the fallback for those that don't. */}
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+
+{/* iOS reads none of the manifest's icons for the home screen — it needs its
+    own link, and it does not apply a mask, so that file is full-bleed. */}
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<link rel="manifest" href="/manifest.webmanifest" />
+
+{/* Colours the browser chrome to match .topbar, so a standalone window reads as
+    one surface instead of the header floating under a grey strip. */}
+<meta name="theme-color" content="#0F1E3D" />
+
+{/* iOS still honours these rather than the manifest's display mode. */}
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Hangar" />

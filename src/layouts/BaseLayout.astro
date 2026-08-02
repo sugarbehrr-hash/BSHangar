@@ -4,6 +4,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 import MobileNav from '../components/MobileNav.astro';
 import StructuredData from '../components/StructuredData.astro';
 import ServiceWorker from '../components/ServiceWorker.astro';
+import PwaHead from '../components/PwaHead.astro';
 import { SITE } from '../data/site';
 import { PRELAUNCH } from '../data/prelaunch';
 import '../styles/global.css';
@@ -68,7 +69,7 @@ const ogImage = new URL(`/og/${ogSlug}.png`, Astro.site ?? SITE.url).href;
     {/* Page-specific head content — today only the Roller Pro's Product schema,
         which is about one product and so cannot live in the site-wide block. */}
     <slot name="head" />
-    <ServiceWorker />
+    <PwaHead />
   </head>
 
   <body>
@@ -84,5 +85,6 @@ const ogImage = new URL(`/og/${ogSlug}.png`, Astro.site ?? SITE.url).href;
       <SiteFooter />
       <MobileNav path={path} />
     </div>
+    <ServiceWorker />
   </body>
 </html>

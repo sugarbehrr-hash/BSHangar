@@ -1,6 +1,7 @@
 ---
 import { SITE, DISCLAIMER } from '../data/site';
 import ServiceWorker from '../components/ServiceWorker.astro';
+import PwaHead from '../components/PwaHead.astro';
 import '../styles/global.css';
 import '../styles/print.css';
 
@@ -31,7 +32,7 @@ const { title, description } = Astro.props;
     <title>{title} — {SITE.name}</title>
     <meta name="robots" content="noindex, follow" />
     <meta name="description" content={description ?? title} />
-    <ServiceWorker />
+    <PwaHead />
   </head>
 
   <body>
@@ -50,6 +51,7 @@ const { title, description } = Astro.props;
     <script>
       document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
     </script>
+    <ServiceWorker />
   </body>
 </html>
 

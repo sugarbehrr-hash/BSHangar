@@ -257,3 +257,76 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
    above. Dropping that padding and setting the margin to the card's own 24px
    puts equal space on both sides. */
 #slipForget { padding: 0 4px; margin-top: 24px; }
+
+/* ============================================================
+   Service-worker status bar
+   ------------------------------------------------------------
+   Says two things and nothing else: the site finished downloading
+   for offline use, or a newer deploy is waiting. See
+   components/ServiceWorker.astro.
+
+   Bottom-anchored, clearing the mobile tab bar with the same
+   offset .moresheet uses, and sitting above it (z 70) so the
+   prompt is never half-covered by the nav. Above 1100px the tab
+   bar is gone, so it settles to the corner.
+
+   Navy, not a cream tint: every floating surface in this site —
+   .tabbar, .moresheet, .answerdock — is navy, and a pale bar
+   drifting over cream page content reads as part of the page.
+   ============================================================ */
+.swbar {
+  position: fixed;
+  z-index: 80;
+  left: 14px;
+  right: 14px;
+  bottom: calc(66px + 14px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px 13px 16px;
+  background: var(--navy-900);
+  border: 1px solid rgba(159, 208, 240, 0.22);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  /* Animated in by .is-open so the bar never flashes at full opacity on the
+     frame it is unhidden. */
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .22s ease, transform .22s ease;
+}
+.swbar.is-open { opacity: 1; transform: none; }
+
+@media (min-width: 1100px) {
+  .swbar { left: auto; right: 22px; bottom: 22px; max-width: 460px; }
+}
+
+.swbar-icon { display: flex; flex: none; }
+.swbar-icon i { font-size: 1.375rem; color: var(--sky-300); }
+.swbar [data-swbar-update] i { color: var(--gold-500); }
+
+.swbar-text {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--cream-100);
+}
+
+.swbar .btn { flex: none; }
+
+.swbar-close {
+  flex: none;
+  display: flex;
+  padding: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  color: var(--sky-300);
+}
+.swbar-close:hover { color: var(--cream-100); background: rgba(159, 208, 240, 0.12); }
+.swbar-close i { font-size: 1.0625rem; }
+
+@media print { .swbar { display: none !important; } }
