@@ -734,7 +734,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
 .dphint { font-family: var(--font-heading); font-weight: 800; font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); margin: 16px 0 0; display: flex; align-items: center; gap: 7px; }
 .dphint i { color: var(--sky-700); font-size: 15px; }
 .nlrow .fig { font-family: var(--font-display); font-size: 29px; line-height: .9; color: var(--navy-900); display: flex; align-items: baseline; gap: 4px; }
-.nlrow .fig span { font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--red-600); }
+/* Multi-word units ("in spare") stack one word per line and sit on the
+   figure's baseline; min-content width leaves single-word units alone. */
+.nlrow .fig span { font-family: var(--font-heading); font-weight: 800; font-size: 12px; line-height: 1.1; letter-spacing: .08em; text-transform: uppercase; color: var(--red-600); width: min-content; align-self: last baseline; }
 .nlrow .lb { font-family: var(--font-heading); font-weight: 800; font-size: 15px; line-height: 1.25; color: var(--navy-900); }
 .nlrow .cap { font-size: 13px; line-height: 1.35; color: var(--ink-500); margin-top: 2px; }
 .nlrow .rf { font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: .06em; color: var(--ink-500); background: var(--cream-200); border-radius: var(--radius-pill); padding: 4px 10px; }
@@ -1122,13 +1124,20 @@ a.tiercol:hover { background: var(--cream-100); }
    matrix keeps horizontal scroll — .reftable-scroll.)
    ============================================================ */
 @media (max-width: 699px) {
-  /* Situation accordion header: when a flag chip shares the row, chips go
-     above and the title gets its own full-width line. Plain zone headers
-     (Discounts: badge · short name · count) stay on ONE line — there isn't
-     enough content there to warrant three rows. */
-  .zhead:has(.zflag) { flex-wrap: wrap; row-gap: 9px; padding: 12px 46px 12px 16px; position: relative; }
-  .zhead:has(.zflag) .ztitle { flex: 1 1 100%; order: 10; }
-  .zhead:has(.zflag) .zchev { position: absolute; right: 16px; top: 17px; }
+  /* Situation accordion headers stack per the mobile column rule: chip row
+     (badge, plus the flag when there is one) with the chevron on its far
+     right, then the title full-width, then the note as a sentence-case
+     caption — the uppercase kicker treatment reads as shouting once it
+     wraps at phone width. EVERY situation header stacks, not just the
+     flagged one: their titles are full sentences that wrap beside a badge,
+     and two layouts in one list is worse than either. Discount explorer
+     headers (badge · short name · count) keep their single line — that
+     content fits it. */
+  .zone.situation > .zhead { flex-wrap: wrap; row-gap: 10px; padding: 14px 46px 14px 16px; position: relative; }
+  .zone.situation > .zhead .ztitle { flex: 1 1 100%; order: 10; gap: 4px; }
+  .zone.situation > .zhead .ztitle { font-size: 16px; line-height: 1.3; }
+  .zone.situation > .zhead .znote { font-family: var(--font-body); font-weight: 400; font-size: 13px; letter-spacing: 0; text-transform: none; line-height: 1.4; }
+  .zone.situation > .zhead .zchev { position: absolute; right: 16px; top: 20px; }
 
   /* Accordion body rows: the reference is a tag UNDER the text,
      never a column beside it. */

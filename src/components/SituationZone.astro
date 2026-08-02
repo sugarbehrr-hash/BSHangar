@@ -21,7 +21,7 @@ interface Props {
 const { situation, id } = Astro.props;
 ---
 
-<details class:list={['zone', situation.urgent && 'urgent']} id={id} open={situation.urgent}>
+<details class:list={['zone', 'situation', situation.urgent && 'urgent']} id={id} open={situation.urgent}>
   <summary class="zhead">
     <span class="zbadge">{situation.badge}</span>
     <span class="ztitle">
