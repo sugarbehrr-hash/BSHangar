@@ -382,8 +382,15 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .znote:empty { display: none; }
 .zcount { flex: none; font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: var(--ink-500); background: var(--cream-200); border-radius: var(--radius-pill); padding: 3px 11px; }
 .zchev { flex: none; color: var(--ink-300); font-size: 18px; transition: transform .2s; }
-.zone[open] .zchev { transform: rotate(180deg); color: var(--navy-700); }
-.zone[open] > .zhead { background: var(--cream-100); }
+/* The open-header rule (see the figure ledger): the open zone's header
+   inverts to navy and becomes the title bar of the answer below it.
+   Closed headers stay quiet paper; hover previews in cream. */
+.zone[open] .zchev { transform: rotate(180deg); color: var(--gold-500); }
+.zone[open] > .zhead { background: var(--navy-900); }
+.zone[open] > .zhead .ztitle { color: #fff; }
+.zone[open] > .zhead .znote { color: var(--sky-300); }
+.zone[open] > .zhead .zbadge { background: var(--white); color: var(--navy-900); }
+.zone[open] > .zhead .zcount { background: rgba(255,255,255,0.14); color: var(--cream-100); }
 .zbody { padding: 2px 16px 10px; }
 .zrow { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid var(--cream-200); }
 .zn { font-size: 15.5px; color: var(--ink-900); line-height: 1.35; display: block; }
@@ -472,18 +479,25 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .step { background: var(--white); border: var(--border-card); border-radius: var(--radius-md); overflow: hidden; scroll-margin-top: 84px; }
 .step.open { border-color: var(--navy-700); box-shadow: 0 10px 26px rgba(15, 30, 61, .09); }
 .step-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; background: none; border: 0; text-align: left; cursor: pointer; font-family: var(--font-body); min-height: 60px; }
-.step-head:hover, .step.open .step-head { background: var(--cream-100); }
+.step-head:hover { background: var(--cream-100); }
+/* The open-header rule (see the figure ledger): the open step's header
+   inverts to navy — it is the title bar of the work below it. The badge
+   goes gold on the dark surface (the .card.inverse badge language);
+   a finished step's green check outranks it. */
+.step.open .step-head { background: var(--navy-900); }
 .step-badge { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--cream-300); color: var(--navy-900); display: grid; place-items: center; font-family: var(--font-display); font-size: 15px; line-height: 1; }
-.step.open .step-badge { background: var(--navy-900); color: #fff; }
+.step.open .step-badge { background: var(--gold-500); color: var(--navy-900); }
 .step.done .step-badge { background: #1E9E63; color: #fff; font-size: 15px; }
 .step-txt { flex: 1; min-width: 0; }
 .step-title { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 15px; color: var(--navy-900); line-height: 1.25; }
+.step.open .step-title { color: #fff; }
 .step-sub { display: block; font-size: 12.5px; color: var(--ink-500); margin-top: 2px; line-height: 1.4; }
+.step.open .step-sub { color: var(--sky-300); }
 .step-resume { display: none; margin-top: 3px; font-size: 13px; font-weight: 600; color: var(--sky-700); line-height: 1.4; }
 .step.done:not(.open) .step-resume { display: block; }
 .step.done:not(.open) .step-sub { display: none; }
 .step-caret { flex: none; color: var(--ink-300); font-size: 17px; transition: transform .2s; }
-.step.open .step-caret { transform: rotate(90deg); }
+.step.open .step-caret { transform: rotate(90deg); color: var(--gold-500); }
 .step-body { display: none; padding: 2px 16px 18px; }
 .step.open .step-body { display: block; }
 /* The BODY owns the rhythm between its blocks, not each block itself. The
@@ -682,17 +696,24 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
 .nlrow { width: 100%; display: grid; grid-template-columns: 92px minmax(0, 1fr) auto auto; align-items: center; gap: 14px; padding: 14px 18px; min-height: 64px;
          background: none; border: none; border-top: 1px solid var(--cream-200); font: inherit; text-align: left; cursor: pointer; transition: background .14s; }
 .nlrow:first-child { border-top: none; }
-/* Three readable tiers, not one: a mouse preview (hover) is lighter and
-   temporary; the row that's actually open (pressed) is a full step darker
-   and persists; a finger mid-tap (active) reads the same as open, since on
-   touch there's no separate hover to preview with first. */
+/* THE OPEN-HEADER RULE (site-wide): the header of the open thing inverts
+   to the dark surface — the same "you are here" language as the tab bar's
+   current tab, the answer dock and the masthead. Hover previews in light
+   cream, a mid-tap flashes a step darker, and the row that's actually
+   selected commits to navy: Anton figure in cream, unit and chevron in
+   gold, label white, caption sky. Same rule drives .zone[open] > .zhead
+   and .step.open .step-head. */
 .nlrow:hover { background: var(--cream-100); }
-.nlrow:active,
-.nlrow[aria-pressed="true"] { background: var(--cream-200); }
-.nlrow[aria-pressed="true"] .rf { background: var(--navy-900); color: #fff; }
+.nlrow:active { background: var(--cream-200); }
+.nlrow[aria-pressed="true"] { background: var(--navy-900); }
+.nlrow[aria-pressed="true"] .lb { color: #fff; }
+.nlrow[aria-pressed="true"] .cap { color: var(--sky-300); }
+.nlrow[aria-pressed="true"] .fig { color: var(--cream-100); }
+.nlrow[aria-pressed="true"] .fig span { color: var(--gold-500); }
+.nlrow[aria-pressed="true"] .rf { background: rgba(255,255,255,0.14); color: var(--cream-100); }
 .nlgo { color: var(--ink-300); font-size: 16px; transition: transform .18s, color .18s; }
 .nlrow:hover .nlgo { transform: translateX(3px); color: var(--navy-700); }
-.nlrow[aria-pressed="true"] .nlgo { color: var(--navy-700); transform: translateX(3px); }
+.nlrow[aria-pressed="true"] .nlgo { color: var(--gold-500); transform: translateX(3px); }
 
 /* The panel the rows load into. One .dp visible at a time, and the
    card holds the ledger's full height so switching panes doesn't
@@ -747,6 +768,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1
    ============================================================ */
 .zone.urgent { border-color: var(--red-600); box-shadow: var(--shadow-card); }
 .zone.urgent .zbadge { background: var(--red-600); }
+/* The urgent badge stays red on the open navy header — urgency outranks
+   the open-state's white badge. */
+.zone.urgent[open] > .zhead .zbadge { background: var(--red-600); color: #fff; }
 .zflag { flex: none; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--red-600); border-radius: var(--radius-pill); padding: 5px 11px; }
 .zs.ref { color: var(--ink-500); font-size: 12.5px; letter-spacing: .06em; }
 .zdo { display: flex; gap: 11px; align-items: flex-start; margin: 12px 0 4px; padding: 13px 15px; background: var(--cream-100); border-radius: var(--radius-sm); font-size: 14.5px; line-height: 1.5; color: var(--ink-700); }
@@ -1059,19 +1083,11 @@ a.tiercol:hover { background: var(--cream-100); }
    ============================================================ */
 @media (max-width: 999px) {
   .figrow .detailpanel { display: none; }
-  /* The tapped row IS the header of the answer it opens, so it commits to
-     being one: it inverts to the site's dark surface — the same "you are
-     here" language as the tab bar's current tab, the answer dock and the
-     masthead. Navy title bar + paper body below = one unmistakable card
-     (exactly the answer dock's own anatomy). Closed rows stay quiet paper;
-     the open one is the loudest thing in the list, as it should be. */
-  .nlrow[aria-pressed="true"] { background: var(--navy-900); }
-  .nlrow[aria-pressed="true"] .lb { color: #fff; }
-  .nlrow[aria-pressed="true"] .cap { color: var(--sky-300); }
-  .nlrow[aria-pressed="true"] .fig { color: var(--cream-100); }
-  .nlrow[aria-pressed="true"] .fig span { color: var(--gold-500); }
-  .nlrow[aria-pressed="true"] .rf { background: rgba(255,255,255,0.14); color: var(--cream-100); }
-  .nlrow[aria-pressed="true"] .nlgo { color: var(--gold-500); transform: rotate(90deg); }
+  /* The navy pressed state is site-wide (see the open-header rule at the
+     ledger base styles); here the row is additionally the literal title bar
+     of the pane below it, so the chevron turns downward instead of pointing
+     at a side panel. */
+  .nlrow[aria-pressed="true"] .nlgo { transform: rotate(90deg); }
   /* The answer body: one paper surface under the navy header. The pane's
      own card-head just repeats the row's title — with the row AS the
      header, the duplicate goes, and the body starts at the answer. */
