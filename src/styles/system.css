@@ -1097,12 +1097,16 @@ a.tiercol:hover { background: var(--cream-100); }
      of the pane below it, so the chevron turns downward instead of pointing
      at a side panel. */
   .nlrow[aria-pressed="true"] .nlgo { transform: rotate(90deg); }
-  /* The answer body: one paper surface under the navy header. The pane's
-     own card-head just repeats the row's title — with the row AS the
-     header, the duplicate goes, and the body starts at the answer. The
-     pane is a grid item of the subgridded ledger here, so it must span
-     every column track. */
-  .numledger .dp { display: block; grid-column: 1 / -1; padding: 4px 18px 16px; background: var(--cream-100); }
+  /* The answer body keeps the card's white — the navy row above it is
+     already the header, so tinting the body too was a second signal for
+     the same thing, and it tinted the body the exact cream of the .zdo
+     callout inside it, which erased the callout. White body, cream
+     callout: one tint step, and the same two surfaces the desktop
+     detail panel uses. The pane's own card-head just repeats the row's
+     title — with the row AS the header, the duplicate goes, and the body
+     starts at the answer. The pane is a grid item of the subgridded
+     ledger here, so it must span every column track. */
+  .numledger .dp { display: block; grid-column: 1 / -1; padding: 4px 18px 16px; }
   .numledger .dp .card-head { display: none; }
   .numledger .dp .dphint { display: none; }
 }
