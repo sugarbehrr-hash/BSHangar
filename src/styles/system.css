@@ -1059,17 +1059,25 @@ a.tiercol:hover { background: var(--cream-100); }
    ============================================================ */
 @media (max-width: 999px) {
   .figrow .detailpanel { display: none; }
-  /* The open row above (now --cream-200) and this pane need to read as two
-     different surfaces, not one blob — the pane sits a shade lighter. The
-     pane itself stays ONE surface top to bottom: the badge + bold title
-     already separate "what this is" from "the explanation" below it without
-     needing a second background colour in the middle — a header-only tint
-     would band the pane into three unrelated-looking strips instead of one
-     answer, which reads as broken, not as a header. A hairline is enough. */
-  .numledger .dp { display: block; padding: 4px 18px 18px; background: var(--cream-100); border-top: 1px solid var(--cream-300); }
-  .numledger .dp .card-head { padding: 14px 0 13px; border-bottom: 1px solid var(--cream-200); }
+  /* The tapped row IS the header of the answer it opens, so it commits to
+     being one: it inverts to the site's dark surface — the same "you are
+     here" language as the tab bar's current tab, the answer dock and the
+     masthead. Navy title bar + paper body below = one unmistakable card
+     (exactly the answer dock's own anatomy). Closed rows stay quiet paper;
+     the open one is the loudest thing in the list, as it should be. */
+  .nlrow[aria-pressed="true"] { background: var(--navy-900); }
+  .nlrow[aria-pressed="true"] .lb { color: #fff; }
+  .nlrow[aria-pressed="true"] .cap { color: var(--sky-300); }
+  .nlrow[aria-pressed="true"] .fig { color: var(--cream-100); }
+  .nlrow[aria-pressed="true"] .fig span { color: var(--gold-500); }
+  .nlrow[aria-pressed="true"] .rf { background: rgba(255,255,255,0.14); color: var(--cream-100); }
+  .nlrow[aria-pressed="true"] .nlgo { color: var(--gold-500); transform: rotate(90deg); }
+  /* The answer body: one paper surface under the navy header. The pane's
+     own card-head just repeats the row's title — with the row AS the
+     header, the duplicate goes, and the body starts at the answer. */
+  .numledger .dp { display: block; padding: 4px 18px 16px; background: var(--cream-100); }
+  .numledger .dp .card-head { display: none; }
   .numledger .dp .dphint { display: none; }
-  .nlrow[aria-pressed="true"] .nlgo { transform: rotate(90deg); }
 }
 @media (max-width: 699px) {
   .nlrow { grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; padding: 12px 14px; min-height: 56px; }
