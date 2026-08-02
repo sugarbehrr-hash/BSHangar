@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/gen-icons.mjs && astro build && node scripts/gen-og.mjs && pagefind --site dist && node scripts/check-links.mjs && node scripts/check-styles.mjs",
+    "build": "node scripts/gen-icons.mjs && astro build && node scripts/gen-og.mjs && pagefind --site dist && node scripts/check-links.mjs && node scripts/check-styles.mjs && node scripts/gen-sw.mjs",
     "preview": "astro preview",
     "check": "astro check"
   },

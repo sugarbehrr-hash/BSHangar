@@ -1,0 +1,28 @@
+---
+/**
+ * Registers the offline service worker.
+ *
+ * Lives in every shell — BaseLayout, CurtainShell and PrintLayout — because any
+ * of them can be the first page someone opens, and the site is only downloaded
+ * once a worker is installed. One component so there is one copy of the logic
+ * to change.
+ *
+ * The worker is built by scripts/gen-sw.mjs and only exists in dist/, so
+ * registration is gated on PROD: under `astro dev` there is no /sw.js, and
+ * registering would log a failure on every page load.
+ */
+---
+
+<script>
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    // After load, not during: precaching the whole site is a few MB of
+    // requests, and they should not compete with the page being read right now.
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch((err) => {
+        // Non-fatal — the site works online without it. Worth surfacing,
+        // because silently having no offline copy is the failure that matters.
+        console.error('Offline service worker failed to register:', err);
+      });
+    });
+  }
+</script>

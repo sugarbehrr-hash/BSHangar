@@ -1,5 +1,6 @@
 ---
 import { SITE, DISCLAIMER } from '../data/site';
+import ServiceWorker from '../components/ServiceWorker.astro';
 import '../styles/global.css';
 import '../styles/print.css';
 
@@ -30,6 +31,7 @@ const { title, description } = Astro.props;
     <title>{title} — {SITE.name}</title>
     <meta name="robots" content="noindex, follow" />
     <meta name="description" content={description ?? title} />
+    <ServiceWorker />
   </head>
 
   <body>
