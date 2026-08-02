@@ -53,13 +53,19 @@ const destinations = NAV.filter((item) => item.href !== '/');
 
       <section class="band">
         <div class="wrap">
-          <div class="cols3">
+          <div class="grid three">
             {
               destinations.map((item) => (
-                <a class="catcard" href={item.href} style="--accent: var(--navy-700);">
-                  <span class="cb"><Icon name="ph-arrow-right" /></span>
-                  <h3>{item.label}</h3>
-                  <span class="go">Go <Icon name="ph-arrow-right" /></span>
+                <a class="card" href={item.href}>
+                  <div class="card-head">
+                    <span class="card-badge"><Icon name={item.icon} /></span>
+                    <div class="card-titles">
+                      <h3 class="card-title">{item.label}</h3>
+                    </div>
+                  </div>
+                  <span class="card-go">
+                    Go <Icon name="ph-arrow-right" />
+                  </span>
                 </a>
               ))
             }
