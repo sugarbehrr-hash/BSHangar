@@ -55,6 +55,16 @@ img, svg, video { max-width: 100%; height: auto; }
 .topbar { position: sticky; top: 0; z-index: 60; background: var(--navy-900); box-shadow: 0 2px 14px rgba(15,30,61,0.28); }
 .topbar-inner { max-width: 1140px; margin: 0 auto; display: flex; align-items: center; gap: 14px; padding: 10px 18px; }
 @media (min-width: 700px) { .topbar-inner { padding: 12px 28px; gap: 20px; } }
+/* Below 1100px the app shell is a bar at each end of the screen, so they are
+   the same object at the same height — 76px, the tab bar's constant. Its
+   controls are sized to match: a 46px round button reads as a sibling of a
+   76px tab, where the old 38px chip read as a leftover from the desktop. */
+@media (max-width: 1099px) {
+  .topbar-inner { min-height: 76px; }
+  /* the tab bar's keyline, mirrored — 76px of bar plus a hairline at each
+     end of the screen, so the two are the same object to the pixel */
+  .topbar { border-bottom: 1px solid rgba(159,208,240,0.22); }
+}
 
 .brand { display: flex; align-items: center; flex: none; }
 .brand .logo { display: block; height: 38px; width: auto; }
@@ -80,7 +90,7 @@ img, svg, video { max-width: 100%; height: auto; }
 
 /* Opens the share sheet. Phone/tablet only — the sheet it controls is, and
    on desktop the footer already carries the same links. */
-.moretoggle { display: none; width: 40px; height: 40px; flex: none; border: none; border-radius: 50%; background: rgba(255,255,255,0.13); color: var(--sky-300); font-size: 19px; place-items: center; cursor: pointer; transition: background .18s, color .18s, transform .12s; }
+.moretoggle { display: none; width: 46px; height: 46px; flex: none; border: none; border-radius: 50%; background: rgba(255,255,255,0.13); color: var(--sky-300); font-size: 23px; place-items: center; cursor: pointer; transition: background .18s, color .18s, transform .12s; }
 @media (max-width: 1099px) { .moretoggle { display: grid; } }
 .moretoggle:hover { background: rgba(255,255,255,0.22); color: #fff; }
 .moretoggle:active { transform: scale(.94); }
@@ -477,11 +487,11 @@ a.card:hover .card-go i { transform: translateX(4px); }
    collapsed stack still says what you told it. */
 .stepstack.accordion { gap: 8px; }
 /* scroll-margin-top: advancing a step scrolls it to the top, and .topbar is
-   sticky over that spot — 64px on a phone, 70px wide — so without it the
+   sticky over that spot — 76px on a phone, 70px wide — so without it the
    step's own header lands underneath and you arrive looking at a headless
    form. Same job as the [id] rule above; these are scrolled to by script
    rather than by anchor, so they miss it. */
-.step { background: var(--white); border: var(--border-card); border-radius: var(--radius-md); overflow: hidden; scroll-margin-top: 84px; }
+.step { background: var(--white); border: var(--border-card); border-radius: var(--radius-md); overflow: hidden; scroll-margin-top: 96px; }
 .step.open { border-color: var(--navy-700); box-shadow: 0 10px 26px rgba(15, 30, 61, .09); }
 .step-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; background: none; border: 0; text-align: left; cursor: pointer; font-family: var(--font-body); min-height: 60px; }
 .step-head:hover { background: var(--cream-100); }
@@ -1102,10 +1112,11 @@ a.tiercol:hover { background: var(--cream-100); }
    mobile density is moot — it's hidden below 1100px, §18.)
    ============================================================ */
 @media (max-width: 699px) {
-  /* Header: one slim bar. The Facebook pill collapses to an icon-size
-     chip — the full link lives in the More sheet. */
+  /* Header: the wordmark, the text-size picker and the ⋯ button, at the
+     same 76px as the tab bar. The Facebook chip that used to sit here is a
+     Quick link in the sheet now. */
   .topbar-inner { padding: 7px 14px; gap: 10px; }
-  .brand .logo { height: 30px; }
+  .brand .logo { height: 40px; }
 
   /* Hero: headline scale, not billboard scale. */
   .mh-body { padding: 16px 0 20px; }

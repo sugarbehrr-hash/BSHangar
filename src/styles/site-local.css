@@ -56,16 +56,16 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
    GEOMETRY. Everything is px, not rem: this control sets the root font-size,
    so a rem-sized picker would resize itself as you used it. --ts-a is the
    round button, and the pill is that plus its own 4px of padding — which puts
-   the collapsed control at exactly the height of the Facebook chip beside it
-   at both breakpoints (38px on a phone, 44px from 700px up).
+   the collapsed control at 46px, the size of the ⋯ button beside it, in a
+   header that is now the tab bar's 76px. One value at every width below
+   1100px: the two buttons are a pair and should not drift apart at 700.
 
    The pill is absolutely positioned inside a fixed-size box so that opening it
    grows it DOWNWARD over the page instead of stretching the site bar. The
    trigger hides while open, so the open control keeps the same width and the
    same button size — it just becomes the column of three. */
-.textsize { display: none; --ts-a: 30px; position: relative; flex: none; width: calc(var(--ts-a) + 8px); height: calc(var(--ts-a) + 8px); }
+.textsize { display: none; --ts-a: 38px; position: relative; flex: none; width: calc(var(--ts-a) + 8px); height: calc(var(--ts-a) + 8px); }
 @media (max-width: 1099px) { .textsize { display: block; } }
-@media (min-width: 700px) { .textsize { --ts-a: 36px; } }
 
 /* Above .searchpanel (z-index 70), so an open results list can never cover
    the menu the reader just opened. */
@@ -80,7 +80,7 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
           border-radius: 50%; background: none; color: var(--sky-300); font-family: var(--font-heading); cursor: pointer; line-height: 1; }
 .ts-toggle span,
 .ts-btn span { font-weight: 800; }
-.ts-toggle span { font-size: 15px; }
+.ts-toggle span { font-size: 18px; }
 .ts-toggle:hover,
 .ts-btn:hover:not(.is-active) { background: rgba(255,255,255,0.2); color: #fff; }
 
