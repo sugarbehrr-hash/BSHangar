@@ -22,7 +22,7 @@
 body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--navy-900); color: var(--cream-100); }
 .curtain-main { max-width: 620px; padding: 48px 24px; text-align: center; }
 .curtain-main .brand { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 34px; }
-.curtain-main h1 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(44px, 9vw, 64px); line-height: .92; margin: 0 0 18px; color: var(--cream-100); }
+.curtain-main h1 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2.75rem, 9vw, 4rem); line-height: .92; margin: 0 0 18px; color: var(--cream-100); }
 .curtain-main h1 .r { color: var(--red-500); }
 .curtain-main .curtain-copy { font-size: var(--fs-lead); line-height: var(--lh-normal); color: var(--cream-300); margin: 0 0 30px; }
 .curtain-main .cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
@@ -44,6 +44,61 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 .sres .t { font-family: var(--font-heading); font-weight: 800; font-size: 14px; color: var(--navy-900); line-height: 1.1; }
 .sres .d { font-size: 12px; color: var(--ink-500); line-height: 1.2; margin-top: 2px; }
 .snone { padding: 20px 16px; font-size: 13.5px; color: var(--ink-500); }
+
+/* ---------- READER TEXT SIZE ----------
+   The "A" beside the Facebook chip (src/components/TextSize.astro). Site-only
+   chrome, like the search panel above — the prototypes have no such control.
+
+   Shown below 1100px only: that is where the site is already in its app
+   layout (the tab bar has replaced the desktop nav), and it is where the
+   reader has no easy browser zoom. Above it, the desktop has its own.
+
+   GEOMETRY. Everything is px, not rem: this control sets the root font-size,
+   so a rem-sized picker would resize itself as you used it. --ts-a is the
+   round button, and the pill is that plus its own 4px of padding — which puts
+   the collapsed control at exactly the height of the Facebook chip beside it
+   at both breakpoints (38px on a phone, 44px from 700px up).
+
+   The pill is absolutely positioned inside a fixed-size box so that opening it
+   grows it DOWNWARD over the page instead of stretching the site bar. The
+   trigger hides while open, so the open control keeps the same width and the
+   same button size — it just becomes the column of three. */
+.textsize { display: none; --ts-a: 30px; position: relative; flex: none; width: calc(var(--ts-a) + 8px); height: calc(var(--ts-a) + 8px); }
+@media (max-width: 1099px) { .textsize { display: block; } }
+@media (min-width: 700px) { .textsize { --ts-a: 36px; } }
+
+/* Above .searchpanel (z-index 70), so an open results list can never cover
+   the menu the reader just opened. */
+.ts-pill { position: absolute; top: 0; right: 0; z-index: 71; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px;
+           border-radius: var(--radius-pill); background: rgba(255,255,255,0.12); }
+.textsize.is-open .ts-pill { background: var(--navy-800); box-shadow: 0 10px 24px rgba(15,30,61,0.45); }
+
+/* Trigger and presets share one geometry so the collapsed button and the open
+   column are the same object at the same size. */
+.ts-toggle,
+.ts-btn { display: flex; align-items: center; justify-content: center; width: var(--ts-a); height: var(--ts-a); padding: 0; border: none;
+          border-radius: 50%; background: none; color: var(--sky-300); font-family: var(--font-heading); cursor: pointer; line-height: 1; }
+.ts-toggle span,
+.ts-btn span { font-weight: 800; }
+.ts-toggle span { font-size: 15px; }
+.ts-toggle:hover,
+.ts-btn:hover:not(.is-active) { background: rgba(255,255,255,0.2); color: #fff; }
+
+/* The active preset takes a solid fill — the segmented-control language of
+   system.css §22, in the gold that carries a filled state on a navy surface
+   (.card.inverse's badge, the Facebook chip). Not the nav's gold underline:
+   this picks a setting, it does not say which page you are on. */
+.ts-btn.is-active { background: var(--gold-500); color: var(--navy-900); }
+
+/* The three A's are the control's own label — each drawn at its preset's
+   relative weight, so the choice reads without any text. */
+.ts-btn[data-size="normal"] span { font-size: 11px; }
+.ts-btn[data-size="large"] span { font-size: 13.5px; }
+.ts-btn[data-size="xlarge"] span { font-size: 16.5px; }
+
+.ts-menu { display: none; flex-direction: column; align-items: center; gap: 4px; }
+.textsize.is-open .ts-toggle { display: none; }
+.textsize.is-open .ts-menu { display: flex; }
 
 /* Curtain lockup — larger than the topbar's, since it is the only thing
    on the page above the headline. */
@@ -87,13 +142,13 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
    figures have to separate from the prose at a glance. */
 .rec-head,
 .rec-row { display: grid; grid-template-columns: minmax(0, 1fr) 92px 92px 92px; gap: 2px 14px; align-items: baseline; }
-.rec-head { padding-bottom: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.rec-head { padding-bottom: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
 .rec-head .rec-figs span { text-align: right; }
 .rec-row { padding: 11px 0; border-top: 1px solid var(--cream-200); }
 .rec-row:first-child { border-top: none; }
-.rec-row .rec-label { font-family: var(--font-heading); font-weight: 700; font-size: 14px; line-height: 1.35; color: var(--ink-900); }
+.rec-row .rec-label { font-family: var(--font-heading); font-weight: 700; font-size: 0.875rem; line-height: 1.35; color: var(--ink-900); }
 .rec-figs { display: contents; }
-.rec-row .rec-figs span { text-align: right; font-family: var(--font-display); font-size: 19px; line-height: 1; font-variant-numeric: tabular-nums; }
+.rec-row .rec-figs span { text-align: right; font-family: var(--font-display); font-size: 1.1875rem; line-height: 1; font-variant-numeric: tabular-nums; }
 .rec-est { color: var(--ink-500); }
 .rec-act { color: var(--navy-900); }
 .rec-diff.close { color: #1B7F4C; }
@@ -110,12 +165,12 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
   .rec-row { grid-template-columns: minmax(0, 1fr); padding: 0; border-top: none; margin-top: 16px; }
   .rec-row:first-child { margin-top: 0; }
   .rec-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
-  .rec-row .rec-figs span { display: block; text-align: right; font-size: 18px;
+  .rec-row .rec-figs span { display: block; text-align: right; font-size: 1.125rem;
     background: var(--cream-100); border-radius: var(--radius-sm); padding: 8px 9px 9px; }
   .rec-est::before, .rec-act::before, .rec-diff::before { text-align: left; }
   .rec-est::before,
   .rec-act::before,
-  .rec-diff::before { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 9.5px;
+  .rec-diff::before { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.59375rem;
     letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 5px; }
   .rec-est::before { content: 'Estimated'; }
   .rec-act::before { content: 'Actual'; }
@@ -136,25 +191,25 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
 .audit-table { --audit-cols: minmax(0, 1fr) 96px 96px 58px; }
 .audit-head,
 .audit-row { display: grid; grid-template-columns: var(--audit-cols); gap: 2px 14px; align-items: baseline; }
-.audit-head { padding-bottom: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.audit-head { padding-bottom: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 0.6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
 .audit-row { padding: 10px 0; border-top: 1px solid var(--cream-200); }
-.audit-what { font-family: var(--font-heading); font-weight: 700; font-size: 14.5px; color: var(--ink-900); }
+.audit-what { font-family: var(--font-heading); font-weight: 700; font-size: 0.90625rem; color: var(--ink-900); }
 .audit-exp,
-.audit-act { text-align: right; font-variant-numeric: tabular-nums; font-size: 14.5px; }
+.audit-act { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.90625rem; }
 .audit-head .audit-exp,
-.audit-head .audit-act { font-size: 11px; }
+.audit-head .audit-act { font-size: 0.6875rem; }
 /* Money is set in Anton, like every other figure that matters on this site
    (.answer-net, .rec-est/.rec-act on the estimator's own reconcile card) —
    the header keeps Archivo so only the values read as data, not the labels. */
 .audit-row .audit-exp,
-.audit-row .audit-act { font-family: var(--font-display); font-size: 17px; line-height: 1; }
+.audit-row .audit-act { font-family: var(--font-display); font-size: 1.0625rem; line-height: 1; }
 .audit-exp { color: var(--ink-500); }
 .audit-act { color: var(--navy-900); font-weight: 600; }
-.audit-flag { text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
+.audit-flag { text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
 .audit-flag.close { color: #1B7F4C; }
 .audit-flag.off { color: var(--red-600); }
 /* The explanation sits under its own row, spanning every column. */
-.audit-detail { grid-column: 1 / -1; font-size: 12px; line-height: 1.45; color: var(--ink-500); margin-top: 2px; max-width: 52ch; }
+.audit-detail { grid-column: 1 / -1; font-size: 0.75rem; line-height: 1.45; color: var(--ink-500); margin-top: 2px; max-width: 52ch; }
 /* `display: contents` lets the two figures be grid items on wide screens and
    join the same tile row as .audit-flag on a phone, from a single bit of markup. */
 .audit-figs { display: contents; }
@@ -174,12 +229,12 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
   .audit-flag { flex: 1 1 0; text-align: right; background: var(--cream-100); border-radius: var(--radius-sm); padding: 8px 9px 9px; margin-top: 4px; }
   .audit-exp::before,
   .audit-act::before,
-  .audit-flag::before { display: block; text-align: left; font-family: var(--font-heading); font-weight: 800; font-size: 9.5px;
+  .audit-flag::before { display: block; text-align: left; font-family: var(--font-heading); font-weight: 800; font-size: 0.59375rem;
     letter-spacing: .08em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 5px; }
   .audit-exp::before { content: 'Expected'; }
   .audit-act::before { content: 'On slip'; }
   .audit-flag::before { content: 'Result'; }
-  .audit-flag { font-size: 14px; }
+  .audit-flag { font-size: 0.875rem; }
   .audit-flag.close { background: var(--success-100); }
   .audit-flag.off { background: var(--danger-100); }
   .audit-flag.close::before, .audit-flag.off::before { color: inherit; opacity: .75; }

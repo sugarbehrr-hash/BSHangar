@@ -1,0 +1,161 @@
+---
+/**
+ * Reader text-size control — the "A" in the site bar, beside the Facebook chip.
+ *
+ * Ported from the Monkey Vault waiver's picker, which solves the same problem:
+ * a long document read on a phone, often in bad light, by people whose eyesight
+ * varies. Same three presets, same collapse-to-one-button behaviour, same
+ * persistence — so someone who has met one of them already knows this one.
+ *
+ * HOW IT SCALES
+ * Picking a preset sets the ROOT font-size, and the site's type is in rem
+ * (src/styles/tokens/typography.css and system.css), so one declaration moves
+ * every heading, paragraph and figure at once. Two things deliberately stay in
+ * px and therefore do NOT scale:
+ *
+ *   - The app chrome (this control, the site bar, the tab bar, the More sheet).
+ *     The frame should hold still while the content grows; a picker that
+ *     resizes itself as you use it feels broken, and the tab bar's 66px height
+ *     is a constant the More sheet and the page's bottom padding both rely on.
+ *   - The printable documents (styles/print.css, the .fm-* sheets), which are a
+ *     fixed 816x1056 Letter box. Scaling type there pushes it off the page
+ *     instead of making it readable.
+ *
+ * WHY THE SCRIPT IS INLINE AND ES5
+ * It has to run before first paint, or the page renders at 100% and then jumps
+ * to the reader's saved size. Being the first script in <body> — the site bar
+ * is the first thing in .site — it executes while the parser is still above the
+ * fold. It is one script rather than a head applier plus a body wirer so the
+ * preset table has exactly one definition.
+ */
+---
+
+<script is:inline>
+  (function () {
+    var KEY = 'bsh.textSize';
+    var SIZES = { normal: '100%', large: '115%', xlarge: '130%' };
+
+    function saved() {
+      try {
+        var v = localStorage.getItem(KEY);
+        return SIZES[v] ? v : 'normal';
+      } catch (e) {
+        return 'normal';
+      }
+    }
+
+    function apply(k) {
+      document.documentElement.style.fontSize = SIZES[k] || SIZES.normal;
+    }
+
+    // Resolve and apply before the parser reaches the content below.
+    var current = saved();
+    apply(current);
+
+    function wire() {
+      var ctrl = document.getElementById('textsize');
+      if (!ctrl) return;
+
+      var toggle = document.getElementById('ts-toggle');
+      var btns = ctrl.getElementsByClassName('ts-btn');
+
+      function refresh(active) {
+        for (var i = 0; i < btns.length; i++) {
+          var on = btns[i].getAttribute('data-size') === active;
+          btns[i].classList.toggle('is-active', on);
+          btns[i].setAttribute('aria-checked', on ? 'true' : 'false');
+        }
+      }
+
+      function isOpen() {
+        return ctrl.classList.contains('is-open');
+      }
+
+      function open() {
+        ctrl.classList.add('is-open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'true');
+      }
+
+      function close() {
+        ctrl.classList.remove('is-open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      refresh(current);
+
+      if (toggle) {
+        toggle.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (isOpen()) close();
+          else open();
+        });
+      }
+
+      for (var i = 0; i < btns.length; i++) {
+        (function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var k = btn.getAttribute('data-size');
+            if (!SIZES[k]) return;
+            apply(k);
+            current = k;
+            try {
+              localStorage.setItem(KEY, k);
+            } catch (err) {}
+            refresh(k);
+            close();
+          });
+        })(btns[i]);
+      }
+
+      // Tapping anywhere else closes the menu.
+      document.addEventListener('click', function (e) {
+        if (isOpen() && !ctrl.contains(e.target)) close();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) close();
+      });
+    }
+
+    if (document.readyState !== 'loading') wire();
+    else document.addEventListener('DOMContentLoaded', wire);
+  })();
+</script>
+
+<div class="textsize" id="textsize">
+  <div class="ts-pill">
+    <button
+      type="button"
+      class="ts-toggle"
+      id="ts-toggle"
+      aria-haspopup="true"
+      aria-expanded="false"
+      aria-label="Text size"
+      title="Text size"><span>A</span></button>
+
+    <div class="ts-menu" role="menu" aria-label="Choose text size">
+      <button
+        type="button"
+        class="ts-btn"
+        data-size="normal"
+        role="menuitemradio"
+        aria-checked="true"
+        aria-label="Normal text size"><span>A</span></button>
+      <button
+        type="button"
+        class="ts-btn"
+        data-size="large"
+        role="menuitemradio"
+        aria-checked="false"
+        aria-label="Large text size"><span>A</span></button>
+      <button
+        type="button"
+        class="ts-btn"
+        data-size="xlarge"
+        role="menuitemradio"
+        aria-checked="false"
+        aria-label="Extra large text size"><span>A</span></button>
+    </div>
+  </div>
+</div>

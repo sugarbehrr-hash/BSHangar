@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import TextSize from './TextSize.astro';
 import { SITE, NAV, FACEBOOK_GROUP } from '../data/site';
 import { isCurrentSection } from '../lib/nav';
 import brandLogo from '../assets/brand-logo.svg';
@@ -72,6 +73,10 @@ const isCurrent = (href: string) => isCurrentSection(path, href);
           <div data-search-list></div>
         </div>
       </div>
+
+      {/* Phone/tablet only — see .textsize in site-local.css. It sits before
+          the Facebook chip so that chip stays the last, gold thing in the bar. */}
+      <TextSize />
 
       <a class="fbbtn" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
         <Icon name="ph-facebook-logo" />

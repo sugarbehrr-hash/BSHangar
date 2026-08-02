@@ -20,18 +20,21 @@
   --fw-bold:    700;  /* @kind font */
   --fw-extra:   800;  /* @kind font */
 
-  /* ---- Type scale (flyer / document oriented) ---- */
-  --fs-display-xl: 72px;   /* poster hero */
-  --fs-display-lg: 54px;   /* flyer title */
-  --fs-display-md: 40px;   /* section poster */
-  --fs-h1: 34px;
-  --fs-h2: 26px;
-  --fs-h3: 21px;
-  --fs-lead: 19px;         /* intro / lead paragraph */
-  --fs-body: 17px;         /* default body — never smaller in print */
-  --fs-body-sm: 15px;
-  --fs-caption: 13px;
-  --fs-overline: 13px;
+  /* ---- Type scale (flyer / document oriented) ----
+     In rem, so the reader's text-size choice (the "A" in the header) scales
+     the whole scale at once. 1rem = 16px at the default setting, so these are
+     the same sizes they have always been until someone changes it. */
+  --fs-display-xl: 4.5rem;    /* poster hero — 72px */
+  --fs-display-lg: 3.375rem;  /* flyer title — 54px */
+  --fs-display-md: 2.5rem;    /* section poster — 40px */
+  --fs-h1: 2.125rem;          /* 34px */
+  --fs-h2: 1.625rem;          /* 26px */
+  --fs-h3: 1.3125rem;         /* 21px */
+  --fs-lead: 1.1875rem;       /* intro / lead paragraph — 19px */
+  --fs-body: 1.0625rem;       /* default body — never smaller in print — 17px */
+  --fs-body-sm: 0.9375rem;    /* 15px */
+  --fs-caption: 0.8125rem;    /* 13px */
+  --fs-overline: 0.8125rem;   /* 13px */
 
   /* ---- Line heights ---- */
   --lh-tight: 1.02;   /* @kind font */
