@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+import { slugify } from '../lib/slug';
+import type { GuideSection } from '../data/guides/types';
+
+/**
+ * The "On this page" jump nav for one guide — sticky collapsed bar on mobile,
+ * static right rail at >=1100px (system.css §5, .secnav). Generated from
+ * guide.sections directly, never from guide.contents: contents is the print
+ * cover's own summary and its labels can drift from the section titles
+ * GuideSection actually stamps ids from (e.g. the contract guide's cover says
+ * "Quality of Life" for a section titled "Quality of Life Enhancements").
+ * Building from sections means a link's href and its target's id always come
+ * from the same string through the same slugify call.
+ */
+interface Props {
+  sections: GuideSection[];
+}
+
+const { sections } = Astro.props;
+---
+
+<nav class="secnav" aria-label="Guide sections">
+  <button class="secnav-toggle" type="button" aria-expanded="false" aria-controls="secnav-list">
+    <Icon name="ph-list-bullets" />
+    <span class="lbl">{sections[0].title}</span>
+    <Icon name="ph-caret-down" class="chev" />
+  </button>
+  <div class="secnav-head">On this page</div>
+  <ul class="secnav-list" id="secnav-list">
+    {
+      sections.map((section, i) => (
+        <li>
+          <a href={`#${slugify(section.title)}`} aria-current={i === 0 ? 'page' : undefined}>
+            <span class="lbl">{section.title}</span>
+            {section.ref && <span class="secnav-ref">{section.ref}</span>}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

@@ -35,6 +35,18 @@ export interface Resource {
   links: ResourceLink[];
 }
 
+/**
+ * Canonical web routes for the three long-form guides — the same role
+ * VOTE_GUIDE plays for the vendored artifacts. Referenced by the resource
+ * cards below and by inline guide links in contract-hub.ts / commuting-hub.ts,
+ * so a route never has to be typed out a second time.
+ */
+export const GUIDE_ROUTES = {
+  commuting: '/commuting/guide/',
+  reserve: '/contract/reserve-field-guide/',
+  contract: '/contract/field-manual/',
+} as const;
+
 /** Shown in "The full references" on /contract/. */
 export const contractResources: Resource[] = [
   {
@@ -48,6 +60,7 @@ export const contractResources: Resource[] = [
     accent: 'var(--navy-700)',
     kind: 'generated',
     links: [
+      { label: 'Read', href: GUIDE_ROUTES.contract, variant: 'primary', icon: 'ph-book-open' },
       { label: 'Download PDF', href: '/print/contract-field-manual/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },
@@ -62,6 +75,7 @@ export const contractResources: Resource[] = [
     accent: 'var(--sky-700)',
     kind: 'generated',
     links: [
+      { label: 'Read', href: GUIDE_ROUTES.reserve, variant: 'primary', icon: 'ph-book-open' },
       { label: 'Download PDF', href: '/print/reserve-field-guide/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },
@@ -96,6 +110,7 @@ export const commutingResources: Resource[] = [
     accent: 'var(--navy-700)',
     kind: 'generated',
     links: [
+      { label: 'Read', href: GUIDE_ROUTES.commuting, variant: 'primary', icon: 'ph-book-open' },
       { label: 'Download PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },
@@ -112,6 +127,12 @@ export const commutingResources: Resource[] = [
     // TODO: this has no artifact of its own yet — the listing tables live inside
     // the commuting guide, so it points there until one is authored.
     links: [
+      {
+        label: 'Read',
+        href: `${GUIDE_ROUTES.commuting}#free-flying-and-listing`,
+        variant: 'primary',
+        icon: 'ph-book-open',
+      },
       { label: 'Download PDF', href: '/print/commuting-guide/', variant: 'gold', icon: 'ph-file-pdf' },
     ],
   },

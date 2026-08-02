@@ -20,6 +20,7 @@
 
 import type { LedgerFigure, LedgerIntro } from './figure-ledger';
 import type { ContractSituation } from './contract-hub';
+import { GUIDE_ROUTES } from './resources';
 
 /** Same shapes as the contract hub — the patterns are shared, the content is not. */
 export type CommutingFigure = LedgerFigure;
@@ -237,7 +238,7 @@ export const commutingSituations: CommutingSituation[] = [
         "ref": "Program"
       }
     ],
-    "action": "**Pick the option and repeat it back** — “so that's my RAP moving to 1400 today.” Reserve rules in full: [Your Contract](/contract/)."
+    "action": `**Pick the option and repeat it back** — “so that's my RAP moving to 1400 today.” Reserve rules in full: [Reserve Field Guide](${GUIDE_ROUTES.reserve}).`
   },
   {
     "badge": "DRESS",

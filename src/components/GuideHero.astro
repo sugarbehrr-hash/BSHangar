@@ -1,0 +1,36 @@
+---
+import Icon from './Icon.astro';
+import type { Guide } from '../data/guides/types';
+
+/**
+ * Masthead for one guide page: the single-column .mh-body pattern used by
+ * /tools/, /crew-essentials/ and /crew-discounts/ (no .mh-grid — that's for
+ * pages with a second masthead column, which guides don't have). Subtitle and
+ * intro both render as .mh-sub, the same way HomePage stacks .mh-sub above
+ * .mh-actions — a short tagline, then the fuller line, then the one action
+ * this page has.
+ */
+interface Props {
+  guide: Guide;
+  /** Print route for the "Download PDF" CTA, e.g. "/print/commuting-guide/". */
+  pdfHref: string;
+}
+
+const { guide, pdfHref } = Astro.props;
+---
+
+<div class="masthead">
+  <div class="wrap">
+    <div class="mh-body">
+      <div class="mh-eyebrow">{guide.eyebrow}</div>
+      <h1 class="mh-title">{guide.title}</h1>
+      <p class="mh-sub">{guide.subtitle}</p>
+      <p class="mh-sub">{guide.intro}</p>
+      <div class="mh-actions">
+        <a class="btn gold" href={pdfHref}>
+          <Icon name="ph-file-pdf" /> Download PDF
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

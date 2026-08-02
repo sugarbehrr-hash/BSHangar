@@ -17,6 +17,7 @@
    ============================================================ */
 
 import type { LedgerFigure, LedgerIntro } from './figure-ledger';
+import { GUIDE_ROUTES } from './resources';
 
 /** One "find your situation" accordion. */
 export interface ContractSituation {
@@ -261,7 +262,7 @@ export const contractSituations: ContractSituation[] = [
         "ref": "§9"
       }
     ],
-    "action": "**Note the minute the phone rang.** Your report clock starts at the call, not when you got the voicemail. Reserve life in full: [Reserve Field Guide](#)."
+    "action": `**Note the minute the phone rang.** Your report clock starts at the call, not when you got the voicemail. Reserve life in full: [Reserve Field Guide](${GUIDE_ROUTES.reserve}).`
   },
   {
     "badge": "§3",

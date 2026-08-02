@@ -1,0 +1,74 @@
+---
+import GuideSection from './GuideSection.astro';
+import GuideToc from './GuideToc.astro';
+import type { Guide } from '../data/guides/types';
+
+/**
+ * Rail layout for one guide: the secnav jump-list beside (>=1100px) or above
+ * (below it) the sections themselves. .rail has to come before .railmain in
+ * source order — below 1100px .rail is display:contents (system.css §5), so
+ * the sticky collapsed bar only lands above the sections if it's written
+ * first; the >=1100px grid places it in column 2 regardless of source order.
+ */
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+---
+
+<div class="withrail">
+  <div class="rail">
+    <GuideToc sections={guide.sections} />
+  </div>
+  <div class="railmain">
+    {guide.sections.map((section) => <GuideSection section={section} />)}
+  </div>
+</div>
+
+<script>
+  const secnav = document.querySelector<HTMLElement>('.secnav');
+  const main = document.querySelector<HTMLElement>('.railmain');
+  const toggle = secnav?.querySelector<HTMLButtonElement>('.secnav-toggle');
+  const toggleLbl = toggle?.querySelector<HTMLElement>('.lbl');
+
+  if (secnav && main && toggle && toggleLbl) {
+    const links = [...secnav.querySelectorAll<HTMLAnchorElement>('.secnav-list a')];
+    const linkById = new Map(links.map((link) => [link.getAttribute('href')?.slice(1) ?? '', link]));
+    const sections = [...main.querySelectorAll<HTMLElement>('.gd-section')];
+
+    const setOpen = (open: boolean) => {
+      secnav.dataset.open = open ? '1' : '';
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+    toggle.addEventListener('click', () => setOpen(secnav.dataset.open !== '1'));
+    for (const link of links) link.addEventListener('click', () => setOpen(false));
+
+    let activeId = '';
+    const setActive = (id: string) => {
+      if (!id || id === activeId) return;
+      activeId = id;
+      for (const [linkId, link] of linkById) {
+        if (linkId === id) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      }
+      toggleLbl.textContent = linkById.get(id)?.querySelector('.lbl')?.textContent ?? '';
+    };
+
+    const visible = new Set<string>();
+    // Top inset matches [id] { scroll-margin-top: 140px } (system.css) so a
+    // section jumped to from the TOC lands exactly where it becomes current.
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        const current = sections.find((section) => visible.has(section.id));
+        if (current) setActive(current.id);
+      },
+      { rootMargin: '-140px 0px -55% 0px' }
+    );
+    for (const section of sections) spy.observe(section);
+  }
+</script>

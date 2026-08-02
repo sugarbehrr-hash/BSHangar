@@ -40,7 +40,14 @@ const { section } = Astro.props;
       }
 
       if (block.kind === 'note') {
-        return <div class:list={['gd-note', block.tone ?? 'info']} set:html={richText(block.text)} />;
+        // 'info' is .gd-note's own unmodified style — 'warn'/'ok' are the only
+        // real modifier classes, so a bare 'info' class was dead markup.
+        return (
+          <div
+            class:list={['gd-note', (block.tone === 'warn' || block.tone === 'ok') && block.tone]}
+            set:html={richText(block.text)}
+          />
+        );
       }
 
       if (block.kind === 'prose') {
