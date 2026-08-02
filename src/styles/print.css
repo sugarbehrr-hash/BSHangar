@@ -128,7 +128,7 @@
 }
 .fm-row:last-child { border-bottom: none; }
 .fm-name { font-size: 12.5px; color: var(--ink-900); line-height: 1.3; }
-.fm-detail { font-size: 10.5px; color: var(--ink-500); line-height: 1.35; }
+.fm-detail { font-size: 10.5px; color: var(--ink-500); line-height: 1.35; margin-left: 6px; }
 .fm-detail:empty { display: none; }
 .fm-highlight {
   flex: none;
@@ -237,6 +237,30 @@
   /* Backgrounds are meaningful here (the navy masthead, the zone badges), so
      ask the browser to keep them rather than dropping to white-on-white. */
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ---------- SCREEN REFLOW ----------
+   These documents are live, navigable pages reached from phone UI (the
+   "Download PDF" buttons and the Discounts "Full list"), not just print
+   stylesheets. Below the sheet's own 816px the Letter metaphor stops
+   meaning anything — a fixed sheet on a 360px phone is just a document
+   you can't read — so the sheet dissolves into a fluid page and the dark
+   backdrop seam between sheets becomes the page separator. Print output
+   is untouched: everything here is screen-only. */
+@media screen and (max-width: 859px) {
+  .sheet-wrap { padding: 0 0 48px; }
+  .fm-page { width: auto; min-height: 0; margin: 0 0 18px; box-shadow: none; }
+  .fm-tools { flex-wrap: wrap; }
+}
+@media screen and (max-width: 699px) {
+  /* Phone gutters: the site's own 18-20px, not the sheet's 44px. */
+  .fm-run { padding: 10px 20px; flex-wrap: wrap; gap: 2px 12px; }
+  .fm-body { padding: 16px 20px 24px; }
+  .fm-foot { padding: 10px 20px; flex-wrap: wrap; gap: 2px 12px; }
+  .fm-mast { padding: 22px 20px; }
+  .fm-mast h1 { font-size: 30px; }
+  /* One column: two 160px columns of venue rows is confetti, not a list. */
+  .fm-cols { columns: 1; }
 }
 
 /* ---------- PRINT-DENSITY OVERRIDES ----------
