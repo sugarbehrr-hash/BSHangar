@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import TextSize from './TextSize.astro';
-import { SITE, NAV, FACEBOOK_GROUP } from '../data/site';
+import { SITE, NAV } from '../data/site';
 import { isCurrentSection } from '../lib/nav';
 import brandLogo from '../assets/brand-logo.svg';
 
@@ -74,14 +74,23 @@ const isCurrent = (href: string) => isCurrentSection(path, href);
         </div>
       </div>
 
-      {/* Phone/tablet only — see .textsize in site-local.css. It sits before
-          the Facebook chip so that chip stays the last, gold thing in the bar. */}
+      {/* Phone/tablet only — see .textsize in site-local.css. */}
       <TextSize />
 
-      <a class="fbbtn" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
-        <Icon name="ph-facebook-logo" />
-        <span>Facebook Group</span>
-      </a>
+      {/* Phone/tablet only. Opens the sheet in MobileNav, which holds
+          everything that isn't a page: share, the QR code, the outbound
+          links and the legal line. The Facebook chip that used to sit here
+          is one of those links now — the header was carrying a single
+          destination at the same weight as the site's own sections. */}
+      <button
+        class="moretoggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="moresheet"
+        aria-label="Share and links"
+      >
+        <Icon name="ph-dots-three-outline" />
+      </button>
     </div>
   </div>
 </header>

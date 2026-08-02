@@ -5,23 +5,25 @@ import { SITE_QR } from '../data/qr-site';
 import { isCurrentSection } from '../lib/nav';
 
 /**
- * Mobile app shell: bottom tab bar, the "More" sheet, and the QR sheet.
+ * Mobile app shell: bottom tab bar, the share sheet, and the QR sheet.
  *
  * Below 1100px this replaces SiteHeader's `.mainnav` entirely (see its own
- * comment) — five always-visible, thumb-reachable destinations instead of a
- * burger-hidden dropdown. The footer is also hidden below 1100px (system.css
- * §18); its occasional links move into `.ms-chips` below.
+ * comment). The footer is also hidden below 1100px (system.css §18); its
+ * occasional links move into `.ms-chips` below.
  *
- * THE SHEET NEVER COVERS THE TAB BAR. It stops at the bar's top edge, because
- * the More button is the sheet's open/close control and hiding your only way
- * out under the thing it opened is how you strand someone. The button's glyph
- * turns into a close mark while the sheet is up.
+ * EVERY SECTION IS A TAB. Four sections in the bar and the remaining two
+ * behind a drawer meant nobody found the remaining two: a reader does not
+ * open a drawer to discover a page they don't know exists. So all five
+ * sections are permanent tabs, and Home is the wordmark — top-left on every
+ * page, which is where a reader already looks for it, and which keeps the bar
+ * to five columns wide enough for the full section names.
  *
- * WHAT'S ON IT, AND WHAT ISN'T
+ * WHAT THE SHEET HOLDS: nothing that is a page. Share, the QR code, the
+ * outbound links, the legal line. It opens from the `⋯` button in the header
+ * (SiteHeader) rather than from a tab, because it is not navigation.
  *
- * Only the two sections the tab bar can't fit — Tools and Essentials. The
- * other four are live buttons forty pixels below; repeating them as tiles is
- * duplicating a control the reader can already see.
+ * THE SHEETS NEVER COVER THE TAB BAR. They stop at its top edge, so the five
+ * sections stay visible and tappable the whole time one is open.
  *
  * Surfaces are cream with navy `.card.inverse` blocks on top, so the gold and
  * red buttons have something to sit against. A navy sheet put navy buttons on
@@ -35,17 +37,12 @@ interface Props {
 const { path } = Astro.props;
 const isCurrent = (href: string) => isCurrentSection(path, href);
 
-/** The four tabs shown in the bar; everything else lives behind "More". */
-const TABS = NAV.slice(0, 4);
-
-/** The sections that don't fit in the bar — the entire reason the sheet exists. */
-const SHEET_SECTIONS = [
-  { item: NAV.find((n) => n.href === '/tools/')!, blurb: '5th & 20th estimate' },
-  { item: NAV.find((n) => n.href === '/crew-essentials/')!, blurb: 'Gear that lasts' },
-];
-
-/** "More" lights up whenever the current page isn't one of the four tabs. */
-const moreActive = !TABS.some((item) => isCurrent(item.href));
+/**
+ * Every section except Home, which is the wordmark. Five columns is what lets
+ * "Commuting", "Discounts" and "Essentials" render at full length down to a
+ * 360px phone; a sixth column clips them.
+ */
+const TABS = NAV.filter((item) => item.href !== '/');
 
 const year = new Date().getFullYear();
 ---
@@ -53,31 +50,10 @@ const year = new Date().getFullYear();
 <div class="sheet-scrim"></div>
 <div class="qr-scrim"></div>
 
-<nav class="moresheet" id="moresheet" aria-label="More sections">
+<nav class="moresheet" id="moresheet" aria-label="Share and links">
   <div class="ms-grab"><span></span></div>
 
   <div class="ms-scroll">
-    <div class="ms-group">More sections</div>
-    <div class="ms-grid">
-      {
-        SHEET_SECTIONS.map(({ item, blurb }) => (
-          <a
-            class="card inverse ms-tile"
-            href={item.href}
-            aria-current={isCurrent(item.href) ? 'page' : undefined}
-          >
-            <span class="ms-badge">
-              <Icon name={item.icon} />
-            </span>
-            <strong>
-              {item.label}
-              <small>{blurb}</small>
-            </strong>
-          </a>
-        ))
-      }
-    </div>
-
     <div class="ms-group">Share the hangar</div>
     <div class="card inverse ms-share">
       <strong>Send it to a crewmember</strong>
@@ -169,16 +145,6 @@ const year = new Date().getFullYear();
       </a>
     ))
   }
-  <button
-    class:list={['tab-more', moreActive && 'here']}
-    type="button"
-    aria-expanded="false"
-    aria-controls="moresheet"
-  >
-    <Icon name="ph-squares-four" class="ic-open" />
-    <Icon name="ph-x" weight="bold" class="ic-close" />
-    <span>More</span>
-  </button>
 </nav>
 
 <script>
@@ -195,7 +161,9 @@ const year = new Date().getFullYear();
   const site = document.querySelector<HTMLElement>('.site');
   const sheet = document.querySelector<HTMLElement>('.moresheet');
   const qrsheet = document.querySelector<HTMLElement>('.qrsheet');
-  const more = document.querySelector<HTMLButtonElement>('.tab-more');
+  /* The trigger lives in the header now — the sheet holds no pages, so it
+     has no business occupying a slot in the primary navigation. */
+  const more = document.querySelector<HTMLButtonElement>('.moretoggle');
   if (site && sheet && qrsheet && more) {
     const sync = () => {
       const sheetOpen = site.dataset.sheet === '1';
@@ -225,7 +193,7 @@ const year = new Date().getFullYear();
     document.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
 
-      if (target.closest('.tab-more')) {
+      if (target.closest('.moretoggle')) {
         return site.dataset.sheet === '1' ? closeAll() : openSheet();
       }
       // Top sheet first: a tap on the More sheet while the QR is up drops the

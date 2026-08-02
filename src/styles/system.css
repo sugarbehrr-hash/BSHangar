@@ -78,11 +78,13 @@ img, svg, video { max-width: 100%; height: auto; }
 .searchbox input:focus { background: rgba(255,255,255,0.2); width: 240px; }
 .searchbox i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--sky-300); font-size: 17px; pointer-events: none; }
 
-.fbbtn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: var(--radius-pill); background: var(--gold-500); color: var(--navy-900); font-family: var(--font-heading); font-weight: 800; font-size: 13px; transition: filter .18s, transform .12s; }
-.fbbtn:hover { filter: brightness(1.06); }
-.fbbtn:active { transform: scale(.96); }
-.fbbtn span { display: none; }
-@media (min-width: 900px) { .fbbtn span { display: inline; } }
+/* Opens the share sheet. Phone/tablet only — the sheet it controls is, and
+   on desktop the footer already carries the same links. */
+.moretoggle { display: none; width: 40px; height: 40px; flex: none; border: none; border-radius: 50%; background: rgba(255,255,255,0.13); color: var(--sky-300); font-size: 19px; place-items: center; cursor: pointer; transition: background .18s, color .18s, transform .12s; }
+@media (max-width: 1099px) { .moretoggle { display: grid; } }
+.moretoggle:hover { background: rgba(255,255,255,0.22); color: #fff; }
+.moretoggle:active { transform: scale(.94); }
+.moretoggle[aria-expanded="true"] { background: var(--gold-500); color: var(--navy-900); }
 
 /* ============================================================
    2 · MASTHEAD — every page opens the same way.
@@ -999,11 +1001,15 @@ a.tiercol:hover { background: var(--cream-100); }
 
 /* ============================================================
    18 · MOBILE TAB BAR — app-style primary navigation on phones.
-   Replaces the burger below 1100px: the five doors are always
-   visible and thumb-reachable. Dark-surface current state =
-   white + gold rule (top edge), same as the desktop mainnav.
-   Tab 5 is "More" — a bottom sheet with the remaining sections,
-   which also replaces the footer below this width.
+   Replaces the burger below 1100px: EVERY section is a permanent
+   tab. Four tabs plus a "More" drawer hid two whole sections —
+   nobody opens a drawer to find a page they don't know exists.
+   Home is the wordmark instead, which every page already carries,
+   and five columns is what lets "Commuting", "Discounts" and
+   "Essentials" render at full length down to a 360px phone.
+   Dark-surface current state = white + gold rule (top edge), same
+   as the desktop mainnav. The sheets below hold no pages, only
+   share/links/legal, and open from the header's ⋯ button.
    ============================================================ */
 @media (max-width: 1099px) {
   .site { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
@@ -1013,14 +1019,13 @@ a.tiercol:hover { background: var(--cream-100); }
 }
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 75; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--navy-900); border-top: 1px solid rgba(159,208,240,0.22); box-shadow: 0 -6px 20px rgba(15,30,61,0.35); padding-bottom: env(safe-area-inset-bottom, 0px); }
 @media (min-width: 1100px) { .tabbar, .moresheet, .qrsheet, .sheet-scrim, .qr-scrim { display: none !important; } }
-.tabbar a, .tabbar button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 76px; padding: 14px 2px 11px; background: none; border: none; cursor: pointer; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .02em; color: var(--sky-300); }
-.tabbar i { font-size: 25px; line-height: 1; }
-.tab-more .ic-close { display: none; }
-.tab-more[aria-expanded="true"] .ic-open { display: none; }
-.tab-more[aria-expanded="true"] .ic-close { display: inline-block; }
-.tabbar a:hover, .tabbar button:hover { color: #fff; }
-.tabbar a[aria-current="page"], .tabbar .tab-more.here, .tabbar .tab-more[aria-expanded="true"] { color: #fff; }
-.tabbar a[aria-current="page"]::before, .tabbar .tab-more.here::before, .tabbar .tab-more[aria-expanded="true"]::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 34px; height: 3px; border-radius: 0 0 2px 2px; background: var(--gold-500); }
+.tabbar a { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-width: 0; min-height: 76px; padding: 12px 1px 11px; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: .01em; line-height: 1.1; text-align: center; color: var(--sky-300); }
+.tabbar i { font-size: 23px; line-height: 1; }
+.tabbar a:hover { color: #fff; }
+.tabbar a[aria-current="page"] { color: #fff; }
+/* 61px a column on a 320px phone: the labels only fit at 10px there. */
+@media (max-width: 340px) { .tabbar a { font-size: 10px; } .tabbar i { font-size: 21px; } }
+.tabbar a[aria-current="page"]::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; border-radius: 0 0 2px 2px; background: var(--gold-500); }
 
 /* More sheet — rises to the tab bar's top edge, never over it.
 
@@ -1031,8 +1036,9 @@ a.tiercol:hover { background: var(--cream-100); }
    so the gold and red buttons have something to sit against, and the
    dark scrim makes the whole sheet the brightest thing on screen.
 
-   The More button stays visible and is still the open/close control,
-   which is why the sheet stops at 76px and not at 0. */
+   It stops at 76px rather than 0 so the five sections stay visible and
+   tappable while it is open — the sheet is not navigation, and it has no
+   business hiding the navigation. It opens from the header's ⋯ button. */
 .sheet-scrim { position: fixed; inset: 0; z-index: 68; background: rgba(9,18,38,0.6); opacity: 0; pointer-events: none; }
 .site[data-sheet="1"] .sheet-scrim { opacity: 1; pointer-events: auto; }
 .moresheet { position: fixed; left: 0; right: 0; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); z-index: 69; max-height: calc(100% - 76px - 34px); display: flex; flex-direction: column; background: var(--cream-100); border-radius: var(--radius-xl) var(--radius-xl) 0 0; box-shadow: 0 -14px 40px rgba(9,18,38,0.5); transform: translateY(calc(100% + 76px)); overscroll-behavior: contain; }
@@ -1058,16 +1064,6 @@ a.tiercol:hover { background: var(--cream-100); }
 /* red kicker: the label colour every cream section already uses */
 .ms-group { font-family: var(--font-heading); font-weight: 800; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--red-600); padding: 12px 2px 8px; }
 .ms-foot { flex: none; padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px)); background: var(--cream-200); font-size: 10.5px; line-height: 1.5; color: var(--ink-500); }
-
-/* Sections — .card.inverse at sheet scale. Only the two the tab bar
-   can't fit; the other four are live buttons 40px below. */
-.ms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-.ms-tile { gap: 9px; padding: 13px; }
-.ms-badge { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--gold-500); display: grid; place-items: center; }
-.ms-badge i { font-size: 19px; color: var(--navy-900); }
-.ms-tile strong { font-family: var(--font-heading); font-weight: 800; font-size: 14.5px; line-height: 1.2; color: #fff; }
-.ms-tile small { display: block; font-family: var(--font-body); font-weight: 400; font-size: 11.5px; color: var(--sky-300); margin-top: 3px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ms-tile[aria-current="page"] { border-color: var(--gold-500); }
 
 /* Share — the OS share sheet, the clipboard, and the code. */
 .ms-share { padding: 14px; }
@@ -1110,8 +1106,6 @@ a.tiercol:hover { background: var(--cream-100); }
      chip — the full link lives in the More sheet. */
   .topbar-inner { padding: 7px 14px; gap: 10px; }
   .brand .logo { height: 30px; }
-  .fbbtn { height: 38px; padding: 0 11px; font-size: 12px; }
-  .fbbtn i { font-size: 18px; }
 
   /* Hero: headline scale, not billboard scale. */
   .mh-body { padding: 16px 0 20px; }
