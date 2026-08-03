@@ -15,16 +15,8 @@
    one way: catalog -> bags -> essentials.
    ============================================================ */
 
-/** Pill-bar groups. Both single products and tier categories carry one. */
+/** Filter group a pick belongs to. Kept for grouping, not for a pill bar. */
 export type CatalogCat = 'bags' | 'body' | 'kit';
-
-/** Pill-bar groups, in display order. Counts derive from the entries. */
-export const productCategories = [
-  { key: 'all', label: 'Everything', icon: 'ph-squares-four' },
-  { key: 'bags', label: 'Bags & packing', icon: 'ph-suitcase-rolling' },
-  { key: 'body', label: 'Body & rest', icon: 'ph-heartbeat' },
-  { key: 'kit', label: 'Power & uniform', icon: 'ph-battery-charging' },
-] as const;
 
 /* ------------------------------------------------------------
    The three tiers

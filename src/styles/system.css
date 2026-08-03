@@ -1088,20 +1088,21 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 @media (min-width: 760px) { .js-buy { grid-column: 3; flex-direction: column; align-items: flex-end; gap: 9px; } }
 .js-price { font-family: var(--font-display); font-size: 1.75rem; line-height: 1; color: var(--navy-900); }
 
-/* Category links — a worked category is a destination, not a card that
-   unfolds. Replaces the tier-morph tile and its FLIP animation entirely. */
-.catlinks { display: grid; grid-template-columns: 1fr; gap: 12px; }
-@media (min-width: 760px) { .catlinks { grid-template-columns: repeat(2, 1fr); } }
-.catlink { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); text-decoration: none; transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
-.catlink:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--navy-700); }
-.cl-icon { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: var(--radius-sm); background: var(--sky-100); color: var(--navy-700); font-size: 1.5rem; }
-.cl-body { flex: 1; min-width: 0; }
-.cl-name { display: block; font-family: var(--font-display); text-transform: uppercase; font-size: 1.375rem; line-height: 1; color: var(--navy-900); }
-.cl-blurb { display: block; font-size: 0.84375rem; line-height: 1.45; color: var(--ink-700); margin-top: 6px; text-wrap: pretty; }
-.cl-meta { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 7px; }
-.cl-go { flex: none; color: var(--navy-700); font-size: 1.125rem; }
-.catlink:hover .cl-go { transform: translateX(4px); }
-.cl-go i { transition: transform .18s; }
+/* Category panels — every category's content is in the page, one shown at a
+   time. Switching is a pill, not a link: nothing navigates, so comparing two
+   categories costs one click and no page load. */
+.catpanel { margin-top: 4px; }
+.catpanel[hidden] { display: none; }
+
+/* A category we have not worked through yet: one pick, presented as a
+   deliberate state rather than an empty ladder. */
+.solopick { display: flex; align-items: flex-start; gap: 18px; padding: 24px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); }
+.sp-icon { flex: none; display: grid; place-items: center; width: 76px; height: 76px; border-radius: var(--radius-sm); background: var(--sky-100); color: var(--navy-700); font-size: 2rem; }
+.sp-body { flex: 1; min-width: 0; }
+.sp-tag { display: inline-block; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
+.sp-name { font-family: var(--font-display); text-transform: uppercase; font-size: 1.625rem; line-height: 1; color: var(--navy-900); margin: 5px 0 0; }
+.sp-blurb { font-size: 0.9375rem; line-height: 1.55; color: var(--ink-700); margin: 10px 0 14px; text-wrap: pretty; }
+@media (max-width: 560px) { .solopick { flex-direction: column; gap: 14px; padding: 20px; } }
 
 /* The rule under a ladder, stated once instead of badged on every row. */
 .ladder-note { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-500); margin: 16px 0 0; text-wrap: pretty; }

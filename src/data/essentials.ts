@@ -109,11 +109,3 @@ export const products: Product[] = [
   },
 ];
 
-/**
- * Pill counts over the single-pick grid. Worked categories are NOT counted:
- * they left the grid for their own pages, so counting them would advertise
- * picks the pills cannot filter to.
- */
-export function countFor(key: string): number {
-  return products.filter((product) => key === 'all' || product.cat === key).length;
-}
