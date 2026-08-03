@@ -71,14 +71,6 @@ body{margin:0;background:var(--cream-200);font-family:var(--font-body);color:var
 .jsWhy b{color:var(--navy-900)}
 @container (max-width:620px){ .jsHead{padding:14px 16px;gap:10px} .jsHead .hl{min-width:100%;order:3} }
 
-/* ---------- current jumpseat (reference, options B and C) ---------- */
-.cJump{display:grid;grid-template-columns:1fr;background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);overflow:hidden;margin-top:18px;--tc:var(--red-600)}
-@container (min-width:760px){.cJump{grid-template-columns:232px 1fr}}
-.cJside{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:22px;background:color-mix(in srgb,var(--tc) 6%,var(--cream-100));border-bottom:1px solid var(--cream-200)}
-@container (min-width:760px){.cJside{border-bottom:none;border-right:1px solid var(--cream-200)}}
-.cJbody{padding:22px}
-.cJkick{display:block;font-family:var(--font-heading);font-weight:800;font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tc)}
-.cJname{font-family:var(--font-display);text-transform:uppercase;font-size:1.5rem;line-height:.98;color:var(--navy-900);margin:6px 0 0}
 
 /* ================= OPTION A — tier bands, picks as rows ================= */
 .aLad{background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden}
@@ -147,24 +139,6 @@ body{margin:0;background:var(--cream-200);font-family:var(--font-body);color:var
 .bDet .comp{font-size:.8125rem}
 .bDet .buy{margin-top:9px;font-size:.75rem;padding:6px 12px}
 
-/* ================= CURRENT (reference) ================= */
-.cLad{display:grid;grid-template-columns:1fr;background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);overflow:hidden}
-@container (min-width:820px){.cLad{grid-template-columns:repeat(3,1fr)}}
-.cCol{padding:20px;border-left:1px solid var(--cream-200);box-shadow:inset 0 3.5px 0 var(--tc)}
-.cCol:first-child{border-left:none}
-.cRng{font-family:var(--font-display);font-size:1.6rem;margin:12px 0 0;color:var(--navy-900)}
-.cPick{padding-top:14px;margin-top:14px;border-top:1px solid var(--cream-200)}
-.cPick:first-of-type{border-top:none;margin-top:8px}
-.cTop{display:flex;gap:12px;align-items:flex-start}
-.cShot{flex:none;width:64px;aspect-ratio:1;border:1px solid var(--cream-300);border-radius:8px;overflow:hidden;background:#fff}
-.cShot img{width:100%;height:100%;object-fit:contain}
-.cHead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-.cName{font-family:var(--font-heading);font-weight:800;font-size:.9375rem;margin:0;color:var(--navy-900)}
-.cPrice{font-family:var(--font-display);font-size:1.25rem;color:var(--navy-900)}
-.cStat{font-family:var(--font-heading);font-weight:700;font-size:.71875rem;color:var(--ink-500);margin-top:5px}
-.cText{font-size:.84375rem;line-height:1.5;color:var(--ink-700);margin:9px 0 0}
-.cComp{margin-top:12px;padding:11px 13px;background:#fff;border:1px solid var(--cream-300);border-radius:var(--radius-sm);font-size:.8125rem;line-height:1.45;color:var(--ink-700)}
-.cBuy{margin-top:12px}
 </style>
 </head>
 <body>
@@ -174,7 +148,6 @@ body{margin:0;background:var(--cream-200);font-family:var(--font-body);color:var
   <span>Layout:</span>
   <button data-opt="a" aria-pressed="true">A · Tier bands</button>
   <button data-opt="b" aria-pressed="false">B · 3 columns, compact</button>
-  <button data-opt="c" aria-pressed="false">C · Current (broken)</button>
   <span style="margin-left:auto">Width:</span>
   <button data-w="desk" aria-pressed="true">Desktop</button>
   <button data-w="phone" aria-pressed="false">Phone</button>
@@ -184,7 +157,7 @@ body{margin:0;background:var(--cream-200);font-family:var(--font-body);color:var
 
 <!-- ============ A ============ -->
 <section class="opt on" id="opt-a">
-  <p class="optnote"><b>A · Tier bands, picks as rows.</b> The ladder runs <span class="good">top to bottom, cheap to expensive</span> — which is what a ladder actually is. Every pick is one aligned row, so nothing ends ragged and a tier can hold 1 or 5 picks without the layout caring. The compromise sits inline instead of in a box-inside-a-box. Phone layout is the same thing, so there is no reflow to get wrong.</p>
+  <p class="optnote"><b>A &middot; Tier bands, picks as rows.</b> The ladder runs <span class="good">top to bottom, cheap to expensive</span> &mdash; which is what a ladder actually is. Every pick is one full-width row, so the compromise sentence reads on one line instead of wrapping, and a tier can hold one pick or five without the layout caring. The phone layout is the same structure, so nothing reflows. <span class="bad">Cost:</span> you can no longer see all three tiers side by side.</p>
 
   <div class="aLad">
     <div class="aTier" data-t="eco" style="--tc:var(--sky-700);--tfg:#fff">
@@ -299,7 +272,7 @@ body{margin:0;background:var(--cream-200);font-family:var(--font-body);color:var
 
 <!-- ============ B ============ -->
 <section class="opt" id="opt-b">
-  <p class="optnote"><b>B · Keep three columns, strip the rows.</b> Restores the read <span class="good">across</span> the tiers by cutting each pick down to photo, name, price, spec and buy — the body paragraph goes to the pick's own page. <span class="bad">Cost:</span> columns still end at different heights, and the compromise sentence gets squeezed even though it is the site's actual rating.</p>
+  <p class="optnote"><b>B &middot; Three columns.</b> Keeps the read <span class="good">across</span> the tiers &mdash; $160, $255 and $729 sit side by side, which is the original point of a three-tier ladder. The header carries the tier and its price bracket, so each pick is just photo, name, price, spec, compromise and buy. <span class="bad">Cost:</span> in a narrow column the compromise sentence wraps to three or four short lines, and on a phone the columns stack, so the across-read disappears exactly where most crew are reading.</p>
 
   <div class="bLad">
     <div class="bCol" data-t="eco" style="--tc:var(--sky-700);--tfg:#fff">
@@ -382,63 +355,6 @@ body{margin:0;background:var(--cream-200);font-family:var(--font-body);color:var
         </div>
         <div class="aBuy"><div class="aPrice">$600</div><a class="buy" href="#">View on Amazon</a></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ C ============ -->
-<section class="opt" id="opt-c">
-  <p class="optnote"><b>C · What is live now.</b> <span class="bad">The problem:</span> a layout built for one pick per column, given seven. Columns end at wildly different heights, nothing lines up across tiers so you cannot actually compare, and each pick repeats five stacked elements including a bordered box inside a bordered column.</p>
-
-  <div class="cLad">
-    <div class="cCol" style="--tc:var(--sky-700)">
-      <div class="bars"><b class="on"></b><b></b><b></b></div><div class="cRng">$160 – $200</div>
-      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/maxlite-5.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro Maxlite 5 21"</h4><span class="cPrice">$160</span></div><div class="cStat">5.4 lb — the lightest bag on this page</div></div></div>
-        <p class="cText">The bag you actually see crew pulling through a terminal. Ultra-light, quiet wheels, a useful 2" expansion and a limited lifetime warranty.</p>
-        <div class="cComp"><b>Your compromise:</b> the handle wobbles fully extended and it tips if you let go in motion.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
-      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/flightcrew-5-21.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro FlightCrew5 21"</h4><span class="cPrice">$200</span></div><div class="cStat">3-year commercial-use warranty</div></div></div>
-        <p class="cText">The flight-line standard, and the cheapest genuinely commercial-grade bag here. Ballistic nylon, reinforced frame, 5–10 years on the line.</p>
-        <div class="cComp"><b>Your compromise:</b> four spinner wheels are consumables on rough ramps.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
-      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--cream-200);font-size:.8125rem;color:var(--ink-500);line-height:1.5">
-        <span style="display:block;font-family:var(--font-heading);font-weight:800;font-size:.625rem;letter-spacing:.12em;text-transform:uppercase">Also at this price — not reviewed</span>
-        <div style="margin-top:6px"><b>Loomis 21" Softside Spinner</b> The affordability pick among pilots.</div>
-        <div style="margin-top:6px"><b>SwissGear softside spinner</b> A low-cost crew favourite.</div>
-        <div style="margin-top:6px"><b>Samsonite softside spinner</b> Similar styling under $500.</div>
-      </div>
-    </div>
-    <div class="cCol" style="--tc:var(--gold-500)">
-      <div class="bars"><b class="on"></b><b class="on"></b><b></b></div><div class="cRng">$255 – $390</div>
-      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/crew-classic.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro Crew Classic</h4><span class="cPrice">$255</span></div><div class="cStat">Flown by crew at 90+ airlines</div></div></div>
-        <p class="cText">Eight MagnaTrac self-aligning wheels and a tapered expansion that keeps the centre of gravity low so it stops tipping.</p>
-        <div class="cComp"><b>Your compromise:</b> function over form, no USB port and no laptop pocket.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
-      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/platinum-elite-21.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro Platinum Elite 21"</h4><span class="cPrice">$390</span></div><div class="cStat">10/10 ease of transport</div></div></div>
-        <p class="cText">The best-rolling bag on this page. Eight magnet-embedded wheels track dead straight; nine compartments.</p>
-        <div class="cComp"><b>Your compromise:</b> ~23.5" with wheels and handle, so a strict gate agent can call it.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
-    </div>
-    <div class="cCol" style="--tc:var(--navy-700)">
-      <div class="bars"><b class="on"></b><b class="on"></b><b class="on"></b></div><div class="cRng">$729 – $1,050</div>
-      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/briggs-riley-spinner.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Briggs &amp; Riley Baseline 22"</h4><span class="cPrice">$729</span></div><div class="cStat">~10 lb · lifetime warranty</div></div></div>
-        <p class="cText">The warranty pick. Outside-mounted handle hardware leaves a flat packing surface that keeps a uniform jacket from creasing.</p>
-        <div class="cComp"><b>Your compromise:</b> ten pounds empty and a steep price.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
-      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/tumi-alpha3-4wheel.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">TUMI Alpha 3 Intl 4-Wheel</h4><span class="cPrice">$1,050</span></div><div class="cStat">10.9 lb · 65 W USB-C</div></div></div>
-        <p class="cText">The status bag that earns it on materials. FXT ballistic nylon, aircraft-grade aluminium handle, garment sleeve for one blazer.</p>
-        <div class="cComp"><b>Your compromise:</b> the price, and the weight.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
-    </div>
-  </div>
-
-  <div class="cJump">
-    <div class="cJside">
-      <span class="chip jump">Jumpseat</span>
-      <div style="display:flex;align-items:center;gap:9px;font-family:var(--font-heading);font-weight:800;font-size:.8125rem;color:var(--navy-900)"><span style="width:22px;height:22px;border-radius:50%;background:var(--red-600)"></span> Cole &middot; CLT</div>
-    </div>
-    <div class="cJbody">
-      <span class="cJkick">The seat that isn&rsquo;t for sale</span>
-      <h3 class="cJname">Peak Design Roller Pro</h3>
-      <div style="font-family:var(--font-heading);font-weight:700;font-size:.78125rem;color:var(--ink-500);margin-top:7px"><b style="font-family:var(--font-display);font-size:1.125rem;color:var(--navy-900)">$600</b> &middot; 8.6 lb &middot; 34 L &rarr; 39 L &middot; lifetime warranty</div>
-      <p style="font-size:.90625rem;line-height:1.55;color:var(--ink-700);margin:12px 0 0">A flat carbon-fibre trolley that leaves no bumps inside the bag, a drawbridge lid that stays open on its own, and 60 mm wheels you replace yourself.</p>
-      <div class="jsWhy"><div><b>Why there&rsquo;s no stamp.</b> It is barely a year old and was built for photographers, not crew.</div></div>
-      <div class="comp" style="margin-top:12px"><b>Your compromise:</b> the price, and two pounds of empty weight.</div>
-      <div style="margin-top:16px"><a class="buy" href="#">View on Amazon</a></div>
     </div>
   </div>
 </section>
