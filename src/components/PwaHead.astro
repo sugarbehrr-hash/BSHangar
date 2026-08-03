@@ -26,7 +26,12 @@
     one surface instead of the header floating under a grey strip. */}
 <meta name="theme-color" content="#0F1E3D" />
 
-{/* iOS still honours these rather than the manifest's display mode. */}
+{/* The standardised name, which Chrome warns about the absence of. */}
+<meta name="mobile-web-app-capable" content="yes" />
+
+{/* iOS still honours these rather than the manifest's display mode, and the
+    `apple-` capable tag is what Safari reads on versions that ignore the
+    standard one — so it stays alongside rather than being replaced. */}
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Hangar" />

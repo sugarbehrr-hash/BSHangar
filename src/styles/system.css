@@ -69,6 +69,13 @@ img, svg, video { max-width: 100%; height: auto; }
 .brand { display: flex; align-items: center; flex: none; }
 .brand .logo { display: block; height: 38px; width: auto; }
 @media (min-width: 700px) { .brand .logo { height: 46px; } }
+/* The app shell's bar is 76px, and it was carrying a 40px wordmark with 18px
+   of dead air above and below. Nothing competes for the width down here — the
+   three round buttons take 158px of a 375px screen — and the brand is the only
+   thing in the bar that says which site you are on. Declared after the two
+   rules above so it wins below 1100px; the desktop bar keeps 46px, since it
+   has a row of nav links to sit beside. */
+@media (max-width: 1099px) { .brand .logo { height: 54px; } }
 .footer .brand .logo { height: 58px; }
 
 /* Primary links: dark-surface current state — white + gold underline.
@@ -1155,7 +1162,6 @@ a.tiercol:hover { background: var(--cream-100); }
      same 76px as the tab bar. The Facebook chip that used to sit here is a
      Quick link in the sheet now. */
   .topbar-inner { padding: 7px 14px; gap: 10px; }
-  .brand .logo { height: 40px; }
 
   /* Hero: headline scale, not billboard scale. */
   .mh-body { padding: 16px 0 20px; }
