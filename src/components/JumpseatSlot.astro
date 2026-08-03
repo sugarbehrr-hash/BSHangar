@@ -38,6 +38,14 @@ const seller = sellerFor(pick.url);
       <span>{pick.by}</span>
     </div>
     {here && <span class="js-here">This page</span>}
+
+    {
+      pick.image && (
+        <div class="js-shot">
+          <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
+        </div>
+      )
+    }
   </div>
 
   <div class="js-body">
