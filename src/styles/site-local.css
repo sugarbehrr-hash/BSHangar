@@ -270,9 +270,9 @@ body.curtain { margin: 0; min-height: 100vh; display: flex; align-items: center;
    prompt is never half-covered by the nav. Above 1100px the tab
    bar is gone, so it settles to the corner.
 
-   Navy, not a cream tint: every floating surface in this site —
-   .tabbar, .moresheet, .answerdock — is navy, and a pale bar
-   drifting over cream page content reads as part of the page.
+   Navy, not a cream tint: the bars this stacks against are the
+   navy .tabbar and the gold .answerdock, and a pale bar drifting
+   over cream page content reads as part of the page.
    ============================================================ */
 .swbar {
   position: fixed;

@@ -89,13 +89,12 @@ const zoneId = (categoryKey: string, zoneName: string) =>
 
   {
     base.categories.map((c) =>
-      c.zones.map((zone, i) => (
+      c.zones.map((zone) => (
         <details
           class="zone"
           data-zone
           data-cat={c.key}
           id={zoneId(c.key, zone.name)}
-          open={c.key === firstCategory.key && i === 0}
           hidden={c.key !== firstCategory.key}
         >
           <summary class="zhead">
@@ -194,9 +193,10 @@ const zoneId = (categoryKey: string, zoneName: string) =>
     for (const pill of pills) {
       pill.addEventListener('click', () => {
         category = pill.dataset.cat ?? category;
-        // A fresh category opens its first zone, as the page does on load.
-        const first = zones.find((z) => z.dataset.cat === category);
-        for (const z of zones) z.open = z === first;
+        // Every zone closed, as the page loads: a terminal's worth of open
+        // venue lists buries the other zones' headings, which are the thing
+        // you are scanning for.
+        for (const z of zones) z.open = false;
         render();
       });
     }

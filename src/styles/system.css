@@ -53,7 +53,7 @@ img, svg, video { max-width: 100%; height: auto; }
    1 · SITE BAR — the only always-present navigation
    ============================================================ */
 .topbar { position: sticky; top: 0; z-index: 60; background: var(--navy-900); box-shadow: 0 2px 14px rgba(15,30,61,0.28); }
-.topbar-inner { max-width: 1140px; margin: 0 auto; display: flex; align-items: center; gap: 14px; padding: 10px 18px; }
+.topbar-inner { position: relative; max-width: 1140px; margin: 0 auto; display: flex; align-items: center; gap: 14px; padding: 10px 18px; }
 @media (min-width: 700px) { .topbar-inner { padding: 12px 28px; gap: 20px; } }
 /* Below 1100px the app shell is a bar at each end of the screen, so they are
    the same object at the same height — 76px, the tab bar's constant. Its
@@ -83,6 +83,35 @@ img, svg, video { max-width: 100%; height: auto; }
 .topbar-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; flex: none; }
 .searchbox { position: relative; display: none; }
 @media (min-width: 560px) { .searchbox { display: block; } }
+
+/* Search on a phone. Below 560px the input has nowhere to sit beside the
+   wordmark, so it is summoned instead: the button swaps the header's
+   contents for a full-width input and turns into the way back out. The
+   results panel is the same .searchpanel, hung off the same input — there
+   is one search on this site, at two widths. */
+.searchtoggle { display: none; width: 46px; height: 46px; flex: none; border: none; border-radius: 50%; background: rgba(255,255,255,0.13); color: var(--sky-300); font-size: 21px; place-items: center; cursor: pointer; transition: background .18s, color .18s, transform .12s; }
+@media (max-width: 559px) { .searchtoggle { display: grid; } }
+.searchtoggle:hover { background: rgba(255,255,255,0.22); color: #fff; }
+.searchtoggle:active { transform: scale(.94); }
+.searchtoggle .ic-close { display: none; }
+@media (max-width: 559px) {
+  .site[data-search="1"] .searchtoggle { background: var(--gold-500); color: var(--navy-900); }
+  .site[data-search="1"] .searchtoggle .ic-open { display: none; }
+  .site[data-search="1"] .searchtoggle .ic-close { display: inline-block; }
+  /* The input takes the bar; the brand, the picker and ⋯ stand down while
+     it does, so the row never has two competing jobs at once. */
+  .site[data-search="1"] .searchbox { display: block; position: absolute; left: 14px; right: 68px; top: 50%; transform: translateY(-50%); }
+  .site[data-search="1"] .searchbox input { width: 100%; }
+  .site[data-search="1"] .searchbox input:focus { width: 100%; }
+  /* The panel is anchored to the input's right edge, and the input now spans
+     the bar — a fixed 340px from there starts off the left of the screen. */
+  .site[data-search="1"] .searchpanel { left: 0; width: auto; max-width: none; }
+  .site[data-search="1"] .brand { visibility: hidden; }
+  /* display, not visibility: these two still take their width otherwise, and
+     the close button lands in the middle of the input instead of beside it */
+  .site[data-search="1"] .textsize,
+  .site[data-search="1"] .moretoggle { display: none; }
+}
 .searchbox input { width: 190px; height: 44px; border: none; border-radius: var(--radius-pill); background: rgba(255,255,255,0.12); color: #fff; font-family: var(--font-body); font-size: 14px; padding: 0 14px 0 38px; outline: none; transition: background .2s, width .25s; }
 .searchbox input::placeholder { color: rgba(228,242,252,0.7); }
 .searchbox input:focus { background: rgba(255,255,255,0.2); width: 240px; }
@@ -525,18 +554,28 @@ a.card:hover .card-go i { transform: translateX(4px); }
 .step-next:hover { background: var(--navy-700); }
 
 /* The answer follows you on a phone. Without this it sits below five steps,
-   where nobody scrolls to it while they are still typing into them. */
-.answerdock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--navy-900); color: #fff; box-shadow: 0 -10px 30px rgba(15, 30, 61, .28); border-top: 1px solid rgba(159, 208, 240, .2); }
-.dock-bar { display: flex; align-items: center; gap: 12px; padding: 11px 16px; width: 100%; background: none; border: 0; cursor: pointer; text-align: left; min-height: 56px; }
-.dock-lbl { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-500); }
-.dock-date { display: block; font-size: 0.71875rem; color: var(--sky-300); margin-top: 1px; }
-.dock-net { margin-left: auto; font-family: var(--font-display); font-size: 1.625rem; line-height: 1; color: #fff; }
-.dock-caret { color: var(--sky-300); font-size: 0.9375rem; transition: transform .2s; }
+   where nobody scrolls to it while they are still typing into them.
+
+   GOLD, NOT NAVY. It lands directly on top of the navy tab bar, so a navy
+   dock read as a taller tab bar rather than as the answer — two dark bars
+   stacked with a hairline between them. Inverted, it is the one gold thing
+   on the screen and the figure it carries is the reason the page exists.
+   Gold header over a navy body is the site's existing pairing (the commuting
+   page's urgent band sits the same way inside its navy card).
+
+   It is 76px like both bars: three bars at the same height read as one shell
+   instead of three bolted-on strips. */
+.answerdock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--gold-500); color: var(--navy-900); box-shadow: 0 -10px 30px rgba(15, 30, 61, .28); }
+.dock-bar { display: flex; align-items: center; gap: 12px; padding: 11px 16px; width: 100%; background: none; border: 0; cursor: pointer; text-align: left; min-height: 76px; }
+.dock-lbl { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--navy-900); }
+.dock-date { display: block; font-size: 0.71875rem; font-weight: 600; color: var(--navy-700); margin-top: 1px; }
+.dock-net { margin-left: auto; font-family: var(--font-display); font-size: 1.75rem; line-height: 1; color: var(--navy-900); }
+.dock-caret { color: var(--navy-900); font-size: 0.9375rem; transition: transform .2s; }
 .answerdock.open .dock-caret { transform: rotate(180deg); }
-.dock-body { display: none; padding: 2px 16px 16px; max-height: 46vh; overflow: auto; background: var(--navy-800); border-top: 1px solid rgba(159, 208, 240, .25); }
+.dock-body { display: none; padding: 2px 16px 16px; max-height: 46vh; overflow: auto; background: var(--navy-800); color: #fff; }
 .answerdock.open .dock-body { display: block; }
 /* Room to scroll past the docked bar. */
-.stepstack.accordion { padding-bottom: 68px; }
+.stepstack.accordion { padding-bottom: 88px; }
 @media (min-width: 1000px) {
   .answerdock { display: none; }
   .stepstack.accordion { padding-bottom: 0; }

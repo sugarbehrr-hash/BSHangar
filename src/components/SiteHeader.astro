@@ -74,6 +74,21 @@ const isCurrent = (href: string) => isCurrentSection(path, href);
         </div>
       </div>
 
+      {/* Under 560px the input itself has nowhere to sit, so search became a
+          desktop-only feature on the site's most mobile audience. This button
+          is what stands in for it: it swaps the header's contents for the
+          full-width input, and the results panel below is the same one. */}
+      <button
+        class="searchtoggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-search"
+        aria-label="Search the hangar"
+      >
+        <Icon name="ph-magnifying-glass" class="ic-open" />
+        <Icon name="ph-x" weight="bold" class="ic-close" />
+      </button>
+
       {/* Phone/tablet only — see .textsize in site-local.css. */}
       <TextSize />
 
@@ -211,6 +226,35 @@ const isCurrent = (href: string) => isCurrentSection(path, href);
     if (event.key === 'Escape') {
       setOpen(false);
       input.blur();
+      closeMobileSearch();
     }
+  });
+
+  // ---------------------------------------------------------------------
+  // Phone search. Under 560px the input is summoned by a button rather than
+  // sitting in the bar; above it nothing here ever runs, because the toggle
+  // is display:none and cannot be clicked.
+  // ---------------------------------------------------------------------
+  const site = document.querySelector<HTMLElement>('.site');
+  const toggle = document.querySelector<HTMLButtonElement>('.searchtoggle');
+
+  function closeMobileSearch() {
+    if (!site || site.dataset.search !== '1') return;
+    site.dataset.search = '';
+    toggle?.setAttribute('aria-expanded', 'false');
+    toggle?.focus();
+  }
+
+  toggle?.addEventListener('click', () => {
+    if (!site) return;
+    if (site.dataset.search === '1') {
+      setOpen(false);
+      closeMobileSearch();
+      return;
+    }
+    site.dataset.search = '1';
+    toggle.setAttribute('aria-expanded', 'true');
+    void ensurePagefind();
+    input?.focus();
   });
 </script>
