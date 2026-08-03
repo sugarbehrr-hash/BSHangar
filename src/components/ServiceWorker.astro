@@ -15,11 +15,12 @@ import Icon from './Icon.astro';
  *           put the phone in airplane mode and still have the contract. It
  *           auto-dismisses, because after the first time it is noise.
  *
- *   update  whenever a new deploy is installed and waiting. The worker is
- *           cache-first with no revalidation, so without this a reader sits on
- *           the old contract text until every tab is closed. That is the
- *           failure that actually matters here, so the prompt is persistent
- *           and only leaves when it is acted on or dismissed.
+ *   update  whenever a new deploy is installed and waiting. Pages themselves
+ *           are network-first, so this is no longer what stands between a
+ *           reader and today's contract text — it is what refreshes the
+ *           DOWNLOADED copy, which is the one that matters in airplane mode
+ *           and would otherwise stay a deploy behind until every tab closed.
+ *           Still persistent: it only leaves when acted on or dismissed.
  */
 ---
 

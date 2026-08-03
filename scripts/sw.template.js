@@ -14,10 +14,34 @@
  * page you happened to visit already" is not good enough — the answer they need
  * offline is usually the one they have not read yet.
  *
- * Cache-first, with no revalidation. Every asset is immutable for the life of a
- * deploy, so a hit is always correct; a new deploy ships a new VERSION, which
- * makes a byte-different sw.js, which is what triggers the browser to install
- * the new worker and drop every older cache.
+ * TWO STRATEGIES, SPLIT BY WHAT THE THING IS
+ *
+ * Assets — /_astro/*.css, fonts, images — are cache-first with no
+ * revalidation. Their filenames carry a content hash, so a hit is always
+ * correct and a changed file is a different URL.
+ *
+ * Pages are network-first, with the precached copy as the fallback. They were
+ * cache-first too, and that stranded people: the installed app kept serving a
+ * page from the previous deploy, that page asked for the previous deploy's
+ * hashed asset names, and those names no longer exist on the server — so the
+ * app came back with no CSS until it was force-quit. A page is the one thing
+ * here whose URL does not change when its content does, so it is the one thing
+ * that has to be asked about rather than assumed.
+ *
+ * What that costs: a navigation now waits on the network. NAV_TIMEOUT caps
+ * that wait, because "slow" and "offline" look identical to a phone on a
+ * hotel wifi that resolves DNS and then stalls — past the cap we serve the
+ * downloaded copy rather than spin.
+ *
+ * What it does NOT do is write pages into the cache as they are fetched. The
+ * precache is one deploy's coherent snapshot; dropping a newer page into it
+ * would leave that page asking, offline, for assets its own deploy has and
+ * this cache does not.
+ *
+ * A new deploy still ships a new VERSION, which makes a byte-different sw.js,
+ * which is what triggers the browser to install the new worker and drop every
+ * older cache. That is now how the offline copy is refreshed, not how a
+ * reader gets today's page.
  */
 
 const VERSION = '__VERSION__';
@@ -26,6 +50,14 @@ const PRECACHE = __PRECACHE__;
 
 /** Served when a navigation has no cached page and no network. */
 const OFFLINE_FALLBACK = '/404.html';
+
+/**
+ * How long a navigation waits for the network before the downloaded copy is
+ * served instead. Long enough that a merely slow connection still wins and
+ * the reader gets today's page; short enough that a stalled one does not hold
+ * a blank screen while they are trying to look something up on a jetway.
+ */
+const NAV_TIMEOUT = 3000;
 
 self.addEventListener('install', (event) => {
   // No skipWaiting: a page already open was built against the previous
@@ -73,8 +105,6 @@ self.addEventListener('fetch', (event) => {
 });
 
 /**
- * Cache-first over the precache, then the network, then a fallback.
- *
  * Paths are matched as the build emitted them: `astro.config.mjs` sets
  * trailingSlash 'always' and format 'directory', so a route is cached under
  * `/tools/`, never `/tools/index.html`. A bare `/tools` still resolves — the
@@ -82,30 +112,65 @@ self.addEventListener('fetch', (event) => {
  */
 async function respond(request, url) {
   const cache = await caches.open(CACHE);
+  if (request.mode === 'navigate') return navigate(request, url, cache);
 
+  // Assets: cache-first. The filename is a content hash, so a hit cannot be
+  // stale — a changed file arrives under a different name.
   const hit = await cache.match(url.pathname);
   if (hit) return hit;
 
-  const isNavigation = request.mode === 'navigate';
-
-  if (isNavigation && !url.pathname.endsWith('/')) {
-    const slashed = await cache.match(`${url.pathname}/`);
-    if (slashed) return slashed;
-  }
-
   try {
     return await fetch(request);
-  } catch (err) {
-    if (isNavigation) {
-      const fallback = await cache.match(OFFLINE_FALLBACK);
-      if (fallback) return fallback;
-    }
-    // Nothing cached and no network. Say so, rather than letting the request
-    // surface as an opaque failure with no explanation.
-    return new Response('Offline, and this is not in the downloaded site.', {
-      status: 504,
-      statusText: 'Offline',
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    });
+  } catch {
+    return offline();
   }
+}
+
+/** The precached page for this URL, however the request spelled it. */
+function cachedPage(url, cache) {
+  return url.pathname.endsWith('/')
+    ? cache.match(url.pathname)
+    : cache.match(url.pathname).then((hit) => hit || cache.match(`${url.pathname}/`));
+}
+
+/**
+ * Network first, capped by NAV_TIMEOUT, then the downloaded copy, then 404.
+ *
+ * A non-ok response falls back to the cache as well: a deploy that briefly
+ * 500s should show the page the reader already has rather than an error, and
+ * a genuine 404 for a page nobody has cached still surfaces as itself.
+ */
+async function navigate(request, url, cache) {
+  let timer;
+  const timeout = new Promise((resolve) => {
+    timer = setTimeout(() => resolve(null), NAV_TIMEOUT);
+  });
+
+  try {
+    const response = await Promise.race([fetch(request), timeout]);
+    if (response && response.ok) return response;
+    const cached = await cachedPage(url, cache);
+    if (cached) return cached;
+    if (response) return response;
+  } catch {
+    const cached = await cachedPage(url, cache);
+    if (cached) return cached;
+  } finally {
+    clearTimeout(timer);
+  }
+
+  const fallback = await cache.match(OFFLINE_FALLBACK);
+  return fallback || offline();
+}
+
+/**
+ * Nothing cached and no network. Say so, rather than letting the request
+ * surface as an opaque failure with no explanation.
+ */
+function offline() {
+  return new Response('Offline, and this is not in the downloaded site.', {
+    status: 504,
+    statusText: 'Offline',
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
 }
