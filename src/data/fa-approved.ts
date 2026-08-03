@@ -5,10 +5,12 @@
    FA Approved.dc.html) and lives here rather than in the page,
    so the markup stays structural.
 
-   The three tiers are NOT described here — they are in
-   src/data/essentials.ts, on TIERS.explain, because the ladders
-   that render them appear all over the site and a tier cannot be
-   explained one way here and another way on a product page.
+   The three tiers and the jumpseat are NOT described here — they
+   are in src/data/catalog.ts, on TIERS.explain and
+   JUMPSEAT.explain, because the ladders that render them appear
+   all over the site and a tier cannot be explained one way here
+   and another way on a product page. What lives here is only the
+   framing around them.
 
    **bold** and [label](href) are the inline markers understood by
    src/lib/rich-text.ts.
@@ -48,6 +50,19 @@ export const faCopy = {
     "**Why Main Cabin is the default.** It's chosen for what most crew earn, lift and fly — " +
     "not for anyone's personal taste. If a pick only makes sense on a senior line, it " +
     'belongs in First Class, flagged.',
+
+  jumpKicker: 'The fourth mark',
+  jumpHeading: 'The jumpseat pick',
+  jumpLead:
+    'Sometimes one of us flies something the group has never tested — too new, or built for ' +
+    'somebody else and adopted anyway. That opinion is worth reading, and it is not worth a ' +
+    'stamp. So it gets a jumpseat instead: the same review, with a name on it and the missing ' +
+    'evidence stated plainly.',
+  jumpNote:
+    '**A jumpseat pick is not a rung on the ladder.** It is not ranked above First Class or ' +
+    'below Economy, because it is not a price at all — the three tiers are fare classes, and ' +
+    'the jumpseat is the one seat on the airplane that was never for sale. When enough crew ' +
+    'have flown it, it either earns the stamp and joins a tier, or it comes off the site.',
 
   actionTitle: 'The stamp is only as good as the group behind it.',
   actionBody:

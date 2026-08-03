@@ -4,7 +4,7 @@ import Icon from '../components/Icon.astro';
 import Stamp from '../components/Stamp.astro';
 import { richText } from '../lib/rich-text';
 import { FACEBOOK_GROUP } from '../data/site';
-import { TIERS, TIER_ORDER } from '../data/essentials';
+import { TIERS, TIER_ORDER, JUMPSEAT, type TierKey } from '../data/catalog';
 import { faCopy, faAuthority, faCriteria, faHonesty } from '../data/fa-approved';
 
 /**
@@ -15,6 +15,10 @@ import { faCopy, faAuthority, faCriteria, faHonesty } from '../data/fa-approved'
  * brand buy it. The tier ladder here is the only one on the site that shows
  * no products — it explains what the three levels mean before any pick is
  * attached to them.
+ *
+ * It also has to define the jumpseat mark, for the same reason: a reader who
+ * meets that chip on a product page comes here to find out what it means, and
+ * "not stamped, and here is why" is a claim the standard has to own.
  */
 ---
 
@@ -109,7 +113,7 @@ import { faCopy, faAuthority, faCriteria, faHonesty } from '../data/fa-approved'
       {/* The one ladder with no products in it — the tiers themselves. */}
       <div class="tierscard">
         {
-          TIER_ORDER.map((key) => {
+          TIER_ORDER.map((key: TierKey) => {
             const tier = TIERS[key];
             return (
               <div class="tiercol" data-tier={key} style={`--tc: ${tier.color};`}>
@@ -136,6 +140,36 @@ import { faCopy, faAuthority, faCriteria, faHonesty } from '../data/fa-approved'
       <div class="notice spaced">
         <Icon name="ph-users-three" />
         <div class="nt" set:html={richText(faCopy.tiersNote)} />
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="grid two">
+        <div>
+          <span class="kicker">{faCopy.jumpKicker}</span>
+          <h2 class="h2">{faCopy.jumpHeading}</h2>
+          <p class="lead">{faCopy.jumpLead}</p>
+          <p class="footnote" set:html={richText(faCopy.jumpNote)} />
+        </div>
+
+        {/* Drawn as a single tier column so the reader sees at a glance that
+            it is built from the same kit — and in the one colour no rung
+            uses, so they also see it is not a fourth rung. */}
+        <div class="tierscard solo">
+          <div class="tiercol" data-tier="jumpseat" style={`--tc: ${JUMPSEAT.color};`}>
+            <span class:list={['stampchip', JUMPSEAT.chip]}>
+              <Icon name={JUMPSEAT.icon} /> {JUMPSEAT.label}
+            </span>
+            <h3 class="tier-name">{JUMPSEAT.explain.headline}</h3>
+            <p class="tier-text">{JUMPSEAT.explain.text}</p>
+            <div class="tier-comp">
+              <Icon name="ph-scales" />
+              <div set:html={richText(JUMPSEAT.explain.compromise)} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>

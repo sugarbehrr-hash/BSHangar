@@ -948,7 +948,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    its tile rather than sitting small in a letterbox. Absolutely positioned
    because a square source given height:100% resolves against a height the
    frame is still deriving from aspect-ratio, and stretches the tile instead. */
-.gmain img, .gthumb img, .tier-shot img, .card.product .shot img {
+.gmain img, .gthumb img, .card.product .shot img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
 }
 
@@ -977,10 +977,13 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .buyactions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* Tier chips — three price levels, one gate. Main Cabin is the default
-   recommendation and the only gold chip, so it reads as "start here". */
+   recommendation and the only gold chip, so it reads as "start here".
+   Jumpseat is red because red is the one brand colour NO tier uses: the
+   chip has to be unmistakably not-a-rung at a glance. */
 .stampchip.eco { background: var(--sky-700); color: #fff; }
 .stampchip.main { background: var(--gold-500); color: var(--navy-900); }
 .stampchip.first { background: var(--navy-700); color: var(--gold-500); border: 1.5px solid var(--gold-500); }
+.stampchip.jump { background: var(--red-600); color: #fff; }
 
 /* Tier ladder — ONE card, three columns, read as a progression. Price bars
    step up 1-2-3 like a signal meter. The columns carry no selected state:
@@ -988,6 +991,10 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    same bar and highlighting one of them reads as a grade. */
 .tierscard { display: grid; grid-template-columns: 1fr; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
 @media (min-width: 880px) { .tierscard { grid-template-columns: repeat(3, 1fr); } }
+/* One column, full width. The jumpseat explainer on the standard page is
+   built from the same kit as the tiers so it reads as a sibling, but it is a
+   single card — without this it renders as a cramped one-third strip. */
+.tierscard.solo { grid-template-columns: 1fr; }
 .tiercol { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 0; text-align: left; background: none; border: none; font: inherit; color: inherit; padding: 22px 22px 20px; border-top: 1px solid var(--cream-200); box-shadow: inset 0 3.5px 0 var(--tc, var(--navy-900)); transition: background .2s; }
 .tiercol:first-child { border-top: none; }
 @media (min-width: 880px) {
@@ -1001,25 +1008,66 @@ a.tiercol:hover { background: var(--cream-100); }
 .tbars b.on { background: var(--tc, var(--navy-900)); }
 .tbars b:nth-child(2) { height: 12px; }
 .tbars b:nth-child(3) { height: 18px; }
-.tier-price { font-family: var(--font-display); font-size: 2.125rem; line-height: .9; color: var(--navy-900); margin: 14px 0 2px; }
-.tier-price span { font-family: var(--font-heading); font-weight: 800; font-size: 0.6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); margin-left: 5px; }
+/* The price range the column covers — one number when it holds one pick. */
+.tier-range { font-family: var(--font-display); font-size: 1.75rem; line-height: .95; color: var(--navy-900); margin: 14px 0 0; }
 .tier-name { font-family: var(--font-heading); font-weight: 800; font-size: 1.03125rem; color: var(--navy-900); margin: 6px 0 0; }
 /* The standard page's ladder has no price, so the name takes its air. */
 .stampchip + .tier-name { margin-top: 14px; }
-.tier-stat { font-family: var(--font-heading); font-weight: 700; font-size: 0.75rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 3px; }
 .tier-text { font-size: 0.875rem; line-height: 1.5; color: var(--ink-700); margin: 10px 0 0; text-wrap: pretty; }
+
+/* A column holds two or three picks. Each is a row: name and price on one
+   line, then the spec, the compromise, and the buy link. The rule between
+   rows is the only separator — no card-in-a-card. */
+.tier-picks { list-style: none; margin: 16px 0 0; padding: 0; width: 100%; }
+.tier-pick + .tier-pick { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cream-200); }
+.tp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.tp-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.9375rem; line-height: 1.25; color: var(--navy-900); margin: 0; text-wrap: pretty; }
+.tp-name a { color: inherit; text-decoration: none; }
+.tp-name a:hover { color: var(--navy-700); text-decoration: underline; text-underline-offset: 3px; }
+.tp-price { flex: none; font-family: var(--font-display); font-size: 1.25rem; line-height: 1; color: var(--navy-900); }
+.tp-stat { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 5px; }
+.tp-prov { font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-600); background: var(--gold-100, var(--cream-100)); border: 1px solid var(--gold-500); border-radius: var(--radius-pill); padding: 2px 8px; }
+.tp-text { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-700); margin: 9px 0 0; text-wrap: pretty; }
+.tp-buy { margin-top: 12px; }
+
+/* Names crew repeat without a review behind them. Links, never a priced
+   column — quoting a price we have not checked is the one thing the ladder
+   must never do. */
+.tier-alts { width: 100%; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--cream-200); }
+.ta-label { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
+.tier-alts ul { list-style: none; margin: 8px 0 0; padding: 0; }
+.tier-alts li { font-size: 0.8125rem; line-height: 1.45; color: var(--ink-500); margin-top: 6px; }
+.tier-alts a { font-weight: 700; color: var(--navy-700); }
 .tier-comp { display: flex; gap: 9px; align-items: flex-start; margin-top: 14px; padding: 11px 13px; background: var(--white); border: 1px solid var(--cream-300); border-radius: var(--radius-sm); font-size: 0.8125rem; line-height: 1.45; color: var(--ink-700); }
 .tier-comp i { flex: none; font-size: 1rem; color: var(--tc, var(--navy-900)); margin-top: 1px; }
 .tier-comp b { color: var(--navy-900); }
-.tier-here { position: absolute; top: 16px; right: 16px; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-500); background: var(--navy-900); border-radius: var(--radius-pill); padding: 4px 10px; }
+/* ---------- JUMPSEAT ----------
+   The crew's own pick, and deliberately NOT a fourth column. It reads as a
+   different KIND of thing on sight: its own card below the ladder, a red chip
+   no tier uses, and a name attached to it.
 
-/* Ladder extras for the browse grid: a photo frame per tier column, and a
-   go-link that is always visible — showing it on hover only shifted the
-   column height, so it stays. */
-.tier-shot { position: relative; width: 100%; aspect-ratio: 5 / 3; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--sky-100); margin-bottom: 14px; }
-.tier-go { display: inline-flex; margin-top: 14px; font-family: var(--font-heading); font-weight: 800; font-size: 0.84375rem; color: var(--navy-700); align-items: center; gap: 7px; }
-.tier-go i { transition: transform .18s; }
-.tiercol:hover .tier-go i { transform: translateX(4px); }
+   No single-side colour strip here — the whole card carries a keyline and the
+   side rail carries a tint, so the treatment communicates "different claim"
+   without the border-left cliché. */
+.jumpseat { display: grid; grid-template-columns: 1fr; gap: 0; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; margin-top: 18px; }
+@media (min-width: 760px) { .jumpseat { grid-template-columns: 232px 1fr; } }
+.js-side { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 22px; background: color-mix(in srgb, var(--tc) 6%, var(--cream-100)); border-bottom: 1px solid var(--cream-200); }
+@media (min-width: 760px) { .js-side { border-bottom: none; border-right: 1px solid var(--cream-200); } }
+.js-by { display: flex; align-items: center; gap: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; color: var(--navy-900); }
+.js-here { font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-500); background: var(--navy-900); border-radius: var(--radius-pill); padding: 4px 10px; }
+.js-body { padding: 22px; }
+.js-kicker { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.6875rem; letter-spacing: .14em; text-transform: uppercase; color: var(--tc, var(--red-600)); }
+.js-name { font-family: var(--font-display); text-transform: uppercase; font-size: 1.5rem; line-height: .98; color: var(--navy-900); margin: 6px 0 0; }
+.js-name a { color: inherit; text-decoration: none; }
+.js-name a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.js-stat { font-family: var(--font-heading); font-weight: 700; font-size: 0.78125rem; letter-spacing: .03em; color: var(--ink-500); margin-top: 7px; }
+.js-stat b { font-family: var(--font-display); font-size: 1.125rem; color: var(--navy-900); letter-spacing: 0; }
+.js-text { font-size: 0.90625rem; line-height: 1.55; color: var(--ink-700); margin: 12px 0 0; text-wrap: pretty; }
+/* The reason the stamp is absent. Load-bearing, so it is tinted, not a footnote. */
+.js-why { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 12px 14px; background: color-mix(in srgb, var(--tc) 7%, var(--white)); border: 1px solid color-mix(in srgb, var(--tc) 26%, var(--cream-300)); border-radius: var(--radius-sm); font-size: 0.84375rem; line-height: 1.5; color: var(--ink-700); }
+.js-why i { flex: none; font-size: 1rem; color: var(--tc, var(--red-600)); margin-top: 1px; }
+.js-why b { color: var(--navy-900); }
+.js-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 16px; }
 
 /* Header of the expanded morph card — a slim masthead for the ladder. */
 .tierfold-head { display: flex; align-items: center; gap: 20px; width: 100%; padding: 18px 22px 18px 18px; background: none; border: none; font: inherit; text-align: left; cursor: pointer; transition: background .2s; }
@@ -1031,6 +1079,10 @@ a.tiercol:hover { background: var(--cream-100); }
 .tf-cta { flex: none; display: flex; align-items: center; gap: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 0.84375rem; color: var(--navy-700); }
 @media (max-width: 700px) { .tf-cta span { display: none; } }
 .tf-note { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-500); margin: 0; padding: 16px 22px 20px; border-top: 1px solid var(--cream-200); }
+/* The jumpseat sits inside the expanded morph, so it needs the gutter the
+   edge-to-edge ladder above it does not. */
+.tf-jump { padding: 0 22px; }
+.tf-jump .jumpseat { margin-top: 22px; }
 
 /* Tier morph — the category is a NORMAL grid card that GROWS to the
    full row when opened. The layout jump is animated FLIP-style from

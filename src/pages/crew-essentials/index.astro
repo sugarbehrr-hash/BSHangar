@@ -2,16 +2,18 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import TierLadder from '../../components/TierLadder.astro';
+import JumpseatSlot from '../../components/JumpseatSlot.astro';
 import { FACEBOOK_GROUP } from '../../data/site';
+import { products, countFor } from '../../data/essentials';
+import { bagCategories } from '../../data/bags';
 import {
-  products,
   productCategories,
-  tierCategories,
   TIERS,
   TIER_ORDER,
-  countFor,
+  coverFor,
+  pickCount,
   priceRange,
-} from '../../data/essentials';
+} from '../../data/catalog';
 
 /**
  * The browse page. Most picks are one tile; a category the group has worked
@@ -70,57 +72,69 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
 
       <div class="grid three" id="prodgrid">
         {
-          tierCategories.map((category) => (
-            <div class="card product tiermorph" data-cat={category.cat}>
-              <div
-                class="tm-face"
-                role="button"
-                tabindex="0"
-                aria-expanded="false"
-                aria-label={`${category.label} — see all three tiers`}
-              >
-                <div class="shot">
-                  <img src={category.picks.at(-1)?.image} alt={category.picks.at(-1)?.imageAlt} />
-                  <span class="tagchip">{category.picks.length} picks</span>
-                  <span class="stampmini">
-                    <span class="t">FA Approved</span>
-                    <span class="s">Blue Streak Hangar</span>
-                  </span>
-                </div>
-                <div class="pbody">
-                  <h3 class="card-title">{category.label}</h3>
-                  <p class="card-text">{category.blurb}</p>
-                  <span class="card-go">
-                    See all three tiers <Icon name="ph-arrow-right" />
-                  </span>
-                </div>
-              </div>
+          bagCategories.map((category) => {
+            const cover = coverFor(category);
 
-              <div class="tm-full">
-                {/* The label is hidden under 700px, where the icon stands alone,
-                    so the name is stated rather than inferred from the text. */}
-                <button
-                  class="tierfold-head"
-                  type="button"
-                  data-tm-close
-                  aria-label="Fold it back up"
+            return (
+              <div class="card product tiermorph" data-cat={category.cat}>
+                <div
+                  class="tm-face"
+                  role="button"
+                  tabindex="0"
+                  aria-expanded="false"
+                  aria-label={`${category.label} — see every pick`}
                 >
-                  <div class="tf-main">
-                    <span class="tf-kicker">Same bar, three prices</span>
-                    <h3 class="tf-title">{category.label}</h3>
-                    <div class="tf-sub">{priceRange(category)} · {tierNames}</div>
+                  <div class="shot">
+                    {cover ? (
+                      <img src={cover.image} alt={cover.alt} />
+                    ) : (
+                      <Icon name={category.icon} />
+                    )}
+                    <span class="tagchip">{pickCount(category)} picks</span>
+                    <span class="stampmini">
+                      <span class="t">FA Approved</span>
+                      <span class="s">Blue Streak Hangar</span>
+                    </span>
                   </div>
-                  <span class="tf-cta">
-                    <span>Fold it back up</span> <Icon name="ph-arrows-in-simple" weight="bold" />
-                  </span>
-                </button>
+                  <div class="pbody">
+                    <h3 class="card-title">{category.label}</h3>
+                    <p class="card-text">{category.blurb}</p>
+                    <span class="card-go">
+                      See every pick <Icon name="ph-arrow-right" />
+                    </span>
+                  </div>
+                </div>
 
-                <TierLadder category={category} compact />
+                <div class="tm-full">
+                  {/* The label is hidden under 700px, where the icon stands alone,
+                      so the name is stated rather than inferred from the text. */}
+                  <button
+                    class="tierfold-head"
+                    type="button"
+                    data-tm-close
+                    aria-label="Fold it back up"
+                  >
+                    <div class="tf-main">
+                      <span class="tf-kicker">Same bar, three prices</span>
+                      <h3 class="tf-title">{category.label}</h3>
+                      <div class="tf-sub">{priceRange(category)} · {tierNames}</div>
+                    </div>
+                    <span class="tf-cta">
+                      <span>Fold it back up</span> <Icon name="ph-arrows-in-simple" weight="bold" />
+                    </span>
+                  </button>
 
-                <p class="tf-note">{category.provisionalNote}</p>
+                  <TierLadder category={category} compact />
+
+                  <div class="tf-jump">
+                    <JumpseatSlot category={category} />
+                  </div>
+
+                  <p class="tf-note">{category.provisionalNote}</p>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         }
 
         {

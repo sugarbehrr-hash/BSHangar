@@ -4,11 +4,13 @@ import Icon from '../../components/Icon.astro';
 import Stamp from '../../components/Stamp.astro';
 import FigureLedger from '../../components/FigureLedger.astro';
 import TierLadder from '../../components/TierLadder.astro';
+import JumpseatSlot from '../../components/JumpseatSlot.astro';
 import { richText } from '../../lib/rich-text';
 import { SITE, FACEBOOK_GROUP } from '../../data/site';
-import { products, TIERS } from '../../data/essentials';
+import { products } from '../../data/essentials';
+import { JUMPSEAT } from '../../data/catalog';
 import {
-  rollingBags,
+  spinnerCategory,
   rollerPro,
   rollerProCopy,
   rollerProGallery,
@@ -21,12 +23,16 @@ import {
 } from '../../data/roller-pro';
 
 /**
- * The first item page.
+ * The first item page — and the site's one jumpseat pick.
  *
  * A product page here is a document, not a listing: the same figure ledger the
  * contract hub uses, the honest downsides beside the wins, and the compromise
  * stated in one sentence in three places that all read it from the same field.
  * There is no score anywhere on this page, deliberately.
+ *
+ * The masthead carries the Jumpseat mark rather than the Flight Attendant
+ * Approved stamp, and the standard band below scores this bag against the gate
+ * and shows the point it fails. See the header note in data/roller-pro.ts.
  */
 const [hero, ...supports] = rollerProGallery;
 
@@ -37,8 +43,8 @@ const related = rollerProRelated.map((entry) => {
   return { ...product, blurb: entry.blurb };
 });
 
-/** A price checked in July 2026 is worth trusting until July 2027, not forever. */
-const [checkedYear, checkedMonth] = rollingBags.checked.split('-');
+/** A price checked in August 2026 is worth trusting until August 2027, not forever. */
+const [checkedYear, checkedMonth] = spinnerCategory.checked.split('-');
 const priceValidUntil = `${Number(checkedYear) + 1}-${checkedMonth}-01`;
 
 /** Product schema. No aggregateRating — the system deliberately has no scores. */
@@ -47,7 +53,9 @@ const productSchema = {
   '@type': 'Product',
   name: 'Peak Design Roller Pro Carry-On',
   brand: { '@type': 'Brand', name: 'Peak Design' },
-  image: new URL(rollerPro.image, Astro.site ?? SITE.url).href,
+  // The gallery hero, not the pick's thumbnail: the pick's photo is optional
+  // across the catalog, and this one is always the same frame anyway.
+  image: new URL(hero.src, Astro.site ?? SITE.url).href,
   description: rollerProCopy.sub,
   offers: {
     '@type': 'Offer',
@@ -63,7 +71,7 @@ const productSchema = {
 
 <BaseLayout
   title="Peak Design Roller Pro"
-  description="The First Class pick for crew rolling bags: 8.6 lb empty, 34 L, 0.2 in of sizer clearance, 60 mm wheels you replace yourself, $599. Six numbers, the honest downsides, and what earns the Flight Attendant Approved stamp."
+  description="The jumpseat pick — what one CLT flight attendant actually flies: 8.6 lb empty, 34 L, 0.2 in of sizer clearance, 60 mm wheels you replace yourself, $600. Six numbers, the honest downsides, and why this one carries a name instead of the Flight Attendant Approved stamp."
 >
   <script type="application/ld+json" set:html={JSON.stringify(productSchema)} slot="head" />
 
@@ -86,13 +94,16 @@ const productSchema = {
           </div>
         </div>
 
+        {/* No stamp here. This pick has not cleared the gate, and a masthead
+            that showed the mark anyway would be the exact dishonesty the whole
+            standard exists to prevent. The chip and the byline stand in. */}
         <div class="mh-mark">
-          <a class="stamplink" href="/fa-approved/" title="What the stamp means">
-            <Stamp />
-          </a>
-          <span class:list={['stampchip', TIERS[rollerPro.tier].chip]}>
-            <Icon name={TIERS[rollerPro.tier].icon} /> {rollerProCopy.stampChip}
+          <span class:list={['stampchip', JUMPSEAT.chip]}>
+            <Icon name={JUMPSEAT.icon} /> {rollerProCopy.stampChip}
           </span>
+          <div class="stampnote">
+            <Icon name="ph-user" /> {rollerPro.by}
+          </div>
           <div class="stampnote">
             <Icon name="ph-scales" /> Your compromise: {rollerPro.compromise}
           </div>
@@ -209,11 +220,13 @@ const productSchema = {
         <p class="lead" set:html={richText(rollerProCopy.tiersLead)} />
       </div>
 
-      <TierLadder category={rollingBags} here={rollerPro.tier} />
+      <TierLadder category={spinnerCategory} />
+
+      <JumpseatSlot category={spinnerCategory} here />
 
       <div class="notice warn spaced">
         <Icon name="ph-hourglass-medium" />
-        <div class="nt" set:html={richText(rollingBags.provisionalNotice)} />
+        <div class="nt" set:html={richText(spinnerCategory.provisionalNotice)} />
       </div>
 
       <div class="buybar" style="margin-top:26px;">

@@ -1,49 +1,49 @@
 /* ============================================================
-   Peak Design Roller Pro — the First Class rolling bag
+   Peak Design Roller Pro — the jumpseat pick
    ------------------------------------------------------------
-   The first item page. Copy is final (design handoff,
-   Essentials Item.dc.html) and lives here rather than in the
-   page, so the markup stays structural.
+   The first item page. Copy lives here rather than in the page,
+   so the markup stays structural.
 
    Everything the ladder already knows — name, price, the
-   compromise sentence, the photo — is read from the pick in
-   src/data/essentials.ts rather than restated here. A product
-   that says $599 in its buy bar and $610 in its ladder column is
+   compromise sentence, the photo — is read from the jumpseat
+   entry in src/data/bags.ts rather than restated here. A product
+   that says $600 in its buy bar and $610 in its ladder column is
    exactly the failure this page is supposed to be above.
+
+   NOT A STAMPED PICK. This page used to run as the First Class
+   rolling bag, carrying the Flight Attendant Approved stamp and
+   the line "Flown by 3 CLT crew". Both were overclaims: the bag
+   is a year old, was built for photographers rather than crew,
+   and exactly one flight attendant in this group flies one. The
+   stamp requires "more than one of us said so", so it comes off
+   and the jumpseat mark goes on — which is the honest version
+   and, having a name attached, the more useful one.
 
    **bold** and [label](href) are the inline markers understood by
    src/lib/rich-text.ts.
    ============================================================ */
 
 import type { LedgerFigure, LedgerIntro } from './figure-ledger';
-import { tierCategories, checkedLabel } from './essentials';
-
-const category = tierCategories.find((entry) => entry.key === 'rolling-bags');
-if (!category) throw new Error('roller-pro: the rolling-bags category is gone from essentials.ts');
-
-const first = category.picks.find((entry) => entry.tier === 'first');
-if (!first) throw new Error('roller-pro: rolling-bags has no First Class pick');
+import { checkedLabel } from './catalog';
+import { spinners } from './bags';
 
 /** The category this page belongs to, and this page's own pick. */
-export const rollingBags = category;
-export const rollerPro = first;
+export const spinnerCategory = spinners;
+export const rollerPro = spinners.jumpseat;
 
-/** "July 2026" — when the price below was last verified. */
-const CHECKED = checkedLabel(category.checked);
-
-/** When the stamp went on. Separate from the price check: different fact. */
-const APPROVED = 'July 2026';
+/** "August 2026" — when the price below was last verified. */
+const CHECKED = checkedLabel(spinners.checked);
 
 export const rollerProCopy = {
   eyebrow: 'Bags & packing · Peak Design',
   title: 'Roller Pro',
   titleLine2: 'Carry-On',
   sub:
-    'The best-built roller we have flown with — our First Class pick. The compromises are ' +
-    'real and there are two of them: the price, and the weight.',
-  meta: [`Approved ${APPROVED}`, 'Flown by 3 CLT crew', '8.6 lb empty — feel it before you buy'],
+    'The best-built roller I have flown with, and the one I actually fly — but one flight ' +
+    'attendant is not a verdict, so it carries my name instead of the stamp.',
+  meta: ['Jumpseat pick · Cole, CLT', 'One crew, not the group', '8.6 lb empty — feel it before you buy'],
   backLabel: 'All crew essentials',
-  stampChip: 'First Class pick',
+  stampChip: 'Jumpseat pick',
   stampLink: 'What the stamp means →',
 
   figuresKicker: 'The 30-second read',
@@ -56,22 +56,22 @@ export const rollerProCopy = {
     'Press shots from Peak Design for now — crew photos replace them as they come in.',
 
   standardKicker: 'The standard',
-  standardHeading: 'What earns the stamp',
+  standardHeading: 'Why this one has no stamp',
   standardLead:
-    'Flight Attendant Approved is not a sticker we hand out. Nobody pays for it and nobody ' +
-    'is sent a free one. It means this, every time:',
+    'Flight Attendant Approved is not a sticker we hand out. A pick has to clear all five ' +
+    'points below, and this bag clears four of them. The fifth is the one that matters most:',
   standardNote:
-    'The full standard — including the two marks and how a pick loses the stamp — is on ' +
+    'The full standard — including the jumpseat mark and how a pick loses the stamp — is on ' +
     '[the Flight Attendant Approved page](/fa-approved/).',
   standardFooter:
-    "Nothing on this page is sponsored. Where we earn a small commission, it's the note at " +
-    'the bottom — and it never decides what gets the stamp.',
+    'Nothing on this page is sponsored. Where we earn a small commission, it is the note at ' +
+    'the bottom — and it has never decided what gets a stamp, or what gets withheld.',
 
   tiersKicker: 'Same bar, three prices',
-  tiersHeading: 'Rolling bags — all three tiers',
+  tiersHeading: 'Spinners — all three tiers',
   tiersLead:
-    'Every pick clears the same bar. The tiers are price levels, and each one tells you what ' +
-    "you're giving up. [How the tiers work](/fa-approved/).",
+    'Every pick below cleared the gate this one has not. The tiers are price levels, and each ' +
+    "one tells you what you're giving up. [How the tiers work](/fa-approved/).",
 
   buyLabel: `Street price · ${CHECKED}`,
   buyMeta:
@@ -88,8 +88,8 @@ export const rollerProCopy = {
   relatedHeading: 'The rest of the kit',
   actionTitle: 'Flown with this one? Say so.',
   actionBody:
-    "Agreement, disagreement and photos all belong in the group — that's how the stamp " +
-    'stays honest.',
+    'This is the one page on the site waiting on you. Two more crew reporting a year on it, ' +
+    'and it stops being a jumpseat pick.',
 } as const;
 
 /** The four frames. First is the main 4/3; the rest are 1/1 supports. */
@@ -211,7 +211,7 @@ export const rollerProFigures: LedgerFigure[] = [
   {
     key: 'price',
     icon: 'ph-tag',
-    value: '599',
+    value: '600',
     unit: 'USD',
     label: 'What you will pay',
     caption: `Direct or Amazon · checked ${CHECKED}`,
@@ -219,11 +219,11 @@ export const rollerProFigures: LedgerFigure[] = [
     pane: {
       accent: 'var(--gold-600)',
       title: 'What you will pay',
-      sub: `$599 USD · checked ${CHECKED}`,
+      sub: `$600 USD · checked ${CHECKED}`,
       paras: [
-        'There is no way to soften this: it costs roughly what a reserve line pays in a week. ' +
-          'It is why this is the First Class pick and not the default — most crew should buy ' +
-          'the Main Cabin bag instead.',
+        'There is no way to soften this: it costs roughly what a reserve line pays in a week, ' +
+          'and it buys a bag the group has not vetted. Most crew should buy the Main Cabin ' +
+          'pick instead and never think about it again.',
         'The case for it is time — five to seven years of daily use, with parts you can ' +
           'replace, against a $150 bag you buy again every eighteen months.',
       ],
@@ -244,7 +244,7 @@ export const rollerProFigures: LedgerFigure[] = [
     pane: {
       accent: 'var(--red-600)',
       title: 'If it walks off a crew rack',
-      sub: '$599 out of pocket',
+      sub: '$600 out of pocket',
       paras: [
         'The lifetime warranty covers defects. It does not cover theft, loss, or the ramp. At ' +
           'this price the bag becomes something you notice being away from — which for some ' +
@@ -285,21 +285,24 @@ export const rollerProVerdictCards = {
       '**8.6 lb empty is a lot.** Nearly two pounds more than the soft-side most of us fly.',
       '**Four spinner wheels are terminal wheels.** On jetbridge grating and carpeted aisles ' +
         'you will tow it on two anyway.',
-      '**$599 is a lot to leave in a hotel lobby.** If you have lost a bag before, buy the ' +
+      '**$600 is a lot to leave in a hotel lobby.** If you have lost a bag before, buy the ' +
         'cheaper pick and sleep better.',
     ],
   },
 } as const;
 
 /**
- * The standard, restated in this bag's own terms. The five points are the same
- * gate as /fa-approved/, in the order they mattered here, and the last one is
- * filled in with what this pick costs you.
+ * The standard, scored against this bag. The five points are the same gate as
+ * /fa-approved/, and the flagged one is the point this pick FAILS — which is
+ * the whole reason the page carries a jumpseat mark instead of a stamp.
+ *
+ * The flag is not decoration: four green checks and one amber warning is the
+ * page saying out loud what it cannot claim.
  */
 export const rollerProCriteria = [
   {
     text:
-      '**Flown, not sampled.** At least 90 days in a real rotation, by crew who paid for it.',
+      '**Flown, not sampled.** Eighteen months in a real rotation, paid for out of pocket.',
   },
   {
     text:
@@ -313,23 +316,28 @@ export const rollerProCriteria = [
   },
   {
     text:
-      '**More than one of us said so.** Recommended in the group, unprompted, by crew who ' +
-      "don't know each other.",
+      "**Its compromise is named.** Every pick says in one sentence what you're giving up. " +
+      '**This one: the price, and two pounds of empty weight.**',
   },
   {
     flag: true,
     text:
-      "**Its compromise is named.** Every pick says in one sentence what you're giving up. " +
-      '**This one: the price, and two pounds of empty weight.**',
+      '**More than one of us said so — and here, nobody else has.** The bag is a year old and ' +
+      'was built for photographers, not crew. One flight attendant flying one is a ' +
+      'recommendation, not a verdict, so the stamp stays off until the group has flown it.',
   },
 ] as const;
 
+/**
+ * The one quote on the site with a name on it. That is the point of a jumpseat
+ * pick — an attributed opinion beats an anonymous consensus of one.
+ */
 export const rollerProVerdict = {
   quote:
-    '“I have carried this since January, through two winters of CLT weather and one ramp ' +
-    "that clearly hated it. It looks new. I still wince at what it cost — and I'd buy it " +
-    'again.”',
-  byline: 'CLT · 9 years on the line',
+    '“I have carried this through two winters of CLT weather and one ramp that clearly hated ' +
+    "it. It looks new. I still wince at what it cost — and I'd buy it again. I just can't " +
+    'tell you the group agrees with me, because it hasn\'t flown one yet.”',
+  byline: 'Cole · CLT · 9 years on the line',
 } as const;
 
 /**

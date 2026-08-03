@@ -1,57 +1,58 @@
 ---
 import Icon from './Icon.astro';
-import { TIERS, TIER_ORDER, type TierCategory, type TierKey } from '../data/essentials';
+import { richText } from '../lib/rich-text';
+import {
+  TIERS,
+  TIER_ORDER,
+  picksFor,
+  alternatesFor,
+  columnRange,
+  sellerFor,
+  type TierCategory,
+} from '../data/catalog';
 
 /**
  * The tier ladder: one card, three columns, read left to right as a price
  * progression. The bars step 1-2-3 like a signal meter.
  *
+ * A column now holds MORE THAN ONE pick — Cole's reviews gave two or three
+ * bags at most price levels, and every one of them is a buy link we want. So
+ * the column head carries the tier and its price range, and each pick under it
+ * is a row: name, price, the one spec that decides it, its compromise, and
+ * where to buy.
+ *
  * No column carries a selected or focused state. That was tried and removed —
  * every pick here already cleared the same gate, so highlighting one of them
- * reads as a grade, which is the one thing the tiers are not.
+ * reads as a grade, which is the one thing the tiers are not. The pick that is
+ * somebody's personal favourite lives OUTSIDE this component, in the jumpseat
+ * slot, for exactly that reason.
+ *
+ * There are no photos in the ladder. Three of the sixteen bags have a crew
+ * photo, so a thumbnail column would be three pictures and thirteen holes —
+ * and this is a comparison table, where a name and a number do more work than
+ * a press shot. Photos live on a pick's own page.
  */
 interface Props {
   category: TierCategory;
   /**
-   * Browse-card variant: a photo per column and the prose dropped, since the
-   * card is one third of a grid row rather than the width of the page. The
-   * pick that has its own page becomes the link out.
+   * Browse-card variant: the longer prose is dropped, since the card is one
+   * third of a grid row rather than the width of the page.
    */
   compact?: boolean;
-  /** The tier whose column is the page being read. Flags it "This page". */
-  here?: TierKey;
 }
 
-const { category, compact = false, here } = Astro.props;
-
-/** Ordered here rather than trusted from the data — the ladder IS the order. */
-const picks = [...category.picks].sort(
-  (a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier)
-);
+const { category, compact = false } = Astro.props;
 ---
 
 <div class="tierscard">
   {
-    picks.map((pick) => {
-      const tier = TIERS[pick.tier];
-      const linked = compact && pick.href;
-      const Column = linked ? 'a' : 'div';
+    TIER_ORDER.map((key) => {
+      const tier = TIERS[key];
+      const picks = picksFor(category, key);
+      const alternates = alternatesFor(category, key);
 
       return (
-        <Column
-          class="tiercol"
-          data-tier={pick.tier}
-          style={`--tc: ${tier.color};`}
-          {...(linked ? { href: pick.href } : {})}
-        >
-          {here === pick.tier && <span class="tier-here">This page</span>}
-
-          {compact && (
-            <div class="tier-shot">
-              <img src={pick.image} alt={pick.imageAlt} loading="lazy" />
-            </div>
-          )}
-
+        <div class="tiercol" data-tier={key} style={`--tc: ${tier.color};`}>
           <div class="tbars">
             {[0, 1, 2].map((i) => (
               <b class:list={[i < tier.bars && 'on']} />
@@ -62,23 +63,64 @@ const picks = [...category.picks].sort(
             <Icon name={tier.icon} /> {tier.label}
           </span>
 
-          <div class="tier-price">${pick.price}<span>USD</span></div>
-          <h3 class="tier-name">{pick.name}</h3>
-          <div class="tier-stat">{pick.stat}</div>
+          <div class="tier-range">{columnRange(picks)}</div>
 
-          {!compact && <p class="tier-text">{pick.text}</p>}
+          <ul class="tier-picks">
+            {picks.map((pick) => {
+              const seller = sellerFor(pick.url);
 
-          <div class="tier-comp">
-            <Icon name="ph-scales" />
-            <div><b>Your compromise:</b> {pick.compromise}</div>
-          </div>
+              return (
+                <li class="tier-pick">
+                  <div class="tp-head">
+                    <h4 class="tp-name">
+                      {pick.href ? <a href={pick.href}>{pick.name}</a> : pick.name}
+                    </h4>
+                    <div class="tp-price">${pick.price.toLocaleString('en-US')}</div>
+                  </div>
 
-          {linked && (
-            <span class="tier-go">
-              Read the full pick <Icon name="ph-arrow-right" />
-            </span>
+                  <div class="tp-stat">
+                    {pick.stat}
+                    {pick.provisional && <span class="tp-prov">Provisional</span>}
+                  </div>
+
+                  {!compact && <p class="tp-text">{pick.text}</p>}
+
+                  <div class="tier-comp">
+                    <Icon name="ph-scales" />
+                    <div>
+                      <b>Your compromise:</b> {pick.compromise}
+                    </div>
+                  </div>
+
+                  <a
+                    class="btn quiet sm tp-buy"
+                    href={pick.url}
+                    target="_blank"
+                    rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
+                  >
+                    <Icon name={seller.icon} /> {seller.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+
+          {alternates.length > 0 && (
+            <div class="tier-alts">
+              <span class="ta-label">Also at this price — not reviewed</span>
+              <ul>
+                {alternates.map((alt) => (
+                  <li>
+                    <a href={alt.url} target="_blank" rel="noopener sponsored">
+                      {alt.name}
+                    </a>{' '}
+                    <span set:html={richText(alt.note)} />
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
-        </Column>
+        </div>
       );
     })
   }

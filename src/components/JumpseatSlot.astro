@@ -1,0 +1,82 @@
+---
+import Icon from './Icon.astro';
+import { JUMPSEAT, sellerFor, type TierCategory } from '../data/catalog';
+
+/**
+ * The jumpseat pick — what one named flight attendant actually flies.
+ *
+ * Deliberately NOT a fourth column on the ladder. See the long note on
+ * JUMPSEAT in src/data/catalog.ts: the tiers are fare classes sorted by price,
+ * and every pick in them cleared "more than one of us said so". This clears
+ * neither test, so it sits beside the ladder rather than on it.
+ *
+ * Two things are structurally required and neither is decoration: the name of
+ * the crew member behind it, and the reason the stamp is absent. A jumpseat
+ * card without those is just an unearned recommendation, which is the failure
+ * this whole slot exists to prevent.
+ */
+interface Props {
+  category: TierCategory;
+  /** Flags the card "This page" when the pick's own page is the one being read. */
+  here?: boolean;
+}
+
+const { category, here = false } = Astro.props;
+const pick = category.jumpseat;
+const seller = sellerFor(pick.url);
+---
+
+<div class="jumpseat" style={`--tc: ${JUMPSEAT.color};`}>
+  <div class="js-side">
+    <span class:list={['stampchip', JUMPSEAT.chip]}>
+      <Icon name={JUMPSEAT.icon} /> {JUMPSEAT.label}
+    </span>
+    <div class="js-by">
+      <span class="card-badge sm" style={`--accent: ${JUMPSEAT.color};`}>
+        <Icon name="ph-user" />
+      </span>
+      <span>{pick.by}</span>
+    </div>
+    {here && <span class="js-here">This page</span>}
+  </div>
+
+  <div class="js-body">
+    <span class="js-kicker">{JUMPSEAT.explain.headline}</span>
+    <h3 class="js-name">
+      {pick.href && !here ? <a href={pick.href}>{pick.name}</a> : pick.name}
+    </h3>
+    <div class="js-stat">
+      <b>${pick.price.toLocaleString('en-US')}</b> · {pick.stat}
+    </div>
+
+    <p class="js-text">{pick.text}</p>
+
+    <div class="js-why">
+      <Icon name="ph-info" />
+      <div><b>Why there's no stamp.</b> {pick.why}</div>
+    </div>
+
+    <div class="tier-comp">
+      <Icon name="ph-scales" />
+      <div><b>Your compromise:</b> {pick.compromise}</div>
+    </div>
+
+    <div class="js-actions">
+      <a
+        class="btn quiet sm"
+        href={pick.url}
+        target="_blank"
+        rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
+      >
+        <Icon name={seller.icon} /> {seller.label}
+      </a>
+      {
+        pick.href && !here && (
+          <a class="txtbtn" href={pick.href}>
+            Read the full pick <Icon name="ph-arrow-right" />
+          </a>
+        )
+      }
+    </div>
+  </div>
+</div>
