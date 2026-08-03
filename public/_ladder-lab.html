@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ladder lab — Blue Streak Hangar</title>
+<style>
+@font-face { font-family:'Anton'; font-style:normal; font-weight:400; font-display:swap; src:url('/fonts/anton-latin.woff2') format('woff2'); }
+@font-face { font-family:'Archivo'; font-style:normal; font-weight:400 800; font-display:swap; src:url('/fonts/archivo-latin-var.woff2') format('woff2'); }
+@font-face { font-family:'Libre Franklin'; font-style:normal; font-weight:400 700; font-display:swap; src:url('/fonts/libre-franklin-latin-var.woff2') format('woff2'); }
+
+:root{
+  --navy-900:#0F1E3D; --navy-700:#1B3461; --navy-600:#294B82;
+  --red-600:#C8102E; --red-100:#FBE3E7;
+  --sky-700:#1F6FB2; --sky-100:#E4F2FC;
+  --gold-600:#D88A1E; --gold-500:#E8A33D; --gold-100:#FBF0D9;
+  --cream-100:#FBF7EE; --cream-200:#F5EFE1; --cream-300:#ECE3CF;
+  --ink-900:#16202E; --ink-700:#33414F; --ink-500:#5E6C7A;
+  --white:#fff;
+  --radius-sm:10px; --radius-lg:20px; --radius-pill:999px;
+  --shadow-card:0 8px 24px rgba(15,30,61,.12);
+  --font-display:'Anton','Arial Narrow',sans-serif;
+  --font-heading:'Archivo','Helvetica Neue',sans-serif;
+  --font-body:'Libre Franklin','Helvetica Neue',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream-200);font-family:var(--font-body);color:var(--ink-900);}
+
+/* ---------- lab chrome ---------- */
+.labbar{position:sticky;top:0;z-index:50;background:var(--navy-900);color:#fff;padding:12px 18px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-family:var(--font-heading);font-weight:800;font-size:.8125rem}
+.labbar b{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:1.05rem;letter-spacing:.02em}
+.labbar button{font:inherit;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:var(--radius-pill);padding:6px 14px;cursor:pointer}
+.labbar button[aria-pressed=true]{background:var(--gold-500);color:var(--navy-900);border-color:var(--gold-500)}
+.stage{padding:26px 18px 60px;margin:0 auto;transition:max-width .2s;container-type:inline-size}
+.stage[data-w=phone]{max-width:400px}
+.stage[data-w=desk]{max-width:1120px}
+.opt{display:none}
+.opt.on{display:block}
+.optnote{background:var(--navy-900);color:#fff;border-radius:var(--radius-sm);padding:14px 16px;margin:0 0 20px;font-size:.875rem;line-height:1.5}
+.optnote b{font-family:var(--font-heading);font-weight:800}
+.optnote .bad{color:#FFB3BF}
+.optnote .good{color:#B9E8CE}
+
+/* ---------- shared bits ---------- */
+.chip{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:var(--radius-pill);font-family:var(--font-heading);font-weight:800;font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase}
+.chip.eco{background:var(--sky-700);color:#fff}
+.chip.main{background:var(--gold-500);color:var(--navy-900)}
+.chip.first{background:var(--navy-700);color:var(--gold-500);border:1.5px solid var(--gold-500)}
+.chip.jump{background:var(--red-600);color:#fff}
+.bars{display:flex;align-items:flex-end;gap:4px;height:16px}
+.bars b{width:13px;border-radius:2.5px;background:var(--cream-300);height:5px}
+.bars b:nth-child(2){height:10px}.bars b:nth-child(3){height:16px}
+.bars b.on{background:var(--tc,var(--navy-900))}
+.buy{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-heading);font-weight:800;font-size:.8125rem;padding:8px 15px;border:1.5px solid var(--cream-300);border-radius:var(--radius-pill);background:var(--white);color:var(--navy-900);text-decoration:none;white-space:nowrap}
+.buy:hover{border-color:var(--navy-700)}
+.comp{font-size:.84375rem;line-height:1.45;color:var(--ink-700)}
+.comp b{color:var(--navy-900)}
+.aBody .comp{margin-top:6px}
+
+
+/* ---------- JUMPSEAT (shared by the options) ---------- */
+.jsWrap{margin-top:22px}
+.jsLead{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-family:var(--font-heading);font-weight:800;font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-500)}
+.jsLead::after{content:"";flex:1;height:1px;background:var(--cream-300)}
+.jsCard{--tc:var(--red-600);--tfg:#fff;background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden}
+.jsHead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 20px;background:var(--tc);color:var(--tfg)}
+.jsWho{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-heading);font-weight:800;font-size:.8125rem}
+.jsWho .dot{width:22px;height:22px;border-radius:50%;background:color-mix(in srgb,var(--tfg) 24%,transparent);color:var(--tfg);display:grid;place-items:center;font-size:.625rem}
+.jsHead .hl{flex:1;min-width:180px;font-family:var(--font-heading);font-weight:700;font-size:.8125rem;opacity:.8}
+.jsWhy{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:11px 13px;background:color-mix(in srgb,var(--tc) 13%,var(--white));border-radius:var(--radius-sm);font-size:.84375rem;line-height:1.45;color:var(--ink-700)}
+.jsWhy b{color:var(--navy-900)}
+@container (max-width:620px){ .jsHead{padding:14px 16px;gap:10px} .jsHead .hl{min-width:100%;order:3} }
+
+/* ---------- current jumpseat (reference, options B and C) ---------- */
+.cJump{display:grid;grid-template-columns:1fr;background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);overflow:hidden;margin-top:18px;--tc:var(--red-600)}
+@container (min-width:760px){.cJump{grid-template-columns:232px 1fr}}
+.cJside{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:22px;background:color-mix(in srgb,var(--tc) 6%,var(--cream-100));border-bottom:1px solid var(--cream-200)}
+@container (min-width:760px){.cJside{border-bottom:none;border-right:1px solid var(--cream-200)}}
+.cJbody{padding:22px}
+.cJkick{display:block;font-family:var(--font-heading);font-weight:800;font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tc)}
+.cJname{font-family:var(--font-display);text-transform:uppercase;font-size:1.5rem;line-height:.98;color:var(--navy-900);margin:6px 0 0}
+
+/* ================= OPTION A — tier bands, picks as rows ================= */
+.aLad{background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden}
+.aTier + .aTier{border-top:1px solid var(--cream-300)}
+/* The tier band header is a SOLID field in the tier's own colour, using the
+   exact pairs the chips already use. Not a strip: a strip is 3px of colour you
+   stop seeing, and the rules here rule out colour on one edge anyway. A whole
+   coloured band is what makes the tier readable at a glance while scrolling. */
+.aHead{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 20px;background:var(--tc);color:var(--tfg)}
+.tname{font-family:var(--font-heading);font-weight:800;font-size:.8125rem;letter-spacing:.14em;text-transform:uppercase}
+.aHead .hl{flex:1;min-width:180px;font-family:var(--font-heading);font-weight:700;font-size:.8125rem;opacity:.78}
+.aHead .rng{font-family:var(--font-display);font-size:1.375rem;line-height:1}
+/* Bars read against the solid field, not against cream. */
+.aHead .bars b{background:color-mix(in srgb,var(--tfg) 28%,transparent)}
+.aHead .bars b.on{background:var(--tfg)}
+.aRow:hover{background:var(--cream-100)}
+.aRow{display:grid;grid-template-columns:76px 1fr auto;gap:16px;align-items:center;padding:16px 20px}
+.aRow + .aRow{border-top:1px solid var(--cream-200)}
+.aShot{width:76px;aspect-ratio:1;border:1px solid var(--cream-300);border-radius:var(--radius-sm);background:var(--white);overflow:hidden}
+.aShot img{width:100%;height:100%;object-fit:contain}
+.aBody{min-width:0}
+.aName{font-family:var(--font-heading);font-weight:800;font-size:1rem;color:var(--navy-900);margin:0}
+.aStat{font-family:var(--font-heading);font-weight:700;font-size:.71875rem;letter-spacing:.04em;color:var(--ink-500);margin-top:3px}
+.aBuy{display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+.aPrice{font-family:var(--font-display);font-size:1.75rem;line-height:1;color:var(--navy-900)}
+@container (max-width:620px){
+  .aRow{grid-template-columns:56px 1fr;gap:12px;padding:14px 16px;align-items:start}
+  .aShot{width:56px}
+  .aBody{grid-column:2}
+  /* Compromise spans full width under the thumb, so a long sentence does not
+     wrap inside a narrow column. Price and buy share the last line. */
+  .aBody .comp{margin-top:8px}
+  .aBuy{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;margin-top:4px}
+  .aPrice{font-size:1.5rem}
+  .aHead{padding:14px 16px;gap:10px}
+  .aHead .hl{min-width:100%;order:3}
+  .aHead .rng{margin-left:auto}
+}
+.aAlts{padding:14px 20px 18px;background:var(--cream-100);font-size:.8125rem;line-height:1.5;color:var(--ink-500)}
+.aAlts .lab{display:block;font-family:var(--font-heading);font-weight:800;font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.aAlts a{color:var(--navy-700);font-weight:700}
+
+/* ================= OPTION B — 3 columns, compact rows ================= */
+.bLad{display:grid;grid-template-columns:1fr;background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden}
+@container (min-width:820px){.bLad{grid-template-columns:repeat(3,1fr)}}
+/* Same colour language as A: a solid tier field at the head of the column,
+   then the tier's own wash carried through its picks. */
+.bCol{display:flex;flex-direction:column}
+@container (min-width:820px){.bCol{border-left:1px solid var(--cream-200)}.bCol:first-child{border-left:none}}
+.bHead{padding:14px 18px;background:var(--tc);color:var(--tfg);display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.bHead .bars{margin:0}
+.bHead .bars b{background:color-mix(in srgb,var(--tfg) 28%,transparent)}
+.bHead .bars b.on{background:var(--tfg)}
+.bBody{padding:6px 18px 16px}
+.bRng{font-family:var(--font-display);font-size:1.5rem;margin:0 0 0 auto;line-height:1}
+.bHl{flex-basis:100%;font-family:var(--font-heading);font-weight:700;font-size:.75rem;opacity:.8}
+.bPick{display:grid;grid-template-columns:52px 1fr;gap:11px;align-items:center;padding:12px 0}
+.bPick + .bPick{border-top:1px solid var(--cream-200)}
+.bShot{width:52px;aspect-ratio:1;border:1px solid var(--cream-300);border-radius:8px;background:#fff;overflow:hidden}
+.bShot img{width:100%;height:100%;object-fit:contain}
+.bName{font-family:var(--font-heading);font-weight:800;font-size:.875rem;color:var(--navy-900);margin:0;line-height:1.25}
+.bTop{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.bPrice{font-family:var(--font-display);font-size:1.0625rem;color:var(--navy-900)}
+.bStat{display:block;font-family:var(--font-heading);font-weight:700;font-size:.6875rem;color:var(--ink-500);margin-top:3px}
+.bDet{grid-column:1/-1;margin-top:4px}
+.bDet .comp{font-size:.8125rem}
+.bDet .buy{margin-top:9px;font-size:.75rem;padding:6px 12px}
+
+/* ================= CURRENT (reference) ================= */
+.cLad{display:grid;grid-template-columns:1fr;background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-lg);overflow:hidden}
+@container (min-width:820px){.cLad{grid-template-columns:repeat(3,1fr)}}
+.cCol{padding:20px;border-left:1px solid var(--cream-200);box-shadow:inset 0 3.5px 0 var(--tc)}
+.cCol:first-child{border-left:none}
+.cRng{font-family:var(--font-display);font-size:1.6rem;margin:12px 0 0;color:var(--navy-900)}
+.cPick{padding-top:14px;margin-top:14px;border-top:1px solid var(--cream-200)}
+.cPick:first-of-type{border-top:none;margin-top:8px}
+.cTop{display:flex;gap:12px;align-items:flex-start}
+.cShot{flex:none;width:64px;aspect-ratio:1;border:1px solid var(--cream-300);border-radius:8px;overflow:hidden;background:#fff}
+.cShot img{width:100%;height:100%;object-fit:contain}
+.cHead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.cName{font-family:var(--font-heading);font-weight:800;font-size:.9375rem;margin:0;color:var(--navy-900)}
+.cPrice{font-family:var(--font-display);font-size:1.25rem;color:var(--navy-900)}
+.cStat{font-family:var(--font-heading);font-weight:700;font-size:.71875rem;color:var(--ink-500);margin-top:5px}
+.cText{font-size:.84375rem;line-height:1.5;color:var(--ink-700);margin:9px 0 0}
+.cComp{margin-top:12px;padding:11px 13px;background:#fff;border:1px solid var(--cream-300);border-radius:var(--radius-sm);font-size:.8125rem;line-height:1.45;color:var(--ink-700)}
+.cBuy{margin-top:12px}
+</style>
+</head>
+<body>
+
+<div class="labbar">
+  <b>Ladder lab</b>
+  <span>Layout:</span>
+  <button data-opt="a" aria-pressed="true">A · Tier bands</button>
+  <button data-opt="b" aria-pressed="false">B · 3 columns, compact</button>
+  <button data-opt="c" aria-pressed="false">C · Current (broken)</button>
+  <span style="margin-left:auto">Width:</span>
+  <button data-w="desk" aria-pressed="true">Desktop</button>
+  <button data-w="phone" aria-pressed="false">Phone</button>
+</div>
+
+<div class="stage" data-w="desk">
+
+<!-- ============ A ============ -->
+<section class="opt on" id="opt-a">
+  <p class="optnote"><b>A · Tier bands, picks as rows.</b> The ladder runs <span class="good">top to bottom, cheap to expensive</span> — which is what a ladder actually is. Every pick is one aligned row, so nothing ends ragged and a tier can hold 1 or 5 picks without the layout caring. The compromise sits inline instead of in a box-inside-a-box. Phone layout is the same thing, so there is no reflow to get wrong.</p>
+
+  <div class="aLad">
+    <div class="aTier" data-t="eco" style="--tc:var(--sky-700);--tfg:#fff">
+      <div class="aHead">
+        <div class="bars"><b class="on"></b><b></b><b></b></div>
+        <span class="tname">Economy</span>
+        <span class="hl">The least money that clears the bar</span>
+        <span class="rng">Under $250</span>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/maxlite-5.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">Travelpro Maxlite 5 21"</h4>
+          <div class="aStat">5.4 lb — the lightest bag on this page</div>
+          <div class="comp"><b>Your compromise:</b> the handle wobbles fully extended and it tips if you let go in motion — plan on buying it again in a couple of years.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$160</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/flightcrew-5-21.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">Travelpro FlightCrew5 21"</h4>
+          <div class="aStat">3-year commercial-use warranty</div>
+          <div class="comp"><b>Your compromise:</b> four spinner wheels are consumables — on jetbridge grating and cobblestone layovers they go first.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$200</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      <div class="aAlts">
+        <span class="lab">Also at this price — not reviewed</span>
+        <a href="#">Loomis 21" Softside Spinner</a> The affordability pick among pilots. ·
+        <a href="#">SwissGear softside spinner</a> A low-cost crew favourite. ·
+        <a href="#">Samsonite softside spinner</a> Similar styling under $500.
+      </div>
+    </div>
+
+    <div class="aTier" data-t="main" style="--tc:var(--gold-500);--tfg:var(--navy-900)">
+      <div class="aHead">
+        <div class="bars"><b class="on"></b><b class="on"></b><b></b></div>
+        <span class="tname">Main Cabin</span>
+        <span class="hl">The default. Start here.</span>
+        <span class="rng">$250 – $400</span>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/crew-classic.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">Travelpro Crew Classic</h4>
+          <div class="aStat">Flown by crew at 90+ airlines</div>
+          <div class="comp"><b>Your compromise:</b> it is function over form — the anonymous black crew-room look, with no USB port and no laptop pocket.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$255</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/platinum-elite-21.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">Travelpro Platinum Elite 21"</h4>
+          <div class="aStat">10/10 ease of transport — OutdoorGearLab</div>
+          <div class="comp"><b>Your compromise:</b> it measures about 23.5" with wheels and handle, so a strict gate agent can call it at the sizer.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$390</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+    </div>
+
+    <div class="aTier" data-t="first" style="--tc:var(--navy-700);--tfg:var(--gold-500)">
+      <div class="aHead">
+        <div class="bars"><b class="on"></b><b class="on"></b><b class="on"></b></div>
+        <span class="tname">First Class</span>
+        <span class="hl">The best experience money buys</span>
+        <span class="rng">$400 +</span>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/briggs-riley-spinner.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">Briggs &amp; Riley Baseline Essential 22"</h4>
+          <div class="aStat">~10 lb · lifetime warranty, no questions asked</div>
+          <div class="comp"><b>Your compromise:</b> ten pounds empty and a steep price — and the push-button expansion can be set off by the contents themselves.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$729</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/tumi-alpha3-4wheel.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">TUMI Alpha 3 International 4-Wheel</h4>
+          <div class="aStat">10.9 lb · 65 W USB-C port</div>
+          <div class="comp"><b>Your compromise:</b> the price, and the weight — 10.9 lb is over 20% above the category average.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$1,050</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jsWrap">
+    <p class="jsLead">Not on the ladder</p>
+    <div class="jsCard">
+      <div class="jsHead">
+        <span class="tname">Jumpseat</span>
+        <span class="jsWho"><span class="dot">&#9679;</span> Cole &middot; CLT</span>
+        <span class="hl">The seat that isn&rsquo;t for sale</span>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/roller-pro-hero.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">Peak Design Roller Pro</h4>
+          <div class="aStat">8.6 lb &middot; 34 L &rarr; 39 L &middot; lifetime warranty</div>
+          <div class="jsWhy"><div><b>Why there&rsquo;s no stamp.</b> It is barely a year old and it was built for photographers, not crew &mdash; so nobody in the group has flown one long enough to vouch for it but me.</div></div>
+          <div class="comp" style="margin-top:8px"><b>Your compromise:</b> the price, and two pounds of empty weight over the soft-side most of us fly.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$600</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ B ============ -->
+<section class="opt" id="opt-b">
+  <p class="optnote"><b>B · Keep three columns, strip the rows.</b> Restores the read <span class="good">across</span> the tiers by cutting each pick down to photo, name, price, spec and buy — the body paragraph goes to the pick's own page. <span class="bad">Cost:</span> columns still end at different heights, and the compromise sentence gets squeezed even though it is the site's actual rating.</p>
+
+  <div class="bLad">
+    <div class="bCol" data-t="eco" style="--tc:var(--sky-700);--tfg:#fff">
+      <div class="bHead">
+        <div class="bars"><b class="on"></b><b></b><b></b></div>
+        <span class="tname">Economy</span>
+        <div class="bRng">Under $250</div>
+        <div class="bHl">The least money that clears the bar</div>
+      </div>
+      <div class="bBody">
+      <div class="bPick">
+        <div class="bShot"><img src="/essentials/maxlite-5.jpg" alt=""></div>
+        <div><div class="bTop"><h4 class="bName">Travelpro Maxlite 5 21"</h4><span class="bPrice">$160</span></div><div class="bStat">5.4 lb</div></div>
+        <div class="bDet"><div class="comp"><b>Compromise:</b> handle wobbles, tips in motion — buy it again in a couple of years.</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      <div class="bPick">
+        <div class="bShot"><img src="/essentials/flightcrew-5-21.jpg" alt=""></div>
+        <div><div class="bTop"><h4 class="bName">Travelpro FlightCrew5 21"</h4><span class="bPrice">$200</span></div><div class="bStat">3-yr commercial</div></div>
+        <div class="bDet"><div class="comp"><b>Compromise:</b> spinner wheels are consumables on rough ramps.</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      </div>
+    </div>
+    <div class="bCol" data-t="main" style="--tc:var(--gold-500);--tfg:var(--navy-900)">
+      <div class="bHead">
+        <div class="bars"><b class="on"></b><b class="on"></b><b></b></div>
+        <span class="tname">Main Cabin</span>
+        <div class="bRng">$250 – $400</div>
+        <div class="bHl">The default. Start here.</div>
+      </div>
+      <div class="bBody">
+      <div class="bPick">
+        <div class="bShot"><img src="/essentials/crew-classic.jpg" alt=""></div>
+        <div><div class="bTop"><h4 class="bName">Travelpro Crew Classic</h4><span class="bPrice">$255</span></div><div class="bStat">90+ airlines</div></div>
+        <div class="bDet"><div class="comp"><b>Compromise:</b> anonymous crew-room look, no USB or laptop pocket.</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      <div class="bPick">
+        <div class="bShot"><img src="/essentials/platinum-elite-21.jpg" alt=""></div>
+        <div><div class="bTop"><h4 class="bName">Travelpro Platinum Elite 21"</h4><span class="bPrice">$390</span></div><div class="bStat">10/10 transport</div></div>
+        <div class="bDet"><div class="comp"><b>Compromise:</b> ~23.5" with wheels — a strict gate agent can call it.</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      </div>
+    </div>
+    <div class="bCol" data-t="first" style="--tc:var(--navy-700);--tfg:var(--gold-500)">
+      <div class="bHead">
+        <div class="bars"><b class="on"></b><b class="on"></b><b class="on"></b></div>
+        <span class="tname">First Class</span>
+        <div class="bRng">$400 +</div>
+        <div class="bHl">The best experience money buys</div>
+      </div>
+      <div class="bBody">
+      <div class="bPick">
+        <div class="bShot"><img src="/essentials/briggs-riley-spinner.jpg" alt=""></div>
+        <div><div class="bTop"><h4 class="bName">Briggs &amp; Riley Baseline 22"</h4><span class="bPrice">$729</span></div><div class="bStat">Lifetime warranty</div></div>
+        <div class="bDet"><div class="comp"><b>Compromise:</b> ten pounds empty, steep price, twitchy expansion button.</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      <div class="bPick">
+        <div class="bShot"><img src="/essentials/tumi-alpha3-4wheel.jpg" alt=""></div>
+        <div><div class="bTop"><h4 class="bName">TUMI Alpha 3 Intl 4-Wheel</h4><span class="bPrice">$1,050</span></div><div class="bStat">10.9 lb</div></div>
+        <div class="bDet"><div class="comp"><b>Compromise:</b> the price, and 20% heavier than the category average.</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jsWrap">
+    <p class="jsLead">Not on the ladder</p>
+    <div class="jsCard">
+      <div class="jsHead">
+        <span class="tname">Jumpseat</span>
+        <span class="jsWho"><span class="dot">&#9679;</span> Cole &middot; CLT</span>
+        <span class="hl">The seat that isn&rsquo;t for sale</span>
+      </div>
+      <div class="aRow">
+        <div class="aShot"><img src="/essentials/roller-pro-hero.jpg" alt=""></div>
+        <div class="aBody">
+          <h4 class="aName">Peak Design Roller Pro</h4>
+          <div class="aStat">8.6 lb &middot; 34 L &rarr; 39 L &middot; lifetime warranty</div>
+          <div class="jsWhy"><div><b>Why there&rsquo;s no stamp.</b> It is barely a year old and it was built for photographers, not crew &mdash; so nobody in the group has flown one long enough to vouch for it but me.</div></div>
+          <div class="comp" style="margin-top:8px"><b>Your compromise:</b> the price, and two pounds of empty weight over the soft-side most of us fly.</div>
+        </div>
+        <div class="aBuy"><div class="aPrice">$600</div><a class="buy" href="#">View on Amazon</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ C ============ -->
+<section class="opt" id="opt-c">
+  <p class="optnote"><b>C · What is live now.</b> <span class="bad">The problem:</span> a layout built for one pick per column, given seven. Columns end at wildly different heights, nothing lines up across tiers so you cannot actually compare, and each pick repeats five stacked elements including a bordered box inside a bordered column.</p>
+
+  <div class="cLad">
+    <div class="cCol" style="--tc:var(--sky-700)">
+      <div class="bars"><b class="on"></b><b></b><b></b></div><div class="cRng">$160 – $200</div>
+      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/maxlite-5.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro Maxlite 5 21"</h4><span class="cPrice">$160</span></div><div class="cStat">5.4 lb — the lightest bag on this page</div></div></div>
+        <p class="cText">The bag you actually see crew pulling through a terminal. Ultra-light, quiet wheels, a useful 2" expansion and a limited lifetime warranty.</p>
+        <div class="cComp"><b>Your compromise:</b> the handle wobbles fully extended and it tips if you let go in motion.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
+      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/flightcrew-5-21.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro FlightCrew5 21"</h4><span class="cPrice">$200</span></div><div class="cStat">3-year commercial-use warranty</div></div></div>
+        <p class="cText">The flight-line standard, and the cheapest genuinely commercial-grade bag here. Ballistic nylon, reinforced frame, 5–10 years on the line.</p>
+        <div class="cComp"><b>Your compromise:</b> four spinner wheels are consumables on rough ramps.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--cream-200);font-size:.8125rem;color:var(--ink-500);line-height:1.5">
+        <span style="display:block;font-family:var(--font-heading);font-weight:800;font-size:.625rem;letter-spacing:.12em;text-transform:uppercase">Also at this price — not reviewed</span>
+        <div style="margin-top:6px"><b>Loomis 21" Softside Spinner</b> The affordability pick among pilots.</div>
+        <div style="margin-top:6px"><b>SwissGear softside spinner</b> A low-cost crew favourite.</div>
+        <div style="margin-top:6px"><b>Samsonite softside spinner</b> Similar styling under $500.</div>
+      </div>
+    </div>
+    <div class="cCol" style="--tc:var(--gold-500)">
+      <div class="bars"><b class="on"></b><b class="on"></b><b></b></div><div class="cRng">$255 – $390</div>
+      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/crew-classic.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro Crew Classic</h4><span class="cPrice">$255</span></div><div class="cStat">Flown by crew at 90+ airlines</div></div></div>
+        <p class="cText">Eight MagnaTrac self-aligning wheels and a tapered expansion that keeps the centre of gravity low so it stops tipping.</p>
+        <div class="cComp"><b>Your compromise:</b> function over form, no USB port and no laptop pocket.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
+      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/platinum-elite-21.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Travelpro Platinum Elite 21"</h4><span class="cPrice">$390</span></div><div class="cStat">10/10 ease of transport</div></div></div>
+        <p class="cText">The best-rolling bag on this page. Eight magnet-embedded wheels track dead straight; nine compartments.</p>
+        <div class="cComp"><b>Your compromise:</b> ~23.5" with wheels and handle, so a strict gate agent can call it.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
+    </div>
+    <div class="cCol" style="--tc:var(--navy-700)">
+      <div class="bars"><b class="on"></b><b class="on"></b><b class="on"></b></div><div class="cRng">$729 – $1,050</div>
+      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/briggs-riley-spinner.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">Briggs &amp; Riley Baseline 22"</h4><span class="cPrice">$729</span></div><div class="cStat">~10 lb · lifetime warranty</div></div></div>
+        <p class="cText">The warranty pick. Outside-mounted handle hardware leaves a flat packing surface that keeps a uniform jacket from creasing.</p>
+        <div class="cComp"><b>Your compromise:</b> ten pounds empty and a steep price.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
+      <div class="cPick"><div class="cTop"><div class="cShot"><img src="/essentials/tumi-alpha3-4wheel.jpg" alt=""></div><div style="flex:1"><div class="cHead"><h4 class="cName">TUMI Alpha 3 Intl 4-Wheel</h4><span class="cPrice">$1,050</span></div><div class="cStat">10.9 lb · 65 W USB-C</div></div></div>
+        <p class="cText">The status bag that earns it on materials. FXT ballistic nylon, aircraft-grade aluminium handle, garment sleeve for one blazer.</p>
+        <div class="cComp"><b>Your compromise:</b> the price, and the weight.</div><a class="buy cBuy" href="#">View on Amazon</a></div>
+    </div>
+  </div>
+
+  <div class="cJump">
+    <div class="cJside">
+      <span class="chip jump">Jumpseat</span>
+      <div style="display:flex;align-items:center;gap:9px;font-family:var(--font-heading);font-weight:800;font-size:.8125rem;color:var(--navy-900)"><span style="width:22px;height:22px;border-radius:50%;background:var(--red-600)"></span> Cole &middot; CLT</div>
+    </div>
+    <div class="cJbody">
+      <span class="cJkick">The seat that isn&rsquo;t for sale</span>
+      <h3 class="cJname">Peak Design Roller Pro</h3>
+      <div style="font-family:var(--font-heading);font-weight:700;font-size:.78125rem;color:var(--ink-500);margin-top:7px"><b style="font-family:var(--font-display);font-size:1.125rem;color:var(--navy-900)">$600</b> &middot; 8.6 lb &middot; 34 L &rarr; 39 L &middot; lifetime warranty</div>
+      <p style="font-size:.90625rem;line-height:1.55;color:var(--ink-700);margin:12px 0 0">A flat carbon-fibre trolley that leaves no bumps inside the bag, a drawbridge lid that stays open on its own, and 60 mm wheels you replace yourself.</p>
+      <div class="jsWhy"><div><b>Why there&rsquo;s no stamp.</b> It is barely a year old and was built for photographers, not crew.</div></div>
+      <div class="comp" style="margin-top:12px"><b>Your compromise:</b> the price, and two pounds of empty weight.</div>
+      <div style="margin-top:16px"><a class="buy" href="#">View on Amazon</a></div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+const stage = document.querySelector('.stage');
+document.querySelectorAll('.labbar button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.opt ? 'opt' : 'w';
+    document.querySelectorAll(`.labbar button[data-${group}]`).forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    if (group === 'opt') {
+      document.querySelectorAll('.opt').forEach(s => s.classList.toggle('on', s.id === 'opt-' + btn.dataset.opt));
+    } else {
+      stage.dataset.w = btn.dataset.w;
+    }
+  });
+});
+</script>
+</body>
+</html>
