@@ -65,7 +65,6 @@ export const spinners: TierCategory = {
 
   picks: [
     {
-      tier: 'economy',
       name: 'Travelpro Maxlite 5 21"',
       price: 160,
       stat: '5.4 lb — the lightest bag on this page',
@@ -80,7 +79,6 @@ export const spinners: TierCategory = {
       imageAlt: 'Travelpro Maxlite 5 21-inch softside spinner, front view',
     },
     {
-      tier: 'economy',
       name: 'Travelpro FlightCrew5 21"',
       price: 200,
       stat: '3-year commercial-use warranty',
@@ -95,7 +93,6 @@ export const spinners: TierCategory = {
       imageAlt: 'Travelpro FlightCrew 5 21-inch spinner, front view',
     },
     {
-      tier: 'main',
       name: 'Travelpro Crew Classic',
       price: 255,
       stat: 'Flown by crew at 90+ airlines',
@@ -110,7 +107,6 @@ export const spinners: TierCategory = {
       imageAlt: 'Travelpro Crew Classic carry-on spinner, front view',
     },
     {
-      tier: 'main',
       name: 'Travelpro Platinum Elite 21"',
       price: 390,
       stat: '10/10 ease of transport — OutdoorGearLab',
@@ -125,7 +121,6 @@ export const spinners: TierCategory = {
       imageAlt: 'Travelpro Platinum Elite 21-inch spinner, front view',
     },
     {
-      tier: 'first',
       name: 'Briggs & Riley Baseline Essential 22"',
       price: 729,
       stat: '~10 lb · lifetime warranty, no questions asked',
@@ -140,7 +135,6 @@ export const spinners: TierCategory = {
       imageAlt: 'Briggs & Riley Baseline Essential 22-inch spinner, front view',
     },
     {
-      tier: 'first',
       name: 'TUMI Alpha 3 International 4-Wheel',
       price: 1050,
       stat: '10.9 lb · 65 W USB-C port',
@@ -214,7 +208,6 @@ export const rollaboards: TierCategory = {
 
   picks: [
     {
-      tier: 'economy',
       name: 'Travelpro Maxlite 5 22"',
       price: 160,
       stat: 'Lighter than the spinner version',
@@ -229,7 +222,6 @@ export const rollaboards: TierCategory = {
       imageAlt: 'Travelpro Maxlite 5 22-inch rollaboard, front view',
     },
     {
-      tier: 'economy',
       name: 'LuggageWorks Aurora New Generation 22"',
       price: 210,
       stat: '11.8 lb · 45 L · uniform suiter',
@@ -244,7 +236,6 @@ export const rollaboards: TierCategory = {
       imageAlt: 'LuggageWorks Aurora New Generation 22-inch suiter rolling bag, front view',
     },
     {
-      tier: 'economy',
       name: 'Travelpro FlightCrew5 22"',
       price: 220,
       stat: 'Wheels, handles and pulls all swap out',
@@ -259,7 +250,6 @@ export const rollaboards: TierCategory = {
       imageAlt: 'Travelpro FlightCrew 5 22-inch rollaboard, front view',
     },
     {
-      tier: 'main',
       name: 'Travelpro Pilot Seven3',
       price: 360,
       stat: '9.9 lb · 46 L · 5-year commercial warranty',
@@ -274,7 +264,6 @@ export const rollaboards: TierCategory = {
       imageAlt: 'Travelpro Pilot Seven3 carry-on rollaboard, front view',
     },
     {
-      tier: 'main',
       name: 'Travelpro Pilot 22" Expandable',
       price: 385,
       stat: 'Just under 10 lb · 1682d ballistic nylon',
@@ -288,7 +277,6 @@ export const rollaboards: TierCategory = {
       imageAlt: 'Travelpro Pilot 22-inch expandable rollaboard, front view',
     },
     {
-      tier: 'first',
       name: 'Briggs & Riley Baseline Essential 2-Wheel',
       price: 679,
       stat: 'Nearly 10 lb · lifetime warranty',
@@ -303,7 +291,6 @@ export const rollaboards: TierCategory = {
       imageAlt: 'Briggs & Riley Baseline Essential 2-wheel carry-on, front view',
     },
     {
-      tier: 'first',
       // PRICE NEEDS A MANUAL CHECK. TUMI does not publish the 2-wheel Alpha 3
       // price behind a fetchable URL; the 4-wheel lists at $1,050 and this one
       // is the Alpha 3 MSRP seen at Luggage Pros. Cole only says "often over

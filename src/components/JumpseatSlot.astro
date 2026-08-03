@@ -8,12 +8,16 @@ import { JUMPSEAT, sellerFor, type TierCategory } from '../data/catalog';
  * Deliberately NOT a fourth column on the ladder. See the long note on
  * JUMPSEAT in src/data/catalog.ts: the tiers are fare classes sorted by price,
  * and every pick in them cleared "more than one of us said so". This clears
- * neither test, so it sits beside the ladder rather than on it.
+ * neither test, so it sits outside the ladder rather than in it.
  *
- * Two things are structurally required and neither is decoration: the name of
- * the crew member behind it, and the reason the stamp is absent. A jumpseat
- * card without those is just an unearned recommendation, which is the failure
- * this whole slot exists to prevent.
+ * Built from the ladder's own parts — the same solid coloured header, the same
+ * pick row — so it reads as the same system. What separates it is the red (no
+ * tier uses it), the "not on the ladder" label above, and the name attached.
+ *
+ * Two things are structurally required and neither is decoration: the crew
+ * member behind it, and the reason the stamp is absent. A jumpseat card
+ * without those is just an unearned recommendation, which is the failure this
+ * slot exists to prevent.
  */
 interface Props {
   category: TierCategory;
@@ -26,65 +30,68 @@ const pick = category.jumpseat;
 const seller = sellerFor(pick.url);
 ---
 
-<div class="jumpseat" style={`--tc: ${JUMPSEAT.color};`}>
-  <div class="js-side">
-    <span class:list={['stampchip', JUMPSEAT.chip]}>
-      <Icon name={JUMPSEAT.icon} /> {JUMPSEAT.label}
-    </span>
-    <div class="js-by">
-      <span class="card-badge sm" style={`--accent: ${JUMPSEAT.color};`}>
+<div class="jumpwrap" style={`--tc: ${JUMPSEAT.color}; --tfg: #fff;`}>
+  <p class="jump-label">Not on the ladder</p>
+
+  <div class="jumpseat">
+    <div class="tc-head">
+      <span class="tc-name">{JUMPSEAT.label}</span>
+      <span class="js-by">
         <Icon name="ph-user" />
+        {pick.by}
       </span>
-      <span>{pick.by}</span>
-    </div>
-    {here && <span class="js-here">This page</span>}
-
-    {
-      pick.image && (
-        <div class="js-shot">
-          <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
-        </div>
-      )
-    }
-  </div>
-
-  <div class="js-body">
-    <span class="js-kicker">{JUMPSEAT.explain.headline}</span>
-    <h3 class="js-name">
-      {pick.href && !here ? <a href={pick.href}>{pick.name}</a> : pick.name}
-    </h3>
-    <div class="js-stat">
-      <b>${pick.price.toLocaleString('en-US')}</b> · {pick.stat}
+      <span class="js-kicker">{JUMPSEAT.explain.headline}</span>
+      {here && <span class="js-here">This page</span>}
     </div>
 
-    <p class="js-text">{pick.text}</p>
-
-    <div class="js-why">
-      <Icon name="ph-info" />
-      <div><b>Why there's no stamp.</b> {pick.why}</div>
-    </div>
-
-    <div class="tier-comp">
-      <Icon name="ph-scales" />
-      <div><b>Your compromise:</b> {pick.compromise}</div>
-    </div>
-
-    <div class="js-actions">
-      <a
-        class="btn quiet sm"
-        href={pick.url}
-        target="_blank"
-        rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
-      >
-        <Icon name={seller.icon} /> {seller.label}
-      </a>
+    <div class="js-row">
       {
-        pick.href && !here && (
-          <a class="txtbtn" href={pick.href}>
-            Read the full pick <Icon name="ph-arrow-right" />
-          </a>
+        pick.image && (
+          <div class="js-shot">
+            <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
+          </div>
         )
       }
+
+      <div class="js-id">
+        <h3 class="js-name">
+          {pick.href && !here ? <a href={pick.href}>{pick.name}</a> : pick.name}
+        </h3>
+        <div class="js-stat">{pick.stat}</div>
+      </div>
+
+      <div class="js-det">
+        <p class="js-text">{pick.text}</p>
+
+        <div class="js-why">
+          <Icon name="ph-info" />
+          <div><b>Why there's no stamp.</b> {pick.why}</div>
+        </div>
+
+        <div class="tier-comp">
+          <Icon name="ph-scales" />
+          <div><b>Your compromise:</b> {pick.compromise}</div>
+        </div>
+      </div>
+
+      <div class="js-buy">
+        <div class="js-price">${pick.price.toLocaleString('en-US')}</div>
+        <a
+          class="btn quiet sm"
+          href={pick.url}
+          target="_blank"
+          rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
+        >
+          <Icon name={seller.icon} /> {seller.label}
+        </a>
+        {
+          pick.href && !here && (
+            <a class="txtbtn" href={pick.href}>
+              Read the full pick <Icon name="ph-arrow-right" />
+            </a>
+          )
+        }
+      </div>
     </div>
   </div>
 </div>

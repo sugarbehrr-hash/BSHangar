@@ -1,30 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import TierLadder from '../../components/TierLadder.astro';
-import JumpseatSlot from '../../components/JumpseatSlot.astro';
 import { FACEBOOK_GROUP } from '../../data/site';
 import { products, countFor } from '../../data/essentials';
 import { bagCategories } from '../../data/bags';
-import {
-  productCategories,
-  TIERS,
-  TIER_ORDER,
-  coverFor,
-  pickCount,
-  priceRange,
-} from '../../data/catalog';
+import { productCategories, pickCount, priceRange } from '../../data/catalog';
 
 /**
- * The browse page. Most picks are one tile; a category the group has worked
- * all the way through is one tile too, which grows into its three-tier ladder
- * in place rather than sending the reader somewhere else to compare.
+ * The browse page.
+ *
+ * A worked category is a LINK now, not a card that grew into its ladder in
+ * place. The morph was clever and wrong: a ladder is a full page of content —
+ * seven picks, a jumpseat and the standard — so cramming it into a grid row
+ * meant it could never be linked to, shared, or found by search. Categories
+ * are destinations; this page points at them.
  */
 const total = countFor('all');
-
-/** "Economy, Main Cabin & First Class" — from the tier vocabulary, not typed. */
-const tierList = TIER_ORDER.map((tier) => TIERS[tier].label);
-const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
 ---
 
 <BaseLayout
@@ -46,6 +37,41 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
 
   <section class="band">
     <div class="wrap">
+      <div class="band-head tight">
+        <span class="kicker">Worked all the way through</span>
+        <h2 class="h2">Compare a whole category</h2>
+      </div>
+
+      <div class="catlinks">
+        {
+          bagCategories.map((category) => (
+            <a class="catlink" href={`/crew-essentials/${category.key}/`}>
+              <span class="cl-icon">
+                <Icon name={category.icon} />
+              </span>
+              <span class="cl-body">
+                <span class="cl-name">{category.label}</span>
+                <span class="cl-blurb">{category.blurb}</span>
+                <span class="cl-meta">
+                  {pickCount(category)} picks · {priceRange(category)}
+                </span>
+              </span>
+              <span class="cl-go">
+                <Icon name="ph-arrow-right" />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="band-head tight" style="margin-top:36px;">
+        <span class="kicker">Single picks</span>
+        <h2 class="h2">The rest of the kit</h2>
+        <p class="lead">
+          Categories we haven't worked all the way through yet — one pick each, for now.
+        </p>
+      </div>
+
       <div class="pillbar" id="catbar">
         <div class="pillrail">
           {
@@ -71,75 +97,6 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
       </div>
 
       <div class="grid three" id="prodgrid">
-        {
-          bagCategories.map((category) => {
-            const cover = coverFor(category);
-
-            return (
-              <div class="card product tiermorph" data-cat={category.cat}>
-                <div
-                  class="tm-face"
-                  role="button"
-                  tabindex="0"
-                  aria-expanded="false"
-                  aria-label={`${category.label} — see every pick`}
-                >
-                  <div class="shot">
-                    {cover ? (
-                      <img src={cover.image} alt={cover.alt} />
-                    ) : (
-                      <Icon name={category.icon} />
-                    )}
-                    <span class="tagchip">{pickCount(category)} picks</span>
-                    {/* The stamp's one appearance on this page. It marks a
-                        category that has been worked all the way through, which
-                        is why the not-yet-reviewed tiles below carry none. */}
-                    <span class="stampmini">
-                      <span class="t">FA Approved</span>
-                      <span class="s">Blue Streak Hangar</span>
-                    </span>
-                  </div>
-                  <div class="pbody">
-                    <h3 class="card-title">{category.label}</h3>
-                    <p class="card-text">{category.blurb}</p>
-                    <span class="card-go">
-                      See every pick <Icon name="ph-arrow-right" />
-                    </span>
-                  </div>
-                </div>
-
-                <div class="tm-full">
-                  {/* The label is hidden under 700px, where the icon stands alone,
-                      so the name is stated rather than inferred from the text. */}
-                  <button
-                    class="tierfold-head"
-                    type="button"
-                    data-tm-close
-                    aria-label="Fold it back up"
-                  >
-                    <div class="tf-main">
-                      <span class="tf-kicker">Same bar, three prices</span>
-                      <h3 class="tf-title">{category.label}</h3>
-                      <div class="tf-sub">{priceRange(category)} · {tierNames}</div>
-                    </div>
-                    <span class="tf-cta">
-                      <span>Fold it back up</span> <Icon name="ph-arrows-in-simple" weight="bold" />
-                    </span>
-                  </button>
-
-                  <TierLadder category={category} compact />
-
-                  <div class="tf-jump">
-                    <JumpseatSlot category={category} />
-                  </div>
-
-                  <p class="tf-note">{category.note}</p>
-                </div>
-              </div>
-            );
-          })
-        }
-
         {
           products.map((product) => (
             <div class="card product" data-cat={product.cat}>
@@ -183,14 +140,14 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
 </BaseLayout>
 
 <script>
-  /* Two behaviours over the same grid: the category filter, and the tier card
-     that grows from one tile to the full row. */
+  /* The category filter over the single-pick grid.
+
+     The tier-morph FLIP animation that used to live here is gone with the
+     cards it animated — a worked category is its own page now. */
 
   const bar = document.querySelector<HTMLElement>('#catbar');
   const grid = document.querySelector<HTMLElement>('#prodgrid');
   const label = document.querySelector<HTMLElement>('#prodcount');
-
-  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (bar && grid && label) {
     const pills = [...bar.querySelectorAll<HTMLButtonElement>('.pill')];
@@ -216,103 +173,11 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
         pill.setAttribute('aria-pressed', String(pill.dataset.cat === cat));
       }
       label.textContent =
-        cat === 'all'
-          ? `Showing all ${total} picks`
-          : `Showing ${shown} in ${nameFor(cat)}`;
+        cat === 'all' ? `Showing all ${total} picks` : `Showing ${shown} in ${nameFor(cat)}`;
     };
 
     for (const pill of pills) {
       pill.addEventListener('click', () => apply(pill.dataset.cat ?? 'all'));
     }
-  }
-
-  /* ---------- TIER MORPH ----------
-     Toggling .open IS the layout change; everything below only animates it.
-     FLIP: measure every card before and after, then play each one from its old
-     box to its new box as a transform — the growing card as translate + scale,
-     its displaced neighbours as a plain translate. */
-
-  /** Clears the sticky topbar. Same value as .step's scroll-margin-top. */
-  const TOPBAR_OFFSET = 84;
-  const MORPH_MS = 500;
-
-  for (const morph of document.querySelectorAll<HTMLElement>('.tiermorph')) {
-    const face = morph.querySelector<HTMLElement>('.tm-face');
-    const close = morph.querySelector<HTMLElement>('[data-tm-close]');
-    if (!grid || !face || !close) continue;
-
-    const setOpen = (open: boolean) => {
-      // The control that was activated is about to be display:none, so a
-      // keyboard user would be dropped back to the top of the document.
-      const carriedFocus =
-        document.activeElement === face || document.activeElement === close;
-
-      const items = [...grid.children] as HTMLElement[];
-      const before = new Map(items.map((item) => [item, item.getBoundingClientRect()]));
-
-      morph.classList.toggle('open', open);
-      face.setAttribute('aria-expanded', String(open));
-      if (carriedFocus) (open ? close : face).focus();
-
-      // Taken before any transform is applied, so these are real layout boxes.
-      const after = new Map(items.map((item) => [item, item.getBoundingClientRect()]));
-
-      if (open) {
-        const top = (after.get(morph)?.top ?? 0) + window.scrollY - TOPBAR_OFFSET;
-        window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion() ? 'auto' : 'smooth' });
-      }
-
-      if (reduceMotion()) return;
-
-      const moved: HTMLElement[] = [];
-      for (const item of items) {
-        const first = before.get(item);
-        const last = after.get(item);
-        if (!first || !last || !first.width || !last.width) continue;
-
-        const dx = first.left - last.left;
-        const dy = first.top - last.top;
-
-        if (item === morph) {
-          item.style.transformOrigin = 'top left';
-          item.style.transition = 'none';
-          item.style.transform =
-            `translate(${dx}px, ${dy}px) ` +
-            `scale(${first.width / last.width}, ${first.height / last.height})`;
-          moved.push(item);
-        } else if (dx || dy) {
-          item.style.transition = 'none';
-          item.style.transform = `translate(${dx}px, ${dy}px)`;
-          moved.push(item);
-        }
-      }
-
-      // Forcing layout commits the transforms above as the animation's first
-      // frame, so releasing them on the very next line animates rather than
-      // jumping. Deliberately NOT deferred to requestAnimationFrame: rAF does
-      // not fire in a background tab, and a card that is toggled and then
-      // backgrounded would keep the scale forever.
-      grid.getBoundingClientRect();
-
-      for (const item of moved) {
-        item.style.transition = `transform ${MORPH_MS}ms var(--ease-out)`;
-        item.style.transform = '';
-      }
-
-      window.setTimeout(() => {
-        for (const item of moved) {
-          item.style.transition = '';
-          item.style.transformOrigin = '';
-        }
-      }, MORPH_MS + 60);
-    };
-
-    face.addEventListener('click', () => setOpen(true));
-    face.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter' && event.key !== ' ') return;
-      event.preventDefault();
-      setOpen(true);
-    });
-    close.addEventListener('click', () => setOpen(false));
   }
 </script>

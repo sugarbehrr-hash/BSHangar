@@ -6,7 +6,6 @@ import {
   TIER_ORDER,
   picksFor,
   alternatesFor,
-  columnRange,
   sellerFor,
   type TierCategory,
 } from '../data/catalog';
@@ -15,22 +14,22 @@ import {
  * The tier ladder: one card, three columns, read left to right as a price
  * progression. The bars step 1-2-3 like a signal meter.
  *
- * A column now holds MORE THAN ONE pick — Cole's reviews gave two or three
- * bags at most price levels, and every one of them is a buy link we want. So
- * the column head carries the tier and its price range, and each pick under it
- * is a row: name, price, the one spec that decides it, its compromise, and
- * where to buy.
+ * WHY THREE COLUMNS AND NOT A VERTICAL LIST. A row-per-pick layout was
+ * prototyped against this one (public/_ladder-lab.html) and lost: putting the
+ * tiers side by side is the entire point, because $160 / $255 / $729 in one
+ * glance is the comparison the page exists to make. Stacking them turns a
+ * comparison into a list.
  *
- * No column carries a selected or focused state. That was tried and removed —
- * every pick here already cleared the same gate, so highlighting one of them
- * reads as a grade, which is the one thing the tiers are not. The pick that is
- * somebody's personal favourite lives OUTSIDE this component, in the jumpseat
- * slot, for exactly that reason.
+ * A column holds MORE THAN ONE pick — Cole's reviews gave two or three bags at
+ * most price levels, and every one is a buy link. So the tier's identity and
+ * price bracket live in a solid coloured header at the top of the column, and
+ * each pick under it is a compact row.
  *
- * There are no photos in the ladder. Three of the sixteen bags have a crew
- * photo, so a thumbnail column would be three pictures and thirteen holes —
- * and this is a comparison table, where a name and a number do more work than
- * a press shot. Photos live on a pick's own page.
+ * No column carries a selected or focused state, and no pick carries an
+ * "approved" mark. Every pick here already cleared the same gate, so a badge
+ * saying so would fire on every row and mean nothing — see the note under the
+ * ladder, which says it once. The pick that is somebody's personal favourite
+ * lives OUTSIDE this component, in the jumpseat slot.
  */
 interface Props {
   category: TierCategory;
@@ -52,26 +51,28 @@ const { category, compact = false } = Astro.props;
       const alternates = alternatesFor(category, key);
 
       return (
-        <div class="tiercol" data-tier={key} style={`--tc: ${tier.color};`}>
-          <div class="tbars">
-            {[0, 1, 2].map((i) => (
-              <b class:list={[i < tier.bars && 'on']} />
-            ))}
+        <div class="tiercol" data-tier={key} style={`--tc: ${tier.color}; --tfg: ${tier.fg};`}>
+          {/* Solid field in the tier's colour. A 3px keyline was tried first
+              and you stop seeing it; the whole band is what makes the tier
+              readable at a glance. */}
+          <div class="tc-head">
+            <div class="tbars">
+              {[0, 1, 2].map((i) => (
+                <b class:list={[i < tier.bars && 'on']} />
+              ))}
+            </div>
+            <span class="tc-name">{tier.label}</span>
+            <div class="tc-bracket">{tier.bracket}</div>
+            <div class="tc-hl">{tier.explain.headline}</div>
           </div>
 
-          <span class:list={['stampchip', tier.chip]}>
-            <Icon name={tier.icon} /> {tier.label}
-          </span>
+          <div class="tc-body">
+            <ul class="tier-picks">
+              {picks.map((pick) => {
+                const seller = sellerFor(pick.url);
 
-          <div class="tier-range">{columnRange(picks)}</div>
-
-          <ul class="tier-picks">
-            {picks.map((pick) => {
-              const seller = sellerFor(pick.url);
-
-              return (
-                <li class="tier-pick">
-                  <div class="tp-top">
+                return (
+                  <li class="tier-pick">
                     {pick.image && (
                       <div class="tp-shot">
                         <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
@@ -83,59 +84,51 @@ const { category, compact = false } = Astro.props;
                         <h4 class="tp-name">
                           {pick.href ? <a href={pick.href}>{pick.name}</a> : pick.name}
                         </h4>
-                        <div class="tp-price">${pick.price.toLocaleString('en-US')}</div>
+                        <span class="tp-price">${pick.price.toLocaleString('en-US')}</span>
                       </div>
-
-                      {/* NO STATUS CHIP HERE, EITHER KIND.
-                          "FA Approved" was tried and removed: it fired on 10 of
-                          13 rows, and a mark that is never withheld carries no
-                          information. "Provisional" went the same way — nobody
-                          runs a 90-day wear-test clock, so it described a
-                          process that did not exist and could never resolve.
-                          Where a bag genuinely has no track record, its
-                          compromise sentence says so, which is where every
-                          other caveat on this site already lives. */}
                       <div class="tp-stat">{pick.stat}</div>
                     </div>
-                  </div>
 
-                  {!compact && <p class="tp-text">{pick.text}</p>}
+                    <div class="tp-det">
+                      {!compact && <p class="tp-text">{pick.text}</p>}
 
-                  <div class="tier-comp">
-                    <Icon name="ph-scales" />
-                    <div>
-                      <b>Your compromise:</b> {pick.compromise}
+                      <div class="tier-comp">
+                        <Icon name="ph-scales" />
+                        <div>
+                          <b>Your compromise:</b> {pick.compromise}
+                        </div>
+                      </div>
+
+                      <a
+                        class="btn quiet sm tp-buy"
+                        href={pick.url}
+                        target="_blank"
+                        rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
+                      >
+                        <Icon name={seller.icon} /> {seller.label}
+                      </a>
                     </div>
-                  </div>
-
-                  <a
-                    class="btn quiet sm tp-buy"
-                    href={pick.url}
-                    target="_blank"
-                    rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
-                  >
-                    <Icon name={seller.icon} /> {seller.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-
-          {alternates.length > 0 && (
-            <div class="tier-alts">
-              <span class="ta-label">Also at this price — not reviewed</span>
-              <ul>
-                {alternates.map((alt) => (
-                  <li>
-                    <a href={alt.url} target="_blank" rel="noopener sponsored">
-                      {alt.name}
-                    </a>{' '}
-                    <span set:html={richText(alt.note)} />
                   </li>
-                ))}
-              </ul>
-            </div>
-          )}
+                );
+              })}
+            </ul>
+
+            {alternates.length > 0 && (
+              <div class="tier-alts">
+                <span class="ta-label">Also at this price — not reviewed</span>
+                <ul>
+                  {alternates.map((alt) => (
+                    <li>
+                      <a href={alt.url} target="_blank" rel="noopener sponsored">
+                        {alt.name}
+                      </a>{' '}
+                      <span set:html={richText(alt.note)} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       );
     })

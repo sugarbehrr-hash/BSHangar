@@ -21,7 +21,6 @@
    ============================================================ */
 
 import type { CatalogCat } from './catalog';
-import { bagCategories } from './bags';
 
 export interface Product {
   title: string;
@@ -110,11 +109,11 @@ export const products: Product[] = [
   },
 ];
 
-/** Pill counts, over both kinds of entry. A tier category counts as one pick. */
+/**
+ * Pill counts over the single-pick grid. Worked categories are NOT counted:
+ * they left the grid for their own pages, so counting them would advertise
+ * picks the pills cannot filter to.
+ */
 export function countFor(key: string): number {
-  const inCat = (cat: string) => key === 'all' || cat === key;
-  return (
-    products.filter((product) => inCat(product.cat)).length +
-    bagCategories.filter((category) => inCat(category.cat)).length
-  );
+  return products.filter((product) => key === 'all' || product.cat === key).length;
 }

@@ -46,8 +46,14 @@ export const TIERS = {
   economy: {
     label: 'Economy',
     icon: 'ph-coins',
-    /** Column rule, price bars and the scales glyph, via the --tc custom property. */
+    /** Upper bound, exclusive. A pick's tier is DERIVED from this — see tierForPrice. */
+    max: 250,
+    /** The bracket, as printed on the ladder. Standard across every category. */
+    bracket: 'Under $250',
+    /** The tier's colour, via the --tc custom property. */
     color: 'var(--sky-700)',
+    /** Text/bars ON that colour, via --tfg. Checked for contrast against it. */
+    fg: '#fff',
     /** Chip variant class, and the number of price bars lit. */
     chip: 'eco',
     bars: 1,
@@ -61,7 +67,10 @@ export const TIERS = {
   main: {
     label: 'Main Cabin',
     icon: 'ph-seal-check',
+    max: 400,
+    bracket: '$250 – $400',
     color: 'var(--gold-500)',
+    fg: 'var(--navy-900)',
     chip: 'main',
     bars: 2,
     explain: {
@@ -73,7 +82,10 @@ export const TIERS = {
   first: {
     label: 'First Class',
     icon: 'ph-crown-simple',
+    max: Infinity,
+    bracket: '$400 +',
     color: 'var(--navy-700)',
+    fg: 'var(--gold-500)',
     chip: 'first',
     bars: 3,
     explain: {
@@ -132,7 +144,6 @@ export const JUMPSEAT = {
    ------------------------------------------------------------ */
 
 export interface TierPick {
-  tier: TierKey;
   name: string;
   /** USD, whole dollars. Drives the ladder price and the ordering claim. */
   price: number;
@@ -222,35 +233,30 @@ export function priceRange(category: TierCategory): string {
   return `${usd(Math.min(...prices))} – ${usd(Math.max(...prices))}`;
 }
 
-/**
- * The photo for the browse tile, or null when the category has none yet.
- *
- * Derived rather than stored: a `heroImage` field on the category would be a
- * second place a product's photo lives, and the two would drift the first time
- * a real crew photo replaced a press shot.
- *
- * Order matters and is not cosmetic. The browse tile presses the Flight
- * Attendant Approved stamp over this photo, so it must be a bag that carries
- * the stamp — any ladder pick does, the jumpseat pick never does. Leading with
- * the jumpseat bag put the mark on the one product that has not earned it.
- */
-export function coverFor(category: TierCategory): { image: string; alt: string } | null {
-  const shot = category.picks.find((pick) => pick.image);
-  if (shot?.image) return { image: shot.image, alt: shot.imageAlt ?? shot.name };
-
-  const jump = category.jumpseat;
-  return jump.image ? { image: jump.image, alt: jump.imageAlt ?? jump.name } : null;
-}
-
 /** Every pick that can be bought, across the tiers and the jumpseat. */
 export function pickCount(category: TierCategory): number {
   return category.picks.length + 1;
 }
 
 
+/**
+ * Which tier a price falls in. THE tier assignment — nothing stores a tier.
+ *
+ * Hand-setting a pick's tier let it contradict the bracket printed above it: a
+ * $200 bag sat under a header reading "Under $200". Deriving it makes that
+ * impossible, and moving a boundary re-files every pick on the site at once.
+ */
+export function tierForPrice(price: number): TierKey {
+  if (price < TIERS.economy.max) return 'economy';
+  if (price < TIERS.main.max) return 'main';
+  return 'first';
+}
+
 /** The picks in one column, cheapest first. The ladder IS the order. */
 export function picksFor(category: TierCategory, tier: TierKey): TierPick[] {
-  return category.picks.filter((pick) => pick.tier === tier).sort((a, b) => a.price - b.price);
+  return category.picks
+    .filter((pick) => tierForPrice(pick.price) === tier)
+    .sort((a, b) => a.price - b.price);
 }
 
 /** The unreviewed names that belong at the foot of one column. */

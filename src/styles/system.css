@@ -985,138 +985,126 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .stampchip.first { background: var(--navy-700); color: var(--gold-500); border: 1.5px solid var(--gold-500); }
 .stampchip.jump { background: var(--red-600); color: #fff; }
 
-/* Tier ladder — ONE card, three columns, read as a progression. Price bars
-   step up 1-2-3 like a signal meter. The columns carry no selected state:
-   a focus treatment was tried and removed, because every tier clears the
-   same bar and highlighting one of them reads as a grade. */
+/* Tier ladder — ONE card, three columns, read left to right as a price
+   progression. Each column is a solid tier-coloured header over a stack of
+   compact picks. A vertical row-per-pick layout was prototyped against this
+   and lost: side by side is the whole point, because $160 / $255 / $729 in
+   one glance IS the comparison. Bars step 1-2-3 like a signal meter.
+
+   The columns carry no selected state and the picks carry no "approved"
+   badge — every pick cleared the same gate, so a mark that never withholds
+   says nothing. The note under the ladder states it once. */
 .tierscard { display: grid; grid-template-columns: 1fr; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
 @media (min-width: 880px) { .tierscard { grid-template-columns: repeat(3, 1fr); } }
-/* One column, full width. The jumpseat explainer on the standard page is
-   built from the same kit as the tiers so it reads as a sibling, but it is a
-   single card — without this it renders as a cramped one-third strip. */
+/* One column, full width — the standard page's jumpseat explainer. */
 .tierscard.solo { grid-template-columns: 1fr; }
-.tiercol { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 0; text-align: left; background: none; border: none; font: inherit; color: inherit; padding: 22px 22px 20px; border-top: 1px solid var(--cream-200); box-shadow: inset 0 3.5px 0 var(--tc, var(--navy-900)); transition: background .2s; }
-.tiercol:first-child { border-top: none; }
+.tiercol { position: relative; display: flex; flex-direction: column; text-align: left; background: none; border: none; font: inherit; color: inherit; }
 @media (min-width: 880px) {
-  .tiercol { border-top: none; border-left: 1px solid var(--cream-200); }
+  .tiercol { border-left: 1px solid var(--cream-200); }
   .tiercol:first-child { border-left: none; }
 }
-a.tiercol { cursor: pointer; }
-a.tiercol:hover { background: var(--cream-100); }
-.tbars { display: flex; align-items: flex-end; gap: 4px; height: 18px; margin-bottom: 14px; }
-.tbars b { width: 15px; border-radius: 2.5px; background: var(--cream-300); height: 6px; }
-.tbars b.on { background: var(--tc, var(--navy-900)); }
-.tbars b:nth-child(2) { height: 12px; }
-.tbars b:nth-child(3) { height: 18px; }
-/* The price range the column covers — one number when it holds one pick. */
-.tier-range { font-family: var(--font-display); font-size: 1.75rem; line-height: .95; color: var(--navy-900); margin: 14px 0 0; }
-.tier-name { font-family: var(--font-heading); font-weight: 800; font-size: 1.03125rem; color: var(--navy-900); margin: 6px 0 0; }
-/* The standard page's ladder has no price, so the name takes its air. */
-.stampchip + .tier-name { margin-top: 14px; }
-.tier-text { font-size: 0.875rem; line-height: 1.5; color: var(--ink-700); margin: 10px 0 0; text-wrap: pretty; }
 
-/* A column holds two or three picks. Each is a row: name and price on one
-   line, then the spec, the compromise, and the buy link. The rule between
-   rows is the only separator — no card-in-a-card. */
-.tier-picks { list-style: none; margin: 16px 0 0; padding: 0; width: 100%; }
-.tier-pick + .tier-pick { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cream-200); }
-/* Thumbnail beside the name. Every pick has a photo now, so the row can carry
-   one without turning into a column of holes — which is why the ladder went
-   without them until the shots existed. */
-.tp-top { display: flex; align-items: flex-start; gap: 12px; }
-.tp-id { flex: 1; min-width: 0; }
-.tp-shot { flex: none; width: 64px; aspect-ratio: 1; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); }
+/* The tier's solid field. A 3px keyline was tried first and you stop seeing
+   it; the whole band is what keeps the tier readable while scrolling. */
+.tc-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 14px 18px; background: var(--tc, var(--navy-900)); color: var(--tfg, #fff); }
+.tc-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; letter-spacing: .14em; text-transform: uppercase; }
+.tc-bracket { margin-left: auto; font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
+.tc-hl { flex-basis: 100%; font-family: var(--font-heading); font-weight: 700; font-size: 0.75rem; opacity: .8; }
+.tc-body { padding: 6px 18px 16px; }
+
+.tbars { display: flex; align-items: flex-end; gap: 4px; height: 16px; }
+.tbars b { width: 13px; border-radius: 2.5px; height: 5px; background: color-mix(in srgb, var(--tfg, #fff) 28%, transparent); }
+.tbars b.on { background: var(--tfg, #fff); }
+.tbars b:nth-child(2) { height: 10px; }
+.tbars b:nth-child(3) { height: 16px; }
+
+/* The standard page's ladder shows the tiers with no products in them. */
+.tier-name { font-family: var(--font-heading); font-weight: 800; font-size: 1.03125rem; color: var(--navy-900); margin: 6px 0 0; }
+.tier-text { font-size: 0.875rem; line-height: 1.5; color: var(--ink-700); margin: 10px 0 0; text-wrap: pretty; }
+.tierscard.solo .tiercol { padding: 22px; }
+
+/* A column holds two or three picks. Name and price share a line so neither
+   wastes the width; the compromise and the buy link sit below at full width. */
+.tier-picks { list-style: none; margin: 0; padding: 0; }
+.tier-pick { display: grid; grid-template-columns: 52px 1fr; gap: 11px; align-items: center; padding: 12px 0; }
+.tier-pick + .tier-pick { border-top: 1px solid var(--cream-200); }
+.tp-shot { width: 52px; aspect-ratio: 1; border: 1px solid var(--cream-300); border-radius: 8px; overflow: hidden; background: var(--white); }
 .tp-shot img { width: 100%; height: 100%; object-fit: contain; }
+.tp-id { min-width: 0; }
 .tp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.tp-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.9375rem; line-height: 1.25; color: var(--navy-900); margin: 0; text-wrap: pretty; }
+.tp-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.875rem; line-height: 1.25; color: var(--navy-900); margin: 0; text-wrap: pretty; }
 .tp-name a { color: inherit; text-decoration: none; }
 .tp-name a:hover { color: var(--navy-700); text-decoration: underline; text-underline-offset: 3px; }
-.tp-price { flex: none; font-family: var(--font-display); font-size: 1.25rem; line-height: 1; color: var(--navy-900); }
-.tp-stat { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 5px; }
-.tp-text { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-700); margin: 9px 0 0; text-wrap: pretty; }
-.tp-buy { margin-top: 12px; }
+.tp-price { flex: none; font-family: var(--font-display); font-size: 1.0625rem; line-height: 1; color: var(--navy-900); }
+.tp-stat { font-family: var(--font-heading); font-weight: 700; font-size: 0.6875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 3px; }
+.tp-det { grid-column: 1 / -1; margin-top: 4px; }
+.tp-text { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-700); margin: 0 0 2px; text-wrap: pretty; }
+.tp-buy { margin-top: 9px; }
 
-/* Names crew repeat without a review behind them. Links, never a priced
-   column — quoting a price we have not checked is the one thing the ladder
-   must never do. */
-.tier-alts { width: 100%; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--cream-200); }
+/* Names crew repeat without a review behind them. Links, never a priced row —
+   quoting a price we have not checked is the one thing the ladder must not do. */
+.tier-alts { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--cream-200); }
 .ta-label { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
 .tier-alts ul { list-style: none; margin: 8px 0 0; padding: 0; }
 .tier-alts li { font-size: 0.8125rem; line-height: 1.45; color: var(--ink-500); margin-top: 6px; }
 .tier-alts a { font-weight: 700; color: var(--navy-700); }
-.tier-comp { display: flex; gap: 9px; align-items: flex-start; margin-top: 14px; padding: 11px 13px; background: var(--white); border: 1px solid var(--cream-300); border-radius: var(--radius-sm); font-size: 0.8125rem; line-height: 1.45; color: var(--ink-700); }
+
+.tier-comp { display: flex; gap: 9px; align-items: flex-start; margin-top: 9px; font-size: 0.8125rem; line-height: 1.45; color: var(--ink-700); }
 .tier-comp i { flex: none; font-size: 1rem; color: var(--tc, var(--navy-900)); margin-top: 1px; }
 .tier-comp b { color: var(--navy-900); }
-/* ---------- JUMPSEAT ----------
-   The crew's own pick, and deliberately NOT a fourth column. It reads as a
-   different KIND of thing on sight: its own card below the ladder, a red chip
-   no tier uses, and a name attached to it.
 
-   No single-side colour strip here — the whole card carries a keyline and the
-   side rail carries a tint, so the treatment communicates "different claim"
-   without the border-left cliché. */
-.jumpseat { display: grid; grid-template-columns: 1fr; gap: 0; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; margin-top: 18px; }
-@media (min-width: 760px) { .jumpseat { grid-template-columns: 232px 1fr; } }
-.js-side { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 22px; background: color-mix(in srgb, var(--tc) 6%, var(--cream-100)); border-bottom: 1px solid var(--cream-200); }
-@media (min-width: 760px) { .js-side { border-bottom: none; border-right: 1px solid var(--cream-200); } }
-.js-by { display: flex; align-items: center; gap: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; color: var(--navy-900); }
-/* The pick's photo, filling the rail under the byline. Every other pick on the
-   page carries a thumbnail; without this the jumpseat was the only one with
-   none — and it is the one with the best photography. */
-.js-shot { width: 100%; aspect-ratio: 1; margin-top: 4px; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); }
+/* ---------- JUMPSEAT ----------
+   The crew's own pick, and deliberately NOT a fourth column. Built from the
+   ladder's own parts — same solid header, same pick row — so it reads as the
+   same system, while the red (no tier uses it), the label above and the name
+   on it make clear it is a different KIND of claim. Cole asked for it above
+   the ladder rather than below: it is the most-read thing on the card. */
+.jumpwrap { margin-bottom: 18px; }
+.jump-label { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
+.jump-label::after { content: ""; flex: 1; height: 1px; background: var(--cream-300); }
+.jumpseat { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
+.js-by { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; }
+.js-by i { font-size: 0.875rem; }
+.js-kicker { flex: 1; min-width: 150px; font-family: var(--font-heading); font-weight: 700; font-size: 0.8125rem; opacity: .8; }
+.js-here { font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--navy-900); background: #fff; border-radius: var(--radius-pill); padding: 4px 10px; }
+
+.js-row { display: grid; grid-template-columns: 76px 1fr; gap: 14px; padding: 16px 18px; align-items: start; }
+@media (min-width: 760px) { .js-row { grid-template-columns: 76px 1fr auto; align-items: center; } }
+.js-shot { width: 76px; aspect-ratio: 1; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); }
 .js-shot img { width: 100%; height: 100%; object-fit: contain; }
-.js-here { font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-500); background: var(--navy-900); border-radius: var(--radius-pill); padding: 4px 10px; }
-.js-body { padding: 22px; }
-.js-kicker { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.6875rem; letter-spacing: .14em; text-transform: uppercase; color: var(--tc, var(--red-600)); }
-.js-name { font-family: var(--font-display); text-transform: uppercase; font-size: 1.5rem; line-height: .98; color: var(--navy-900); margin: 6px 0 0; }
+.js-id { min-width: 0; }
+.js-name { font-family: var(--font-display); text-transform: uppercase; font-size: 1.375rem; line-height: .98; color: var(--navy-900); margin: 0; }
 .js-name a { color: inherit; text-decoration: none; }
 .js-name a:hover { text-decoration: underline; text-underline-offset: 4px; }
-.js-stat { font-family: var(--font-heading); font-weight: 700; font-size: 0.78125rem; letter-spacing: .03em; color: var(--ink-500); margin-top: 7px; }
-.js-stat b { font-family: var(--font-display); font-size: 1.125rem; color: var(--navy-900); letter-spacing: 0; }
-.js-text { font-size: 0.90625rem; line-height: 1.55; color: var(--ink-700); margin: 12px 0 0; text-wrap: pretty; }
+.js-stat { font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 4px; }
+.js-det { grid-column: 1 / -1; }
+@media (min-width: 760px) { .js-det { grid-column: 2; } }
+.js-text { font-size: 0.875rem; line-height: 1.5; color: var(--ink-700); margin: 0; text-wrap: pretty; }
 /* The reason the stamp is absent. Load-bearing, so it is tinted, not a footnote. */
-.js-why { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 12px 14px; background: color-mix(in srgb, var(--tc) 7%, var(--white)); border: 1px solid color-mix(in srgb, var(--tc) 26%, var(--cream-300)); border-radius: var(--radius-sm); font-size: 0.84375rem; line-height: 1.5; color: var(--ink-700); }
-.js-why i { flex: none; font-size: 1rem; color: var(--tc, var(--red-600)); margin-top: 1px; }
+.js-why { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; padding: 11px 13px; background: var(--red-100); border-radius: var(--radius-sm); font-size: 0.84375rem; line-height: 1.45; color: var(--ink-700); }
+.js-why i { flex: none; font-size: 1rem; color: var(--red-600); margin-top: 1px; }
 .js-why b { color: var(--navy-900); }
-.js-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 16px; }
+.js-buy { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+@media (min-width: 760px) { .js-buy { grid-column: 3; flex-direction: column; align-items: flex-end; gap: 9px; } }
+.js-price { font-family: var(--font-display); font-size: 1.75rem; line-height: 1; color: var(--navy-900); }
 
-/* Header of the expanded morph card — a slim masthead for the ladder. */
-.tierfold-head { display: flex; align-items: center; gap: 20px; width: 100%; padding: 18px 22px 18px 18px; background: none; border: none; font: inherit; text-align: left; cursor: pointer; transition: background .2s; }
-.tierfold-head:hover { background: var(--cream-100); }
-.tf-main { flex: 1; min-width: 0; }
-.tf-kicker { font-family: var(--font-heading); font-weight: 800; font-size: 0.6875rem; letter-spacing: .14em; text-transform: uppercase; color: var(--red-600); }
-.tf-title { font-family: var(--font-display); text-transform: uppercase; font-size: 1.625rem; line-height: .95; color: var(--navy-900); margin: 4px 0 0; }
-.tf-sub { font-family: var(--font-heading); font-weight: 700; font-size: 0.78125rem; color: var(--ink-500); margin-top: 6px; }
-.tf-cta { flex: none; display: flex; align-items: center; gap: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 0.84375rem; color: var(--navy-700); }
-@media (max-width: 700px) { .tf-cta span { display: none; } }
-.tf-note { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-500); margin: 0; padding: 16px 22px 20px; border-top: 1px solid var(--cream-200); }
-/* The jumpseat sits inside the expanded morph, so it needs the gutter the
-   edge-to-edge ladder above it does not. */
-.tf-jump { padding: 0 22px; }
-.tf-jump .jumpseat { margin-top: 22px; }
+/* Category links — a worked category is a destination, not a card that
+   unfolds. Replaces the tier-morph tile and its FLIP animation entirely. */
+.catlinks { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 760px) { .catlinks { grid-template-columns: repeat(2, 1fr); } }
+.catlink { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); text-decoration: none; transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
+.catlink:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--navy-700); }
+.cl-icon { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: var(--radius-sm); background: var(--sky-100); color: var(--navy-700); font-size: 1.5rem; }
+.cl-body { flex: 1; min-width: 0; }
+.cl-name { display: block; font-family: var(--font-display); text-transform: uppercase; font-size: 1.375rem; line-height: 1; color: var(--navy-900); }
+.cl-blurb { display: block; font-size: 0.84375rem; line-height: 1.45; color: var(--ink-700); margin-top: 6px; text-wrap: pretty; }
+.cl-meta { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 7px; }
+.cl-go { flex: none; color: var(--navy-700); font-size: 1.125rem; }
+.catlink:hover .cl-go { transform: translateX(4px); }
+.cl-go i { transition: transform .18s; }
 
-/* Tier morph — the category is a NORMAL grid card that GROWS to the
-   full row when opened. The layout jump is animated FLIP-style from
-   the page script; these rules only define the two states and the
-   content crossfade. */
-.tiermorph { position: relative; }
-.tiermorph .tm-face { display: flex; flex-direction: column; flex: 1; cursor: pointer; }
-.tiermorph:not(.open) { transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
-.tiermorph:not(.open):hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--navy-700); }
-.tiermorph:not(.open):hover .card-go i { transform: translateX(4px); }
-.tiermorph.open { grid-column: 1 / -1; border-color: var(--navy-700); }
-.tiermorph .tm-full { display: none; opacity: 0; }
-.tiermorph.open .tm-face { display: none; }
-.tiermorph.open .tm-full { display: block; opacity: 1; }
-.tiermorph .tierscard { border: none; border-radius: 0; box-shadow: none; border-top: 1px solid var(--cream-200); }
-.tiermorph .tiercol { transform: translateY(18px); }
-.tiermorph.open .tiercol { transform: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .tiermorph.open .tm-full { transition: opacity .38s ease .08s; }
-  .tiermorph .tiercol { transition: transform .55s var(--ease-out), background .2s, opacity .2s; }
-  .tiermorph .tiercol:nth-child(2) { transition-delay: .07s, 0s, 0s; }
-  .tiermorph .tiercol:nth-child(3) { transition-delay: .14s, 0s, 0s; }
-}
+/* The rule under a ladder, stated once instead of badged on every row. */
+.ladder-note { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-500); margin: 16px 0 0; text-wrap: pretty; }
 
 /* ============================================================
    18 · MOBILE TAB BAR — app-style primary navigation on phones.

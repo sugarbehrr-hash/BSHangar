@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import TierLadder from '../../components/TierLadder.astro';
+import JumpseatSlot from '../../components/JumpseatSlot.astro';
+import { richText } from '../../lib/rich-text';
+import { FACEBOOK_GROUP } from '../../data/site';
+import { bagCategories } from '../../data/bags';
+import { checkedLabel, pickCount, priceRange, TIERS, TIER_ORDER } from '../../data/catalog';
+
+/**
+ * One page per worked category.
+ *
+ * Replaces the browse-grid card that grew into its ladder in place. That morph
+ * was clever and wrong: the ladder is a full page of content — seven picks, a
+ * jumpseat and a standard — and cramming it into a grid row meant it could
+ * never be linked to, shared, or found by search. A category is a destination
+ * now, and the browse page just points at it.
+ */
+export function getStaticPaths() {
+  return bagCategories.map((category) => ({
+    params: { category: category.key },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const CHECKED = checkedLabel(category.checked);
+
+/** "Economy, Main Cabin & First Class" — from the vocabulary, not typed. */
+const tierList = TIER_ORDER.map((tier) => TIERS[tier].label);
+const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
+---
+
+<BaseLayout
+  title={`${category.label} — Crew Essentials`}
+  description={category.blurb}
+>
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-body">
+        <div class="mh-eyebrow">Crew essentials · Bags &amp; packing</div>
+        <h1 class="mh-title">{category.label}</h1>
+        <p class="mh-sub">{category.blurb}</p>
+        <div class="mh-meta">
+          <span>{pickCount(category)} picks</span>
+          <span>{priceRange(category)}</span>
+          <span>Prices checked {CHECKED}</span>
+        </div>
+        <div class="mh-actions">
+          <a class="btn onnavy" href="/crew-essentials/">
+            <Icon name="ph-arrow-left" /> All crew essentials
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">Same bar, three prices</span>
+        <h2 class="h2">{tierNames}</h2>
+        <p class="lead">
+          Every pick here cleared the same standard, so the tiers aren't grades — they're price
+          brackets. You're choosing which trade you can live with, and each pick names its trade in
+          one sentence. <a href="/fa-approved/">How the tiers work</a>.
+        </p>
+      </div>
+
+      {/* Above the ladder — Cole's call. It is the pick crew ask about most. */}
+      <JumpseatSlot category={category} />
+
+      <TierLadder category={category} />
+
+      <p class="ladder-note">{category.note}</p>
+
+      <div class="notice warn spaced">
+        <Icon name="ph-hand-heart" />
+        <div class="nt">
+          <b>A quick note.</b> As an Amazon Associate, the Hangar earns from qualifying purchases —
+          at no extra cost to you. These are genuine crew picks; buying through these links helps
+          keep the group's guides free and up to date.
+        </div>
+      </div>
+
+      <div class="actionbar" style="margin-top:20px; --accent: var(--sky-700);">
+        <span class="card-badge"><Icon name="ph-chats-circle" /></span>
+        <div class="txt">
+          <b>Flown something that belongs on this list?</b>
+          <span>Post it in the group — if crew keep recommending it, it lands here.</span>
+        </div>
+        <a class="btn gold" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <Icon name="ph-arrow-up-right" /> Open the group
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
