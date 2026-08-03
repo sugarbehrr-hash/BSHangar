@@ -1,13 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import Stamp from '../../components/Stamp.astro';
 import FigureLedger from '../../components/FigureLedger.astro';
-import TierLadder from '../../components/TierLadder.astro';
-import JumpseatSlot from '../../components/JumpseatSlot.astro';
 import { richText } from '../../lib/rich-text';
 import { SITE, FACEBOOK_GROUP } from '../../data/site';
-import { products } from '../../data/essentials';
 import { JUMPSEAT } from '../../data/catalog';
 import {
   spinnerCategory,
@@ -17,9 +13,7 @@ import {
   rollerProIntro,
   rollerProFigures,
   rollerProVerdictCards,
-  rollerProCriteria,
   rollerProVerdict,
-  rollerProRelated,
 } from '../../data/roller-pro';
 
 /**
@@ -36,12 +30,6 @@ import {
  */
 const [hero, ...supports] = rollerProGallery;
 
-/** Icon and tag come from the product's own entry, so the tiles cannot drift. */
-const related = rollerProRelated.map((entry) => {
-  const product = products.find((candidate) => candidate.title === entry.title);
-  if (!product) throw new Error(`roller-pro: no product named "${entry.title}"`);
-  return { ...product, blurb: entry.blurb };
-});
 
 /** A price checked in August 2026 is worth trusting until August 2027, not forever. */
 const [checkedYear, checkedMonth] = spinnerCategory.checked.split('-');
@@ -170,37 +158,7 @@ const productSchema = {
 
   <section class="band paper">
     <div class="wrap">
-      <div class="grid two">
-        <div>
-          <span class="kicker">{rollerProCopy.standardKicker}</span>
-          <h2 class="h2">{rollerProCopy.standardHeading}</h2>
-          <p class="lead">{rollerProCopy.standardLead}</p>
-          <div style="margin-top:22px;">
-            <a class="stamplink" href="/fa-approved/" title="The full standard">
-              <Stamp ink sm />
-            </a>
-          </div>
-          <p class="footnote" set:html={richText(rollerProCopy.standardNote)} />
-        </div>
-
-        <div class="card">
-          <ul class="crit">
-            {
-              rollerProCriteria.map((point) => (
-                <li class:list={['flag' in point && point.flag && 'flag']}>
-                  <Icon
-                    name={'flag' in point && point.flag ? 'ph-warning-circle' : 'ph-check-circle'}
-                  />
-                  <div set:html={richText(point.text)} />
-                </li>
-              ))
-            }
-          </ul>
-          <p class="card-text" style="margin-top:16px;">{rollerProCopy.standardFooter}</p>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:20px;">
+      <div class="card">
         <p class="verdict">{rollerProVerdict.quote}</p>
         <div class="byline">
           <span class="card-badge sm" style="--accent: var(--sky-700);">
@@ -214,16 +172,6 @@ const productSchema = {
 
   <section class="band tight">
     <div class="wrap">
-      <div class="band-head">
-        <span class="kicker">{rollerProCopy.tiersKicker}</span>
-        <h2 class="h2">{rollerProCopy.tiersHeading}</h2>
-        <p class="lead" set:html={richText(rollerProCopy.tiersLead)} />
-      </div>
-
-      <JumpseatSlot category={spinnerCategory} here />
-
-      <TierLadder category={spinnerCategory} />
-
       <div class="buybar" style="margin-top:26px;">
         <div class="buyprice">
           <small>{rollerProCopy.buyLabel}</small>${rollerPro.price}
@@ -253,31 +201,6 @@ const productSchema = {
 
   <section class="band paper">
     <div class="wrap">
-      <div class="band-head">
-        <span class="kicker">{rollerProCopy.relatedKicker}</span>
-        <h2 class="h2">{rollerProCopy.relatedHeading}</h2>
-      </div>
-
-      <div class="grid three">
-        {
-          related.map((product) => (
-            <div class="card product">
-              <div class="shot">
-                <span class="tagchip">{product.tag}</span>
-                <Icon name={product.icon} />
-              </div>
-              <div class="pbody">
-                <h3 class="card-title">{product.title}</h3>
-                <p class="card-text">{product.blurb}</p>
-                <a class="btn quiet sm" href="/crew-essentials/">
-                  <Icon name="ph-arrow-right" /> See the pick
-                </a>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-
       <div class="actionbar quiet" style="margin-top:20px; --accent: var(--sky-700);">
         <span class="card-badge"><Icon name="ph-chats-circle" /></span>
         <div class="txt">

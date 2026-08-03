@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import FigureLedger from '../../components/FigureLedger.astro';
+import { richText } from '../../lib/rich-text';
+import { SITE, FACEBOOK_GROUP } from '../../data/site';
+import { bagCategories } from '../../data/bags';
+import { JUMPSEAT, TIERS, tierForPrice, checkedLabel, sellerFor } from '../../data/catalog';
+import { bagFigures } from '../../data/bag-figures';
+
+/**
+ * One page per pick — the destination the ladder cards hand off to.
+ *
+ * The card carries three figures; this carries all six, with the pane behind
+ * each one. That split is the whole reason the cards could go photo-forward:
+ * nothing has to be crammed into a 340px column any more.
+ *
+ * The Roller Pro keeps its own bespoke page (gallery, crew quote, the full
+ * standard) and is excluded here — it is the one pick with real crew
+ * photography and a written verdict behind it.
+ */
+export function getStaticPaths() {
+  const paths = [];
+
+  for (const category of bagCategories) {
+    for (const pick of category.picks) {
+      paths.push({ params: { pick: pick.slug }, props: { pick, category, jumpseat: false } });
+    }
+    const jump = category.jumpseat;
+    // roller-pro.astro owns its route; generating it here would collide.
+    if (jump.slug !== 'roller-pro') {
+      paths.push({ params: { pick: jump.slug }, props: { pick: jump, category, jumpseat: true } });
+    }
+  }
+
+  return paths;
+}
+
+const { pick, category, jumpseat } = Astro.props;
+
+const figures = bagFigures(pick.name, pick.price, pick.spec);
+const tier = jumpseat ? null : TIERS[tierForPrice(pick.price)];
+const CHECKED = checkedLabel(category.checked);
+const seller = sellerFor(pick.url);
+
+/** Siblings in the same tier — where to go if this one is not it. */
+const siblings = jumpseat
+  ? []
+  : category.picks.filter(
+      (other) => other.slug !== pick.slug && tierForPrice(other.price) === tierForPrice(pick.price)
+    );
+
+const intro = {
+  icon: category.icon,
+  title: 'Why these six',
+  sub: 'Weight · space · money',
+  paras: [
+    'Every bag review online is written by someone who flies twelve times a year. You fly twelve ' +
+      'times a week — so the questions are different: what does it weigh empty, will it clear the ' +
+      'sizer, and what happens to your month if it disappears.',
+    'Those are the six. Every number is the maker’s published figure, checked ' +
+      CHECKED +
+      '; what the number means on the line is crew opinion, and it is labelled as such.',
+  ],
+};
+
+const priceValidUntil = `${Number(category.checked.split('-')[0]) + 1}-${category.checked.split('-')[1]}-01`;
+
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: pick.name,
+  image: pick.image ? new URL(pick.image, Astro.site ?? SITE.url).href : undefined,
+  description: pick.text,
+  offers: {
+    '@type': 'Offer',
+    price: pick.price,
+    priceCurrency: 'USD',
+    priceValidUntil,
+    url: pick.url,
+    availability: 'https://schema.org/InStock',
+  },
+};
+---
+
+<BaseLayout
+  title={pick.name}
+  description={`${pick.name} — ${pick.spec.weight ?? '?'} lb empty, ${pick.spec.capacity ?? '?'} L, $${pick.price}. The six numbers a flight attendant asks before buying a bag, and the compromise named plainly.`}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} slot="head" />
+
+  <div class="masthead">
+    <div class="wrap">
+      <div class="mh-grid">
+        <div class="mh-body">
+          <div class="mh-eyebrow">Crew essentials · {category.label}</div>
+          <h1 class="mh-title">{pick.name}</h1>
+          <p class="mh-sub">{pick.text}</p>
+          <div class="mh-actions">
+            <a class="btn onnavy" href="/crew-essentials/">
+              <Icon name="ph-arrow-left" /> All crew essentials
+            </a>
+          </div>
+        </div>
+
+        <div class="mh-mark">
+          {
+            jumpseat ? (
+              <>
+                <span class:list={['stampchip', JUMPSEAT.chip]}>
+                  <Icon name={JUMPSEAT.icon} /> Jumpseat pick
+                </span>
+                <div class="stampnote">
+                  <Icon name="ph-user" /> {category.jumpseat.by}
+                </div>
+              </>
+            ) : (
+              <span class:list={['stampchip', tier!.chip]}>
+                <Icon name={tier!.icon} /> {tier!.label}
+              </span>
+            )
+          }
+          <div class="stampnote">
+            <Icon name="ph-scales" /> Your compromise: {pick.compromise}
+          </div>
+          <a href="/fa-approved/" class="txtbtn onnavy">What the stamp means →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="band paper">
+    <div class="wrap">
+      <div class="band-head">
+        <span class="kicker">The 30-second read</span>
+        <h2 class="h2">Six numbers, then decide.</h2>
+        <p class="lead">
+          Everything a flight attendant actually asks before buying a bag. Tap any number for the
+          part that matters on the line.
+        </p>
+      </div>
+
+      <FigureLedger figures={figures} intro={intro} />
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="grid two">
+        <div class="pickshot">
+          {
+            pick.image ? (
+              <img src={pick.image} alt={pick.imageAlt ?? pick.name} />
+            ) : (
+              <Icon name={category.icon} />
+            )
+          }
+        </div>
+
+        <div>
+          {
+            jumpseat && (
+              <div class="notice warn" style="margin-bottom:18px;">
+                <Icon name="ph-info" />
+                <div class="nt">
+                  <b>Why there's no stamp.</b> {category.jumpseat.why}
+                </div>
+              </div>
+            )
+          }
+
+          <div class="buybar">
+            <div class="buyprice">
+              <small>Street price · {CHECKED}</small>${pick.price.toLocaleString('en-US')}
+            </div>
+            <div class="buymeta">
+              <b>{pick.name}.</b> {pick.spec.warranty}.
+            </div>
+            <div class="buyactions">
+              <a
+                class="btn primary"
+                href={pick.url}
+                target="_blank"
+                rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
+              >
+                <Icon name={seller.icon} /> {seller.label}
+              </a>
+            </div>
+          </div>
+
+          {
+            siblings.length > 0 && (
+              <div class="siblings">
+                <span class="sb-label">Also in {tier!.label}</span>
+                <ul>
+                  {siblings.map((other) => (
+                    <li>
+                      <a href={`/crew-essentials/${other.slug}/`}>{other.name}</a>
+                      <span>${other.price.toLocaleString('en-US')}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          <p class="footnote" set:html={richText(
+            'Nothing on this page is sponsored. As an Amazon Associate the Hangar earns from ' +
+            'qualifying purchases, at no extra cost to you — and it has never decided what gets ' +
+            'a pick or what gets withheld.'
+          )} />
+        </div>
+      </div>
+
+      <div class="actionbar" style="margin-top:22px; --accent: var(--sky-700);">
+        <span class="card-badge"><Icon name="ph-chats-circle" /></span>
+        <div class="txt">
+          <b>Flown this one? Say so.</b>
+          <span>Agreement, disagreement and photos all belong in the group.</span>
+        </div>
+        <a class="btn gold" href={FACEBOOK_GROUP} target="_blank" rel="noopener">
+          <Icon name="ph-arrow-up-right" /> Open the group
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

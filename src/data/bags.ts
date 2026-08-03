@@ -66,8 +66,23 @@ export const spinners: TierCategory = {
   picks: [
     {
       name: 'Travelpro Maxlite 5 21"',
+      slug: 'maxlite-5-21',
+      spec: {
+        weight: 5.4,
+        capacity: 46,
+        dims: [23, 14.5, 9],
+        wheels: '4 sealed-bearing spinner wheels',
+        wheelsSwappable: false,
+        warranty: 'Built for a Lifetime limited — defects only',
+        warrantyCoversDamage: false,
+        notes: {
+          weight:
+            'It is the lightest bag on this page by nearly two pounds, and that is the whole reason crew buy it.',
+          wheels:
+            'Lighter-duty than the crew lines: these are not a serviceable part, which is the trade for the price.',
+        },
+      },
       price: 160,
-      stat: '5.4 lb — the lightest bag on this page',
       compromise:
         'the handle wobbles fully extended and it tips if you let go in motion — plan on buying it again in a couple of years.',
       text:
@@ -80,8 +95,23 @@ export const spinners: TierCategory = {
     },
     {
       name: 'Travelpro FlightCrew5 21"',
+      slug: 'flightcrew-5-21',
+      spec: {
+        weight: 9.1,
+        capacity: 49,
+        dims: [23, 14.5, 9.5],
+        wheels: '4 MagnaTrac self-aligning spinner wheels',
+        wheelsSwappable: true,
+        warranty: '3-year commercial-use warranty',
+        warrantyCoversDamage: false,
+        notes: {
+          wheels:
+            'Wheels, handles and zipper pulls are all stocked as parts — you rebuild this bag instead of replacing it.',
+          weight:
+            'Commercial-grade build is where the nine pounds went; it is heavy because it is made to be repaired, not thrown away.',
+        },
+      },
       price: 200,
-      stat: '3-year commercial-use warranty',
       compromise:
         'four spinner wheels are consumables — on jetbridge grating and cobblestone layovers they go first.',
       text:
@@ -94,8 +124,23 @@ export const spinners: TierCategory = {
     },
     {
       name: 'Travelpro Crew Classic',
+      slug: 'crew-classic',
+      spec: {
+        weight: 7.0,
+        capacity: 47,
+        dims: [23, 14.5, 9.5],
+        wheels: '8 MagnaTrac self-aligning spinner wheels',
+        wheelsSwappable: true,
+        warranty: 'Built for a Lifetime limited, plus 3-year Trusted Companion',
+        warrantyCoversDamage: false,
+        notes: {
+          weight:
+            'Seven pounds is genuinely light for a crew bag — two full pounds under the FlightCrew, for most of the same build.',
+          fits:
+            'The tapered expansion keeps the centre of gravity low, so it adds space without becoming a bag that tips.',
+        },
+      },
       price: 255,
-      stat: 'Flown by crew at 90+ airlines',
       compromise:
         'it is function over form — the anonymous black crew-room look, with no USB port and no laptop pocket.',
       text:
@@ -108,8 +153,23 @@ export const spinners: TierCategory = {
     },
     {
       name: 'Travelpro Platinum Elite 21"',
+      slug: 'platinum-elite-21',
+      spec: {
+        weight: 7.8,
+        capacity: 46,
+        dims: [23.5, 14.5, 9],
+        wheels: '8 MagnaTrac self-aligning spinner wheels',
+        wheelsSwappable: true,
+        warranty: 'Built for a Lifetime limited',
+        warrantyCoversDamage: false,
+        notes: {
+          sizer:
+            'At 23.5 inches tall it is the furthest over the frame of anything here — a strict gate agent has a full inch and a half to point at.',
+          wheels:
+            'Eight magnet-aligned wheels track dead straight; it survived being thrown down concrete stairs in testing.',
+        },
+      },
       price: 390,
-      stat: '10/10 ease of transport — OutdoorGearLab',
       compromise:
         'it measures about 23.5" with wheels and handle, so a strict gate agent can call it at the sizer.',
       text:
@@ -122,8 +182,25 @@ export const spinners: TierCategory = {
     },
     {
       name: 'Briggs & Riley Baseline Essential 22"',
+      slug: 'briggs-riley-spinner',
+      spec: {
+        weight: 10.0,
+        capacity: 48,
+        dims: [22, 14, 9],
+        wheels: '4 sealed spinner wheels',
+        wheelsSwappable: false,
+        warranty: 'Simple as that lifetime guarantee — any damage, any cause',
+        warrantyCoversDamage: true,
+        notes: {
+          sizer:
+            'Built exactly to the frame: 22 × 14 × 9 with wheels and handle, nothing to spare and nothing over.',
+          lost:
+            'The only warranty here that repairs airline damage without argument or a receipt.',
+          weight:
+            'Ten pounds empty is the price of that warranty and that outside-mounted handle.',
+        },
+      },
       price: 729,
-      stat: '~10 lb · lifetime warranty, no questions asked',
       compromise:
         'ten pounds empty and a steep price — and the push-button expansion can be set off by the contents themselves.',
       text:
@@ -136,8 +213,23 @@ export const spinners: TierCategory = {
     },
     {
       name: 'TUMI Alpha 3 International 4-Wheel',
+      slug: 'tumi-alpha3-4wheel',
+      spec: {
+        weight: 10.9,
+        capacity: null,
+        dims: [22, 14, 9],
+        wheels: '4 dual spinner wheels',
+        wheelsSwappable: false,
+        warranty: '5-year limited',
+        warrantyCoversDamage: false,
+        notes: {
+          weight:
+            'Over 20% above the category average — the aluminium handle and the armour are heavy before you pack.',
+          lost:
+            'Support thins out noticeably once the five years are up, which is the complaint that recurs most.',
+        },
+      },
       price: 1050,
-      stat: '10.9 lb · 65 W USB-C port',
       compromise:
         'the price, and the weight — 10.9 lb is over 20% above the category average, and repair support thins out once the 5-year warranty ends.',
       text:
@@ -173,8 +265,25 @@ export const spinners: TierCategory = {
 
   jumpseat: {
     name: 'Peak Design Roller Pro',
+    slug: 'roller-pro',
+    spec: {
+      weight: 8.6,
+      capacity: 39,
+      dims: [21.8, 14, 9],
+      wheels: '60 mm wheels, unbolt and swap at home',
+      wheelsSwappable: true,
+      warranty: 'Lifetime warranty on defects',
+      warrantyCoversDamage: false,
+      notes: {
+        weight:
+          'Two pounds over the soft-side most of us fly, and you feel every one of them lifting into a regional bin.',
+        sizer:
+          'One of only two bags here that actually clears the frame with room to spare, wheels and handle included.',
+        wheels:
+          'They unbolt and swap out at home for the cost of a crew meal.',
+      },
+    },
     price: 600,
-    stat: '8.6 lb · 34 L → 39 L · lifetime warranty',
     by: 'Cole · CLT',
     why:
       'It is barely a year old and it was built for photographers, not crew — so nobody in the ' +
@@ -209,8 +318,23 @@ export const rollaboards: TierCategory = {
   picks: [
     {
       name: 'Travelpro Maxlite 5 22"',
+      slug: 'maxlite-5-22',
+      spec: {
+        weight: 5.4,
+        capacity: 52,
+        dims: [23, 14.5, 9],
+        wheels: '2 high-performance ball-bearing wheels',
+        wheelsSwappable: false,
+        warranty: 'Built for a Lifetime limited — defects only',
+        warrantyCoversDamage: false,
+        notes: {
+          weight:
+            'Same 5.4 lb as the spinner but 6 litres more inside — two wheels buy you space for free.',
+          fits:
+            'Fifty-two litres at five and a half pounds is the best space-per-pound on this page.',
+        },
+      },
       price: 160,
-      stat: 'Lighter than the spinner version',
       compromise:
         'lighter-duty components than the crew lines — and expanded, it is over the limit on some airlines.',
       text:
@@ -223,8 +347,25 @@ export const rollaboards: TierCategory = {
     },
     {
       name: 'LuggageWorks Aurora New Generation 22"',
+      slug: 'luggageworks-aurora',
+      spec: {
+        weight: 11.8,
+        capacity: 45,
+        dims: [22, 14, 9],
+        wheels: 'High-grade rubber wheels',
+        wheelsSwappable: true,
+        warranty: 'Workmanship warranty, plus the LuggageWorks repair shop',
+        warrantyCoversDamage: false,
+        notes: {
+          weight:
+            'The heaviest bag here by a pound — more than double a Maxlite before you pack a thing.',
+          sizer:
+            'Exactly to the frame, but the 2-inch expansion puts it straight over.',
+          wheels:
+            'LuggageWorks rebuild these in their own shop; the frame outlives several sets of wheels.',
+        },
+      },
       price: 210,
-      stat: '11.8 lb · 45 L · uniform suiter',
       compromise:
         'it weighs 11.8 lb empty — more than double a Maxlite — and the Aurora line has no long service record yet.',
       text:
@@ -237,8 +378,23 @@ export const rollaboards: TierCategory = {
     },
     {
       name: 'Travelpro FlightCrew5 22"',
+      slug: 'flightcrew-5-22',
+      spec: {
+        weight: 9.9,
+        capacity: 56,
+        dims: [23.5, 14.75, 9.75],
+        wheels: 'Sealed ball-bearing inline skate wheels',
+        wheelsSwappable: true,
+        warranty: '3-year commercial-use warranty',
+        warrantyCoversDamage: false,
+        notes: {
+          fits:
+            'Fifty-six litres is the most usable space of any two-wheeler here short of the Pilot.',
+          wheels:
+            'One pilot got about 25 years out of his first FlightCrew on three or four sets of wheels.',
+        },
+      },
       price: 220,
-      stat: 'Wheels, handles and pulls all swap out',
       compromise:
         'this generation runs about 5–7 years, short of the legendary older ones — and it is crew-outfitter stock, not mainstream retail.',
       text:
@@ -251,8 +407,23 @@ export const rollaboards: TierCategory = {
     },
     {
       name: 'Travelpro Pilot Seven3',
+      slug: 'pilot-seven3',
+      spec: {
+        weight: 9.9,
+        capacity: 46,
+        dims: [23.5, 14.5, 9],
+        wheels: 'Crash-guard housed inline skate wheels',
+        wheelsSwappable: true,
+        warranty: '5-year commercial-use warranty',
+        warrantyCoversDamage: false,
+        notes: {
+          sizer:
+            'Designed around a 737 flight deck rather than a sizer, which is why it is over the frame.',
+          wheels:
+            'Screw construction throughout — the wheel housings are armoured and the whole bag comes apart to fix.',
+        },
+      },
       price: 360,
-      stat: '9.9 lb · 46 L · 5-year commercial warranty',
       compromise:
         'fewer pockets than the FlightCrew — one slip pocket and one dump pocket where the 5 has a whole front face.',
       text:
@@ -265,8 +436,23 @@ export const rollaboards: TierCategory = {
     },
     {
       name: 'Travelpro Pilot 22" Expandable',
+      slug: 'pilot-22',
+      spec: {
+        weight: 10.8,
+        capacity: 58,
+        dims: [23.5, 15, 9.75],
+        wheels: 'Sealed ball-bearing inline skate wheels',
+        wheelsSwappable: true,
+        warranty: 'Commercial-use warranty',
+        warrantyCoversDamage: false,
+        notes: {
+          weight:
+            "At 10.8 lb this is heavier than Cole's \"just under ten\" — the published figure is the one to plan around.",
+          fits:
+            'Fifty-eight litres is the most space on this page, and the reason it is also the widest at 15 inches.',
+        },
+      },
       price: 385,
-      stat: 'Just under 10 lb · 1682d ballistic nylon',
       compromise:
         'just under ten pounds is still hefty against a 7 kg international limit, and it is all function — no style points off the flight line.',
       text:
@@ -278,8 +464,23 @@ export const rollaboards: TierCategory = {
     },
     {
       name: 'Briggs & Riley Baseline Essential 2-Wheel',
+      slug: 'briggs-riley-2wheel',
+      spec: {
+        weight: 9.7,
+        capacity: 51,
+        dims: [22, 14, 9],
+        wheels: '2 high-density impact-resistant wheels',
+        wheelsSwappable: false,
+        warranty: 'Simple as that lifetime guarantee — any damage, any cause',
+        warrantyCoversDamage: true,
+        notes: {
+          fits:
+            'Three litres more than the spinner and a third of a pound lighter — what losing two wheels buys you.',
+          lost:
+            'Repaired for life, whatever happened to it, with no proof of purchase.',
+        },
+      },
       price: 679,
-      stat: 'Nearly 10 lb · lifetime warranty',
       compromise:
         'nearly ten pounds against a 7 kg limit — and crew who own both say the compression is not $600-better than a Travelpro.',
       text:
@@ -296,8 +497,23 @@ export const rollaboards: TierCategory = {
       // is the Alpha 3 MSRP seen at Luggage Pros. Cole only says "often over
       // $800". Confirm on tumi.com before launch.
       name: 'TUMI Alpha 3 International 2-Wheel',
+      slug: 'tumi-alpha3-2wheel',
+      spec: {
+        weight: null,
+        capacity: null,
+        dims: [22, 14, 9],
+        wheels: '2 recessed wheels',
+        wheelsSwappable: false,
+        warranty: '5-year limited',
+        warrantyCoversDamage: false,
+        notes: {
+          weight:
+            "TUMI does not publish an empty weight for the two-wheeler. Expect it near the 4-wheel's 10.9 lb, but that is an expectation, not a spec.",
+          lost:
+            'Same five-year cliff as the spinner, and the same complaints after it.',
+        },
+      },
       price: 895,
-      stat: 'DuraFold armour · TUMI Tracer',
       compromise:
         'the price, and an aluminium build that is not light — plus repair support thins out once the 5-year warranty ends.',
       text:
@@ -312,8 +528,23 @@ export const rollaboards: TierCategory = {
 
   jumpseat: {
     name: 'Travelpro Platinum Elite 22"',
+    slug: 'platinum-elite-22',
+    spec: {
+      weight: 7.7,
+      capacity: 53.5,
+      dims: [23, 14.5, 9],
+      wheels: '2 high-performance ball-bearing wheels',
+      wheelsSwappable: true,
+      warranty: 'Built for a Lifetime limited',
+      warrantyCoversDamage: false,
+      notes: {
+        fits:
+          'Fifty-three litres at 7.7 lb — roughly 40% more than a 21-inch spinner for the same weight.',
+        weight:
+          'The lightest bag on this page that still carries 50+ litres.',
+      },
+    },
     price: 390,
-    stat: '50+ L · roughly 40% more than a 21" spinner',
     by: 'Cole · CLT',
     why:
       'This one is a genuine crew standard, not an unknown — it is in the jumpseat because it ' +

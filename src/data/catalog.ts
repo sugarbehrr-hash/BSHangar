@@ -15,7 +15,9 @@
    one way: catalog -> bags -> essentials.
    ============================================================ */
 
-/** Filter group a pick belongs to. Kept for grouping, not for a pill bar. */
+import type { BagSpec } from './bag-figures';
+
+/** Filter group a pick belongs to. */
 export type CatalogCat = 'bags' | 'body' | 'kit';
 
 /* ------------------------------------------------------------
@@ -137,10 +139,16 @@ export const JUMPSEAT = {
 
 export interface TierPick {
   name: string;
+  /** URL segment for this pick's own page. Unique across the site. */
+  slug: string;
   /** USD, whole dollars. Drives the ladder price and the ordering claim. */
   price: number;
-  /** Small-caps line under the name — the one spec that decides it. */
-  stat: string;
+  /**
+   * Published specs. The six-figure ledger is DERIVED from these, so a number
+   * on a card and the same number on its page cannot disagree. Maker figures
+   * only — see the sourcing note in bag-figures.ts.
+   */
+  spec: BagSpec;
   /** REQUIRED. The one sentence that is the rating; it follows "Your compromise:". */
   compromise: string;
   /** The longer read. Shown on the full ladder, dropped from the browse card. */
@@ -171,8 +179,9 @@ export interface Alternate {
  */
 export interface JumpseatPick {
   name: string;
+  slug: string;
   price: number;
-  stat: string;
+  spec: BagSpec;
   /** Who flies it. "Cole · CLT". */
   by: string;
   /** Why it has no stamp. Required — the slot makes no consensus claim. */

@@ -1,46 +1,35 @@
 ---
 import Icon from './Icon.astro';
 import { richText } from '../lib/rich-text';
-import {
-  TIERS,
-  TIER_ORDER,
-  picksFor,
-  alternatesFor,
-  sellerFor,
-  type TierCategory,
-} from '../data/catalog';
+import { TIERS, TIER_ORDER, picksFor, alternatesFor, type TierCategory } from '../data/catalog';
+import { bagFigures } from '../data/bag-figures';
 
 /**
  * The tier ladder: one card, three columns, read left to right as a price
- * progression. The bars step 1-2-3 like a signal meter.
+ * progression. A vertical row-per-pick layout was prototyped against this and
+ * lost — side by side is the point, because $160 / $255 / $729 in one glance
+ * IS the comparison this page exists to make.
  *
- * WHY THREE COLUMNS AND NOT A VERTICAL LIST. A row-per-pick layout was
- * prototyped against this one (public/_ladder-lab.html) and lost: putting the
- * tiers side by side is the entire point, because $160 / $255 / $729 in one
- * glance is the comparison the page exists to make. Stacking them turns a
- * comparison into a list.
+ * A CARD IS A TEASER, NOT A DESTINATION. Every pick has its own page carrying
+ * the full six-figure ledger, so the card's job is to help you choose and hand
+ * off: photo, name, price, the three figures that decide it, and the one
+ * sentence that is the rating. The long prose and the buy bar live on the page.
  *
- * A column holds MORE THAN ONE pick — Cole's reviews gave two or three bags at
- * most price levels, and every one is a buy link. So the tier's identity and
- * price bracket live in a solid coloured header at the top of the column, and
- * each pick under it is a compact row.
- *
- * No column carries a selected or focused state, and no pick carries an
- * "approved" mark. Every pick here already cleared the same gate, so a badge
- * saying so would fire on every row and mean nothing — see the note under the
- * ladder, which says it once. The pick that is somebody's personal favourite
- * lives OUTSIDE this component, in the jumpseat slot.
+ * The three figures are the SAME three on every card — weight, capacity, sizer
+ * clearance — which is what makes a column comparable down and across. They
+ * are derived from published specs, never written per card, so the number here
+ * and the number on the pick's page cannot disagree.
  */
 interface Props {
   category: TierCategory;
-  /**
-   * Browse-card variant: the longer prose is dropped, since the card is one
-   * third of a grid row rather than the width of the page.
-   */
+  /** Browse variant: unused for now, kept so callers need not care. */
   compact?: boolean;
 }
 
-const { category, compact = false } = Astro.props;
+const { category } = Astro.props;
+
+/** The three headline axes, in the order they decide a purchase. */
+const HEADLINE = ['weight', 'fits', 'sizer'] as const;
 ---
 
 <div class="tierscard">
@@ -52,9 +41,6 @@ const { category, compact = false } = Astro.props;
 
       return (
         <div class="tiercol" data-tier={key} style={`--tc: ${tier.color}; --tfg: ${tier.fg};`}>
-          {/* Solid field in the tier's colour. A 3px keyline was tried first
-              and you stop seeing it; the whole band is what makes the tier
-              readable at a glance. */}
           <div class="tc-head">
             <div class="tbars">
               {[0, 1, 2].map((i) => (
@@ -67,51 +53,49 @@ const { category, compact = false } = Astro.props;
           </div>
 
           <div class="tc-body">
-            <ul class="tier-picks">
-              {picks.map((pick) => {
-                const seller = sellerFor(pick.url);
+            {picks.map((pick) => {
+              const figures = bagFigures(pick.name, pick.price, pick.spec);
+              const headline = HEADLINE.map((k) => figures.find((f) => f.key === k)!);
 
-                return (
-                  <li class="tier-pick">
-                    {pick.image && (
-                      <div class="tp-shot">
-                        <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
-                      </div>
+              return (
+                <a class="pcard" href={`/crew-essentials/${pick.slug}/`}>
+                  <div class="pc-shot">
+                    {pick.image ? (
+                      <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
+                    ) : (
+                      <Icon name={category.icon} />
                     )}
+                  </div>
 
-                    <div class="tp-id">
-                      <div class="tp-head">
-                        <h4 class="tp-name">
-                          {pick.href ? <a href={pick.href}>{pick.name}</a> : pick.name}
-                        </h4>
-                        <span class="tp-price">${pick.price.toLocaleString('en-US')}</span>
+                  <div class="pc-head">
+                    <h4 class="pc-name">{pick.name}</h4>
+                    <span class="pc-price">${pick.price.toLocaleString('en-US')}</span>
+                  </div>
+
+                  {/* Same three axes on every card — the comparison currency. */}
+                  <div class="pc-figs">
+                    {headline.map((figure) => (
+                      <div class="pc-fig">
+                        <span class="pf-val">
+                          {figure.value}
+                          <i>{figure.unit}</i>
+                        </span>
+                        <span class="pf-ref">{figure.ref}</span>
                       </div>
-                      <div class="tp-stat">{pick.stat}</div>
-                    </div>
+                    ))}
+                  </div>
 
-                    <div class="tp-det">
-                      {!compact && <p class="tp-text">{pick.text}</p>}
+                  <div class="pc-comp">
+                    <Icon name="ph-scales" />
+                    <span>{pick.compromise}</span>
+                  </div>
 
-                      <div class="tier-comp">
-                        <Icon name="ph-scales" />
-                        <div>
-                          <b>Your compromise:</b> {pick.compromise}
-                        </div>
-                      </div>
-
-                      <a
-                        class="btn quiet sm tp-buy"
-                        href={pick.url}
-                        target="_blank"
-                        rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
-                      >
-                        <Icon name={seller.icon} /> {seller.label}
-                      </a>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+                  <span class="pc-go">
+                    See the pick <Icon name="ph-arrow-right" />
+                  </span>
+                </a>
+              );
+            })}
 
             {alternates.length > 0 && (
               <div class="tier-alts">
