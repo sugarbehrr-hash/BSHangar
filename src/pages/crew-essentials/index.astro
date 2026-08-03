@@ -10,7 +10,6 @@ import {
   productCategories,
   TIERS,
   TIER_ORDER,
-  allStamped,
   coverFor,
   pickCount,
   priceRange,
@@ -92,17 +91,13 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
                       <Icon name={category.icon} />
                     )}
                     <span class="tagchip">{pickCount(category)} picks</span>
-                    {/* Only when every pick on the ladder has cleared the gate.
-                        A category cannot be flown 90 days; stamping one that
-                        still holds a provisional pick claims what it can't. */}
-                    {
-                      allStamped(category) && (
-                        <span class="stampmini">
-                          <span class="t">FA Approved</span>
-                          <span class="s">Blue Streak Hangar</span>
-                        </span>
-                      )
-                    }
+                    {/* The stamp's one appearance on this page. It marks a
+                        category that has been worked all the way through, which
+                        is why the not-yet-reviewed tiles below carry none. */}
+                    <span class="stampmini">
+                      <span class="t">FA Approved</span>
+                      <span class="s">Blue Streak Hangar</span>
+                    </span>
                   </div>
                   <div class="pbody">
                     <h3 class="card-title">{category.label}</h3>
@@ -138,7 +133,7 @@ const tierNames = `${tierList.slice(0, -1).join(', ')} & ${tierList.at(-1)}`;
                     <JumpseatSlot category={category} />
                   </div>
 
-                  <p class="tf-note">{category.provisionalNote}</p>
+                  <p class="tf-note">{category.note}</p>
                 </div>
               </div>
             );

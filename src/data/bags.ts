@@ -40,19 +40,13 @@ import type { TierCategory } from './catalog';
 const CHECKED = '2026-08';
 
 /**
- * States the rule ONCE, under the ladder, instead of stamping every row.
- * Being listed here already means a pick cleared the standard, so the only
- * thing worth marking is where that is not true.
+ * Stated ONCE, under the ladder. Being listed here already means a pick
+ * cleared the standard, so the only thing worth saying is what the one
+ * exception is.
  */
-const PROVISIONAL_NOTE =
-  'Everything on this ladder cleared the standard — that is what being here means. Only the ' +
-  'exceptions are marked: provisional picks are still inside their 90-day wear test, and the ' +
-  'jumpseat pick is one crew member’s own, with no group verdict behind it.';
-
-const PROVISIONAL_NOTICE =
-  '**Some picks here are provisional.** They are the bags crew name most, but a pick only ' +
-  'gets the stamp after 90 days in a real rotation, reported by more than one of us. Until ' +
-  'then the review stands and the stamp does not.';
+const LADDER_NOTE =
+  'Every bag on this ladder cleared the standard — that is what being listed here means. ' +
+  'The one exception is the jumpseat pick, which is one crew member’s own and says so.';
 
 /* ------------------------------------------------------------
    Spinners — four wheels
@@ -67,8 +61,7 @@ export const spinners: TierCategory = {
     'Six approved four-wheel picks, $160 to $1,050 — same quality bar, three price levels. ' +
     'Effortless in a terminal, consumable on a bad ramp.',
   checked: CHECKED,
-  provisionalNote: PROVISIONAL_NOTE,
-  provisionalNotice: PROVISIONAL_NOTICE,
+  note: LADDER_NOTE,
 
   picks: [
     {
@@ -85,7 +78,6 @@ export const spinners: TierCategory = {
       url: 'https://www.amazon.com/Travelpro-Luggage-Lightweight-Expandable-Suitcase/dp/B07BL7JXHV',
       image: '/essentials/maxlite-5.jpg',
       imageAlt: 'Travelpro Maxlite 5 21-inch softside spinner, front view',
-      provisional: true,
     },
     {
       tier: 'economy',
@@ -218,8 +210,7 @@ export const rollaboards: TierCategory = {
     'Seven approved two-wheel picks, $160 to $895 — same quality bar, three price levels. ' +
     'More clothes inside, and nothing to snap off on a bad ramp.',
   checked: CHECKED,
-  provisionalNote: PROVISIONAL_NOTE,
-  provisionalNotice: PROVISIONAL_NOTICE,
+  note: LADDER_NOTE,
 
   picks: [
     {
@@ -236,7 +227,6 @@ export const rollaboards: TierCategory = {
       url: 'https://www.amazon.com/Travelpro-Luggage-Expandable-Carry-On-Black/dp/B07BLCB6DS',
       image: '/essentials/maxlite-5-22.jpg',
       imageAlt: 'Travelpro Maxlite 5 22-inch rollaboard, front view',
-      provisional: true,
     },
     {
       tier: 'economy',
@@ -252,7 +242,6 @@ export const rollaboards: TierCategory = {
       url: 'https://luggageworks.com/products/aurora-new-generation-22-expandable-suiter-rolling-bag',
       image: '/essentials/luggageworks-aurora.jpg',
       imageAlt: 'LuggageWorks Aurora New Generation 22-inch suiter rolling bag, front view',
-      provisional: true,
     },
     {
       tier: 'economy',

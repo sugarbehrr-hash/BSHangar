@@ -1033,13 +1033,6 @@ a.tiercol:hover { background: var(--cream-100); }
 .tp-name a:hover { color: var(--navy-700); text-decoration: underline; text-underline-offset: 3px; }
 .tp-price { flex: none; font-family: var(--font-display); font-size: 1.25rem; line-height: 1; color: var(--navy-900); }
 .tp-stat { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 5px; }
-/* The per-pick mark — exceptions only. There is deliberately no "approved"
-   variant: every pick on the ladder cleared the standard, so a chip saying so
-   would fire on nearly every row and carry no information. Only the deviation
-   is marked. */
-.tp-mark { display: inline-flex; align-items: center; gap: 5px; font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase; border-radius: var(--radius-pill); padding: 2px 8px; }
-.tp-mark i { font-size: 0.75rem; }
-.tp-mark.prov { color: var(--gold-600); background: var(--cream-100); border: 1px solid var(--gold-500); }
 .tp-text { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-700); margin: 9px 0 0; text-wrap: pretty; }
 .tp-buy { margin-top: 12px; }
 

@@ -86,20 +86,16 @@ const { category, compact = false } = Astro.props;
                         <div class="tp-price">${pick.price.toLocaleString('en-US')}</div>
                       </div>
 
-                      {/* MARK THE EXCEPTION, NEVER THE NORM.
-                          Being on this ladder already means a pick cleared the
-                          standard, so an "FA Approved" chip per row would fire
-                          on almost every row and say nothing. It was tried and
-                          removed for exactly that reason. Only the deviation
-                          gets a mark; the note under the ladder says it once. */}
-                      <div class="tp-stat">
-                        {pick.stat}
-                        {pick.provisional && (
-                          <span class="tp-mark prov" title="Still inside its 90-day wear test">
-                            <Icon name="ph-hourglass-medium" /> Provisional
-                          </span>
-                        )}
-                      </div>
+                      {/* NO STATUS CHIP HERE, EITHER KIND.
+                          "FA Approved" was tried and removed: it fired on 10 of
+                          13 rows, and a mark that is never withheld carries no
+                          information. "Provisional" went the same way — nobody
+                          runs a 90-day wear-test clock, so it described a
+                          process that did not exist and could never resolve.
+                          Where a bag genuinely has no track record, its
+                          compromise sentence says so, which is where every
+                          other caveat on this site already lives. */}
+                      <div class="tp-stat">{pick.stat}</div>
                     </div>
                   </div>
 

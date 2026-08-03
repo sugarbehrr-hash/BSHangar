@@ -224,11 +224,6 @@ const productSchema = {
 
       <JumpseatSlot category={spinnerCategory} here />
 
-      <div class="notice warn spaced">
-        <Icon name="ph-hourglass-medium" />
-        <div class="nt" set:html={richText(spinnerCategory.provisionalNotice)} />
-      </div>
-
       <div class="buybar" style="margin-top:26px;">
         <div class="buyprice">
           <small>{rollerProCopy.buyLabel}</small>${rollerPro.price}

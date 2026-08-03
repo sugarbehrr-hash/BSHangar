@@ -148,8 +148,6 @@ export interface TierPick {
   imageAlt?: string;
   /** Set when this pick has a page of its own. */
   href?: string;
-  /** No stamp yet — still inside its 90-day wear test, or too new to have one. */
-  provisional?: boolean;
 }
 
 /**
@@ -197,9 +195,7 @@ export interface TierCategory {
   /** When these prices were last verified, as YYYY-MM. */
   checked: string;
   /** Footnote under the browse ladder. */
-  provisionalNote: string;
-  /** The same reservation, said at length on a pick's own page. */
-  provisionalNotice: string;
+  note: string;
   picks: TierPick[];
   /** Unreviewed budget names, shown as links at the foot of their column. */
   alternates?: Alternate[];
@@ -234,16 +230,12 @@ export function priceRange(category: TierCategory): string {
  * a real crew photo replaced a press shot.
  *
  * Order matters and is not cosmetic. The browse tile presses the Flight
- * Attendant Approved stamp over this photo, so it has to be a bag that
- * actually HAS the stamp — a stamped pick first, then a provisional one, and
- * the jumpseat pick only as a last resort. Leading with the jumpseat bag put
- * the mark on the one product on the page that has not earned it.
+ * Attendant Approved stamp over this photo, so it must be a bag that carries
+ * the stamp — any ladder pick does, the jumpseat pick never does. Leading with
+ * the jumpseat bag put the mark on the one product that has not earned it.
  */
 export function coverFor(category: TierCategory): { image: string; alt: string } | null {
-  const shot =
-    category.picks.find((pick) => pick.image && !pick.provisional) ??
-    category.picks.find((pick) => pick.image);
-
+  const shot = category.picks.find((pick) => pick.image);
   if (shot?.image) return { image: shot.image, alt: shot.imageAlt ?? shot.name };
 
   const jump = category.jumpseat;
@@ -255,21 +247,6 @@ export function pickCount(category: TierCategory): number {
   return category.picks.length + 1;
 }
 
-/**
- * Whether the browse tile may wear the Flight Attendant Approved stamp.
- *
- * A category cannot itself be flown for 90 days, so the only honest reading of
- * a stamp on a category tile is "every pick on this ladder cleared the gate".
- * That is what this checks, and it self-heals: a category with a provisional
- * pick shows no stamp today and earns one the moment that pick is stamped.
- *
- * The jumpseat pick is excluded on purpose. It is outside the ladder and
- * outside the stamp system by definition, so counting it would make this
- * permanently false and the tile stamp dead code.
- */
-export function allStamped(category: TierCategory): boolean {
-  return category.picks.every((pick) => !pick.provisional);
-}
 
 /** The picks in one column, cheapest first. The ladder IS the order. */
 export function picksFor(category: TierCategory, tier: TierKey): TierPick[] {
