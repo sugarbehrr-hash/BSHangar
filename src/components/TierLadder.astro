@@ -78,9 +78,20 @@ const { category, compact = false } = Astro.props;
                     <div class="tp-price">${pick.price.toLocaleString('en-US')}</div>
                   </div>
 
+                  {/* One slot, two mutually exclusive states. The stamp lives
+                      on the PICK, never on the category tile above — only a
+                      bag can be flown for 90 days. */}
                   <div class="tp-stat">
                     {pick.stat}
-                    {pick.provisional && <span class="tp-prov">Provisional</span>}
+                    {pick.provisional ? (
+                      <span class="tp-mark prov" title="Still inside its 90-day wear test">
+                        <Icon name="ph-hourglass-medium" /> Provisional
+                      </span>
+                    ) : (
+                      <a class="tp-mark ok" href="/fa-approved/" title="What the stamp means">
+                        <Icon name="ph-seal-check" /> FA Approved
+                      </a>
+                    )}
                   </div>
 
                   {!compact && <p class="tp-text">{pick.text}</p>}

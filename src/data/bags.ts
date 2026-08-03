@@ -17,7 +17,21 @@
    as the research they are, and his personal pick moved to the
    jumpseat slot, which exists precisely because it isn't a price.
 
-   Prices are street prices checked Aug 2026. See CHECKED below.
+   PRICES BELONG TO THEIR LINK. A pick's price is the price at
+   the URL it links to — not an MSRP, not a best-anywhere price.
+   A ladder that says $220 next to a button landing on a $260
+   listing is broken, and no reader will forgive it twice.
+
+   Affiliate links are not wired yet, so today's figures are
+   street prices from the sellers named per pick (Aug 2026). The
+   moment referral links land, every price is re-checked against
+   the listing it actually points at, and `checked` moves.
+
+   Amazon is the preferred destination because it converts best,
+   but it is not a requirement: some picks are direct-from-maker
+   (LuggageWorks) and some may end up earning through a coupon
+   code instead of a link. The buy button derives its own label
+   from the URL — see sellerFor() in catalog.ts.
    ============================================================ */
 
 import type { TierCategory } from './catalog';

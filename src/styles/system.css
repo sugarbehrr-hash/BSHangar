@@ -1026,7 +1026,14 @@ a.tiercol:hover { background: var(--cream-100); }
 .tp-name a:hover { color: var(--navy-700); text-decoration: underline; text-underline-offset: 3px; }
 .tp-price { flex: none; font-family: var(--font-display); font-size: 1.25rem; line-height: 1; color: var(--navy-900); }
 .tp-stat { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .04em; color: var(--ink-500); margin-top: 5px; }
-.tp-prov { font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-600); background: var(--gold-100, var(--cream-100)); border: 1px solid var(--gold-500); border-radius: var(--radius-pill); padding: 2px 8px; }
+/* The per-pick mark. Two variants of ONE component: same shape, same size,
+   only the colour changes — stamped is red like the rubber stamp it stands
+   for, provisional is the amber "not yet" the site already uses. */
+.tp-mark { display: inline-flex; align-items: center; gap: 5px; font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase; border-radius: var(--radius-pill); padding: 2px 8px; text-decoration: none; }
+.tp-mark i { font-size: 0.75rem; }
+.tp-mark.ok { color: var(--red-600); background: rgba(198, 32, 52, 0.07); border: 1px solid rgba(198, 32, 52, 0.4); }
+.tp-mark.ok:hover { background: rgba(198, 32, 52, 0.13); }
+.tp-mark.prov { color: var(--gold-600); background: var(--cream-100); border: 1px solid var(--gold-500); }
 .tp-text { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-700); margin: 9px 0 0; text-wrap: pretty; }
 .tp-buy { margin-top: 12px; }
 

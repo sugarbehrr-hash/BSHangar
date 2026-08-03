@@ -255,6 +255,22 @@ export function pickCount(category: TierCategory): number {
   return category.picks.length + 1;
 }
 
+/**
+ * Whether the browse tile may wear the Flight Attendant Approved stamp.
+ *
+ * A category cannot itself be flown for 90 days, so the only honest reading of
+ * a stamp on a category tile is "every pick on this ladder cleared the gate".
+ * That is what this checks, and it self-heals: a category with a provisional
+ * pick shows no stamp today and earns one the moment that pick is stamped.
+ *
+ * The jumpseat pick is excluded on purpose. It is outside the ladder and
+ * outside the stamp system by definition, so counting it would make this
+ * permanently false and the tile stamp dead code.
+ */
+export function allStamped(category: TierCategory): boolean {
+  return category.picks.every((pick) => !pick.provisional);
+}
+
 /** The picks in one column, cheapest first. The ladder IS the order. */
 export function picksFor(category: TierCategory, tier: TierKey): TierPick[] {
   return category.picks.filter((pick) => pick.tier === tier).sort((a, b) => a.price - b.price);
