@@ -40,13 +40,14 @@ import type { TierCategory } from './catalog';
 const CHECKED = '2026-08';
 
 /**
- * The stamp reservation, worded once. Both categories carry picks that are
- * genuine long-service crew standards and picks that are simply too new for
- * the group to have an opinion — the note says which is which.
+ * States the rule ONCE, under the ladder, instead of stamping every row.
+ * Being listed here already means a pick cleared the standard, so the only
+ * thing worth marking is where that is not true.
  */
 const PROVISIONAL_NOTE =
-  'Picks marked provisional have not finished their 90-day wear test with this group yet — ' +
-  'the stamp goes on when they have earned it, not before.';
+  'Everything on this ladder cleared the standard — that is what being here means. Only the ' +
+  'exceptions are marked: provisional picks are still inside their 90-day wear test, and the ' +
+  'jumpseat pick is one crew member’s own, with no group verdict behind it.';
 
 const PROVISIONAL_NOTICE =
   '**Some picks here are provisional.** They are the bags crew name most, but a pick only ' +
@@ -98,7 +99,7 @@ export const spinners: TierCategory = {
         '1682d ballistic nylon with a DuraGuard coating, reinforced frame, and a warranty ' +
         'written for daily working use — these routinely run 5 to 10 years on the line.',
       url: 'https://www.amazon.com/s?k=travelpro+flightcrew+5+21+spinner',
-      image: '/essentials/flightcrew-5.jpg',
+      image: '/essentials/flightcrew-5-21.jpg',
       imageAlt: 'Travelpro FlightCrew 5 21-inch spinner, front view',
     },
     {
@@ -113,6 +114,8 @@ export const spinners: TierCategory = {
         'expansion that adds 2" while keeping the centre of gravity low so it stops tipping. ' +
         'Comes with a removable compression packing organizer.',
       url: 'https://www.amazon.com/s?k=travelpro+crew+classic+carry+on+spinner',
+      image: '/essentials/crew-classic.jpg',
+      imageAlt: 'Travelpro Crew Classic carry-on spinner, front view',
     },
     {
       tier: 'main',
@@ -126,6 +129,8 @@ export const spinners: TierCategory = {
         'dead straight, and it survived being thrown down concrete stairs repeatedly in testing ' +
         'still looking essentially new. Nine compartments, including a detachable TSA liquids case.',
       url: 'https://www.amazon.com/Travelpro-Luggage-Platinum-Expandable-Spinner/dp/B07DL64SYP',
+      image: '/essentials/platinum-elite-21.jpg',
+      imageAlt: 'Travelpro Platinum Elite 21-inch spinner, front view',
     },
     {
       tier: 'first',
@@ -139,6 +144,8 @@ export const spinners: TierCategory = {
         'larger packing surface that keeps a uniform jacket from creasing. Pack it expanded in ' +
         'the hotel, then collapse it to compress everything back to legal carry-on size.',
       url: 'https://www.amazon.com/Briggs-Riley-Spinners-Baseline-Essential/dp/B09Y2DBZGS',
+      image: '/essentials/briggs-riley-spinner.jpg',
+      imageAlt: 'Briggs & Riley Baseline Essential 22-inch spinner, front view',
     },
     {
       tier: 'first',
@@ -152,6 +159,8 @@ export const spinners: TierCategory = {
         'scuffs, an aircraft-grade aluminium handle, a 65 W USB-C port, and a built-in garment ' +
         'sleeve sized for exactly one uniform blazer.',
       url: 'https://www.amazon.com/TUMI-Expandable-International-Carry-Suitcase/dp/B07MGHP7SM',
+      image: '/essentials/tumi-alpha3-4wheel.jpg',
+      imageAlt: 'TUMI Alpha 3 International Expandable 4-wheel carry-on, front view',
     },
   ],
 
@@ -225,6 +234,8 @@ export const rollaboards: TierCategory = {
         'spinner because there is no wheel housing eating into it. Limited lifetime warranty ' +
         'and a useful 2" expansion.',
       url: 'https://www.amazon.com/Travelpro-Luggage-Expandable-Carry-On-Black/dp/B07BLCB6DS',
+      image: '/essentials/maxlite-5-22.jpg',
+      imageAlt: 'Travelpro Maxlite 5 22-inch rollaboard, front view',
       provisional: true,
     },
     {
@@ -239,6 +250,8 @@ export const rollaboards: TierCategory = {
         'suiter compartment built to keep a uniform jacket flat. Metal J-hook, all-metal zipper ' +
         'pulls, and the LuggageWorks repair shop behind it.',
       url: 'https://luggageworks.com/products/aurora-new-generation-22-expandable-suiter-rolling-bag',
+      image: '/essentials/luggageworks-aurora.jpg',
+      imageAlt: 'LuggageWorks Aurora New Generation 22-inch suiter rolling bag, front view',
       provisional: true,
     },
     {
@@ -253,6 +266,8 @@ export const rollaboards: TierCategory = {
         'page — wheels, handles and zipper pulls all swap rather than replacing the bag. One ' +
         'pilot got about 25 years out of his first one on three or four sets of wheels.',
       url: 'https://www.amazon.com/s?k=travelpro+flightcrew+5+22+rollaboard',
+      image: '/essentials/flightcrew-5-22.jpg',
+      imageAlt: 'Travelpro FlightCrew 5 22-inch rollaboard, front view',
     },
     {
       tier: 'main',
@@ -266,6 +281,8 @@ export const rollaboards: TierCategory = {
         'honeycomb frame, crash-guard wheel housings, full-length armour, corner and skid ' +
         'guards — and screws instead of rivets, so it can actually be repaired.',
       url: 'https://www.amazon.com/s?k=travelpro+pilot+seven3+carry+on+rollaboard',
+      image: '/essentials/pilot-seven3.jpg',
+      imageAlt: 'Travelpro Pilot Seven3 carry-on rollaboard, front view',
     },
     {
       tier: 'main',
@@ -278,6 +295,8 @@ export const rollaboards: TierCategory = {
         'The dependability pick. Pockets front, side and rear, inside and out, plus shoe bags ' +
         'and a laundry bag, on the same ballistic-nylon platform as the FlightCrew 5.',
       url: 'https://www.amazon.com/s?k=travelpro+pilot+22+expandable+rollaboard',
+      image: '/essentials/pilot-22.jpg',
+      imageAlt: 'Travelpro Pilot 22-inch expandable rollaboard, front view',
     },
     {
       tier: 'first',
@@ -291,6 +310,8 @@ export const rollaboards: TierCategory = {
         'Outside-mounted handle hardware leaves a flat surface that carries dress clothes with ' +
         'far fewer wrinkles, and it compresses back to legal after you pack it expanded.',
       url: 'https://www.amazon.com/Briggs-Riley-Uprights-Baseline-Essential/dp/B09Y282JQD',
+      image: '/essentials/briggs-riley-2wheel.jpg',
+      imageAlt: 'Briggs & Riley Baseline Essential 2-wheel carry-on, front view',
     },
     {
       tier: 'first',
@@ -308,6 +329,8 @@ export const rollaboards: TierCategory = {
         'and a telescoping handle with no flex or clanking that locks at several heights ' +
         'one-handed. The lid carries a built-in suiter for one uniform blazer.',
       url: 'https://www.amazon.com/s?k=tumi+alpha+3+international+expandable+2+wheeled+carry+on',
+      image: '/essentials/tumi-alpha3-2wheel.jpg',
+      imageAlt: 'TUMI Alpha 3 International Expandable 2-wheel carry-on, front view',
     },
   ],
 
@@ -325,6 +348,8 @@ export const rollaboards: TierCategory = {
       'and almost 40% more than a 21" spinner. One owner checked his on ~40 round trips a year ' +
       'since 2018 with only corner wear — and Travelpro mailed replacement zipper pulls free.',
     url: 'https://www.amazon.com/s?k=travelpro+platinum+elite+22+expandable+rollaboard',
+    image: '/essentials/platinum-elite-22.jpg',
+    imageAlt: 'Travelpro Platinum Elite 22-inch rollaboard, front view',
   },
 };
 

@@ -71,27 +71,36 @@ const { category, compact = false } = Astro.props;
 
               return (
                 <li class="tier-pick">
-                  <div class="tp-head">
-                    <h4 class="tp-name">
-                      {pick.href ? <a href={pick.href}>{pick.name}</a> : pick.name}
-                    </h4>
-                    <div class="tp-price">${pick.price.toLocaleString('en-US')}</div>
-                  </div>
-
-                  {/* One slot, two mutually exclusive states. The stamp lives
-                      on the PICK, never on the category tile above — only a
-                      bag can be flown for 90 days. */}
-                  <div class="tp-stat">
-                    {pick.stat}
-                    {pick.provisional ? (
-                      <span class="tp-mark prov" title="Still inside its 90-day wear test">
-                        <Icon name="ph-hourglass-medium" /> Provisional
-                      </span>
-                    ) : (
-                      <a class="tp-mark ok" href="/fa-approved/" title="What the stamp means">
-                        <Icon name="ph-seal-check" /> FA Approved
-                      </a>
+                  <div class="tp-top">
+                    {pick.image && (
+                      <div class="tp-shot">
+                        <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
+                      </div>
                     )}
+
+                    <div class="tp-id">
+                      <div class="tp-head">
+                        <h4 class="tp-name">
+                          {pick.href ? <a href={pick.href}>{pick.name}</a> : pick.name}
+                        </h4>
+                        <div class="tp-price">${pick.price.toLocaleString('en-US')}</div>
+                      </div>
+
+                      {/* MARK THE EXCEPTION, NEVER THE NORM.
+                          Being on this ladder already means a pick cleared the
+                          standard, so an "FA Approved" chip per row would fire
+                          on almost every row and say nothing. It was tried and
+                          removed for exactly that reason. Only the deviation
+                          gets a mark; the note under the ladder says it once. */}
+                      <div class="tp-stat">
+                        {pick.stat}
+                        {pick.provisional && (
+                          <span class="tp-mark prov" title="Still inside its 90-day wear test">
+                            <Icon name="ph-hourglass-medium" /> Provisional
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {!compact && <p class="tp-text">{pick.text}</p>}
