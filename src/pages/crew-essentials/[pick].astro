@@ -44,12 +44,6 @@ const CHECKED = checkedLabel(category.checked);
 const seller = sellerFor(pick.url);
 
 
-/** Siblings in the same tier — where to go if this one is not it. */
-const siblings = jumpseat
-  ? []
-  : category.picks.filter(
-      (other) => other.slug !== pick.slug && tierForPrice(other.price) === tierForPrice(pick.price)
-    );
 
 const intro = {
   icon: category.icon,
@@ -160,42 +154,16 @@ const productSchema = {
 
   <section class="band">
     <div class="wrap">
-      <div class="grid two">
-        <div>
-          {
-            jumpseat && (
-              <div class="notice warn" style="margin-bottom:18px;">
-                <Icon name="ph-info" />
-                <div class="nt">
-                  <b>Why there's no stamp.</b> {category.jumpseat.why}
-                </div>
-              </div>
-            )
-          }
-
-          {
-            siblings.length > 0 && (
-              <div class="siblings">
-                <span class="sb-label">Also in {tier!.label}</span>
-                <ul>
-                  {siblings.map((other) => (
-                    <li>
-                      <a href={`/crew-essentials/${other.slug}/`}>{other.name}</a>
-                      <span>${other.price.toLocaleString('en-US')}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )
-          }
-
-          <p class="footnote" set:html={richText(
-            'Nothing on this page is sponsored. As an Amazon Associate the Hangar earns from ' +
-            'qualifying purchases, at no extra cost to you — and it has never decided what gets ' +
-            'a pick or what gets withheld.'
-          )} />
-        </div>
-      </div>
+      {
+        jumpseat && (
+          <div class="notice warn" style="margin-bottom:18px;">
+            <Icon name="ph-info" />
+            <div class="nt">
+              <b>Why there's no stamp.</b> {category.jumpseat.why}
+            </div>
+          </div>
+        )
+      }
 
       {/* Full width. This component has three columns of its own; in a
           half-width grid cell they crushed and the product name broke over
@@ -218,6 +186,12 @@ const productSchema = {
           </a>
         </div>
       </div>
+
+      <p class="footnote" set:html={richText(
+        'Nothing on this page is sponsored. As an Amazon Associate the Hangar earns from ' +
+        'qualifying purchases, at no extra cost to you — and it has never decided what gets ' +
+        'a pick or what gets withheld.'
+      )} />
 
       <div class="actionbar" style="margin-top:22px; --accent: var(--sky-700);">
         <span class="card-badge"><Icon name="ph-chats-circle" /></span>

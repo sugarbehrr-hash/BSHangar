@@ -1387,14 +1387,6 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 /* ============================================================
    PICK PAGE — the destination a ladder card hands off to.
    ============================================================ */
-.siblings { margin-top: 18px; padding: 14px 16px; background: var(--cream-100); border-radius: var(--radius-lg); }
-.sb-label { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
-.siblings ul { list-style: none; margin: 8px 0 0; padding: 0; }
-.siblings li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; font-size: 0.875rem; }
-.siblings li + li { box-shadow: 0 -1px 0 var(--cream-300); }
-.siblings a { font-family: var(--font-heading); font-weight: 800; color: var(--navy-700); text-decoration: none; }
-.siblings a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.siblings li span { font-family: var(--font-display); color: var(--navy-900); }
 
 
 /* The pick-page hero carries only what appears NOWHERE ELSE on the page: the
