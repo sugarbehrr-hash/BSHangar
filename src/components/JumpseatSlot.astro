@@ -27,7 +27,12 @@ interface Props {
 const { category, here = false } = Astro.props;
 const pick = category.jumpseat;
 const figures = bagFigures(pick.name, pick.price, pick.spec);
-const headline = (['weight', 'fits', 'sizer'] as const).map((k) => figures.find((f) => f.key === k)!);
+const HEADLINE = [
+  { key: 'weight', axis: 'Weight' },
+  { key: 'fits', axis: 'Capacity' },
+  { key: 'sizer', axis: 'Sizer' },
+] as const;
+const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) => f.key === h.key)! }));
 ---
 
 <div class="jumpwrap" style={`--tc: ${JUMPSEAT.color}; --tfg: #fff;`}>
@@ -60,19 +65,20 @@ const headline = (['weight', 'fits', 'sizer'] as const).map((k) => figures.find(
           <span class="js-price">${pick.price.toLocaleString('en-US')}</span>
         </div>
 
-        <div class="pc-figs">
+        <dl class="pc-figs">
           {
-            headline.map((figure) => (
+            headline.map(({ axis, figure }) => (
               <div class="pc-fig">
-                <span class="pf-val">
+                <dt>{axis}</dt>
+                <dd class="pf-val">
                   {figure.value}
                   <i>{figure.unit}</i>
-                </span>
-                <span class="pf-ref">{figure.ref}</span>
+                </dd>
+                <dd class="pf-ref">{figure.ref}</dd>
               </div>
             ))
           }
-        </div>
+        </dl>
 
         <p class="js-text">{pick.text}</p>
 

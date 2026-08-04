@@ -43,6 +43,14 @@ const tier = jumpseat ? null : TIERS[tierForPrice(pick.price)];
 const CHECKED = checkedLabel(category.checked);
 const seller = sellerFor(pick.url);
 
+/** The same three axes the ladder cards show, so arriving from one is continuous. */
+const HEADLINE = [
+  { key: 'weight', axis: 'Weight' },
+  { key: 'fits', axis: 'Capacity' },
+  { key: 'sizer', axis: 'Sizer' },
+] as const;
+const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) => f.key === h.key)! }));
+
 /** Siblings in the same tier — where to go if this one is not it. */
 const siblings = jumpseat
   ? []
@@ -103,27 +111,43 @@ const productSchema = {
           </div>
         </div>
 
-        <div class="mh-mark">
+        {/* A spec block, not a chip over a paragraph. The three figures that
+            decide the bag, then the compromise — the same shape the cards use,
+            so arriving from a card is continuous. */}
+        <div class="mh-spec">
           {
             jumpseat ? (
-              <>
-                <span class:list={['stampchip', JUMPSEAT.chip]}>
-                  <Icon name={JUMPSEAT.icon} /> Jumpseat pick
-                </span>
-                <div class="stampnote">
-                  <Icon name="ph-user" /> {category.jumpseat.by}
-                </div>
-              </>
+              <span class:list={['stampchip', JUMPSEAT.chip]}>
+                <Icon name={JUMPSEAT.icon} /> Jumpseat · {category.jumpseat.by}
+              </span>
             ) : (
               <span class:list={['stampchip', tier!.chip]}>
                 <Icon name={tier!.icon} /> {tier!.label}
               </span>
             )
           }
-          <div class="stampnote">
-            <Icon name="ph-scales" /> Your compromise: {pick.compromise}
+
+          <div class="ms-price">${pick.price.toLocaleString('en-US')}</div>
+
+          <dl class="ms-figs">
+            {
+              headline.map(({ axis, figure }) => (
+                <div class="ms-fig">
+                  <dt>{axis}</dt>
+                  <dd class="msf-val">
+                    {figure.value}
+                    <i>{figure.unit}</i>
+                  </dd>
+                  <dd class="msf-ref">{figure.ref}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          <div class="ms-comp">
+            <Icon name="ph-scales" />
+            <span>{pick.compromise}</span>
           </div>
-          <a href="/fa-approved/" class="txtbtn onnavy">What the stamp means →</a>
         </div>
       </div>
     </div>

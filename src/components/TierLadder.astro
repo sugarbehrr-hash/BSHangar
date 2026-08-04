@@ -29,7 +29,11 @@ interface Props {
 const { category } = Astro.props;
 
 /** The three headline axes, in the order they decide a purchase. */
-const HEADLINE = ['weight', 'fits', 'sizer'] as const;
+const HEADLINE = [
+  { key: 'weight', axis: 'Weight' },
+  { key: 'fits', axis: 'Capacity' },
+  { key: 'sizer', axis: 'Sizer' },
+] as const;
 ---
 
 <div class="tierscard">
@@ -55,7 +59,10 @@ const HEADLINE = ['weight', 'fits', 'sizer'] as const;
           <div class="tc-body">
             {picks.map((pick) => {
               const figures = bagFigures(pick.name, pick.price, pick.spec);
-              const headline = HEADLINE.map((k) => figures.find((f) => f.key === k)!);
+              const headline = HEADLINE.map((h) => ({
+                axis: h.axis,
+                figure: figures.find((f) => f.key === h.key)!,
+              }));
 
               return (
                 <a class="pcard" href={`/crew-essentials/${pick.slug}/`}>
@@ -72,18 +79,20 @@ const HEADLINE = ['weight', 'fits', 'sizer'] as const;
                     <span class="pc-price">${pick.price.toLocaleString('en-US')}</span>
                   </div>
 
-                  {/* Same three axes on every card — the comparison currency. */}
-                  <div class="pc-figs">
-                    {headline.map((figure) => (
+                  {/* Same three axes on every card, STACKED — you skim a column
+                      of weights down the page, not left-to-right across a row. */}
+                  <dl class="pc-figs">
+                    {headline.map(({ axis, figure }) => (
                       <div class="pc-fig">
-                        <span class="pf-val">
+                        <dt>{axis}</dt>
+                        <dd class="pf-val">
                           {figure.value}
                           <i>{figure.unit}</i>
-                        </span>
-                        <span class="pf-ref">{figure.ref}</span>
+                        </dd>
+                        <dd class="pf-ref">{figure.ref}</dd>
                       </div>
                     ))}
-                  </div>
+                  </dl>
 
                   <div class="pc-comp">
                     <Icon name="ph-scales" />
