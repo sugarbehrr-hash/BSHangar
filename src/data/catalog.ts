@@ -162,18 +162,6 @@ export interface TierPick {
 }
 
 /**
- * A cheaper bag crew name in the same breath as the Economy pick, without a
- * review behind it. A line and a link, never a priced column — quoting a price
- * we have not checked is the one thing the ladder must never do.
- */
-export interface Alternate {
-  tier: TierKey;
-  name: string;
-  note: string;
-  url: string;
-}
-
-/**
  * The named personal pick. `by` and `why` are both required: the slot's entire
  * justification is that it says who, and says plainly why the stamp is absent.
  */
@@ -209,8 +197,6 @@ export interface TierCategory {
   /** Footnote under the browse ladder. */
   note: string;
   picks: TierPick[];
-  /** Unreviewed budget names, shown as links at the foot of their column. */
-  alternates?: Alternate[];
   jumpseat: JumpseatPick;
 }
 
@@ -258,11 +244,6 @@ export function picksFor(category: TierCategory, tier: TierKey): TierPick[] {
   return category.picks
     .filter((pick) => tierForPrice(pick.price) === tier)
     .sort((a, b) => a.price - b.price);
-}
-
-/** The unreviewed names that belong at the foot of one column. */
-export function alternatesFor(category: TierCategory, tier: TierKey): Alternate[] {
-  return (category.alternates ?? []).filter((entry) => entry.tier === tier);
 }
 
 /**

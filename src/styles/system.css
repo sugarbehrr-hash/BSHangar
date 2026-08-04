@@ -1064,13 +1064,6 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .pc-go i { transition: transform .18s; }
 .pcard:hover .pc-go i { transform: translateX(4px); }
 
-/* Names crew repeat without a review behind them. Links, never a priced row —
-   quoting a price we have not checked is the one thing the ladder must not do. */
-.tier-alts { margin: 0 14px 14px; padding: 12px 13px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); }
-.ta-label { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
-.tier-alts ul { list-style: none; margin: 8px 0 0; padding: 0; }
-.tier-alts li { font-size: 0.8125rem; line-height: 1.45; color: var(--ink-500); margin-top: 6px; }
-.tier-alts a { font-weight: 700; color: var(--navy-700); }
 
 .tier-comp { display: flex; gap: 9px; align-items: flex-start; margin-top: 9px; font-size: 0.8125rem; line-height: 1.45; color: var(--ink-700); }
 .tier-comp i { flex: none; font-size: 1rem; color: var(--tc, var(--navy-900)); margin-top: 1px; }

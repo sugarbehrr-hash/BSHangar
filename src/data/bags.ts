@@ -242,26 +242,6 @@ export const spinners: TierCategory = {
     },
   ],
 
-  alternates: [
-    {
-      tier: 'economy',
-      name: 'Loomis 21" Softside Spinner',
-      note: 'The affordability pick among pilots.',
-      url: 'https://www.amazon.com/Softside-Expandable-Luggage-Lightweight-Suitcase/dp/B0BQ2362H7',
-    },
-    {
-      tier: 'economy',
-      name: 'SwissGear softside spinner',
-      note: 'A low-cost crew favourite — 16k+ Amazon reviews at 4.5 stars.',
-      url: 'https://www.amazon.com/s?k=swissgear+softside+carry+on+spinner',
-    },
-    {
-      tier: 'economy',
-      name: 'Samsonite softside spinner',
-      note: 'Similar styling for anyone avoiding a $500+ spend.',
-      url: 'https://www.amazon.com/s?k=samsonite+softside+carry+on+spinner',
-    },
-  ],
 
   jumpseat: {
     name: 'Peak Design Roller Pro',

@@ -1,7 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { richText } from '../lib/rich-text';
-import { TIERS, TIER_ORDER, picksFor, alternatesFor, type TierCategory } from '../data/catalog';
+import { TIERS, TIER_ORDER, picksFor, type TierCategory } from '../data/catalog';
 import { bagFigures } from '../data/bag-figures';
 
 /**
@@ -41,7 +40,6 @@ const HEADLINE = [
     TIER_ORDER.map((key) => {
       const tier = TIERS[key];
       const picks = picksFor(category, key);
-      const alternates = alternatesFor(category, key);
 
       return (
         <div class="tiercol" data-tier={key} style={`--tc: ${tier.color}; --tfg: ${tier.fg};`}>
@@ -111,21 +109,6 @@ const HEADLINE = [
               );
             })}
 
-            {alternates.length > 0 && (
-              <div class="tier-alts">
-                <span class="ta-label">Also at this price — not reviewed</span>
-                <ul>
-                  {alternates.map((alt) => (
-                    <li>
-                      <a href={alt.url} target="_blank" rel="noopener sponsored">
-                        {alt.name}
-                      </a>{' '}
-                      <span set:html={richText(alt.note)} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         </div>
       );
