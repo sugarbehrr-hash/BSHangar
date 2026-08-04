@@ -66,32 +66,38 @@ const HEADLINE = [
 
               return (
                 <a class="pcard" href={`/crew-essentials/${pick.slug}/`}>
-                  <div class="pc-shot">
-                    {pick.image ? (
-                      <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
-                    ) : (
-                      <Icon name={category.icon} />
-                    )}
-                  </div>
+                  {/* Photo is PORTRAIT — luggage is a tall object — and the
+                      stats sit beside it rather than under it, so the card
+                      costs one photo of height instead of a photo plus a
+                      stack. */}
+                  <div class="pc-top">
+                    <div class="pc-shot">
+                      {pick.image ? (
+                        <img src={pick.image} alt={pick.imageAlt ?? pick.name} loading="lazy" />
+                      ) : (
+                        <Icon name={category.icon} />
+                      )}
+                    </div>
 
-                  <div class="pc-head">
-                    <h4 class="pc-name">{pick.name}</h4>
-                    <span class="pc-price">${pick.price.toLocaleString('en-US')}</span>
-                  </div>
-
-                  {/* Same three axes on every card, STACKED — you skim a column
-                      of weights down the page, not left-to-right across a row. */}
-                  <dl class="pc-figs">
-                    {headline.map(({ figure }) => (
-                      <div class="pc-fig">
-                        <dd class="pf-val">
-                          {figure.value}
-                          <i>{figure.unit}</i>
-                        </dd>
-                        <dd class="pf-ref">{figure.ref}</dd>
+                    <div class="pc-main">
+                      <div class="pc-head">
+                        <h4 class="pc-name">{pick.name}</h4>
+                        <span class="pc-price">${pick.price.toLocaleString('en-US')}</span>
                       </div>
-                    ))}
-                  </dl>
+
+                      <dl class="pc-figs">
+                        {headline.map(({ figure }) => (
+                          <div class="pc-fig">
+                            <dd class="pf-val">
+                              {figure.value}
+                              <i>{figure.unit}</i>
+                            </dd>
+                            <dd class="pf-ref">{figure.ref}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  </div>
 
                   <div class="pc-comp">
                     <Icon name="ph-scales" />

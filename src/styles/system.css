@@ -954,7 +954,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    because a square source given height:100% resolves against a height the
    frame is still deriving from aspect-ratio, and stretches the tile instead. */
 .gmain img, .gthumb img, .card.product .shot img,
-.pc-shot img, .js-shot img, .pickshot img {
+.pc-shot img, .js-shot img, .mh-shot img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
 }
 
@@ -1029,43 +1029,38 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .tier-text { font-size: 0.875rem; line-height: 1.5; color: var(--ink-700); margin: 10px 0 0; text-wrap: pretty; }
 .tierscard.solo .tiercol { padding: 22px; }
 
-/* A PICK CARD IS A TEASER — photo, price, the three figures that decide it,
-   the one-sentence rating, then hands off to the pick's own page.
+/* A PICK CARD IS A TEASER — hands off to the pick's own page.
 
-   NO SINGLE-SIDE BORDERS ANYWHERE IN HERE. Cards are separated by being cards
-   — a full keyline on a tinted column — not by a rule between them. The same
-   goes for the figure block, which is a tinted panel rather than something
-   fenced top and bottom. */
-.tc-body { padding: 14px; background: var(--cream-100); display: grid; gap: 14px; align-content: start; }
-.pcard { display: grid; grid-template-rows: auto auto auto 1fr auto; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); overflow: hidden; text-decoration: none; transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
+   PHOTO IS PORTRAIT AND THE STATS SIT BESIDE IT. Luggage is a tall object, so
+   a landscape frame wasted width, and a stats block stacked underneath doubled
+   the card's height. Side by side, the card costs one photo of height total.
+
+   No single-side borders: cards are separated by BEING cards on a tinted
+   column, and the stats are a tinted panel. */
+.tc-body { padding: 14px; background: var(--cream-100); display: grid; gap: 12px; align-content: start; }
+.pcard { display: block; padding: 12px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); text-decoration: none; transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
 .pcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--navy-700); }
-.pc-shot { position: relative; width: 100%; aspect-ratio: 5 / 3; background: var(--sky-100); display: grid; place-items: center; overflow: hidden; }
-.pc-shot i { font-size: 3rem; color: var(--sky-700); opacity: .5; }
-.pcard:hover .pc-shot img { transform: scale(1.04); }
+.pc-top { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; }
+.pc-shot { position: relative; aspect-ratio: 3 / 4; border-radius: var(--radius-sm); background: var(--sky-100); display: grid; place-items: center; overflow: hidden; }
+.pc-shot i { font-size: 2rem; color: var(--sky-700); opacity: .5; }
 .pc-shot img { transition: transform .3s var(--ease-out); }
-.pc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 13px 14px 0; }
-/* Two lines reserved whether the name needs them or not, so every card in
-   the ladder is the same height and the columns line up. */
-.pc-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.9375rem; line-height: 1.25; min-height: 2.5em; color: var(--navy-900); margin: 0; text-wrap: pretty; }
+.pcard:hover .pc-shot img { transform: scale(1.04); }
+.pc-main { min-width: 0; }
+.pc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.pc-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.875rem; line-height: 1.25; height: 2.5em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--navy-900); margin: 0; text-wrap: pretty; }
 .pcard:hover .pc-name { color: var(--navy-700); }
-.pc-price { flex: none; font-family: var(--font-display); font-size: 1.3125rem; line-height: 1; color: var(--navy-900); }
-
-/* Stacked so a column of weights reads straight down the ladder — but only
-   TWO columns and no axis label: "7 lb" is self-evidently the weight, so
-   printing WEIGHT beside it bought nothing and cost a column and 40px. */
-.pc-figs { margin: 10px 14px 0; padding: 2px 10px; background: var(--cream-100); border-radius: var(--radius-sm); }
-.pc-fig { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 5px 0; }
+.pc-price { flex: none; font-family: var(--font-display); font-size: 1.1875rem; line-height: 1; color: var(--navy-900); }
+.pc-figs { margin: 8px 0 0; padding: 2px 9px; background: var(--cream-100); border-radius: var(--radius-sm); }
+.pc-fig { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 4px 0; }
 .pc-fig + .pc-fig { box-shadow: 0 -1px 0 var(--cream-300); }
 .pc-fig dd { margin: 0; }
-.pf-val { font-family: var(--font-display); font-size: 1rem; line-height: 1.1; color: var(--navy-900); white-space: nowrap; }
-.pf-val i { font-family: var(--font-heading); font-style: normal; font-weight: 800; font-size: 0.5625rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-500); margin-left: 3px; }
-.pf-ref { font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .06em; text-transform: uppercase; color: var(--tc, var(--navy-700)); white-space: nowrap; }
-
-/* Clamped to two lines so every card in a column is the same height. */
-.pc-comp { display: flex; gap: 8px; align-items: flex-start; padding: 11px 14px 0; font-size: 0.8125rem; line-height: 1.45; color: var(--ink-700); }
-.pc-comp i { flex: none; font-size: 0.9375rem; color: var(--tc, var(--navy-900)); margin-top: 1px; }
-.pc-comp span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.pc-go { display: inline-flex; align-items: center; gap: 6px; padding: 11px 14px 14px; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; color: var(--navy-700); }
+.pf-val { font-family: var(--font-display); font-size: 0.9375rem; line-height: 1.1; color: var(--navy-900); white-space: nowrap; }
+.pf-val i { font-family: var(--font-heading); font-style: normal; font-weight: 800; font-size: 0.5rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-500); margin-left: 3px; }
+.pf-ref { font-family: var(--font-heading); font-weight: 800; font-size: 0.5625rem; letter-spacing: .06em; text-transform: uppercase; color: var(--tc, var(--navy-700)); white-space: nowrap; }
+.pc-comp { display: flex; gap: 7px; align-items: flex-start; margin-top: 10px; font-size: 0.78125rem; line-height: 1.45; color: var(--ink-700); }
+.pc-comp i { flex: none; font-size: 0.875rem; color: var(--tc, var(--navy-900)); margin-top: 1px; }
+.pc-comp span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.9em; }
+.pc-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; color: var(--navy-700); }
 .pc-go i { transition: transform .18s; }
 .pcard:hover .pc-go i { transform: translateX(4px); }
 
@@ -1099,7 +1094,6 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .js-row { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
 @media (min-width: 760px) { .js-row { grid-template-columns: minmax(280px, 38%) 1fr; align-items: start; } }
 .js-shot { position: relative; width: 100%; aspect-ratio: 4 / 3; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); display: grid; place-items: center; color: var(--sky-500); font-size: 3rem; }
-.js-shot img { width: 100%; height: 100%; object-fit: contain; }
 .js-body { min-width: 0; }
 .js-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .js-name { font-family: var(--font-display); text-transform: uppercase; font-size: 1.625rem; line-height: .98; color: var(--navy-900); margin: 0; }
@@ -1393,8 +1387,6 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 /* ============================================================
    PICK PAGE — the destination a ladder card hands off to.
    ============================================================ */
-.pickshot { position: relative; width: 100%; aspect-ratio: 4 / 3; border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); overflow: hidden; background: var(--white); display: grid; place-items: center; color: var(--sky-500); font-size: 4rem; box-shadow: var(--shadow-card); }
-.pickshot img { width: 100%; height: 100%; object-fit: contain; }
 .siblings { margin-top: 18px; padding: 14px 16px; background: var(--cream-100); border-radius: var(--radius-lg); }
 .sb-label { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
 .siblings ul { list-style: none; margin: 8px 0 0; padding: 0; }
@@ -1412,3 +1404,6 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .mh-rating { display: flex; gap: 10px; align-items: flex-start; max-width: 62ch; margin: 16px 0 0; font-size: 0.9375rem; line-height: 1.55; color: var(--sky-300); }
 .mh-rating i { flex: none; font-size: 1.125rem; color: var(--gold-500); margin-top: 3px; }
 .mh-rating b { color: #fff; }
+
+/* The product in the pick-page hero — portrait, because luggage is. */
+.mh-shot { position: relative; align-self: start; aspect-ratio: 3 / 4; max-width: 300px; width: 100%; margin-left: auto; border-radius: var(--radius-lg); overflow: hidden; background: var(--white); display: grid; place-items: center; color: var(--sky-500); font-size: 3rem; box-shadow: var(--shadow-lg); }

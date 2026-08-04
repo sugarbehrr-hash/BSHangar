@@ -92,6 +92,7 @@ const productSchema = {
 
   <div class="masthead">
     <div class="wrap">
+      <div class="mh-grid">
       <div class="mh-body">
         <div class="mh-eyebrow">Crew essentials · {category.label}</div>
         <h1 class="mh-title">{pick.name}</h1>
@@ -127,6 +128,18 @@ const productSchema = {
           </a>
         </div>
       </div>
+
+      {/* The product, front and centre. It was buried below the ledger. */}
+      <div class="mh-shot">
+        {
+          pick.image ? (
+            <img src={pick.image} alt={pick.imageAlt ?? pick.name} />
+          ) : (
+            <Icon name={category.icon} />
+          )
+        }
+      </div>
+      </div>
     </div>
   </div>
 
@@ -148,16 +161,6 @@ const productSchema = {
   <section class="band">
     <div class="wrap">
       <div class="grid two">
-        <div class="pickshot">
-          {
-            pick.image ? (
-              <img src={pick.image} alt={pick.imageAlt ?? pick.name} />
-            ) : (
-              <Icon name={category.icon} />
-            )
-          }
-        </div>
-
         <div>
           {
             jumpseat && (
