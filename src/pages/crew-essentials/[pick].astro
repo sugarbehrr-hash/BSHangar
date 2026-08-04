@@ -149,11 +149,7 @@ const productSchema = {
       </div>
 
       <FigureLedger figures={figures} intro={intro} />
-    </div>
-  </section>
 
-  <section class="band">
-    <div class="wrap">
       {
         jumpseat && (
           <div class="notice warn" style="margin-bottom:18px;">
@@ -168,7 +164,7 @@ const productSchema = {
       {/* Full width. This component has three columns of its own; in a
           half-width grid cell they crushed and the product name broke over
           three lines. */}
-      <div class="buybar" style="margin-top:22px;">
+      <div class="buybar" style="margin-top:30px;">
         <div class="buyprice">
           <small>Street price · {CHECKED}</small>${pick.price.toLocaleString('en-US')}
         </div>
