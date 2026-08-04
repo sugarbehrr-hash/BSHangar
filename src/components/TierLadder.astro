@@ -82,9 +82,8 @@ const HEADLINE = [
                   {/* Same three axes on every card, STACKED — you skim a column
                       of weights down the page, not left-to-right across a row. */}
                   <dl class="pc-figs">
-                    {headline.map(({ axis, figure }) => (
+                    {headline.map(({ figure }) => (
                       <div class="pc-fig">
-                        <dt>{axis}</dt>
                         <dd class="pf-val">
                           {figure.value}
                           <i>{figure.unit}</i>

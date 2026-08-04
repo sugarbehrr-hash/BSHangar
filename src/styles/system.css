@@ -1050,17 +1050,16 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .pcard:hover .pc-name { color: var(--navy-700); }
 .pc-price { flex: none; font-family: var(--font-display); font-size: 1.3125rem; line-height: 1; color: var(--navy-900); }
 
-/* STACKED, not a row. You skim a column of weights straight down the page and
-   compare cards to each other; a horizontal strip makes you read each card
-   separately and hold three numbers in your head. */
-.pc-figs { margin: 11px 14px 0; padding: 4px 11px; background: var(--cream-100); border-radius: var(--radius-sm); }
-.pc-fig { display: grid; grid-template-columns: 1fr auto auto; align-items: baseline; gap: 10px; padding: 7px 0; }
+/* Stacked so a column of weights reads straight down the ladder — but only
+   TWO columns and no axis label: "7 lb" is self-evidently the weight, so
+   printing WEIGHT beside it bought nothing and cost a column and 40px. */
+.pc-figs { margin: 10px 14px 0; padding: 2px 10px; background: var(--cream-100); border-radius: var(--radius-sm); }
+.pc-fig { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 5px 0; }
 .pc-fig + .pc-fig { box-shadow: 0 -1px 0 var(--cream-300); }
-.pc-fig dt { font-family: var(--font-heading); font-weight: 700; font-size: 0.6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-500); }
 .pc-fig dd { margin: 0; }
-.pf-val { font-family: var(--font-display); font-size: 1.0625rem; line-height: 1; color: var(--navy-900); white-space: nowrap; }
+.pf-val { font-family: var(--font-display); font-size: 1rem; line-height: 1.1; color: var(--navy-900); white-space: nowrap; }
 .pf-val i { font-family: var(--font-heading); font-style: normal; font-weight: 800; font-size: 0.5625rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-500); margin-left: 3px; }
-.pf-ref { min-width: 62px; text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .06em; text-transform: uppercase; color: var(--tc, var(--navy-700)); }
+.pf-ref { font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .06em; text-transform: uppercase; color: var(--tc, var(--navy-700)); white-space: nowrap; }
 
 /* Clamped to two lines so every card in a column is the same height. */
 .pc-comp { display: flex; gap: 8px; align-items: flex-start; padding: 11px 14px 0; font-size: 0.8125rem; line-height: 1.45; color: var(--ink-700); }
@@ -1405,17 +1404,11 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .siblings a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .siblings li span { font-family: var(--font-display); color: var(--navy-900); }
 
-/* Pick-page masthead spec block — replaces a chip stacked over a long
-   paragraph, which left the right column looking like an afterthought. */
-.mh-spec { align-self: start; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16); border-radius: var(--radius-lg); padding: 18px; }
-.ms-price { font-family: var(--font-display); font-size: 2.5rem; line-height: 1; color: #fff; margin: 12px 0 0; }
-.ms-figs { margin: 14px 0 0; }
-.ms-fig { display: grid; grid-template-columns: 1fr auto auto; align-items: baseline; gap: 10px; padding: 8px 0; }
-.ms-fig + .ms-fig { box-shadow: 0 -1px 0 rgba(255,255,255,.14); }
-.ms-fig dt { font-family: var(--font-heading); font-weight: 700; font-size: 0.6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--sky-300); }
-.ms-fig dd { margin: 0; }
-.msf-val { font-family: var(--font-display); font-size: 1.125rem; line-height: 1; color: #fff; white-space: nowrap; }
-.msf-val i { font-family: var(--font-heading); font-style: normal; font-weight: 800; font-size: 0.5625rem; letter-spacing: .07em; text-transform: uppercase; color: var(--sky-300); margin-left: 3px; }
-.msf-ref { min-width: 62px; text-align: right; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-500); }
-.ms-comp { display: flex; gap: 9px; align-items: flex-start; margin-top: 14px; padding-top: 14px; font-size: 0.84375rem; line-height: 1.5; color: var(--sky-300); box-shadow: inset 0 1px 0 rgba(255,255,255,.14); }
-.ms-comp i { flex: none; font-size: 1rem; color: var(--gold-500); margin-top: 2px; }
+
+/* The pick-page hero carries only what appears NOWHERE ELSE on the page: the
+   tier chip and the compromise sentence. Price is in the buy bar, and the
+   three figures are in the ledger directly below — a spec block up here was
+   the same numbers twice on one screen. */
+.mh-rating { display: flex; gap: 10px; align-items: flex-start; max-width: 62ch; margin: 16px 0 0; font-size: 0.9375rem; line-height: 1.55; color: var(--sky-300); }
+.mh-rating i { flex: none; font-size: 1.125rem; color: var(--gold-500); margin-top: 3px; }
+.mh-rating b { color: #fff; }

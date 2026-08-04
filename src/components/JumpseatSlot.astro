@@ -67,9 +67,8 @@ const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) =
 
         <dl class="pc-figs">
           {
-            headline.map(({ axis, figure }) => (
+            headline.map(({ figure }) => (
               <div class="pc-fig">
-                <dt>{axis}</dt>
                 <dd class="pf-val">
                   {figure.value}
                   <i>{figure.unit}</i>

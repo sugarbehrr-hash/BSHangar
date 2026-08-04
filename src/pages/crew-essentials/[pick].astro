@@ -43,13 +43,6 @@ const tier = jumpseat ? null : TIERS[tierForPrice(pick.price)];
 const CHECKED = checkedLabel(category.checked);
 const seller = sellerFor(pick.url);
 
-/** The same three axes the ladder cards show, so arriving from one is continuous. */
-const HEADLINE = [
-  { key: 'weight', axis: 'Weight' },
-  { key: 'fits', axis: 'Capacity' },
-  { key: 'sizer', axis: 'Sizer' },
-] as const;
-const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) => f.key === h.key)! }));
 
 /** Siblings in the same tier — where to go if this one is not it. */
 const siblings = jumpseat
@@ -99,22 +92,15 @@ const productSchema = {
 
   <div class="masthead">
     <div class="wrap">
-      <div class="mh-grid">
-        <div class="mh-body">
-          <div class="mh-eyebrow">Crew essentials · {category.label}</div>
-          <h1 class="mh-title">{pick.name}</h1>
-          <p class="mh-sub">{pick.text}</p>
-          <div class="mh-actions">
-            <a class="btn onnavy" href="/crew-essentials/">
-              <Icon name="ph-arrow-left" /> All crew essentials
-            </a>
-          </div>
-        </div>
+      <div class="mh-body">
+        <div class="mh-eyebrow">Crew essentials · {category.label}</div>
+        <h1 class="mh-title">{pick.name}</h1>
 
-        {/* A spec block, not a chip over a paragraph. The three figures that
-            decide the bag, then the compromise — the same shape the cards use,
-            so arriving from a card is continuous. */}
-        <div class="mh-spec">
+        {/* The chip and the compromise are the only two things on this page
+            that appear nowhere else. The price is in the buy bar and the
+            figures are in the ledger below, so a spec block up here was the
+            same numbers twice on one screen. */}
+        <div class="mh-meta">
           {
             jumpseat ? (
               <span class:list={['stampchip', JUMPSEAT.chip]}>
@@ -126,28 +112,19 @@ const productSchema = {
               </span>
             )
           }
+        </div>
 
-          <div class="ms-price">${pick.price.toLocaleString('en-US')}</div>
+        <p class="mh-sub">{pick.text}</p>
 
-          <dl class="ms-figs">
-            {
-              headline.map(({ axis, figure }) => (
-                <div class="ms-fig">
-                  <dt>{axis}</dt>
-                  <dd class="msf-val">
-                    {figure.value}
-                    <i>{figure.unit}</i>
-                  </dd>
-                  <dd class="msf-ref">{figure.ref}</dd>
-                </div>
-              ))
-            }
-          </dl>
+        <p class="mh-rating">
+          <Icon name="ph-scales" />
+          <span><b>Your compromise:</b> {pick.compromise}</span>
+        </p>
 
-          <div class="ms-comp">
-            <Icon name="ph-scales" />
-            <span>{pick.compromise}</span>
-          </div>
+        <div class="mh-actions">
+          <a class="btn onnavy" href="/crew-essentials/">
+            <Icon name="ph-arrow-left" /> All crew essentials
+          </a>
         </div>
       </div>
     </div>
@@ -193,25 +170,6 @@ const productSchema = {
             )
           }
 
-          <div class="buybar">
-            <div class="buyprice">
-              <small>Street price · {CHECKED}</small>${pick.price.toLocaleString('en-US')}
-            </div>
-            <div class="buymeta">
-              <b>{pick.name}.</b> {pick.spec.warranty}.
-            </div>
-            <div class="buyactions">
-              <a
-                class="btn primary"
-                href={pick.url}
-                target="_blank"
-                rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
-              >
-                <Icon name={seller.icon} /> {seller.label}
-              </a>
-            </div>
-          </div>
-
           {
             siblings.length > 0 && (
               <div class="siblings">
@@ -233,6 +191,28 @@ const productSchema = {
             'qualifying purchases, at no extra cost to you — and it has never decided what gets ' +
             'a pick or what gets withheld.'
           )} />
+        </div>
+      </div>
+
+      {/* Full width. This component has three columns of its own; in a
+          half-width grid cell they crushed and the product name broke over
+          three lines. */}
+      <div class="buybar" style="margin-top:22px;">
+        <div class="buyprice">
+          <small>Street price · {CHECKED}</small>${pick.price.toLocaleString('en-US')}
+        </div>
+        <div class="buymeta">
+          <b>{pick.name}.</b> {pick.spec.warranty}.
+        </div>
+        <div class="buyactions">
+          <a
+            class="btn primary"
+            href={pick.url}
+            target="_blank"
+            rel={seller.affiliate ? 'noopener sponsored' : 'noopener'}
+          >
+            <Icon name={seller.icon} /> {seller.label}
+          </a>
         </div>
       </div>
 
