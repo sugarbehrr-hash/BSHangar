@@ -941,9 +941,9 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 
 /* Photo set — one main frame, three supports. Slots the group fills. */
 .gallery { display: grid; gap: 12px; }
-.gmain { position: relative; aspect-ratio: 4 / 3; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--sky-100); overflow: hidden; }
+.gmain { position: relative; aspect-ratio: 3 / 4; border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); background: var(--sky-100); overflow: hidden; }
 .gthumbs { display: grid; grid-template-columns: repeat(auto-fit, minmax(88px, 1fr)); gap: 12px; }
-.gthumb { position: relative; aspect-ratio: 1 / 1; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--sky-100); overflow: hidden; }
+.gthumb { position: relative; aspect-ratio: 3 / 4; border: 1.5px solid var(--cream-300); border-radius: var(--radius-sm); background: var(--sky-100); overflow: hidden; }
 .gcap { font-size: 0.78125rem; line-height: 1.45; color: var(--ink-500); }
 /* Small print closing a column — where to read the long version. */
 .footnote { font-size: 0.84375rem; line-height: 1.5; color: var(--ink-500); margin: 14px 0 0; }
@@ -1004,7 +1004,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 @media (min-width: 880px) { .tierscard { grid-template-columns: repeat(3, 1fr); } }
 /* One column, full width — the standard page's jumpseat explainer. */
 .tierscard.solo { grid-template-columns: 1fr; }
-.tiercol { position: relative; display: flex; flex-direction: column; text-align: left; background: none; border: none; font: inherit; color: inherit; }
+.tiercol { position: relative; display: flex; flex-direction: column; text-align: left; background: var(--cream-100); border: none; font: inherit; color: inherit; }
 @media (min-width: 880px) {
   .tiercol { border-left: 1px solid var(--cream-200); }
   .tiercol:first-child { border-left: none; }
@@ -1037,7 +1037,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 
    No single-side borders: cards are separated by BEING cards on a tinted
    column, and the stats are a tinted panel. */
-.tc-body { padding: 14px; background: var(--cream-100); display: grid; gap: 12px; align-content: start; }
+.tc-body { flex: 1; padding: 14px; display: grid; gap: 12px; align-content: start; }
 .pcard { display: block; padding: 12px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); text-decoration: none; transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
 .pcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--navy-700); }
 .pc-top { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; }
@@ -1092,15 +1092,20 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .js-here { font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--navy-900); background: #fff; border-radius: var(--radius-pill); padding: 4px 10px; }
 
 .js-row { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
-@media (min-width: 760px) { .js-row { grid-template-columns: minmax(280px, 38%) 1fr; align-items: start; } }
-.js-shot { position: relative; width: 100%; aspect-ratio: 4 / 3; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); display: grid; place-items: center; color: var(--sky-500); font-size: 3rem; }
+@media (min-width: 760px) { .js-row { grid-template-columns: 220px 1fr; align-items: start; } }
+.js-shot { position: relative; width: 100%; aspect-ratio: 3 / 4; border: 1px solid var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); display: grid; place-items: center; color: var(--sky-500); font-size: 3rem; }
 .js-body { min-width: 0; }
 .js-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .js-name { font-family: var(--font-display); text-transform: uppercase; font-size: 1.625rem; line-height: .98; color: var(--navy-900); margin: 0; }
 .js-name a { color: inherit; text-decoration: none; }
 .js-name a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .js-price { flex: none; font-family: var(--font-display); font-size: 1.75rem; line-height: 1; color: var(--navy-900); }
-.js-body .pc-figs { margin: 12px 0 0; background: var(--cream-100); }
+/* Side by side on the wide jumpseat card, but sized to their content — not
+   three 266px tiles. Same type scale as the ladder cards. */
+.js-body .pc-figs { display: flex; width: fit-content; gap: 1px; margin: 10px 0 0; padding: 0; background: var(--cream-300); border-radius: var(--radius-sm); overflow: hidden; }
+.js-body .pc-fig { display: block; padding: 5px 11px; background: var(--cream-100); }
+.js-body .pc-fig + .pc-fig { box-shadow: none; }
+.js-body .pf-ref { display: block; margin-top: 1px; color: var(--red-600); }
 .js-text { font-size: 0.90625rem; line-height: 1.55; color: var(--ink-700); margin: 12px 0 0; text-wrap: pretty; }
 .js-why { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; padding: 11px 13px; background: var(--red-100); border-radius: var(--radius-sm); font-size: 0.84375rem; line-height: 1.45; color: var(--ink-700); }
 .js-why i { flex: none; font-size: 1rem; color: var(--red-600); margin-top: 1px; }
