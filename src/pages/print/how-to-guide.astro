@@ -1,0 +1,9 @@
+---
+import PrintLayout from '../../layouts/PrintLayout.astro';
+import GuideSheets from '../../components/GuideSheets.astro';
+import { howToGuide as guide } from '../../data/guides/how-to';
+---
+
+<PrintLayout title={guide.title} description={guide.intro}>
+  <GuideSheets guide={guide} runningHead="How to List, by Airline" />
+</PrintLayout>

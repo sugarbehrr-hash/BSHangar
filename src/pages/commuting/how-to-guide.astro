@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GuideHero from '../../components/GuideHero.astro';
+import GuideBody from '../../components/GuideBody.astro';
+import { howToGuide as guide } from '../../data/guides/how-to';
+---
+
+<BaseLayout title={guide.title} description={guide.intro}>
+  <GuideHero guide={guide} pdfHref="/print/how-to-guide/" />
+  <section class="band">
+    <div class="wrap">
+      <GuideBody guide={guide} />
+    </div>
+  </section>
+</BaseLayout>

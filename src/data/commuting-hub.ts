@@ -16,11 +16,20 @@
    as 844-433-2232. That transposition is a known historical bug
    (see UNION_REP_PHONE in src/data/site.ts); the confirmed number
    is 844-423-2232 and pages should render it from that constant.
+
+   The ID90 situation card's airline list comes from
+   ./guides/how-to-list.ts rather than being typed out here — it is
+   the same fact the Commuting Guide and the How-To Guide both show,
+   and this card previously carried a THIRD, older version of it.
+   Its flyzed.info reference also pointed at a bare "#" placeholder
+   rather than the real URL; fixed to EXTERNAL.flyzed.
    ============================================================ */
 
 import type { LedgerFigure, LedgerIntro } from './figure-ledger';
 import type { ContractSituation } from './contract-hub';
 import { GUIDE_ROUTES } from './resources';
+import { EXTERNAL } from './site';
+import { LISTING_METHODS, ALLEGIANT_COUNTER_NOTE } from './guides/how-to-list';
 
 /** Same shapes as the contract hub — the patterns are shared, the content is not. */
 export type CommutingFigure = LedgerFigure;
@@ -202,22 +211,23 @@ export const commutingSituations: CommutingSituation[] = [
     "rows": [
       {
         "statement": "**List with ID90** — the app.",
-        "ref": "Frontier · United"
+        "ref": LISTING_METHODS[0]!.airlines
       },
       {
         "statement": "**List with MyIDtravel** — on the PSA website, not the app.",
-        "ref": "Allegiant · JetBlue · Sun Country · Southwest"
+        "ref": LISTING_METHODS[2]!.airlines
       },
       {
         "statement": "**At the counter or the gate** — nothing to do in advance.",
-        "ref": "Delta · Alaska · Hawaiian"
+        "detail": ALLEGIANT_COUNTER_NOTE,
+        "ref": LISTING_METHODS[1]!.airlines
       },
       {
         "statement": "Check in with your confirmation code — except United, where you see a gate agent.",
         "ref": "Tip"
       }
     ],
-    "action": "**Always use your AA info** — 6-digit number and first.last@aa.com. Never the PSA option. Dress codes by carrier: [flyzed.info](#)."
+    "action": `**Always use your AA info** — 6-digit number and first.last@aa.com. Never the PSA option. Full airline-by-airline steps: [How-To Guide](${GUIDE_ROUTES.howto}). Dress codes by carrier: [flyzed.info](${EXTERNAL.flyzed}).`
   },
   {
     "badge": "RSV",

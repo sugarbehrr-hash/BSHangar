@@ -1,4 +1,5 @@
 import type { Guide } from './types';
+import { LISTING_METHODS, ALLEGIANT_COUNTER_NOTE } from './how-to-list';
 
 /**
  * Commuting Guide — ported in full from the export's commuting-guide template
@@ -13,6 +14,24 @@ import type { Guide } from './types';
  *  - The union number printed as 1.844.433.2232 throughout. Confirmed correct
  *    value is 844-423-2232, which the site renders from site.ts, so it is not
  *    duplicated in this file at all.
+ *
+ * Refreshed against a later handoff pass (the field-guide design bundle):
+ *  - Two new notes on the "two attempts" listing rule, and a rewording of
+ *    "Two options" to "Two attempts" to match.
+ *  - "2 hard copies of 2 different flight numbers" — was "boarding passes",
+ *    the source's more precise phrasing.
+ *  - Two new dress-guideline items (closed-toe shoes on jumpseat, wear your
+ *    badge visible).
+ *  - A checklist item about AA not allowing two flights listed from the same
+ *    airport at once.
+ *  - The "How to List, by Airline" table now comes from ./how-to-list.ts
+ *    rather than being typed out here — see that file for why.
+ *
+ * Two things from that pass deliberately NOT carried over, as duplicate of
+ * content already on the page or elsewhere on the site: a callout on p.4
+ * that repeats the very next block almost word for word, and a pair of
+ * contact tiles on the checklist page that repeat the Union Rep number
+ * already shown elsewhere — and that this file deliberately never hardcodes.
  */
 export const commutingGuide: Guide = {
   slug: 'commuting-guide',
@@ -80,6 +99,11 @@ export const commutingGuide: Guide = {
           ],
         },
         {
+          kind: 'note',
+          tone: 'ok',
+          text: 'You need a **minimum of two attempts** below.',
+        },
+        {
           kind: 'table',
           title: 'Flight Listing Examples',
           ref: 'primary + secondary, both with seats',
@@ -93,8 +117,15 @@ export const commutingGuide: Guide = {
         {
           kind: 'note',
           text:
-            "**Two options, always.** Your back-up needs open seats too — a secondary with no " +
+            "**Two attempts, always.** Your back-up needs open seats too — a secondary with no " +
             "availability doesn't count as a listed option under the program.",
+        },
+        {
+          kind: 'note',
+          tone: 'warn',
+          text:
+            'Two attempts **does not let you off the hook** from continuing to try. Your ' +
+            'Supervisor or CS will tell you what to do.',
         },
       ],
     },
@@ -187,7 +218,7 @@ export const commutingGuide: Guide = {
           text:
             '**Photograph everything.** Email a picture of your first two boarding passes to your ' +
             "Inflight Supervisor if you don't make your first two flights. Hold on to the originals: " +
-            '**2 hard copies of 2 different boarding passes**.',
+            '**2 hard copies of 2 different flight numbers**.',
         },
         {
           kind: 'note',
@@ -223,11 +254,11 @@ export const commutingGuide: Guide = {
           kind: 'table',
           title: 'How to List, by Airline',
           head: ['Method', 'Airlines'],
-          rows: [
-            ['List with ID90', 'Frontier · United'],
-            ['At the Counter / Gate', 'Delta · Alaska / Hawaiian'],
-            ['List with MyIDtravel', 'Allegiant · JetBlue · Sun Country · Southwest'],
-          ],
+          rows: LISTING_METHODS.map((m): [string, string] => [m.method, m.airlines]),
+        },
+        {
+          kind: 'note',
+          text: ALLEGIANT_COUNTER_NOTE,
         },
         {
           kind: 'prose',
@@ -271,6 +302,8 @@ export const commutingGuide: Guide = {
             "**No offensive or distracting attire.** Avoid super-short shorts, bare-midriff, provocative/revealing/see-through, or overly torn/dirty/frayed clothing, plus swimwear and sleepwear. (It's always fine to change into American-provided pajamas if you snag a First Class seat on a premium international flight.)",
             '**Nothing vulgar** or that violates community standards of decency.',
             '**When in doubt, ask:** "Do I blend in with customers, or do I appear better dressed than other customers?" If so, you\'re probably set.',
+            '**Using jumpseat privileges?** You must wear **closed-toe shoes**.',
+            '**Wear your badge** and have it visible.',
           ],
         },
         {
@@ -315,6 +348,9 @@ export const commutingGuide: Guide = {
               when: 'Before you leave',
               items: [
                 '**List a primary AND secondary flight** — both with open seats — at least 24 hours ahead.',
+                '**Note:** AA won\'t let you list two flights at once — you must arrive and be rolled ' +
+                  'over first. The system flags you if you list two flights from the **same airport ' +
+                  'at the same time**.',
                 '**Check in 24h before** via Travel Planner (if on American) to top the standby list.',
                 'Check the loads (Travel Planner, StaffTraveler or "Non-Rev Loads") and pack your bag.',
                 'Confirm your **8 mandatory items** and crew ID are on hand and packed.',
