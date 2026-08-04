@@ -955,7 +955,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    frame is still deriving from aspect-ratio, and stretches the tile instead. */
 .gmain img, .gthumb img, .card.product .shot img,
 .pc-shot img, .js-shot img, .mh-shot img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block;
 }
 
 /* Verdict — the one sentence a reader can repeat to a colleague. */
