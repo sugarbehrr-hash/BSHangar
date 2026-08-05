@@ -104,6 +104,7 @@ function paint(strip, block) {
     verdict: verdict ?? answer?.verdict ?? null,
     draft: draft || (editing ? (answer?.note ?? '') : ''),
     base: store.rememberedBase(),
+    durable: store.isDurable(),
   });
 
   hydrate(strip, { open });
@@ -182,7 +183,10 @@ const onClick = (event) => {
       break;
     }
     case 'retry': {
-      store.flush();
+      // store.retry(), not store.flush(). A given-up record is not in the
+      // outbox — flush() would find an empty queue and return without doing
+      // anything at all, which is what this control used to do.
+      store.retry(block);
       break;
     }
     default:

@@ -92,21 +92,21 @@ describe('outbox', () => {
   it('derives the outbox from the answer map rather than a second list', () => {
     const state = putAnswer(empty, DOC, BLOCK, answer());
     expect(pending(state)).toHaveLength(1);
-    expect(pending(markSynced(state, DOC, BLOCK))).toHaveLength(0);
+    expect(pending(markSynced(state, DOC, BLOCK, 1))).toHaveLength(0);
   });
 
   it('does not mutate the state it is given', () => {
     const before = putAnswer(empty, DOC, BLOCK, answer());
     const snapshot = JSON.stringify(before);
-    markSynced(before, DOC, BLOCK);
-    markAttemptFailed(before, DOC, BLOCK, { retryable: false, message: 'x' });
+    markSynced(before, DOC, BLOCK, 1);
+    markAttemptFailed(before, DOC, BLOCK, 1, { retryable: false, message: 'x' });
     expect(JSON.stringify(before)).toBe(snapshot);
   });
 
   it('keeps a retryable failure in the outbox no matter how many times it fails', () => {
     let state = putAnswer(empty, DOC, BLOCK, answer());
     for (let i = 0; i < 8; i++) {
-      state = markAttemptFailed(state, DOC, BLOCK, { retryable: true, message: 'offline' });
+      state = markAttemptFailed(state, DOC, BLOCK, 1, { retryable: true, message: 'offline' });
     }
     // Being offline for a week is not a reason to throw someone's note away.
     expect(pending(state)).toHaveLength(1);
@@ -116,7 +116,7 @@ describe('outbox', () => {
   it('gives up on a non-retryable failure after MAX_ATTEMPTS', () => {
     let state = putAnswer(empty, DOC, BLOCK, answer());
     for (let i = 0; i < 3; i++) {
-      state = markAttemptFailed(state, DOC, BLOCK, { retryable: false, message: 'permission-denied' });
+      state = markAttemptFailed(state, DOC, BLOCK, 1, { retryable: false, message: 'permission-denied' });
     }
     expect(pending(state)).toHaveLength(0);
     expect(viewState(state.answers[`${DOC}::${BLOCK}`])).toBe('failed');
@@ -124,8 +124,31 @@ describe('outbox', () => {
 
   it('remembers that a record reached the server, so later writes amend it', () => {
     let state = putAnswer(empty, DOC, BLOCK, answer());
-    state = markSynced(state, DOC, BLOCK);
+    state = markSynced(state, DOC, BLOCK, 1);
     state = putAnswer(state, DOC, BLOCK, answer({ verdict: 'unclear' }));
     expect(state.answers[`${DOC}::${BLOCK}`].everSynced).toBe(true);
+  });
+
+  it('ignores an outcome for a revision the reader has already replaced', () => {
+    // The rev guard. Without it, a write that resolves after the reader hit
+    // Undo marked the retraction delivered without ever sending it.
+    let state = putAnswer(empty, DOC, BLOCK, answer({ verdict: 'clear' }));
+    const inFlight = state.answers[`${DOC}::${BLOCK}`].rev;
+
+    state = putAnswer(state, DOC, BLOCK, answer({ verdict: 'withdrawn' }));
+    state = markSynced(state, DOC, BLOCK, inFlight);
+
+    const current = state.answers[`${DOC}::${BLOCK}`];
+    expect(current.verdict).toBe('withdrawn');
+    expect(current.status).toBe(PENDING);
+    expect(pending(state)).toHaveLength(1);
+  });
+
+  it('does not spend a replaced revision\'s retry budget', () => {
+    let state = putAnswer(empty, DOC, BLOCK, answer());
+    const stale = state.answers[`${DOC}::${BLOCK}`].rev;
+    state = putAnswer(state, DOC, BLOCK, answer({ note: 'the real one' }));
+    state = markAttemptFailed(state, DOC, BLOCK, stale, { retryable: false, message: 'x' });
+    expect(state.answers[`${DOC}::${BLOCK}`].attempts).toBe(0);
   });
 });

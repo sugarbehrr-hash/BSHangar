@@ -16,16 +16,20 @@
 import { canDeliver, contentVersion, LIMITS } from './config.js';
 import {
   FAILED,
+  KEY as STORAGE_KEY,
   MAX_ATTEMPTS,
   PENDING,
   SYNCED,
+  failed,
   getAnswer,
   load,
   markAttemptFailed,
   markSynced,
+  mergeWithStored,
   pending,
   putAnswer,
   rememberBase,
+  revive,
   save,
 } from './state.js';
 
@@ -48,14 +52,44 @@ let flushing = false;
  * snapshotted its queue and the re-entrant call returned early.
  */
 let flushAgain = false;
+
+/**
+ * False once localStorage has refused a write. The UI must not tell a reader
+ * their answer is "saved" when nothing was saved — see queued-state copy in
+ * ui.js, which asks for this.
+ */
+let durable = true;
+
 const listeners = new Set();
 
 export function init(id) {
   documentId = id;
   state = load();
-  // Anything left in the outbox from a previous visit goes out now.
+
+  // A fresh load means a fresh App Check token and a fresh sign-in, which is
+  // exactly what turns yesterday's "permanent" rejection into today's
+  // successful write. Anything we gave up on gets a bounded second chance
+  // before the outbox drains.
+  for (const answer of failed(state)) {
+    state = revive(state, answer.doc, answer.block, { automatic: true });
+  }
+
   flush();
   window.addEventListener('online', flush);
+
+  // Another tab wrote the shared map. Adopt it, or this tab's next save would
+  // overwrite whatever that tab just recorded.
+  window.addEventListener('storage', (event) => {
+    if (event.key !== null && event.key !== STORAGE_KEY) return;
+    state = mergeWithStored(state);
+    emit();
+    flush();
+  });
+}
+
+/** Whether the local echo is actually being persisted. */
+export function isDurable() {
+  return durable;
 }
 
 export function subscribe(fn) {
@@ -89,10 +123,36 @@ export function submit(block, { verdict, note = '', base = '' }) {
 
   state = putAnswer(state, documentId, block, clean);
   if (clean.base) state = rememberBase(state, clean.base);
-  save(state);
+  persist();
   emit();
 
   flush();
+}
+
+/**
+ * Puts a given-up answer back in the outbox and tries again.
+ *
+ * Wired to the "Try again" control. That control used to call flush() directly,
+ * which did nothing at all: the outbox is derived from `status === PENDING`, so
+ * a FAILED record was never in the queue and flush() returned on the very first
+ * length check. The one recovery path the feature offers was inert.
+ */
+export function retry(block) {
+  state = revive(state, documentId, block);
+  persist();
+  emit();
+  flush();
+}
+
+/**
+ * Writes the map, remembering whether storage actually accepted it, and adopts
+ * the merged result so a second tab's records are not dropped on the next save.
+ */
+function persist() {
+  const result = save(state);
+  state = result.state;
+  durable = durable && result.ok;
+  return result.ok;
 }
 
 /**
@@ -129,12 +189,16 @@ export async function flush() {
       try {
         net ??= await import(NET_URL);
         await net.write(answer);
-        state = markSynced(state, answer.doc, answer.block);
+        // answer.rev, not "whatever is at that key now". The reader may have
+        // hit Change or Undo while this write was in the air, in which case the
+        // record here is a different answer that has NOT been sent — marking it
+        // delivered would drop it from the outbox and lose it for good.
+        state = markSynced(state, answer.doc, answer.block, answer.rev);
       } catch (error) {
         // A failure to even load the chunk is always retryable — the reader is
         // most likely mid-air with no connection, not holding a bad build.
         const retryable = net ? net.isRetryable(error) : true;
-        state = markAttemptFailed(state, answer.doc, answer.block, {
+        state = markAttemptFailed(state, answer.doc, answer.block, answer.rev, {
           retryable,
           message: net ? net.describe(error) : 'chunk-unavailable',
         });
@@ -148,12 +212,12 @@ export async function flush() {
           break;
         }
       }
-      save(state);
+      persist();
       emit();
     }
   } finally {
     flushing = false;
-    save(state);
+    persist();
     emit();
   }
 

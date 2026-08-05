@@ -148,7 +148,8 @@ function isShapeMismatch(error) {
 }
 
 /**
- * Only these mean "this will never work". Everything else is retried.
+ * Only these mean "this will never work in this session". Everything else is
+ * retried indefinitely.
  *
  * The allowlist is deliberately inverted — terminal codes are enumerated, and
  * anything unrecognised is treated as temporary. An earlier version listed the
@@ -158,6 +159,16 @@ function isShapeMismatch(error) {
  * discarding something a reader took the trouble to write, retrying is the only
  * defensible default; retryable failures never exhaust, so nothing is lost by
  * being wrong in this direction.
+ *
+ * `permission-denied` stays here because it is how a genuine rules rejection
+ * arrives — but note it is ALSO how a blocked or unreachable reCAPTCHA arrives,
+ * since the SDK sends a placeholder App Check token and lets the backend refuse
+ * it. Those two are indistinguishable from the client, and the second is
+ * temporary: a content blocker, a VPN, or a corporate proxy. So "terminal" is
+ * scoped to the session rather than to the record — store.js revives a
+ * given-up answer on the next page load (new token, fresh sign-in) and whenever
+ * the reader taps "Try again". Nothing a reader wrote is thrown away on a
+ * condition that clears itself.
  */
 const TERMINAL = ['permission-denied', 'invalid-argument'];
 

@@ -148,13 +148,13 @@ export function viewState(answer) {
  * React re-render this layer has to tolerate is frequent enough that we repaint
  * from scratch constantly.
  */
-export function stripHtml({ answer, open, base, editing, verdict, draft }) {
+export function stripHtml({ answer, open, base, editing, verdict, draft, durable = true }) {
   const state = viewState(answer);
   const showChooser = state === 'idle' || editing;
 
   return showChooser
     ? chooser({ verdict, draft, base, canCancel: editing && state !== 'idle' })
-    : resolved(answer, state);
+    : resolved(answer, state, durable);
 }
 
 /**
@@ -201,13 +201,19 @@ function chooser({ verdict, draft, base, canCancel }) {
   );
 }
 
-function resolved(answer, state) {
+function resolved(answer, state, durable) {
   const line = {
     done:
       answer.verdict === 'clear'
         ? `Thanks — noted.`
         : `Thanks — we'll read this.`,
-    queued: `Saved — we'll send it when you're back online.`,
+    // "Saved" is a promise about surviving this tab, and localStorage can
+    // refuse — private mode, lockdown mode, a full origin quota. Making the
+    // claim anyway is how a reader closes the guide believing a note is safe
+    // when it only ever existed in memory.
+    queued: durable
+      ? `Saved — we'll send it when you're back online.`
+      : `Waiting to send — keep this tab open, your browser isn't letting us save it.`,
     failed: `Couldn't send that.`,
   }[state];
 
