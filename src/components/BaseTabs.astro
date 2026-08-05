@@ -17,7 +17,12 @@ interface Props {
 const { current } = Astro.props;
 ---
 
-<nav class="sectiontabs" aria-label="Crew discount bases">
+{/* `codes` — below 700px the four cities need 571px in a 375px viewport, so
+    two bases sit off-screen behind a sideways scroll. The airport code is
+    what people scan for anyway, and four of those share the row with room
+    to spare. The tools strip has long labels and no code, so it keeps the
+    scroller; the modifier is what keeps the two apart. */}
+<nav class="sectiontabs codes" aria-label="Crew discount bases">
   {
     bases.map((base) => (
       <a

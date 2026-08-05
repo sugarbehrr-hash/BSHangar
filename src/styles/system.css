@@ -1320,6 +1320,15 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
   .mh-actions { margin-top: 14px; }
   .sectiontabs a { min-height: 46px; font-size: 0.8125rem; }
 
+  /* Code-only bases: the city name is the part that doesn't fit, and the
+     part nobody scans for — you know whether you mean CLT or PHL. Dropping
+     it turns a 571px sideways scroll into four segments that share the row,
+     so no base is hidden behind a gesture. */
+  .sectiontabs.codes { overflow-x: visible; }
+  .sectiontabs.codes .st-sub { display: none; }
+  .sectiontabs.codes a { flex: 1 1 0; min-width: 0; justify-content: center; padding: 0 8px; }
+  .sectiontabs.codes a[aria-current="page"]::after { left: 8px; right: 8px; }
+
   /* Content rhythm: tighter bands, tighter cards. */
   .band { padding: 24px 0; }
   .masthead + .band, .masthead + .band.tight { padding-top: 18px; }
