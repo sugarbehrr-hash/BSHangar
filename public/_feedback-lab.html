@@ -78,6 +78,17 @@ const CASES = [
 
 const host = document.getElementById('cases');
 
+// __bsfRenderCase is gated to localhost inside the bundle, so this page is
+// inert anywhere else. Say so plainly rather than rendering eight empty cards
+// and leaving whoever opened it to guess whether the component is broken.
+if (typeof window.__bsfRenderCase !== 'function') {
+  host.innerHTML =
+    '<p class="note">This harness only runs against a local dev server. ' +
+    'The render hook it needs is not exposed in a production bundle. ' +
+    'Run <code>npm run dev</code> and open this page on localhost.</p>';
+  throw new Error('feedback lab: render hook unavailable outside local dev');
+}
+
 for (const [name, note, answer, ui] of CASES) {
   const wrap = document.createElement('div');
   wrap.className = 'case';
