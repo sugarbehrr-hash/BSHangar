@@ -33,7 +33,7 @@ const zoneId = (categoryKey: string, zoneName: string) =>
 ---
 
 <div data-explorer>
-  <div class="pillbar">
+  <div class="pillbar" data-filterbar>
     <div class="pillrail">
       {
         base.categories.map((c) => (
@@ -50,6 +50,21 @@ const zoneId = (categoryKey: string, zoneName: string) =>
         ))
       }
     </div>
+
+    {/* Below 700px the pill rail needs the whole row — the input was taking
+        half of it and leaving the categories a stub to swipe. Same answer the
+        header reached at 559px: a button that summons the field. */}
+    <button
+      class="filtertoggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="venue-filter"
+      aria-label={`Filter ${base.code} venues`}
+      data-filter-toggle
+    >
+      <Icon name="ph-magnifying-glass" class="ic-open" />
+      <Icon name="ph-x" weight="bold" class="ic-close" />
+    </button>
 
     <div class="filter">
       <Icon name="ph-magnifying-glass" />
@@ -202,6 +217,30 @@ const zoneId = (categoryKey: string, zoneName: string) =>
     }
 
     input?.addEventListener('input', render);
+
+    // Filter toggle (below 700px — see .filtertoggle in system.css §4).
+    // Closing clears the term: the field is out of sight once collapsed, so
+    // leaving it set would hide venues with nothing on screen explaining why.
+    const bar = root.querySelector<HTMLElement>('[data-filterbar]');
+    const filterToggle = root.querySelector<HTMLButtonElement>('[data-filter-toggle]');
+
+    if (bar && filterToggle && input) {
+      const setFilterOpen = (open: boolean) => {
+        bar.dataset.filterOpen = open ? '1' : '';
+        filterToggle.setAttribute('aria-expanded', String(open));
+        if (open) {
+          input.focus();
+        } else if (input.value) {
+          input.value = '';
+          render();
+        }
+      };
+
+      filterToggle.addEventListener('click', () => setFilterOpen(bar.dataset.filterOpen !== '1'));
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setFilterOpen(false);
+      });
+    }
 
     root.querySelector('[data-open-all]')?.addEventListener('click', () => {
       for (const z of zones) if (!z.hidden) z.open = true;

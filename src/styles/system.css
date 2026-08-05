@@ -205,6 +205,18 @@ img, svg, video { max-width: 100%; height: auto; }
 .pill[aria-current="page"] .count, .pill[aria-selected="true"] .count { color: var(--sky-300); }
 .pill .soon { font-family: var(--font-heading); font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase; background: var(--gold-500); color: var(--navy-900); border-radius: var(--radius-pill); padding: 3px 8px; }
 
+/* The pill rail's search toggle. Same object as the header's .searchtoggle —
+   round, icon-only, swaps to an X when open — in the light-surface colours
+   this bar uses. It only exists below 700px; above that the input has room
+   to sit inline and a button would be a tap standing in for nothing. */
+.filtertoggle { display: none; width: 44px; height: 44px; flex: none; border: 1.5px solid var(--cream-300); border-radius: 50%; background: var(--white); color: var(--sky-700); font-size: 1.125rem; place-items: center; cursor: pointer; transition: background .18s, color .18s, border-color .18s, transform .12s; }
+.filtertoggle:hover { border-color: var(--sky-500); color: var(--navy-900); }
+.filtertoggle:active { transform: scale(.94); }
+.filtertoggle .ic-close { display: none; }
+.pillbar[data-filter-open="1"] .filtertoggle { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+.pillbar[data-filter-open="1"] .filtertoggle .ic-open { display: none; }
+.pillbar[data-filter-open="1"] .filtertoggle .ic-close { display: inline-block; }
+
 .filter { position: relative; display: flex; align-items: center; flex: 1 1 220px; }
 .filter i { position: absolute; left: 14px; color: var(--ink-300); font-size: 1rem; pointer-events: none; }
 .filter input { width: 100%; height: 44px; border: 1.5px solid var(--cream-300); border-radius: var(--radius-pill); background: var(--white); padding: 0 16px 0 38px; font-family: var(--font-body); font-size: 0.9375rem; color: var(--ink-900); outline: none; transition: border-color .15s; }
@@ -1391,10 +1403,18 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
   .buybar .buyactions { flex-direction: column; align-items: stretch; }
 
   /* Category pill rail — the app pattern: ONE horizontal row, full-bleed,
-     swipes sideways, never wraps into a pill cloud. The filter takes its
-     own full-width row above the rail. */
-  .pillbar .filter { flex: 1 1 100%; order: -1; }
-  .pillrail { flex: 1 1 100%; display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; margin: 0 -18px; padding: 2px 18px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+     swipes sideways, never wraps into a pill cloud. The filter is a toggle
+     on that row until it's opened, and then takes its own full-width row
+     above it — the rail stays put, because the filter searches within the
+     selected category and hiding it would hide what's being searched. */
+  .pillbar { flex-wrap: wrap; }
+  .filtertoggle { display: grid; }
+  .pillbar .filter { display: none; }
+  .pillbar[data-filter-open="1"] .filter { display: flex; flex: 1 1 100%; order: -1; }
+  /* Bleeds off the left edge only: the right-hand end is where the filter
+     toggle sits, and a rail that bled under it would slide pills beneath a
+     button. Pills still clip at that edge, which is the "swipe me" cue. */
+  .pillrail { flex: 1 1 0; min-width: 0; display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; margin: 0 0 0 -18px; padding: 2px 8px 2px 18px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .pillrail::-webkit-scrollbar { display: none; }
   .pillrail .pill { flex: none; }
 }
