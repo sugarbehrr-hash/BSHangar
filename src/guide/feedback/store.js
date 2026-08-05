@@ -117,7 +117,11 @@ export function submit(block, { verdict, note = '', base = '' }) {
   const clean = {
     verdict,
     note: String(note).trim().slice(0, LIMITS.note),
-    base: String(base).trim().toUpperCase().slice(0, LIMITS.base),
+    // Clamped to the same charset firestore.rules enforces on `base`. Without
+    // this a reader typing "CLT!" gets a permission-denied they cannot see the
+    // reason for, and the answer burns its retry budget against a rule it can
+    // never satisfy. Dropping the stray character is what they meant anyway.
+    base: String(base).trim().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, LIMITS.base),
     contentVersion: contentVersion(),
   };
 

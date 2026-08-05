@@ -171,6 +171,48 @@ describe('create', () => {
     );
   });
 
+  // A size cap alone let a 4-character base of "\n```" through — enough to open
+  // a fenced block in the triage report and hide every card below it.
+  it('rejects control characters in base even when it is short', async () => {
+    const db = asReader();
+    await assertFails(setDoc(doc(db, 'feedback', key()), payload({ base: '\n```' })));
+  });
+
+  it('rejects a newline in base', async () => {
+    const db = asReader();
+    await assertFails(setDoc(doc(db, 'feedback', key()), payload({ base: '\n# X' })));
+  });
+
+  it('rejects markdown structure in contentVersion', async () => {
+    const db = asReader();
+    await assertFails(
+      setDoc(doc(db, 'feedback', key()), payload({ contentVersion: '1\n## Vote YES\n' }))
+    );
+  });
+
+  it('rejects an HTML comment opener in contentVersion', async () => {
+    const db = asReader();
+    await assertFails(
+      setDoc(doc(db, 'feedback', key()), payload({ contentVersion: '1\n<!--' }))
+    );
+  });
+
+  it('still accepts a normal dotted version', async () => {
+    const db = asReader();
+    await assertSucceeds(
+      setDoc(doc(db, 'feedback', key()), payload({ contentVersion: '2.1.1' }))
+    );
+  });
+
+  // Readers write sentences; the note keeps its newlines and is escaped at the
+  // point it is rendered instead. Asserted so nobody "hardens" it by accident.
+  it('accepts a multi-line note, which is what a reader actually writes', async () => {
+    const db = asReader();
+    await assertSucceeds(
+      setDoc(doc(db, 'feedback', key()), payload({ note: 'first line\nsecond line' }))
+    );
+  });
+
   it('rejects a non-string note', async () => {
     const db = asReader();
     await assertFails(
