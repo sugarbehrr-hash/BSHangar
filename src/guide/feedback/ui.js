@@ -73,6 +73,14 @@ export function injectCss() {
     `.${STRIP}.is-open .bsf-row .bsf-link{color:var(--sky-300,#9db6d4)}`,
     `.${STRIP}.is-open .bsf-row .bsf-link:hover{color:#fff}`,
 
+    // Standing disclosure in the prompt row. Quiet enough not to compete with
+    // the two buttons, present on every path that writes.
+    `.bsf-consent{margin-left:auto;font-size:11px;color:var(--ink-500,#7c8398);`,
+    `text-decoration:underline;text-underline-offset:2px;white-space:nowrap}`,
+    `.bsf-consent:hover{color:var(--navy-900,#1f2a44)}`,
+    `.${STRIP}.is-open .bsf-row .bsf-consent{color:var(--sky-300,#9db6d4)}`,
+    `.${STRIP}.is-open .bsf-row .bsf-consent:hover{color:#fff}`,
+
     // Quiet inline actions (Change / Undo / Try again).
     `.bsf-link{background:none;border:0;padding:4px 2px;cursor:pointer;`,
     `font-family:var(--font-body,sans-serif);font-size:11.5px;font-weight:700;`,
@@ -198,6 +206,12 @@ function chooser({ verdict, draft, base, block, canCancel }) {
     `aria-pressed="${verdict === 'clear'}" aria-describedby="${escA(qId)}">Yes</button>` +
     `<button type="button" class="bsf-btn" data-bsf="unclear" ` +
     `aria-pressed="${verdict === 'unclear'}" aria-describedby="${escA(qId)}">Not really</button>` +
+    // In the ROW, not in the form. "Yes" submits straight from the collapsed
+    // strip, so a notice living inside the form was shown only to readers who
+    // chose "Not really" — everyone taking the one-tap path had their answer
+    // recorded without ever being told what happens to it. On a document about
+    // a ratification vote that is exactly the thing not to do quietly.
+    `<a class="bsf-consent" href="${PRIVACY_URL}">Anonymous</a>` +
     // Only offered when there is a saved answer to fall back to. On a card
     // that has never been answered, "Cancel" would just be a second name for
     // leaving it alone.

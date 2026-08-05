@@ -185,30 +185,67 @@ function mdCode(value, max = 160) {
  * `replace(/\n+/g, ' ')` looked like a sanitizer but only touched newlines —
  * carriage returns, backticks and raw HTML all went straight through.
  */
-function mdText(value, max = 600) {
-  return flatten(value)
-    .slice(0, max)
-    .replace(/([\\`*_[\]()<>#|~!+-])/g, '\\$1');
+/**
+ * Default matches the 1000-char cap in firestore.rules and the textarea's own
+ * maxlength. An earlier 600 silently cut the longest notes with no marker, so a
+ * truncated note was indistinguishable from a reader who stopped typing — and
+ * the longest notes are the substantive ones this report exists to surface.
+ * Anything that does get cut says so.
+ */
+function mdText(value, max = 1000) {
+  const flat = flatten(value);
+  const cut = flat.length > max;
+  return (
+    flat
+      .slice(0, max)
+      .replace(/([\\`*_[\]()<>#|~!+-])/g, '\\$1') + (cut ? ' …[truncated]' : '')
+  );
 }
 
 function groupByBlock(rows) {
   const blocks = new Map();
   for (const row of rows) {
     if (!blocks.has(row.block)) {
-      blocks.set(row.block, { block: row.block, clear: 0, unclear: 0, withdrawn: 0, notes: [] });
+      blocks.set(row.block, { block: row.block, clear: 0, unclear: 0, withdrawn: 0, notes: [], times: [] });
     }
     const entry = blocks.get(row.block);
     if (row.verdict === 'clear') entry.clear++;
     else if (row.verdict === 'unclear') entry.unclear++;
     else entry.withdrawn++;
 
+    const created = row.createdAt?.toMillis?.() ?? null;
+    if (created !== null) entry.times.push(created);
+
     // A withdrawn answer's note is withdrawn too — the reader took it back.
     if (row.note && row.verdict !== 'withdrawn') {
       entry.notes.push({ note: row.note, base: row.base, version: row.contentVersion, id: row.id, status: row.status });
     }
   }
+  for (const entry of blocks.values()) entry.burst = burstShare(entry.times);
   return [...blocks.values()];
 }
+
+/** Responses per card arriving in the tightest 10-minute window, as a share. */
+const BURST_WINDOW_MS = 10 * 60 * 1000;
+
+function burstShare(times) {
+  if (times.length < MIN_BURST_RESPONSES) return 0;
+  const sorted = [...times].sort((a, b) => a - b);
+  let best = 0;
+  let start = 0;
+  for (let end = 0; end < sorted.length; end++) {
+    while (sorted[end] - sorted[start] > BURST_WINDOW_MS) start++;
+    best = Math.max(best, end - start + 1);
+  }
+  return best / sorted.length;
+}
+
+/**
+ * Below this, a tight cluster is just a few crew reading the guide together on
+ * the same layover — which is normal and not worth flagging.
+ */
+const MIN_BURST_RESPONSES = 10;
+const BURST_ALERT = 0.6;
 
 /**
  * Ranks by unclear share, with the raw count breaking ties, so one grumpy
@@ -266,6 +303,19 @@ function render(entries, { doc, titles, askable, version, drift, total, since, u
         `**${entry.clear} clear / ${entry.unclear} unclear** (${pct}% unclear)` +
         (entry.withdrawn ? ` · ${entry.withdrawn} withdrawn` : '')
     );
+
+    // This ranking is the rewrite worklist, and it is a direct function of
+    // verdicts submitted by anonymous strangers. Nothing in firestore.rules can
+    // stop one person minting uids and stuffing a card — anonymous auth is free
+    // by design. What we can do is refuse to present a stuffed tally as if it
+    // were a reading of the crew, so a suspiciously tight arrival cluster is
+    // stated next to the number it would distort.
+    if (entry.burst >= BURST_ALERT) {
+      lines.push(
+        `> ⚠ ${Math.round(entry.burst * 100)}% of these arrived within ten minutes of each other. ` +
+          `Treat the ranking for this card as unverified.`
+      );
+    }
     lines.push('');
 
     for (const note of entry.notes) {

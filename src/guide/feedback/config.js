@@ -119,5 +119,15 @@ export function documentIdFromLocation(pathname) {
 /** The content revision a note was written against, so triage can spot drift. */
 export function contentVersion() {
   const v = typeof window !== 'undefined' && window.ASSESSMENT?.meta?.version;
-  return typeof v === 'string' ? v.slice(0, LIMITS.contentVersion) : '';
+  if (typeof v !== 'string') return '';
+  // Clamped to the charset firestore.rules enforces, NOT merely truncated.
+  //
+  // This value is not ours — it is whatever the analyzer put in
+  // ASSESSMENT.meta.version, and that file is a regenerated export. Today it is
+  // "2.1.1" and passes. A future "2.2.0 rc1" would not, and because this field
+  // rides on every single submission, one space in someone else's metadata
+  // would fail every write from every reader, feature-wide, with nothing on the
+  // page to explain it. Provenance is worth having; it is not worth taking the
+  // whole feature down for, so anything unexpected is dropped rather than sent.
+  return v.replace(/[^0-9A-Za-z._-]/g, '').slice(0, LIMITS.contentVersion);
 }
