@@ -155,6 +155,42 @@ function currentBlocks() {
 
 // ---------------------------------------------------------------- reporting
 
+/** Control characters and whitespace runs collapse to a single space. */
+const flatten = (value) =>
+  String(value ?? '')
+    .replace(/[\u0000-\u001F\u007F]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * For a value going inside `backticks`.
+ *
+ * Markdown gives nothing special meaning inside a code span, so escaping there
+ * only produces an unreadable `pay\-retro`. The one character that must go is
+ * the backtick itself, which would close the span and let everything after it
+ * out into the document.
+ */
+function mdCode(value, max = 160) {
+  return flatten(value).replace(/`/g, "'").slice(0, max);
+}
+
+/**
+ * Neutralises reader-supplied text for the Markdown report.
+ *
+ * Every note, base and contentVersion was typed by an anonymous member of the
+ * public, and this report is read by a maintainer — often rendered, since it is
+ * Markdown. Left raw, a note could forge a heading, open a fenced block that
+ * swallowed the rest of the report, insert a link or image that phoned home when
+ * previewed, or fabricate a finding attributed to another card. The earlier
+ * `replace(/\n+/g, ' ')` looked like a sanitizer but only touched newlines —
+ * carriage returns, backticks and raw HTML all went straight through.
+ */
+function mdText(value, max = 600) {
+  return flatten(value)
+    .slice(0, max)
+    .replace(/([\\`*_[\]()<>#|~!+-])/g, '\\$1');
+}
+
 function groupByBlock(rows) {
   const blocks = new Map();
   for (const row of rows) {
@@ -223,20 +259,24 @@ function render(entries, { doc, titles, askable, version, drift, total, since, u
     const answered = entry.clear + entry.unclear;
     const pct = answered ? Math.round(share(entry) * 100) : 0;
 
-    lines.push(`## ${meta?.title ?? entry.block}`);
+    // meta.title comes from our own data file; entry.block came off the wire.
+    lines.push(`## ${meta?.title ?? mdText(entry.block, 80)}`);
     lines.push(
-      `\`${entry.block}\`${meta?.topic ? ` · ${meta.topic}` : ''} — ` +
+      `\`${mdCode(entry.block, 80)}\`${meta?.topic ? ` · ${meta.topic}` : ''} — ` +
         `**${entry.clear} clear / ${entry.unclear} unclear** (${pct}% unclear)` +
         (entry.withdrawn ? ` · ${entry.withdrawn} withdrawn` : '')
     );
     lines.push('');
 
     for (const note of entry.notes) {
-      const tags = [note.base || null, note.version && note.version !== version ? `v${note.version} (stale)` : null]
+      const tags = [
+        note.base ? mdText(note.base, 8) : null,
+        note.version && note.version !== version ? `v${mdText(note.version, 24)} (stale)` : null,
+      ]
         .filter(Boolean)
         .join(' · ');
-      lines.push(`- ${note.note.replace(/\n+/g, ' ').trim()}${tags ? `  \n  _${tags}_` : ''}`);
-      lines.push(`  \`${note.id}\`${note.status === 'triaged' ? ' · triaged' : ''}`);
+      lines.push(`- ${mdText(note.note)}${tags ? `  \n  _${tags}_` : ''}`);
+      lines.push(`  \`${mdCode(note.id, 160)}\`${note.status === 'triaged' ? ' · triaged' : ''}`);
     }
     if (entry.notes.length) lines.push('');
   }
@@ -250,7 +290,10 @@ function render(entries, { doc, titles, askable, version, drift, total, since, u
     lines.push('written about has been regenerated, so read them against the old revision, not the new one.');
     lines.push('');
     for (const row of drift) {
-      lines.push(`- \`${row.block}\` (v${row.contentVersion || '?'}) — ${row.note || `_${row.verdict}, no note_`}`);
+      // Every field here is attacker-chosen: a drift row exists precisely
+      // because its block id matched no card we know about.
+      const note = row.note ? mdText(row.note) : `_${mdText(row.verdict, 16)}, no note_`;
+      lines.push(`- \`${mdCode(row.block, 80)}\` (v${mdText(row.contentVersion, 24) || '?'}) — ${note}`);
     }
     lines.push('');
   }
@@ -311,6 +354,14 @@ const report = render(rank(groupByBlock(live)), {
 if (args.out) {
   writeFileSync(args.out, `${report}\n`);
   process.stdout.write(`wrote ${args.out}\n`);
+  // This repo is public and the file just written is verbatim writing by
+  // members of the public who were told it stays private.
+  if (resolve(args.out).startsWith(`${ROOT}/`)) {
+    process.stdout.write(
+      'note: that path is inside the repo. feedback-*.md is gitignored, but do not rename it\n' +
+        '      into something tracked — the contents are private reader feedback.\n'
+    );
+  }
 } else {
   process.stdout.write(`${report}\n`);
 }

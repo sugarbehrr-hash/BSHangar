@@ -91,7 +91,7 @@ function apply() {
 
 function paint(strip, block) {
   const answer = store.answerFor(block);
-  const { open, editing, draft, verdict } = ui(block);
+  const { open, editing, draft, verdict, base } = ui(block);
 
   // The in-progress choice wins over the stored one: while the form is open,
   // the strip shows what the reader is about to send, not what they sent last
@@ -103,8 +103,11 @@ function paint(strip, block) {
     editing,
     verdict: verdict ?? answer?.verdict ?? null,
     draft: draft || (editing ? (answer?.note ?? '') : ''),
-    base: store.rememberedBase(),
+    // A base typed but not yet sent is transient state like the draft. Reading
+    // only the remembered value meant a lens toggle wiped what was in the box.
+    base: base ?? store.rememberedBase(),
     durable: store.isDurable(),
+    block,
   });
 
   hydrate(strip, { open });
@@ -137,7 +140,7 @@ const onClick = (event) => {
       }
       // One tap, done. The note field stays available behind "Change" for the
       // minority who want to add something, but the common case costs nothing.
-      setUi(block, { open: false, editing: false, verdict: null, draft: '' });
+      setUi(block, { open: false, editing: false, verdict: null, draft: '', base: undefined });
       store.submit(block, { verdict: 'clear', base: store.rememberedBase() });
       break;
     }
@@ -153,7 +156,7 @@ const onClick = (event) => {
       const note = strip.querySelector('[data-bsf="note"]')?.value ?? '';
       const base = strip.querySelector('[data-bsf="base"]')?.value ?? '';
       const chosen = ui(block).verdict ?? store.answerFor(block)?.verdict ?? 'unclear';
-      setUi(block, { open: false, editing: false, verdict: null, draft: '' });
+      setUi(block, { open: false, editing: false, verdict: null, draft: '', base: undefined });
       store.submit(block, { verdict: chosen, note, base });
       break;
     }
@@ -170,7 +173,7 @@ const onClick = (event) => {
       break;
     }
     case 'cancel': {
-      setUi(block, { open: false, editing: false, verdict: null, draft: '' });
+      setUi(block, { open: false, editing: false, verdict: null, draft: '', base: undefined });
       repaintOne(block);
       break;
     }
@@ -178,7 +181,7 @@ const onClick = (event) => {
       // Deletes are closed to the public, so a retraction is a state on the
       // record rather than its absence — see firestore.rules. The strip goes
       // back to asking, and triage stops counting it.
-      setUi(block, { open: false, editing: false, verdict: null, draft: '' });
+      setUi(block, { open: false, editing: false, verdict: null, draft: '', base: undefined });
       store.submit(block, { verdict: 'withdrawn', base: store.rememberedBase() });
       break;
     }
@@ -195,12 +198,18 @@ const onClick = (event) => {
 };
 
 const onInput = (event) => {
-  const field = event.target.closest('[data-bsf="note"]');
-  if (!field) return;
-  const strip = field.closest(`.${STRIP}`);
+  const strip = event.target.closest(`.${STRIP}`);
   if (!strip) return;
-  setUi(strip.getAttribute('data-bsf-for'), { draft: field.value });
-  paintCount(strip);
+  const block = strip.getAttribute('data-bsf-for');
+
+  if (event.target.closest('[data-bsf="note"]')) {
+    setUi(block, { draft: event.target.value });
+    paintCount(strip);
+    return;
+  }
+  if (event.target.closest('[data-bsf="base"]')) {
+    setUi(block, { base: event.target.value });
+  }
 };
 
 // Enter submits from the base field; the note is multi-line so it must not.

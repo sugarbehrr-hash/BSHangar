@@ -22,7 +22,7 @@ import {
   pending,
   putAnswer,
 } from '../../src/guide/feedback/state.js';
-import { viewState } from '../../src/guide/feedback/ui.js';
+import { stripHtml, viewState } from '../../src/guide/feedback/ui.js';
 
 const DOC = '2026-ta-vote-guide';
 const BLOCK = 'pay-levelset';
@@ -83,6 +83,35 @@ describe('viewState', () => {
 
   it('is failed when given up on', () => {
     expect(viewState({ ...base, status: FAILED, attempts: 3 })).toBe('failed');
+  });
+
+  it('surfaces a retraction that failed to send instead of showing it as idle', () => {
+    // Reading `withdrawn` as idle first meant a retraction that never reached
+    // the server looked like a clean unanswered card, with no error and no way
+    // to retry, while Firestore still held the answer the reader thought they
+    // had taken back.
+    expect(viewState({ ...base, verdict: 'withdrawn', status: FAILED, attempts: 3 })).toBe('failed');
+  });
+
+  it('surfaces a retraction still waiting to send', () => {
+    expect(viewState({ ...base, verdict: 'withdrawn', status: PENDING, attempts: 2 })).toBe('queued');
+  });
+
+  it('shows an in-flight retraction optimistically, like any other answer', () => {
+    expect(viewState({ ...base, verdict: 'withdrawn', status: PENDING, attempts: 0 })).toBe('idle');
+  });
+});
+
+describe('per-card DOM ids', () => {
+  it('gives each card its own label and prompt ids', () => {
+    // 46 strips render at once. Fixed ids made every `for=` and
+    // `aria-describedby` on the page resolve to the first card's elements.
+    const a = stripHtml({ answer: null, block: 'pay-levelset', base: '', draft: '' });
+    const b = stripHtml({ answer: null, block: 'pay-retro', base: '', draft: '' });
+    expect(a).toContain('id="bsf-note-pay-levelset"');
+    expect(a).toContain('for="bsf-note-pay-levelset"');
+    expect(b).toContain('id="bsf-note-pay-retro"');
+    expect(a.match(/id="bsf-note-[^"]*"/g)).toHaveLength(1);
   });
 });
 

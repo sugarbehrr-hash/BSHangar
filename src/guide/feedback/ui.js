@@ -122,7 +122,15 @@ export function injectCss() {
 }
 
 const esc = (s) =>
-  String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+/** For values landing inside a double-quoted attribute. */
+const escA = (s) => esc(s);
 
 /**
  * Which of the six states a card is in, derived purely from the stored answer.
@@ -133,9 +141,20 @@ const esc = (s) =>
  * that has already failed at least once is described to the reader as queued.
  */
 export function viewState(answer) {
-  if (!answer || answer.verdict === 'withdrawn') return 'idle';
+  if (!answer) return 'idle';
+
+  // Delivery state is checked BEFORE the withdrawn short-circuit. Reading
+  // `withdrawn` as idle first meant a retraction that never reached the server
+  // rendered as a clean unanswered card: the reader saw their answer taken
+  // back, no error, no retry offered, while Firestore still held the answer
+  // they thought they had withdrawn. A failed retraction is the one a reader
+  // most needs to know about.
   if (answer.status === FAILED) return 'failed';
   if (answer.status === PENDING && answer.attempts > 0) return 'queued';
+
+  // In flight or delivered — optimistic, same as any other answer.
+  if (answer.verdict === 'withdrawn') return 'idle';
+
   if (answer.status === SYNCED || answer.status === PENDING) return 'done';
   return 'idle';
 }
@@ -148,12 +167,12 @@ export function viewState(answer) {
  * React re-render this layer has to tolerate is frequent enough that we repaint
  * from scratch constantly.
  */
-export function stripHtml({ answer, open, base, editing, verdict, draft, durable = true }) {
+export function stripHtml({ answer, open, base, editing, verdict, draft, durable = true, block = '' }) {
   const state = viewState(answer);
   const showChooser = state === 'idle' || editing;
 
   return showChooser
-    ? chooser({ verdict, draft, base, canCancel: editing && state !== 'idle' })
+    ? chooser({ verdict, draft, base, block, canCancel: editing && state !== 'idle' })
     : resolved(answer, state, durable);
 }
 
@@ -163,16 +182,22 @@ export function stripHtml({ answer, open, base, editing, verdict, draft, durable
  * recorded until Send. Reading the selection off the saved answer instead would
  * leave the button the reader just pressed looking unpressed.
  */
-function chooser({ verdict, draft, base, canCancel }) {
+function chooser({ verdict, draft, base, block, canCancel }) {
   const noteValue = draft ?? '';
+  // Ids must be unique per card. The guide renders 46 of these strips at once,
+  // so a fixed id meant every `for=` and `aria-describedby` on the page pointed
+  // at the first card's elements — tapping any note label focused card one, and
+  // a screen reader announced the wrong card's prompt for all 46.
+  const qId = `bsf-q-${block}`;
+  const noteId = `bsf-note-${block}`;
 
   return (
     `<div class="bsf-row">` +
-    `<span class="bsf-label" id="bsf-q">Was this clear?</span>` +
+    `<span class="bsf-label" id="${escA(qId)}">Was this clear?</span>` +
     `<button type="button" class="bsf-btn" data-bsf="clear" ` +
-    `aria-pressed="${verdict === 'clear'}" aria-describedby="bsf-q">Yes</button>` +
+    `aria-pressed="${verdict === 'clear'}" aria-describedby="${escA(qId)}">Yes</button>` +
     `<button type="button" class="bsf-btn" data-bsf="unclear" ` +
-    `aria-pressed="${verdict === 'unclear'}" aria-describedby="bsf-q">Not really</button>` +
+    `aria-pressed="${verdict === 'unclear'}" aria-describedby="${escA(qId)}">Not really</button>` +
     // Only offered when there is a saved answer to fall back to. On a card
     // that has never been answered, "Cancel" would just be a second name for
     // leaving it alone.
@@ -181,9 +206,9 @@ function chooser({ verdict, draft, base, canCancel }) {
       : '') +
     `</div>` +
     `<div class="bsf-form">` +
-    `<label class="bsf-label" for="bsf-note" style="display:block;margin-bottom:6px">` +
+    `<label class="bsf-label" for="${escA(noteId)}" style="display:block;margin-bottom:6px">` +
     `What tripped you up?</label>` +
-    `<textarea id="bsf-note" data-bsf="note" maxlength="${LIMITS.note}" ` +
+    `<textarea id="${escA(noteId)}" data-bsf="note" maxlength="${LIMITS.note}" ` +
     `placeholder="Optional — what's wrong, unclear, or missing?"></textarea>` +
     `<div class="bsf-foot">` +
     `<label class="bsf-base">Base <input type="text" data-bsf="base" maxlength="${LIMITS.base}" ` +

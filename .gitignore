@@ -36,3 +36,8 @@ serviceAccountKey.json
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+
+# Triage output from scripts/feedback-report.mjs — verbatim reader free text.
+# This repo is public; a generated report must never be committed by accident.
+feedback-report*.md
+feedback-*.md
