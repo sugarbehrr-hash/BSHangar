@@ -108,6 +108,24 @@ import ToolTabs from '../../components/ToolTabs.astro';
       (n < 0 ? '-$' : '$') +
       Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+    /**
+     * Anything that came out of the uploaded PDF has to go through this before
+     * it reaches innerHTML below.
+     *
+     * The parsed dates happen to be safe today because they are pulled with a
+     * strict NN/NN/NNNN regex, but pdf.js error messages are not constrained at
+     * all, and the next field someone adds to the parser will not be either.
+     * The template is HTML by construction, so the escaping belongs at the
+     * values rather than in a promise to remember later.
+     */
+    const esc = (value: unknown) =>
+      String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
     function setStatus(html: string, tone: 'ok' | 'bad' | '') {
       status!.className = `statusbox${tone ? ' ' + tone : ''}`;
       status!.innerHTML = html;
@@ -196,7 +214,7 @@ import ToolTabs from '../../components/ToolTabs.astro';
 
         const period =
           slip.periodStart && slip.periodEnd
-            ? `<div class="card-sub">Period ${slip.periodStart} – ${slip.periodEnd}</div>`
+            ? `<div class="card-sub">Period ${esc(slip.periodStart)} – ${esc(slip.periodEnd)}</div>`
             : '';
 
         result!.innerHTML =
@@ -215,13 +233,15 @@ import ToolTabs from '../../components/ToolTabs.astro';
         const bad = report.findings.filter((f) => f.severity !== 'ok').length;
         setStatus(
           `<strong>Checked ${report.findings.length} figure${report.findings.length === 1 ? '' : 's'}</strong>` +
-            (slip.checkDate ? ` on your check dated ${slip.checkDate}` : '') +
+            (slip.checkDate ? ` on your check dated ${esc(slip.checkDate)}` : '') +
             (bad === 0 ? ' — everything matched.' : ` — ${bad} need${bad === 1 ? 's' : ''} a look.`),
           bad === 0 ? 'ok' : 'bad'
         );
       } catch (error) {
+        // pdf.js builds this message from the file it failed on, so it is the
+        // one value here that a crafted PDF genuinely controls.
         setStatus(
-          `Could not read that PDF. ${error instanceof Error ? error.message : 'Unknown error'}`,
+          `Could not read that PDF. ${esc(error instanceof Error ? error.message : 'Unknown error')}`,
           'bad'
         );
       }

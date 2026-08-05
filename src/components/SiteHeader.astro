@@ -163,6 +163,24 @@ const isCurrent = (href: string) => isCurrentSection(path, href);
 
   let token = 0;
 
+  const esc = (value: unknown) =>
+    String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  /**
+   * Pagefind's excerpt is deliberately HTML — it wraps the matched words in
+   * <mark> so the hit is visible. That is the one value here that must not be
+   * escaped wholesale, so it is escaped completely and then exactly those two
+   * tags are put back. Nothing else survives, and a <mark> cannot carry
+   * attributes, so the highlight works without the excerpt being a hole.
+   */
+  const excerptHtml = (value: unknown) =>
+    esc(value).replace(/&lt;mark&gt;/g, '<mark>').replace(/&lt;\/mark&gt;/g, '</mark>');
+
   async function run() {
     const q = (input?.value ?? '').trim();
     if (!q) {
@@ -197,13 +215,14 @@ const isCurrent = (href: string) => isCurrentSection(path, href);
         ? results
             .map(
               (r) =>
-                `<a class="sres" role="option" href="${r.url}">` +
+                `<a class="sres" role="option" href="${esc(r.url)}">` +
                 `<span class="b"><i class="ph-fill ph-arrow-right" aria-hidden="true"></i></span>` +
-                `<span><span class="t">${r.meta.title ?? 'Untitled'}</span>` +
-                `<span class="d">${r.excerpt}</span></span></a>`
+                `<span><span class="t">${esc(r.meta.title ?? 'Untitled')}</span>` +
+                `<span class="d">${excerptHtml(r.excerpt)}</span></span></a>`
             )
             .join('')
-        : `<div class="snone">Nothing matched “${q}”. Try a shorter search.</div>`;
+        // `q` is whatever the reader typed, echoed straight back into markup.
+        : `<div class="snone">Nothing matched “${esc(q)}”. Try a shorter search.</div>`;
     }
 
     setOpen(true);
