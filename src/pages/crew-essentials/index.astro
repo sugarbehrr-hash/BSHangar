@@ -161,15 +161,7 @@ const tabs = [
      The hash is written so a category can still be linked to and shared. It is
      set with replaceState rather than location.hash: assigning the hash scrolls
      the panel under the sticky header, and it would also stack a history entry
-     per row, turning the back button into an undo of clicks.
-
-     The nav itself is a dropdown everywhere except very wide viewports, where
-     CSS turns the same list into a permanent side rail (see the CATEGORY NAV
-     block in system.css). On the two reviewed ladders, the nav has a real
-     neighbour — the "Same bar, three prices" card — to sit beside instead of
-     leaving open space, so the same nav DOM node is moved into that panel's
-     own .jumprow while it's active, and returns to its default slot above the
-     panels everywhere else. */
+     per row, turning the back button into an undo of clicks. */
 
   const bar = document.querySelector<HTMLElement>('#catbar');
 
@@ -190,19 +182,6 @@ const tabs = [
       trigger?.setAttribute('aria-expanded', 'true');
     };
 
-    const homeParent = bar.parentNode!;
-    const homeNext = bar.nextSibling;
-    const jumprowSlots: Record<string, HTMLElement | null> = {};
-    for (const row of rows) {
-      const key = row.dataset.tab ?? '';
-      jumprowSlots[key] = document.querySelector<HTMLElement>(`#panel-${key} .jumprow`);
-    }
-    const placeNav = (key: string) => {
-      const slot = jumprowSlots[key];
-      if (slot) slot.insertBefore(bar, slot.firstChild);
-      else homeParent.insertBefore(bar, homeNext);
-    };
-
     const show = (key: string, pushHash = true) => {
       const row = rows.find((r) => r.dataset.tab === key);
       if (!row) return;
@@ -217,7 +196,6 @@ const tabs = [
       if (triggerName && name) triggerName.textContent = name.textContent;
       if (triggerMeta) triggerMeta.textContent = panel?.dataset.meta ?? '';
 
-      placeNav(key);
       closeList();
       if (pushHash) history.replaceState(null, '', `#${key}`);
 

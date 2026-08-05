@@ -2,16 +2,14 @@
 import Icon from './Icon.astro';
 
 /**
- * Crew Essentials' category switcher. A dropdown everywhere except very wide
- * viewports, where CSS turns the same list into a permanent side rail (see
- * the CATEGORY NAV block in system.css) — one DOM node, no duplication.
+ * Crew Essentials' category switcher — a dropdown, closed by default, sized
+ * to its own content, at every viewport width.
  *
  * Grouped into the two reviewed ladders (tiered picks + a jumpseat pick) and
  * the quick picks (one Amazon link each, not yet worked all the way
  * through) — nothing on this page conflates the two, so the nav doesn't
- * either. The client script (in the page) relocates this same nav node into
- * the active ladder's .jumprow, syncs the trigger's icon/name/subtitle, and
- * owns which .catpanel is visible.
+ * either. The client script (in the page) syncs the trigger's
+ * icon/name/subtitle to the open row and owns which .catpanel is visible.
  */
 interface Tab {
   key: string;

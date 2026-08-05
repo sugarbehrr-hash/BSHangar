@@ -214,24 +214,17 @@ img, svg, video { max-width: 100%; height: auto; }
 .pill .soon { font-family: var(--font-heading); font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase; background: var(--gold-500); color: var(--navy-900); border-radius: var(--radius-pill); padding: 3px 8px; }
 
 /* ============================================================
-   CATEGORY NAV (dropdown / wide-screen rail) — Crew Essentials only
+   CATEGORY NAV (dropdown) — Crew Essentials only
    ------------------------------------------------------------
-   Replaces the pillbar for this one page: a dropdown trigger sized to its
-   own content everywhere below 1400px, and a permanent 216px sticky side
-   rail above it — chosen because that's above the ~1140px content column's
-   own max-width, so the rail only appears where the viewport has real
-   margin to spare. .pill/.pillbar/.pillrail above are untouched and still
-   drive Discounts and Tools.
+   Replaces the pillbar for this one page: a single dropdown trigger, sized
+   to its own content, closed by default at every width — no wide-screen
+   rail mode. .pill/.pillbar/.pillrail above are untouched and still drive
+   Discounts and Tools.
    ============================================================ */
 .ess-layout { display: block; }
 .catnav { position: relative; margin-bottom: 22px; width: fit-content; max-width: 480px; min-width: 280px; }
 .catpanels { min-width: 0; }
 @media (max-width: 699px) { .catnav { width: 100%; max-width: none; } }
-@media (min-width: 1400px) {
-  .ess-layout { display: flex; gap: 24px; align-items: flex-start; }
-  .catnav { flex: none; width: 216px; max-width: none; position: sticky; top: calc(var(--topbar-h) + var(--sticky-gap)); margin-bottom: 0; }
-  .catpanels { flex: 1; }
-}
 
 .cn-trigger { width: 100%; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 10px 16px; border-radius: var(--radius-md); border: 1.5px solid var(--cream-300); background: var(--white); cursor: pointer; text-align: left; }
 .cn-trigger i { font-size: 1.1875rem; color: var(--sky-700); flex: none; }
@@ -240,11 +233,9 @@ img, svg, video { max-width: 100%; height: auto; }
 .cn-trigger-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .cn-trigger-text b { font-family: var(--font-heading); font-weight: 700; font-size: 0.90625rem; color: var(--ink-900); }
 .cn-trigger-text span { font-family: var(--font-body); font-size: 0.75rem; color: var(--ink-500); line-height: 1.4; }
-@media (min-width: 1400px) { .cn-trigger { display: none; } }
 
 .cn-list { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 30; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); padding: 10px; box-shadow: var(--shadow-md); }
 .catnav[data-open="1"] .cn-list { display: block; }
-@media (min-width: 1400px) { .cn-list { display: block !important; position: static; box-shadow: none; padding: 12px; } }
 
 .cn-group-label { font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-500); padding: 8px 10px 6px; }
 .cn-divider { border-top: 1px solid var(--cream-300); margin: 6px 4px; }
@@ -1117,13 +1108,11 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 /* The jumpseat pick and "Same bar, three prices" side by side — one crew
    member's own bag next to the standard the ladder below it is built on.
    Stacked on narrow screens (the jumpseat card reads first), side by side
-   from 900px, where there's room for both without squeezing either. On the
-   two reviewed ladders, the category nav also lands in this row (JS moves
-   the single #catbar node here — see the page's script) rather than sitting
-   above with nothing beside it. */
-.jumprow { display: grid; grid-template-columns: 1fr; grid-template-areas: "nav" "jump" "tier"; gap: 14px; margin-bottom: 18px; align-items: stretch; }
-@media (min-width: 900px) { .jumprow { grid-template-columns: 1.2fr 1fr; grid-template-areas: "nav tier" "jump tier"; } }
-.jumprow .catnav { grid-area: nav; width: 100%; max-width: none; min-width: 0; margin-bottom: 0; }
+   from 900px, where there's room for both without squeezing either. The
+   category nav is not part of this row — it stays in its own slot above
+   .catpanels at every width; tier's height simply follows jump's. */
+.jumprow { display: grid; grid-template-columns: 1fr; grid-template-areas: "jump" "tier"; gap: 14px; margin-bottom: 18px; align-items: stretch; }
+@media (min-width: 900px) { .jumprow { grid-template-columns: 1.2fr 1fr; grid-template-areas: "jump tier"; } }
 .jumprow .jumpwrap { grid-area: jump; }
 .jumprow .tierintro { grid-area: tier; }
 
