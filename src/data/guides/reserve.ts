@@ -35,6 +35,7 @@ export const reserveGuide: Guide = {
       title: 'Your SCR, Callout & Duty Clock',
       ref: '§9 · §7',
       refLabel: 'Sections 7 & 9 · Reserve Rules & Hours of Service',
+      accent: 'sky',
       lead:
         'Three things every SCR flight attendant must know cold: your **SCR window**, ' +
         'your **callout obligations**, and exactly when your **14-hour duty clock** ' +
@@ -131,13 +132,14 @@ export const reserveGuide: Guide = {
       title: 'Know Your Limits & Your Rest',
       ref: '§7',
       refLabel: 'Section 7 · Protections, Rest & Quick Reference',
+      accent: 'navy',
       lead:
         'The 15th hour is **not automatic**. Your rest is **protected by contract**. And your SCR ' +
         'can only shift within strict limits. Know all three.',
       blocks: [
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
           text:
             '**The 15th hour is NOT automatic.** It is only allowed to complete a flight already in ' +
             'progress or due to irregular operations (IROP). Crew Scheduling cannot simply add flying ' +

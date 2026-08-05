@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import { richText } from '../lib/rich-text';
 import { slugify } from '../lib/slug';
 import type { GuideSection } from '../data/guides/types';
@@ -10,21 +11,53 @@ import type { GuideSection } from '../data/guides/types';
  * The id makes every section a deep-link target — the TOC, search results and
  * the /contract/ summary cards all point at it. Print sheets carry the same
  * ids harmlessly (one section per sheet, still unique per document).
+ *
+ * data-accent is what carries the export's per-sheet colour identity: the band,
+ * its badge, the bullet dots, the step numerals and the checklist bars all read
+ * their colour off it (system.css §10). Nothing here hardcodes a colour.
  */
 interface Props {
   section: GuideSection;
 }
 
 const { section } = Astro.props;
+
+/**
+ * The badge is a fixed square, so the ref sets its own type size: a section
+ * number ("7") fills it, a letter-of-agreement tag ("LOA 2022") wraps small.
+ */
+const refSize = (ref: string) => (ref.length <= 2 ? 'lg' : ref.length <= 5 ? 'md' : 'sm');
+
+/** Each tone's default glyph. A block may name its own instead. */
+const NOTE_ICON = {
+  alert: 'ph-warning',
+  tip: 'ph-info',
+  ok: 'ph-check-circle',
+  caution: 'ph-warning-circle',
+} as const;
 ---
 
-<section class="gd-section" id={slugify(section.title)}>
+<section class="gd-section" id={slugify(section.title)} data-accent={section.accent}>
   <div class="gd-band">
-    {section.ref && <span class="gd-band-ref">{section.ref}</span>}
-    {section.refLabel && <span class="gd-band-label">{section.refLabel}</span>}
+    {
+      (section.ref || section.icon) && (
+        <span class="gd-band-mark">
+          {section.ref ? (
+            <span class="n" data-size={refSize(section.ref)}>
+              {section.ref}
+            </span>
+          ) : (
+            <Icon name={section.icon!} />
+          )}
+        </span>
+      )
+    }
+    <div class="gd-band-txt">
+      {section.refLabel && <span class="gd-band-eyebrow">{section.refLabel}</span>}
+      <h2 class="gd-h2">{section.title}</h2>
+    </div>
   </div>
 
-  <h2 class="gd-h2">{section.title}</h2>
   {section.lead && <p class="gd-lead" set:html={richText(section.lead)} />}
 
   {
@@ -40,13 +73,12 @@ const { section } = Astro.props;
       }
 
       if (block.kind === 'note') {
-        // 'info' is .gd-note's own unmodified style — 'warn'/'ok' are the only
-        // real modifier classes, so a bare 'info' class was dead markup.
+        const tone = block.tone ?? 'tip';
         return (
-          <div
-            class:list={['gd-note', (block.tone === 'warn' || block.tone === 'ok') && block.tone]}
-            set:html={richText(block.text)}
-          />
+          <div class:list={['gd-note', tone]}>
+            <Icon name={block.icon ?? NOTE_ICON[tone]} class="gd-note-i" />
+            <div class="gd-note-t" set:html={richText(block.text)} />
+          </div>
         );
       }
 
@@ -74,12 +106,42 @@ const { section } = Astro.props;
             {block.lead && <p class="gd-p" set:html={richText(block.lead)} />}
             <ol class="gd-steps">
               {block.steps.map((step) => (
-                <li>
-                  <span class="gd-step-label">{step.label}</span>
-                  <span class="gd-step-body" set:html={richText(step.body)} />
+                <li class:list={[step.icon && 'iconed']}>
+                  <span class="gd-step-mark">{step.icon && <Icon name={step.icon} />}</span>
+                  <span class="gd-step-txt">
+                    <span class="gd-step-label">{step.label}</span>
+                    <span class="gd-step-body" set:html={richText(step.body)} />
+                  </span>
                 </li>
               ))}
             </ol>
+          </div>
+        );
+      }
+
+      if (block.kind === 'rows') {
+        return (
+          <div class="gd-block">
+            {block.title && (
+              <h3 class="gd-h3">
+                {block.title}
+                {block.ref && <span class="gd-ref">{block.ref}</span>}
+              </h3>
+            )}
+            {block.lead && <p class="gd-p" set:html={richText(block.lead)} />}
+            <div class="gd-rows">
+              {block.rows.map((row) => (
+                <div class="gd-row" data-accent={row.accent}>
+                  <span class="gd-row-badge">
+                    <Icon name={row.icon} />
+                  </span>
+                  <span class="gd-row-txt">
+                    <span class="gd-row-title">{row.title}</span>
+                    <span class="gd-row-body" set:html={richText(row.body)} />
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         );
       }
@@ -113,22 +175,24 @@ const { section } = Astro.props;
               {block.ref && <span class="gd-ref">{block.ref}</span>}
             </h3>
             {block.lead && <p class="gd-p" set:html={richText(block.lead)} />}
-            <table class="gd-table">
-              <thead>
-                <tr>
-                  <th>{block.head[0]}</th>
-                  <th>{block.head[1]}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {block.rows.map((row) => (
+            <div class="gd-tbl">
+              <table class="gd-table">
+                <thead>
                   <tr>
-                    <td set:html={richText(row[0])} />
-                    <td set:html={richText(row[1])} />
+                    <th>{block.head[0]}</th>
+                    <th>{block.head[1]}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {block.rows.map((row) => (
+                    <tr>
+                      <td set:html={richText(row[0])} />
+                      <td set:html={richText(row[1])} />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         );
       }

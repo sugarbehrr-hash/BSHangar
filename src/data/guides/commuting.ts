@@ -58,6 +58,8 @@ export const commutingGuide: Guide = {
     {
       title: 'The Commuter Program',
       refLabel: 'Your responsibilities on a commuting day',
+      accent: 'navy',
+      icon: 'ph-clipboard-text',
       lead:
         'Commuting to and from work, and any expenses incurred, are **your responsibility**. ' +
         'Follow these steps every commuting day so you stay covered under the program.',
@@ -68,30 +70,35 @@ export const commutingGuide: Guide = {
           steps: [
             {
               label: 'List 24 Hours Early',
+              icon: 'ph-clock-countdown',
               body:
                 'List as a non-rev passenger with a **primary and secondary option** (both with ' +
                 'available seats) no less than **24 hours in advance**.',
             },
             {
               label: 'Allow Enough Time',
+              icon: 'ph-timer',
               body:
                 'Both flights must arrive with enough time — **1 hour is recommended** — to check ' +
                 'in and begin your duties safely, without disrupting the operation.',
             },
             {
               label: 'Notify Crew Scheduling',
+              icon: 'ph-phone-outgoing',
               body:
                 'If your primary flight is delayed or unavailable, **immediately notify Crew ' +
                 'Scheduling** with your back-up flight number and departure time.',
             },
             {
               label: 'Keep Trying',
+              icon: 'ph-arrows-clockwise',
               body:
                 'Once your commute begins, continue trying to reach base unless directed otherwise ' +
                 'by your supervisor and/or **Crew Scheduling** (must be on the recorded line).',
             },
             {
               label: 'Ground Transport Too',
+              icon: 'ph-car',
               body:
                 'Commuting by ground? The same rules apply. Ask your **Inflight Supervisor for a ' +
                 'deviation** if driving applies to your commute, and document everything if asked.',
@@ -116,13 +123,14 @@ export const commutingGuide: Guide = {
         },
         {
           kind: 'note',
+          icon: 'ph-check-circle',
           text:
             "**Two attempts, always.** Your back-up needs open seats too — a secondary with no " +
             "availability doesn't count as a listed option under the program.",
         },
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
           text:
             'Two attempts **does not let you off the hook** from continuing to try. Your ' +
             'Supervisor or CS will tell you what to do.',
@@ -133,6 +141,8 @@ export const commutingGuide: Guide = {
     {
       title: 'If Your Commute Fails',
       refLabel: 'Call Crew Scheduling — confirm one option, in order of preference',
+      accent: 'red',
+      icon: 'ph-warning',
       lead:
         "If you've followed the program and still can't reach base, you have contractual options. " +
         '**Call Crew Scheduling** and work through them in order. CS must approve where noted.',
@@ -175,7 +185,8 @@ export const commutingGuide: Guide = {
         },
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
+          icon: 'ph-clock',
           text:
             '**Within 24 hours of a failed commute:** advise your Inflight Supervisor and submit ' +
             'documentation showing you followed the Commuter Program. The CNC code converts to ' +
@@ -196,6 +207,8 @@ export const commutingGuide: Guide = {
     {
       title: 'Getting to Your Gate',
       refLabel: 'Tips for a smooth, well-documented commute',
+      accent: 'sky',
+      icon: 'ph-check-fat',
       lead:
         'Small habits keep you at the top of the standby list and keep your paper trail clean. ' +
         'Build these into every commute.',
@@ -222,6 +235,8 @@ export const commutingGuide: Guide = {
         },
         {
           kind: 'note',
+          tone: 'alert',
+          icon: 'ph-printer',
           text:
             '**Print outside security.** When you arrive, print your boarding pass at a kiosk or ' +
             'with a gate agent **outside of security** and take a picture immediately. When a seat ' +
@@ -239,13 +254,16 @@ export const commutingGuide: Guide = {
     {
       title: 'Free Flying & Listing',
       refLabel: 'Jumpseat · Cabin Seat · Commuter',
+      accent: 'navy',
+      icon: 'ph-ticket',
       lead:
         'Flight Attendants can fly **any domestic US carrier for free** by listing as a commuter, ' +
         'cabin seat, or jumpseat. This is separate from Zedding.',
       blocks: [
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
+          icon: 'ph-identification-card',
           text:
             '**Always use your AA info.** AA 6-digit number & first.last@aa.com. Even if you see a ' +
             "PSA option, don't use it — it won't work.",
@@ -258,6 +276,7 @@ export const commutingGuide: Guide = {
         },
         {
           kind: 'note',
+          icon: 'ph-phone-outgoing',
           text: ALLEGIANT_COUNTER_NOTE,
         },
         {
@@ -267,7 +286,11 @@ export const commutingGuide: Guide = {
             'website. Except United — see a Gate Agent with your confirmation code.',
         },
         {
+          // 'caution' and not the source's red: the reposted How-To Guide, the
+          // newer document, tones this one warning. Same fact, same weight on
+          // both pages — see ./how-to-list.ts.
           kind: 'note',
+          tone: 'caution',
           text:
             '**MyIDtravel and ID90 are two separate things.** MyIDtravel is on the PSA website; ' +
             "ID90 is an app. Don't mix them up.",
@@ -290,6 +313,8 @@ export const commutingGuide: Guide = {
     {
       title: 'Dress Guidelines',
       refLabel: 'What to wear when flying non-rev',
+      accent: 'slate',
+      icon: 'ph-t-shirt',
       lead:
         "American doesn't have a prescribed dress code for non-rev guests. As long as your clothing " +
         "is neat, clean, and doesn't offend or distract, you're good to fly in any class, including " +
@@ -308,6 +333,7 @@ export const commutingGuide: Guide = {
         },
         {
           kind: 'note',
+          tone: 'alert',
           text:
             '**Reminder:** those flying under your travel privileges must adhere to the dress ' +
             'guidelines too — they represent both you and the Company. You or your travelers may ' +
@@ -335,6 +361,8 @@ export const commutingGuide: Guide = {
     {
       title: 'Commute Checklist',
       refLabel: 'Grab-and-go — run this on your commuting day',
+      accent: 'gold',
+      icon: 'ph-check-square',
       lead:
         'The rest of this guide explains the **why**. This page is the **what to do**. Work top to ' +
         'bottom and check each box as you go.',

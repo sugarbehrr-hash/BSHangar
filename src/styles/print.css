@@ -267,27 +267,55 @@
    The guide blocks (.gd-*) are styled for screen in system.css; on a
    Letter sheet they step down. Recovered from the pre-system guide.css
    when system.css replaced the per-component stylesheets. */
+.fm-page .gd-section { margin-bottom: 22px; }
+
+/* The band spans the sheet edge-to-edge, the way the export's sheets opened —
+   .fm-body's 44px gutter is cancelled with a negative margin. */
+.fm-page .gd-band { margin: -22px -44px 16px; border-radius: 0; }
+.fm-page .gd-band-mark { width: 74px; }
+.fm-page .gd-band-mark i { font-size: 30px; }
+.fm-page .gd-band-mark .n[data-size="lg"] { font-size: 34px; }
+.fm-page .gd-band-mark .n[data-size="md"] { font-size: 21px; }
+.fm-page .gd-band-mark .n[data-size="sm"] { font-size: 13px; }
+.fm-page .gd-band-txt { padding: 13px 24px; }
+.fm-page .gd-band-eyebrow { font-size: 10px; }
 .fm-page .gd-h2 { font-size: 26px; }
+
 .fm-page .gd-lead { font-size: 13px; margin-bottom: 14px; }
-.fm-page .gd-h3 { font-size: 14px; }
+.fm-page .gd-h3 { font-size: 12px; margin-bottom: 7px; }
+.fm-page .gd-ref { font-size: 10.5px; }
 .fm-page .gd-p,
 .fm-page .gd-list li,
 .fm-page .gd-step-body { font-size: 11.5px; line-height: 1.42; }
-.fm-page .gd-list li { padding: 4px 0 4px 16px; }
-.fm-page .gd-list li::before { top: 10px; width: 5px; height: 5px; }
+.fm-page .gd-block { margin-bottom: 15px; }
+.fm-page .gd-list li { padding: 4px 0 4px 15px; }
+.fm-page .gd-list li::before { top: 9px; width: 5.5px; height: 5.5px; }
 .fm-page .gd-step-label { font-size: 12.5px; }
-.fm-page .gd-steps li { padding: 7px 0 7px 34px; }
-.fm-page .gd-steps li::before { width: 23px; height: 23px; font-size: 12px; top: 7px; }
-.fm-page .gd-table td { font-size: 11.5px; padding: 5px 8px 5px 0; }
-.fm-page .gd-note { font-size: 11.5px; padding: 9px 12px; margin-bottom: 12px; }
+.fm-page .gd-steps li { padding: 9px 13px; gap: 11px; }
+.fm-page .gd-step-mark { width: 30px; height: 30px; font-size: 14px; }
+.fm-page .gd-step-mark i { font-size: 16px; }
+.fm-page .gd-row { padding: 9px 13px; gap: 11px; }
+.fm-page .gd-row-badge { width: 34px; height: 34px; }
+.fm-page .gd-row-badge i { font-size: 18px; }
+.fm-page .gd-row-title { font-size: 13px; }
+.fm-page .gd-row-body { font-size: 11.5px; }
+.fm-page .gd-table th { font-size: 9.5px; padding: 6px 12px; }
+.fm-page .gd-table td { font-size: 11.5px; padding: 6px 12px; }
+.fm-page .gd-note { padding: 9px 12px; margin-bottom: 12px; gap: 9px; }
+.fm-page .gd-note-t { font-size: 11.5px; }
+.fm-page .gd-note-i { font-size: 15px; }
 .fm-page .gd-stat { padding: 12px 16px; }
 .fm-page .gd-stat-value { font-size: 34px; }
 .fm-page .gd-stat-caption { font-size: 11.5px; }
-.fm-page .gd-section { margin-bottom: 22px; }
-.fm-page .gd-band-ref { font-size: 19px; }
-.fm-page .gd-cl-items li { font-size: 11.5px; padding: 3px 0 3px 22px; }
-.fm-page .gd-cl-items li::before { top: 6px; width: 10px; height: 10px; }
-.fm-page .gd-cl-title { font-size: 12.5px; }
-.fm-page .gd-cl-marker { width: 22px; height: 22px; font-size: 12px; }
-.fm-page .gd-cl-group { padding: 9px 11px; }
-.fm-page .gd-checklist { gap: 10px; }
+.fm-page .gd-checklist { gap: 9px; }
+.fm-page .gd-cl-head { padding: 8px 12px; gap: 9px; }
+.fm-page .gd-cl-marker { width: 21px; height: 21px; font-size: 11px; }
+.fm-page .gd-cl-title { font-size: 12px; }
+.fm-page .gd-cl-when { font-size: 9px; }
+.fm-page .gd-cl-items li { font-size: 11.5px; padding: 5px 12px 5px 32px; }
+.fm-page .gd-cl-items li::before { left: 12px; top: 7px; width: 12px; height: 12px; }
+
+@media screen and (max-width: 699px) {
+  /* .fm-body's phone gutter is 20px, so the band's bleed matches it. */
+  .fm-page .gd-band { margin: -16px -20px 14px; }
+}

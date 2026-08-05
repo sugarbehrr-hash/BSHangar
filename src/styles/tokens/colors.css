@@ -47,6 +47,9 @@
   --black: #0A1019;
 
   /* ---- Semantic · status ---- */
+  /* 700 is the fill to use when a small label sits ON the green: success-600
+     only reaches 3.7:1 against success-100, 700 reaches 4.8:1. */
+  --success-700: #1A7546;
   --success-600: #1F8A52;
   --success-100: #DCF1E5;
   --warning-600: #D88A1E;

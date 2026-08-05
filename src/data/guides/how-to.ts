@@ -28,33 +28,47 @@ export const howToGuide: Guide = {
     {
       title: 'How to List, by Airline',
       refLabel: 'Step by step',
+      accent: 'navy',
+      icon: 'ph-list-numbers',
       blocks: [
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
+          icon: 'ph-identification-card',
           text:
             '**Always use your AA info.** Even if you see a PSA option, don\'t use it — it won\'t ' +
             "work. Once listed, use your confirmation code to check in through the airline's app " +
             'or website.',
         },
         {
-          kind: 'table',
+          // Rows, not a table: three methods whose left column is a label to
+          // read rather than a key to look up. The Commuting Guide's copy of
+          // the same data stays a table — there it sits among other tables.
+          kind: 'rows',
           title: 'Listing Methods',
-          head: ['Method', 'Airlines'],
-          rows: LISTING_METHODS.map((m): [string, string] => [m.method, m.airlines]),
+          rows: LISTING_METHODS.map((m) => ({
+            icon: m.icon,
+            accent: m.accent,
+            title: m.method,
+            body: m.airlines,
+          })),
         },
         {
           kind: 'note',
+          icon: 'ph-phone-outgoing',
           text: ALLEGIANT_COUNTER_NOTE,
         },
         {
           kind: 'note',
+          tone: 'caution',
           text: '**MyIDtravel and ID90 are two separate things.** MyIDtravel is on the PSA website; ID90 is an app.',
         },
       ],
     },
     {
       title: 'Who Can Use What',
+      accent: 'red',
+      icon: 'ph-users-three',
       blocks: [
         {
           kind: 'table',

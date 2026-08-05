@@ -22,15 +22,35 @@
  *     table that was never trimmed.
  */
 
+import type { GuideAccent } from './types';
+
 export interface ListingMethod {
   method: string;
   airlines: string;
+  /** Where you do it: a phone app, a person, or a web portal. */
+  icon: string;
+  accent: GuideAccent;
 }
 
 export const LISTING_METHODS: ListingMethod[] = [
-  { method: 'List with ID90', airlines: 'Frontier · Sun Country · United · Hawaiian' },
-  { method: 'At the Counter / Gate', airlines: 'Delta · Alaska · Hawaiian · Allegiant' },
-  { method: 'List with MyIDtravel', airlines: 'Allegiant · JetBlue · Southwest' },
+  {
+    method: 'List with ID90',
+    airlines: 'Frontier · Sun Country · United · Hawaiian',
+    icon: 'ph-device-mobile',
+    accent: 'sky',
+  },
+  {
+    method: 'At the Counter / Gate',
+    airlines: 'Delta · Alaska · Hawaiian · Allegiant',
+    icon: 'ph-user-circle',
+    accent: 'navy',
+  },
+  {
+    method: 'List with MyIDtravel',
+    airlines: 'Allegiant · JetBlue · Southwest',
+    icon: 'ph-globe-hemisphere-west',
+    accent: 'gold',
+  },
 ];
 
 /** Allegiant's counter/gate row needs this caveat; it doesn't fit in the airline list itself. */

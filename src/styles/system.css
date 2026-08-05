@@ -256,59 +256,6 @@ img, svg, video { max-width: 100%; height: auto; }
   .rail { display: contents; }
 }
 
-/* Guide section header — eyebrow + Anton title directly on the page,
-   matching the site's own how-to-guide template. No colored band strip. */
-.gd-section { margin-bottom: 40px; }
-.gd-section:last-child { margin-bottom: 0; }
-.gd-eyebrow { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--red-600); margin-bottom: 6px; }
-.gd-eyebrow .ref { color: var(--ink-500); margin-left: 10px; }
-.gd-h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 1.75rem; line-height: .95; color: var(--navy-900); margin: 0 0 12px; }
-@media (min-width: 700px) { .gd-h2 { font-size: 2.125rem; } }
-.gd-lead { font-size: 1.03125rem; line-height: 1.55; color: var(--ink-700); margin: 0 0 22px; max-width: 680px; text-wrap: pretty; }
-.gd-block { margin-bottom: 22px; }
-.gd-block:last-child { margin-bottom: 0; }
-.gd-block-title { font-family: var(--font-heading); font-weight: 800; font-size: 0.78125rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); margin-bottom: 12px; }
-.gd-block-title .ref { margin-left: 8px; color: var(--ink-300); }
-.gd-prose { font-size: 1rem; line-height: 1.6; color: var(--ink-700); margin: 0 0 4px; max-width: 680px; text-wrap: pretty; }
-.gd-prose strong { color: var(--navy-900); }
-
-/* Step cards — numbered badge, title, one line of body. */
-.gd-stepgrid { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 620px) { .gd-stepgrid { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 900px) { .gd-stepgrid { grid-template-columns: repeat(4, 1fr); } }
-.gd-stepcard { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm); }
-.gd-stepcard .num { width: 44px; height: 44px; border-radius: 50%; background: var(--navy-900); color: #fff; font-family: var(--font-display); font-size: 1.3125rem; display: grid; place-items: center; margin-bottom: 12px; }
-.gd-stepcard h4 { font-family: var(--font-heading); font-weight: 800; font-size: 1rem; color: var(--navy-900); margin: 0 0 5px; }
-.gd-stepcard p { font-size: 0.90625rem; line-height: 1.5; color: var(--ink-700); margin: 0; }
-.gd-stepcard p strong { color: var(--navy-900); }
-
-/* Icon-group cards — an icon badge, a title, and a plain bulleted list. */
-.gd-cardgrid { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 620px) { .gd-cardgrid.two { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 900px) { .gd-cardgrid.three { grid-template-columns: repeat(3, 1fr); } }
-.gd-groupcard { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm); }
-.gd-groupcard .gb { width: 44px; height: 44px; border-radius: 50%; background: var(--accent, var(--navy-900)); display: grid; place-items: center; margin-bottom: 12px; }
-.gd-groupcard .gb i { color: #fff; font-size: 1.5rem; }
-.gd-groupcard h4 { font-family: var(--font-heading); font-weight: 800; font-size: 1rem; color: var(--navy-900); margin: 0 0 8px; }
-.gd-groupcard ul { list-style: none; margin: 0; padding: 0; }
-.gd-groupcard li { padding: 8px 0; font-size: 0.90625rem; line-height: 1.45; color: var(--ink-700); border-top: 1px solid var(--cream-200); }
-.gd-groupcard li:first-child { border-top: none; padding-top: 0; }
-.gd-groupcard li strong { color: var(--navy-900); font-weight: 700; }
-
-/* Compact reference table — its own card, not raw prose. */
-.gd-tablecard { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); padding: 18px 20px; box-shadow: var(--shadow-sm); overflow-x: auto; }
-.gd-tablecard table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.gd-tablecard th { text-align: left; font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-500); padding: 0 10px 8px 0; border-bottom: 1.5px solid var(--navy-700); }
-.gd-tablecard td { padding: 9px 10px 9px 0; color: var(--ink-700); border-bottom: 1px solid var(--cream-200); vertical-align: top; }
-.gd-tablecard td:first-child { font-weight: 600; color: var(--navy-900); }
-.gd-tablecard td strong { color: var(--navy-900); }
-
-.gd-stat { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; background: var(--navy-900); color: var(--cream-100); border-radius: var(--radius-md); padding: 18px 22px; margin: 0 0 22px; }
-.gd-stat-value { font-family: var(--font-display); font-size: 2.625rem; line-height: 1; color: var(--gold-500); }
-.gd-stat-unit { font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--sky-300); }
-.gd-stat-caption { flex: 1 1 260px; font-size: 0.90625rem; line-height: 1.45; }
-.gd-stat-caption strong { color: #fff; }
-
 @media print { .secnav, .topbar, .footer, .tabbar, .moresheet, .qrsheet, .sheet-scrim, .qr-scrim, .answerdock { display: none !important; } }
 
 /* ============================================================
@@ -459,56 +406,147 @@ a.card:hover .card-go i { transform: translateX(4px); }
 
 /* ============================================================
    10 · ARTICLE PROSE — long-form guide blocks
+
+   The four field guides ship as print documents as well as pages,
+   and the print originals carry the formatting: a coloured band
+   opens every section, callouts are toned and carry a glyph,
+   tables sit under a navy header bar, checklists get a barred
+   head. This is that language, rebuilt as one parameterised set.
+
+   Colour identity comes from ONE place — [data-accent] on the
+   section — which sets four custom properties every block below
+   reads. Adding a section colour means adding one row here; no
+   block rule ever names a palette token directly.
+
+   Named --gd-* and not --accent: colors.css already sets a global
+   --accent: red on :root, and reusing that name would leak red
+   into any block that sat outside a section.
+
+   Scoped to the two elements that actually take an accent — a bare
+   [data-accent] would silently arm any future element that used
+   the attribute for something else.
    ============================================================ */
-.gd-section { margin-bottom: 34px; }
-.gd-band { display: flex; align-items: baseline; gap: 12px; padding: 6px 0; border-bottom: 2.5px solid var(--navy-700); margin-bottom: 14px; }
-.gd-band:empty { display: none; border: none; margin: 0; }
-.gd-band-ref { font-family: var(--font-display); font-size: 1.375rem; line-height: 1; color: var(--navy-700); }
-.gd-band-label { font-family: var(--font-heading); font-weight: 800; font-size: 0.6875rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
-.gd-h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 1.75rem; line-height: .95; color: var(--navy-900); margin: 0 0 10px; }
-@media (min-width: 700px) { .gd-h2 { font-size: 2.125rem; } }
+:is(.gd-section, .gd-row)[data-accent="navy"]  { --gd-band: var(--navy-900); --gd-badge: var(--gold-600); --gd-badge-ink: var(--navy-900); --gd-eyebrow: var(--gold-500); --gd-band-ink: var(--cream-100); --gd-mark: var(--navy-700); }
+:is(.gd-section, .gd-row)[data-accent="slate"] { --gd-band: var(--navy-800); --gd-badge: var(--sky-700);  --gd-badge-ink: #fff;           --gd-eyebrow: var(--sky-300);  --gd-band-ink: var(--cream-100); --gd-mark: var(--navy-700); }
+:is(.gd-section, .gd-row)[data-accent="red"]   { --gd-band: var(--red-600);  --gd-badge: var(--navy-900); --gd-badge-ink: #fff;           --gd-eyebrow: var(--red-100);  --gd-band-ink: var(--cream-100); --gd-mark: var(--red-600); }
+:is(.gd-section, .gd-row)[data-accent="sky"]   { --gd-band: var(--sky-700);  --gd-badge: var(--navy-900); --gd-badge-ink: #fff;           --gd-eyebrow: var(--sky-100);  --gd-band-ink: var(--cream-100); --gd-mark: var(--sky-700); }
+:is(.gd-section, .gd-row)[data-accent="gold"]  { --gd-band: var(--gold-600); --gd-badge: var(--navy-900); --gd-badge-ink: var(--gold-500); --gd-eyebrow: var(--navy-900); --gd-band-ink: var(--navy-900);  --gd-mark: var(--gold-600); }
+/* success-600 is too light to carry an 11px eyebrow — success-700 is the same
+   hue at 4.8:1 against the tint, so the band passes AA on small text. */
+:is(.gd-section, .gd-row)[data-accent="green"] { --gd-band: var(--success-700); --gd-badge: var(--navy-900); --gd-badge-ink: #fff; --gd-eyebrow: var(--success-100); --gd-band-ink: var(--cream-100); --gd-mark: var(--success-600); }
+
+.gd-section { margin-bottom: 40px; }
+.gd-section:last-child { margin-bottom: 0; }
+
+/* --- Section band — badge + eyebrow + Anton title, reversed out --- */
+.gd-band { display: flex; align-items: stretch; background: var(--gd-band); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 18px; }
+.gd-band-mark { flex: none; width: 62px; display: grid; place-items: center; padding: 4px; background: var(--gd-badge); color: var(--gd-badge-ink); text-align: center; }
+.gd-band-mark i { font-size: 1.625rem; }
+.gd-band-mark .n { font-family: var(--font-display); line-height: 1; overflow-wrap: anywhere; }
+.gd-band-mark .n[data-size="lg"] { font-size: 1.875rem; }
+.gd-band-mark .n[data-size="md"] { font-size: 1.1875rem; }
+.gd-band-mark .n[data-size="sm"] { font-size: 0.8125rem; letter-spacing: .02em; }
+.gd-band-txt { flex: 1; min-width: 0; padding: 12px 16px; }
+.gd-band-eyebrow { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 0.6875rem; letter-spacing: .13em; text-transform: uppercase; color: var(--gd-eyebrow); margin-bottom: 3px; }
+.gd-h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 1.5rem; line-height: 1; color: var(--gd-band-ink); margin: 0; }
+@media (min-width: 700px) {
+  .gd-band-mark { width: 84px; }
+  .gd-band-mark i { font-size: 2.125rem; }
+  .gd-band-mark .n[data-size="lg"] { font-size: 2.5rem; }
+  .gd-band-mark .n[data-size="md"] { font-size: 1.5rem; }
+  .gd-band-mark .n[data-size="sm"] { font-size: 0.9375rem; }
+  .gd-band-txt { padding: 15px 24px; }
+  .gd-h2 { font-size: 1.9375rem; }
+}
+
 .gd-lead { font-size: 1.03125rem; line-height: 1.55; color: var(--ink-700); margin: 0 0 20px; text-wrap: pretty; }
-.gd-block { margin-bottom: 20px; }
-.gd-h3 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; font-family: var(--font-heading); font-weight: 800; font-size: 1.0625rem; color: var(--navy-900); margin: 0 0 8px; }
-.gd-ref { font-family: var(--font-heading); font-weight: 700; font-size: 0.71875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-500); }
+.gd-lead strong { color: var(--navy-900); }
+.gd-block { margin-bottom: 22px; }
+.gd-block:last-child { margin-bottom: 0; }
+
+/* --- Sub-head — uppercase Archivo with its citation trailing --- */
+.gd-h3 { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; letter-spacing: .09em; text-transform: uppercase; color: var(--navy-900); margin: 0 0 10px; }
+.gd-ref { font-family: var(--font-heading); font-weight: 600; font-size: 0.71875rem; letter-spacing: 0; text-transform: none; color: var(--ink-500); }
 .gd-p { font-size: 1rem; line-height: 1.6; color: var(--ink-700); margin: 0 0 10px; text-wrap: pretty; }
+.gd-p strong { color: var(--navy-900); }
+
+/* --- Bulleted list — dot in the section's accent, no rules --- */
 .gd-list { list-style: none; margin: 0; padding: 0; }
-.gd-list li { padding: 9px 0; font-size: 1rem; line-height: 1.5; color: var(--ink-700); border-top: 1px solid var(--cream-200); }
-.gd-list li:first-child { border-top: none; }
+.gd-list li { position: relative; padding: 6px 0 6px 18px; font-size: 1rem; line-height: 1.5; color: var(--ink-700); break-inside: avoid; }
+.gd-list li::before { content: ""; position: absolute; left: 0; top: .7em; width: 7px; height: 7px; border-radius: 50%; background: var(--gd-mark); }
 .gd-list li strong { color: var(--navy-900); font-weight: 700; }
-.gd-steps { list-style: none; counter-reset: gd; margin: 0; padding: 0; }
-.gd-steps li { counter-increment: gd; position: relative; padding: 12px 0 12px 44px; border-top: 1px solid var(--cream-200); }
-.gd-steps li:first-child { border-top: none; }
-.gd-steps li::before { content: counter(gd); position: absolute; left: 0; top: 11px; width: 30px; height: 30px; border-radius: 50%; background: var(--navy-900); color: #fff; font-family: var(--font-display); font-size: 1rem; display: grid; place-items: center; }
+
+/* --- Ordered steps — one card, zebra rows, numeral or icon marker --- */
+.gd-steps { list-style: none; counter-reset: gd; margin: 0; padding: 0; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+.gd-steps li { counter-increment: gd; display: flex; align-items: flex-start; gap: 14px; padding: 13px 16px; break-inside: avoid; }
+.gd-steps li:nth-child(even) { background: var(--cream-100); }
+.gd-step-mark { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--gd-mark); color: #fff; font-family: var(--font-display); font-size: 1.125rem; }
+.gd-steps li:not(.iconed) .gd-step-mark::before { content: counter(gd); }
+.gd-step-mark i { font-size: 1.25rem; }
+.gd-step-txt { min-width: 0; }
 .gd-step-label { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.96875rem; color: var(--navy-900); margin-bottom: 2px; }
 .gd-step-body { display: block; font-size: 0.96875rem; line-height: 1.5; color: var(--ink-700); }
 .gd-step-body strong { color: var(--navy-900); }
-.gd-table { width: 100%; border-collapse: collapse; margin: 4px 0 0; }
-.gd-table th { text-align: left; font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-500); padding: 6px 10px 6px 0; border-bottom: 1.5px solid var(--navy-700); }
-.gd-table td { padding: 9px 10px 9px 0; font-size: 0.9375rem; line-height: 1.45; color: var(--ink-700); border-bottom: 1px solid var(--cream-200); vertical-align: top; }
-.gd-table td:first-child { font-weight: 600; color: var(--navy-900); width: 36%; }
+
+/* --- Icon rows — badge + title + one line, hairline separated --- */
+.gd-rows { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+.gd-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; break-inside: avoid; }
+.gd-row + .gd-row { border-top: 1.5px solid var(--cream-300); }
+.gd-row-badge { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--gd-mark); color: #fff; }
+.gd-row-badge i { font-size: 1.4375rem; }
+.gd-row-txt { min-width: 0; }
+.gd-row-title { display: block; font-family: var(--font-heading); font-weight: 700; font-size: 1.0625rem; color: var(--navy-900); }
+.gd-row-body { display: block; font-size: 0.96875rem; line-height: 1.5; color: var(--ink-700); margin-top: 3px; }
+.gd-row-body strong { color: var(--navy-900); }
+
+/* --- Reference table — navy header bar, zebra body, rounded card --- */
+.gd-tbl { border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+.gd-table { width: 100%; border-collapse: collapse; }
+.gd-table th { text-align: left; background: var(--navy-700); color: #fff; font-family: var(--font-heading); font-weight: 700; font-size: 0.65625rem; letter-spacing: .09em; text-transform: uppercase; padding: 9px 14px; }
+.gd-table td { padding: 10px 14px; font-size: 0.9375rem; line-height: 1.45; color: var(--ink-700); vertical-align: top; }
+.gd-table tbody tr { background: var(--white); }
+.gd-table tbody tr:nth-child(even) { background: var(--cream-100); }
+.gd-table td:first-child { font-family: var(--font-heading); font-weight: 700; color: var(--navy-900); width: 38%; }
 .gd-table td strong { color: var(--navy-900); }
-.gd-note { background: var(--sky-100); border-radius: var(--radius-md); padding: 14px 18px; font-size: 0.96875rem; line-height: 1.5; color: var(--ink-900); margin: 0 0 16px; }
-.gd-note.warn { background: var(--gold-100); }
+
+/* --- Callout — tint + glyph carry the tone. No side stripe.
+   Every note names its tone; the base class holds only geometry, so
+   there is no invisible default doing colour work. --- */
+.gd-note { display: flex; align-items: flex-start; gap: 11px; border-radius: var(--radius-md); padding: 13px 16px; margin: 0 0 16px; break-inside: avoid; }
+.gd-note-t { font-size: 0.96875rem; line-height: 1.5; color: var(--ink-900); min-width: 0; }
+.gd-note-t strong { color: var(--navy-900); font-weight: 800; }
+.gd-note-i { flex: none; font-size: 1.25rem; margin-top: 1px; }
+.gd-note.tip { background: var(--sky-100); }
+.gd-note.tip .gd-note-i { color: var(--sky-700); }
+.gd-note.alert { background: var(--red-100); }
+.gd-note.alert .gd-note-i { color: var(--red-600); }
 .gd-note.ok { background: var(--success-100); }
-.gd-note strong { color: var(--navy-900); }
+.gd-note.ok .gd-note-i { color: var(--success-700); }
+.gd-note.caution { background: var(--gold-100); }
+.gd-note.caution .gd-note-i { color: var(--gold-600); }
+
 .gd-stat { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; background: var(--navy-900); color: var(--cream-100); border-radius: var(--radius-md); padding: 16px 20px; margin: 0 0 16px; }
 .gd-stat-value { font-family: var(--font-display); font-size: 2.625rem; line-height: 1; color: var(--gold-500); }
 .gd-stat-unit { font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--sky-300); }
 .gd-stat-caption { flex: 1 1 260px; font-size: 0.90625rem; line-height: 1.45; }
 .gd-stat-caption strong { color: #fff; }
-.gd-checklist { display: flex; flex-direction: column; gap: 14px; }
-.gd-cl-group { border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); padding: 16px; }
-.gd-cl-group.alert { background: var(--red-100); border-color: #f4b8c0; }
-.gd-cl-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-.gd-cl-marker { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--navy-900); color: #fff; font-family: var(--font-display); font-size: 0.9375rem; display: grid; place-items: center; }
-.gd-cl-group.alert .gd-cl-marker { background: var(--red-600); }
-.gd-cl-title { font-family: var(--font-heading); font-weight: 800; font-size: 0.96875rem; color: var(--navy-900); }
-.gd-cl-when { margin-left: auto; font-family: var(--font-heading); font-weight: 700; font-size: 0.625rem; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-500); }
+
+/* --- Checklist — barred head with a chip, tick-box body --- */
+.gd-checklist { display: flex; flex-direction: column; gap: 12px; }
+.gd-cl-group { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); overflow: hidden; break-inside: avoid; }
+.gd-cl-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--navy-900); }
+.gd-cl-group.alert .gd-cl-head { background: var(--red-600); }
+.gd-cl-marker { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--gold-500); color: var(--navy-900); font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; display: grid; place-items: center; }
+.gd-cl-group.alert .gd-cl-marker { background: #fff; color: var(--red-600); }
+.gd-cl-title { font-family: var(--font-heading); font-weight: 800; font-size: 0.84375rem; letter-spacing: .07em; text-transform: uppercase; color: #fff; }
+.gd-cl-when { margin-left: auto; flex: none; font-family: var(--font-heading); font-weight: 700; font-size: 0.625rem; letter-spacing: .11em; text-transform: uppercase; color: var(--sky-300); }
+.gd-cl-group.alert .gd-cl-when { color: var(--red-100); }
 .gd-cl-items { list-style: none; margin: 0; padding: 0; }
-.gd-cl-items li { position: relative; padding: 7px 0 7px 28px; font-size: 0.9375rem; line-height: 1.45; color: var(--ink-700); }
-.gd-cl-items li::before { content: ""; position: absolute; left: 2px; top: 10px; width: 13px; height: 13px; border: 1.5px solid var(--ink-300); border-radius: 3px; background: var(--white); }
-.gd-cl-items li strong { color: var(--navy-900); }
+.gd-cl-items li { position: relative; padding: 9px 14px 9px 38px; font-size: 0.9375rem; line-height: 1.45; color: var(--ink-700); }
+.gd-cl-items li + li { border-top: 1px solid var(--cream-300); }
+.gd-cl-items li::before { content: ""; position: absolute; left: 14px; top: 11px; width: 15px; height: 15px; border: 2px solid var(--navy-700); border-radius: 4px; background: var(--white); }
+.gd-cl-group.alert .gd-cl-items li::before { border-color: var(--red-600); }
+.gd-cl-items li strong { color: var(--navy-900); font-weight: 800; }
 
 .art-disclaimer { font-size: 0.84375rem; line-height: 1.55; color: var(--ink-500); max-width: 720px; margin: 8px 0 0; }
 
@@ -955,7 +993,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    frame is still deriving from aspect-ratio, and stretches the tile instead. */
 .gmain img, .gthumb img, .card.product .shot img,
 .pc-shot img, .js-shot img, .mh-shot img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block;
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
 }
 
 /* Verdict — the one sentence a reader can repeat to a colleague. */

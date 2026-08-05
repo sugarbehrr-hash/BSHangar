@@ -41,6 +41,7 @@ export const contractGuide: Guide = {
       title: 'Duty Time & Rest Limits',
       ref: '7',
       refLabel: 'Section 7 · Hours of Service',
+      accent: 'navy',
       lead:
         'These numbers are hard contractual and FAR protections, not suggestions. If Crew ' +
         'Scheduling asks you to exceed them, **you have the right to refuse.**',
@@ -104,6 +105,7 @@ export const contractGuide: Guide = {
       title: 'Scheduling Rights',
       ref: '8',
       refLabel: 'Section 8 · Scheduling · pp. 29–46',
+      accent: 'red',
       lead:
         'Your monthly schedule is one of your most important contractual rights. Knowing how lines ' +
         'are built, how bids work, and your protections after award **puts you in control.**',
@@ -172,6 +174,7 @@ export const contractGuide: Guide = {
       title: 'Pay Protections',
       ref: '3',
       refLabel: 'Section 3 · Compensation · pp. 9–15',
+      accent: 'navy',
       lead:
         'Your pay has multiple layers of protection. Understanding how each works, and when it ' +
         "kicks in, helps you **catch errors and know what you're owed.**",
@@ -241,6 +244,7 @@ export const contractGuide: Guide = {
       title: 'Reserve Rights',
       ref: '9',
       refLabel: 'Section 9 · Reserve Flight Attendants · pp. 47–56',
+      accent: 'sky',
       lead:
         'The most rule-intensive part of the contract. Know your windows, notification rights, and ' +
         'call-out protections. When in doubt, call the **Reserve Committee at 844-423-2232 ext. 701.**',
@@ -306,7 +310,7 @@ export const contractGuide: Guide = {
         },
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
           text:
             '**Reserve days are not days off.** A trip ending before 0200 is treated as having ' +
             'ended before 0001 for day-off calculations. (§9.J)',
@@ -318,6 +322,7 @@ export const contractGuide: Guide = {
       title: 'Sick Leave & Vacation',
       ref: '§4 §5',
       refLabel: 'Sections 4 & 5 · Sick Leave / Vacations · pp. 16–21',
+      accent: 'green',
       lead:
         'How sick leave accrues and gets used, your documentation rights, and how vacation is ' +
         'earned and protected.',
@@ -392,13 +397,15 @@ export const contractGuide: Guide = {
       title: 'Grievances & Discipline',
       ref: '16',
       refLabel: 'Section 16 · Grievances & Discipline · pp. 76–107',
+      accent: 'slate',
       lead:
         'Called to a meeting with management, or believe a contract was violated? **Time limits are ' +
         'critical.** Contact the Union Rep Assistance immediately.',
       blocks: [
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
+          icon: 'ph-gavel',
           text:
             '**Before ANY discipline — your right to a hearing.** The Company CANNOT issue ' +
             'discipline with pay loss, a final-warning letter, or discharge without first holding ' +
@@ -444,7 +451,8 @@ export const contractGuide: Guide = {
         },
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'tip',
+          icon: 'ph-clock-countdown',
           text:
             "**Don't wait.** The 15- or 30-day clock starts the moment you're aware of a potential " +
             "violation. If you're unsure whether to file, contact the Union Rep Assistance right away.",
@@ -456,6 +464,7 @@ export const contractGuide: Guide = {
       title: 'General Protections',
       ref: '24',
       refLabel: 'Section 24 · General · personnel files & workplace rights',
+      accent: 'slate',
       lead: 'The protections people most often forget they have.',
       blocks: [
         {
@@ -520,6 +529,7 @@ export const contractGuide: Guide = {
       title: 'Quality of Life Enhancements',
       ref: 'LOA 2022',
       refLabel: 'Signed April 2022 · expired July 23, 2023',
+      accent: 'gold',
       lead:
         'Significant quality-of-life improvements. The LOA expired July 23, 2023, but many ' +
         'provisions carried into later practice — **always verify current status with your LEC ' +
@@ -573,7 +583,8 @@ export const contractGuide: Guide = {
         },
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
+          icon: 'ph-lightning',
           text:
             "**Act fast on premium trips.** They're first-come, first-served, and the Company can " +
             'junior assign after 15 minutes if no one picks them up.',
@@ -585,6 +596,7 @@ export const contractGuide: Guide = {
       title: 'Flex Hiring & Retention',
       ref: 'LOA 2022',
       refLabel: 'Signed June 11, 2022 · §3.R & §6.B · effective July 1, 2022',
+      accent: 'gold',
       lead:
         'Flexible starting pay for new hires, one-time retention bonuses, and a new commuter-hotel ' +
         'benefit.',
@@ -655,13 +667,15 @@ export const contractGuide: Guide = {
       title: 'DFW Base & Time Zones',
       ref: 'LOA 2023',
       refLabel: 'Signed Feb 15, 2023 · §6 & §8',
+      accent: 'gold',
       lead:
         'With the crew base at Dallas/Fort Worth (Central Time), key deadlines were clarified to ' +
         'use **Eastern Time** as the standard across all bases.',
       blocks: [
         {
           kind: 'note',
-          tone: 'warn',
+          tone: 'alert',
+          icon: 'ph-clock',
           text:
             '**Based at DFW (Central Time)?** All written contract & LOA deadlines stay in ' +
             '**Eastern Time**. 1700 ET = 1600 CT — always convert to local before submitting.',
