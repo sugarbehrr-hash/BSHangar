@@ -10,13 +10,28 @@ import { bagFigures } from '../data/bag-figures';
  * sorted by price and every pick in them cleared "more than one of us said so";
  * this clears neither, so it sits outside the ladder rather than in it.
  *
- * It is the feature on the page, so the photo is large and the figures are
- * the same three the ladder cards use — a jumpseat pick still has to be
- * comparable to the bags it is not on the ladder with.
+ * TWO ZONES: .js-shot (the photo) and .js-story (everything that is
+ * judgment, not data), in priority order — name/price, the same three
+ * figures every ladder card shows (.pc-figs, completely unstyled here
+ * beyond a max-width — same box, same size, same shape as every ladder
+ * card, just width-capped instead of grid-sized — see system.css), the
+ * rating, why there is no stamp (the credibility gate — the one thing that
+ * makes a jumpseat pick different from every other pick on the page, so it
+ * does not wait behind a story about carbon-fibre trolleys to be seen), the
+ * descriptive paragraph, then the CTA.
  *
- * Two things are structurally required: the crew member behind it, and the
- * reason the stamp is absent. Without those it is an unearned recommendation,
- * which is the failure this slot exists to prevent.
+ * A fixed-width THIRD column, with the figures stretched to fill it, was
+ * tried and looked broken: three short rows above a gap of dead space
+ * running the rest of the card's height. A shrunk-to-fit chip cluster was
+ * tried next and looked like a downgrade — smaller than the ladder cards'
+ * own figures for no reason. Figures don't need a new shape at all; they
+ * need the shape they already have, just placed inline instead of in a
+ * column.
+ *
+ * Two things are structurally required regardless of layout: the crew
+ * member behind it, and the reason the stamp is absent. Without those it is
+ * an unearned recommendation, which is the failure this slot exists to
+ * prevent.
  */
 interface Props {
   category: TierCategory;
@@ -32,7 +47,7 @@ const HEADLINE = [
   { key: 'fits', axis: 'Capacity' },
   { key: 'sizer', axis: 'Sizer' },
 ] as const;
-const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) => f.key === h.key)! }));
+const headline = HEADLINE.map((h) => figures.find((f) => f.key === h.key)!);
 ---
 
 <div class="jumpwrap" style={`--tc: ${JUMPSEAT.color}; --tfg: #fff;`}>
@@ -57,7 +72,7 @@ const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) =
         }
       </div>
 
-      <div class="js-body">
+      <div class="js-story">
         <div class="js-head">
           <h3 class="js-name">
             {pick.href && !here ? <a href={pick.href}>{pick.name}</a> : pick.name}
@@ -67,7 +82,7 @@ const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) =
 
         <dl class="pc-figs">
           {
-            headline.map(({ figure }) => (
+            headline.map((figure) => (
               <div class="pc-fig">
                 <dd class="pf-val">
                   {figure.value}
@@ -79,12 +94,22 @@ const headline = HEADLINE.map((h) => ({ axis: h.axis, figure: figures.find((f) =
           }
         </dl>
 
-        <p class="js-text">{pick.text}</p>
+        {/* The rating. Same markup as every ladder card's compromise line. */}
+        <div class="pc-comp js-rating">
+          <Icon name="ph-scales" />
+          <span>{pick.compromise}</span>
+        </div>
 
+        {/* The credibility gate — promoted above the paragraph. This is the
+            one thing that makes a jumpseat pick different from every other
+            pick on the page, so it does not wait behind a story about
+            carbon-fibre trolleys to be seen. */}
         <div class="js-why">
           <Icon name="ph-info" />
           <div><b>Why there's no stamp.</b> {pick.why}</div>
         </div>
+
+        <p class="js-text">{pick.text}</p>
 
         {
           !here && (
