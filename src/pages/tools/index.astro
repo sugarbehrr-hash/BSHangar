@@ -63,6 +63,13 @@ const initialSummary = renderCheckSummary(nextCheckOfType(buildToday, DEFAULT_CH
       <div class="mh-body">
         <div class="mh-eyebrow">Crew calculators &amp; utilities</div>
         <h1 class="mh-title">Paycheck Estimator</h1>
+        {/* Where the numbers come from, and the one behaviour that isn't
+            obvious from looking at it. "Five steps, top to bottom" was the
+            form describing itself. */}
+        <p class="mh-sub">
+          Built from the group's own spreadsheet. There's no calculate button — the answer
+          updates as you go.
+        </p>
       </div>
 
       <ToolTabs />

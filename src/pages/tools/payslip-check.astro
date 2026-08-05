@@ -25,6 +25,12 @@ import ToolTabs from '../../components/ToolTabs.astro';
       <div class="mh-body">
         <div class="mh-eyebrow">Crew calculators &amp; utilities</div>
         <h1 class="mh-title">Payslip Check</h1>
+        {/* What it does that you'd otherwise assume it can't: read the file
+            itself. "Upload your payslip" was naming the button below it. */}
+        <p class="mh-sub">
+          It reads the numbers straight off your payslip and grades itself. Nothing to type,
+          nothing to copy across.
+        </p>
       </div>
 
       <ToolTabs />

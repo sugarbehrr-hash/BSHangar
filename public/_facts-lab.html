@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facts strip lab — Blue Streak Hangar</title>
+<style>
+@font-face { font-family:'Anton'; font-style:normal; font-weight:400; font-display:swap; src:url('/fonts/anton-latin.woff2') format('woff2'); }
+@font-face { font-family:'Archivo'; font-style:normal; font-weight:400 800; font-display:swap; src:url('/fonts/archivo-latin-var.woff2') format('woff2'); }
+@font-face { font-family:'Libre Franklin'; font-style:normal; font-weight:400 700; font-display:swap; src:url('/fonts/libre-franklin-latin-var.woff2') format('woff2'); }
+
+:root{
+  --navy-900:#0F1E3D; --navy-800:#14264C; --navy-700:#1B3461;
+  --red-600:#C8102E; --red-100:#FBE3E7;
+  --sky-700:#1F6FB2; --sky-300:#9FD0F0; --sky-100:#E4F2FC;
+  --gold-600:#D88A1E; --gold-500:#E8A33D;
+  --cream-100:#FBF7EE; --cream-200:#F5EFE1; --cream-300:#ECE3CF;
+  --ink-900:#16202E; --ink-700:#33414F; --ink-500:#5E6C7A; --ink-300:#9AA6B2;
+  --white:#fff;
+  --radius-sm:10px; --radius-md:14px; --radius-pill:999px;
+  --font-display:'Anton',sans-serif;
+  --font-heading:'Archivo',sans-serif;
+  --font-body:'Libre Franklin',sans-serif;
+  --shadow-sm:0 1px 3px rgba(15,30,61,.07);
+  --shadow-card:0 2px 10px rgba(15,30,61,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#20293c;font-family:var(--font-body);color:var(--ink-900);padding:22px 0 60px}
+
+.labhead{max-width:900px;margin:0 auto 26px;padding:0 18px;color:#fff}
+.labhead h1{font-family:var(--font-display);text-transform:uppercase;font-size:26px;margin:0 0 6px}
+.labhead p{margin:0;color:var(--sky-300);font-size:14px;line-height:1.5}
+
+.rack{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+.slot{width:375px}
+.slot > h2{font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-500);margin:0 0 4px;padding:0 4px}
+.slot > .note{font-size:12px;line-height:1.45;color:var(--sky-300);margin:0 0 10px;padding:0 4px;min-height:32px}
+.phone{background:var(--cream-200);border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.measure{margin:8px 4px 0;font-family:var(--font-heading);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#fff}
+.measure b{color:var(--gold-500)}
+
+/* ---- real site pieces, copied from system.css ---- */
+.wrap{padding:0 18px}
+.masthead{background:var(--navy-900);padding:16px 0 0}
+.mh-eyebrow{font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-500)}
+.mh-title{font-family:var(--font-display);text-transform:uppercase;font-size:38px;line-height:.95;color:var(--cream-100);margin:6px 0 0}
+.sectiontabs{display:flex;margin:14px -18px 0;padding:0 18px;border-top:1px solid rgba(159,208,240,.22)}
+.sectiontabs a{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 8px;font-family:var(--font-heading);font-weight:800;color:var(--sky-300);position:relative;text-decoration:none}
+.sectiontabs .st-code{font-family:var(--font-display);font-size:19px;line-height:1}
+.sectiontabs a[aria-current]{color:#fff}
+.sectiontabs a[aria-current]::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:3px;background:var(--gold-500)}
+
+.band{padding:20px 0 26px}
+.pillbar{display:flex;align-items:center;gap:8px}
+.pillrail{flex:1 1 0;min-width:0;display:flex;gap:8px}
+.pill{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 12px;border-radius:var(--radius-pill);border:1.5px solid var(--cream-300);background:var(--white);font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--navy-900);white-space:nowrap}
+.pill[aria-current]{background:var(--navy-900);border-color:var(--navy-900);color:#fff}
+.pill .count{font-size:12px;font-weight:700;color:var(--ink-500)}
+.pill[aria-current] .count{color:var(--sky-300)}
+.filtertoggle{width:44px;height:44px;flex:none;border:1.5px solid var(--cream-300);border-radius:50%;background:var(--white);color:var(--sky-700);display:grid;place-items:center;font-size:18px}
+
+.toolrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0 12px}
+.count-label{font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-500)}
+.quietbtns{display:flex;align-items:center;gap:8px}
+.txtbtn{font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--sky-700);background:none;border:none;padding:0}
+.tdot{color:var(--ink-300)}
+
+.zone{background:var(--white);border:1.5px solid var(--cream-300);border-radius:var(--radius-md);box-shadow:var(--shadow-card);display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:10px}
+.zbadge{flex:none;width:46px;height:34px;border-radius:8px;background:var(--navy-900);color:#fff;display:grid;place-items:center;font-family:var(--font-heading);font-weight:800;font-size:13px}
+.ztitle{font-family:var(--font-heading);font-weight:800;font-size:17px;color:var(--navy-900)}
+.zsub{font-family:var(--font-heading);font-weight:700;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-500);margin-top:2px}
+
+/* ============ OPTION A — the cream card that shipped ============ */
+.a .basefacts{list-style:none;margin:14px 0 0;padding:9px 14px;background:var(--cream-100);border:1.5px solid var(--cream-300);border-radius:var(--radius-md);font-size:14.5px;line-height:1.5;color:var(--ink-700)}
+.a .basefacts li{display:inline}
+.a .basefacts li + li::before{content:"·";margin:0 8px;color:var(--ink-300);font-weight:700}
+.a .basefacts b{font-family:var(--font-heading);font-weight:800;color:var(--navy-900)}
+.a .basefacts b::after{content:":";margin-right:4px}
+.a .basefacts .alert{color:var(--navy-900);font-weight:700}
+.a .basefacts .alert .warn{color:var(--red-600);margin-right:4px}
+
+/* ============ OPTION B — a second line in the toolrow family ============ */
+.b .factrow{margin:14px 0 0;font-size:14.5px;line-height:1.5;color:var(--ink-700);list-style:none;padding:0}
+.b .factrow li{display:inline}
+.b .factrow li + li::before{content:"·";margin:0 8px;color:var(--ink-300);font-weight:700}
+.b .factrow b{font-family:var(--font-heading);font-weight:800;color:var(--navy-900)}
+.b .factrow b::after{content:":";margin-right:4px}
+.b .factrow .alert{color:var(--navy-900);font-weight:700}
+.b .factrow .alert .warn{color:var(--red-600);margin-right:4px}
+.b .toolrow{margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="labhead">
+  <h1>Facts strip — two treatments</h1>
+  <p>Same content, same page position. <b>A</b> is what shipped: its own bordered cream card. <b>B</b> is the existing toolrow family — the same type and rhythm as “19&nbsp;spots&nbsp;·&nbsp;3&nbsp;areas” right under it, and as Essentials’ “7&nbsp;picks&nbsp;·&nbsp;$160–$1,050&nbsp;·&nbsp;checked&nbsp;2026/08”. Both shown at 375px.</p>
+</div>
+
+<div class="rack">
+
+  <!-- ============ A ============ -->
+  <div class="slot a">
+    <h2>A · Cream card (shipped)</h2>
+    <p class="note">Its own bordered block. Reads as a distinct object — but it's a second component sitting directly above one that already does this job.</p>
+    <div class="phone">
+      <div class="masthead">
+        <div class="wrap">
+          <div class="mh-eyebrow">Crew discounts · Dallas / Fort Worth</div>
+          <h1 class="mh-title">DFW</h1>
+          <nav class="sectiontabs">
+            <a href="#"><span class="st-code">CLT</span></a>
+            <a href="#"><span class="st-code">DCA</span></a>
+            <a href="#" aria-current="page"><span class="st-code">DFW</span></a>
+            <a href="#"><span class="st-code">PHL</span></a>
+          </nav>
+        </div>
+      </div>
+      <div class="band">
+        <div class="wrap">
+          <div class="pillbar">
+            <div class="pillrail">
+              <button class="pill" aria-current="page">Meal Deals <span class="count">19</span></button>
+              <button class="pill">% Discounts <span class="count">50</span></button>
+            </div>
+            <button class="filtertoggle">⌕</button>
+          </div>
+
+          <ul class="basefacts">
+            <li><b>The deal</b>set crew price or 10–20% off</li>
+            <li><b>Printed menus</b>A &amp; C — percentages at E &amp; B</li>
+            <li class="alert"><span class="warn">▲</span>Most don't apply if you dine in</li>
+          </ul>
+
+          <div class="toolrow">
+            <div class="count-label">19 spots · 3 areas</div>
+            <div class="quietbtns"><button class="txtbtn">Open all</button><span class="tdot">·</span><button class="txtbtn">Close all</button></div>
+          </div>
+
+          <div class="zone"><span class="zbadge">A</span><div><div class="ztitle">Terminal A</div><div class="zsub">Gates A13–A28 · Crew menus</div></div></div>
+          <div class="zone"><span class="zbadge">C</span><div><div class="ztitle">Terminal C</div><div class="zsub">Gates C6–C33 · Crew menus</div></div></div>
+          <div class="zone"><span class="zbadge">D</span><div><div class="ztitle">Terminal D</div><div class="zsub">International · Ask at register</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="measure">First venue row at <b>511px</b> · strip costs <b>64px</b></div>
+  </div>
+
+  <!-- ============ B ============ -->
+  <div class="slot b">
+    <h2>B · Toolrow family</h2>
+    <p class="note">No border, no fill. Same type and dot rhythm as the count line under it, so the two read as one block of “what's true here”, not two competing objects.</p>
+    <div class="phone">
+      <div class="masthead">
+        <div class="wrap">
+          <div class="mh-eyebrow">Crew discounts · Dallas / Fort Worth</div>
+          <h1 class="mh-title">DFW</h1>
+          <nav class="sectiontabs">
+            <a href="#"><span class="st-code">CLT</span></a>
+            <a href="#"><span class="st-code">DCA</span></a>
+            <a href="#" aria-current="page"><span class="st-code">DFW</span></a>
+            <a href="#"><span class="st-code">PHL</span></a>
+          </nav>
+        </div>
+      </div>
+      <div class="band">
+        <div class="wrap">
+          <div class="pillbar">
+            <div class="pillrail">
+              <button class="pill" aria-current="page">Meal Deals <span class="count">19</span></button>
+              <button class="pill">% Discounts <span class="count">50</span></button>
+            </div>
+            <button class="filtertoggle">⌕</button>
+          </div>
+
+          <ul class="factrow">
+            <li><b>The deal</b>set crew price or 10–20% off</li>
+            <li><b>Printed menus</b>A &amp; C — percentages at E &amp; B</li>
+            <li class="alert"><span class="warn">▲</span>Most don't apply if you dine in</li>
+          </ul>
+
+          <div class="toolrow">
+            <div class="count-label">19 spots · 3 areas</div>
+            <div class="quietbtns"><button class="txtbtn">Open all</button><span class="tdot">·</span><button class="txtbtn">Close all</button></div>
+          </div>
+
+          <div class="zone"><span class="zbadge">A</span><div><div class="ztitle">Terminal A</div><div class="zsub">Gates A13–A28 · Crew menus</div></div></div>
+          <div class="zone"><span class="zbadge">C</span><div><div class="ztitle">Terminal C</div><div class="zsub">Gates C6–C33 · Crew menus</div></div></div>
+          <div class="zone"><span class="zbadge">D</span><div><div class="ztitle">Terminal D</div><div class="zsub">International · Ask at register</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="measure">First venue row at <b>~487px</b> · strip costs <b>~40px</b></div>
+  </div>
+
+</div>
+</body>
+</html>
