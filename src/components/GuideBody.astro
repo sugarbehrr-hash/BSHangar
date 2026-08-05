@@ -56,8 +56,11 @@ const { guide } = Astro.props;
     };
 
     const visible = new Set<string>();
-    // Top inset matches [id] { scroll-margin-top: 140px } (system.css) so a
-    // section jumped to from the TOC lands exactly where it becomes current.
+    // Top inset is read from [id]'s own scroll-margin-top rather than repeated
+    // as a number here: that value is derived from the topbar and jump-bar
+    // heights (tokens/spacing.css) and differs by breakpoint, and a section
+    // jumped to from the TOC has to land exactly where it becomes current.
+    const inset = parseFloat(getComputedStyle(sections[0]!).scrollMarginTop) || 140;
     const spy = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -67,7 +70,7 @@ const { guide } = Astro.props;
         const current = sections.find((section) => visible.has(section.id));
         if (current) setActive(current.id);
       },
-      { rootMargin: '-140px 0px -55% 0px' }
+      { rootMargin: `-${inset}px 0px -55% 0px` }
     );
     for (const section of sections) spy.observe(section);
   }

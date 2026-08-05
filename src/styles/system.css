@@ -34,8 +34,9 @@
 /* ---------- RESET / SHELL ---------- */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-/* Enough clearance for the sticky topbar plus the sticky collapsed jump bar. */
-[id] { scroll-margin-top: 140px; }
+/* Enough clearance for the sticky topbar plus the sticky collapsed jump bar —
+   both derived, so an anchor can't land under a bar that grew (tokens/spacing.css). */
+[id] { scroll-margin-top: calc(var(--topbar-h) + var(--secnav-h) + var(--sticky-gap) * 2); }
 body { margin: 0; background: var(--cream-200); }
 a { text-decoration: none; color: inherit; }
 a.inline, .prose a, .lead a, .footnote a { color: var(--sky-700); text-decoration: underline; text-underline-offset: 2px; }
@@ -225,7 +226,7 @@ img, svg, video { max-width: 100%; height: auto; }
    own how-to-guide template): full-bleed colored section bands
    carry the hierarchy, not pagination or hidden views.
    ============================================================ */
-.secnav { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); overflow: hidden; position: sticky; top: 68px; z-index: 30; margin-bottom: 20px; }
+.secnav { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); overflow: hidden; position: sticky; top: calc(var(--topbar-h) + var(--sticky-gap)); z-index: 30; margin-bottom: 20px; }
 .secnav-toggle { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 0 18px; border: none; background: none; cursor: pointer; font-family: var(--font-heading); font-weight: 800; font-size: 0.90625rem; color: var(--navy-900); text-align: left; }
 .secnav-toggle i:first-child { font-size: 1.1875rem; color: var(--sky-700); flex: none; }
 .secnav-toggle .lbl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -242,12 +243,12 @@ img, svg, video { max-width: 100%; height: auto; }
 
 @media (min-width: 1100px) {
   .withrail { display: grid; grid-template-columns: minmax(0, 1fr) 262px; column-gap: 44px; align-items: start; }
-  .rail { grid-column: 2; grid-row: 1; position: sticky; top: 92px; }
+  .rail { grid-column: 2; grid-row: 1; position: sticky; top: calc(var(--topbar-h) + var(--sticky-gap)); }
   .railmain { grid-column: 1; grid-row: 1; min-width: 0; }
   .secnav { position: static; background: none; border: none; box-shadow: none; border-radius: 0; overflow: visible; margin: 0; }
   .secnav-toggle { display: none; }
   .secnav-head { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-500); padding: 0 10px 8px; }
-  .secnav-list { display: block; padding: 0; max-height: calc(100vh - 140px); border-top: none; }
+  .secnav-list { display: block; padding: 0; max-height: calc(100vh - var(--topbar-h) - var(--sticky-gap) * 2); border-top: none; }
 }
 @media (max-width: 1099px) {
   /* Below 1100px .rail is otherwise a static block sized exactly to .secnav,
@@ -557,7 +558,7 @@ a.card:hover .card-go i { transform: translateX(4px); }
 /* The sidebar answer is .answerdock's desktop counterpart — each hides
    where the other one is the right fit (system.css line ~508). */
 .toolside { display: none; }
-@media (min-width: 1000px) { .toollayout { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 24px; } .toolside { display: block; position: sticky; top: 90px; } }
+@media (min-width: 1000px) { .toollayout { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 24px; } .toolside { display: block; position: sticky; top: calc(var(--topbar-h) + var(--sticky-gap)); } }
 .stepstack { display: flex; flex-direction: column; gap: 16px; }
 
 /* --- Accordion stepper -----------------------------------------------------

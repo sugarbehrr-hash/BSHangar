@@ -24,6 +24,23 @@
   --tap-min: 44px;        /* never smaller — accessibility floor */
   --tap-comfortable: 52px;
 
+  /* ---- Sticky app shell ----
+     .topbar sticks at top:0, so everything that sticks below it — the
+     collapsed jump bar, the guide rail, the tool sidebar — has to clear it,
+     and every anchor has to land below both. Those offsets were each a
+     separate hardcoded guess at the bar's height, and one of them was wrong:
+     the jump bar sat at 68px against a 77px bar and lost its top 9px behind
+     it. One token, derived everywhere, is what stops them drifting again.
+
+     Below 1100px the bar is the tab bar's constant 76px plus its 1px
+     keyline; above, it is sized by its own content. */
+  --topbar-h: 77px;
+  --sticky-gap: 10px;
+  /* Height of the collapsed jump bar, for anchors that must land clear of
+     it. At >=1100px it is a static rail rather than a sticky bar, so there
+     is nothing above the content to clear. */
+  --secnav-h: 58px;
+
   /* ---- Document page sizes (print-friendly) ---- */
   --page-flyer-w: 1080px;     /* square social / flyer width */
   --page-poster-w: 1080px;
@@ -33,4 +50,8 @@
   --content-max: 720px;       /* readable measure */
 
   --gutter: var(--space-7);
+}
+
+@media (min-width: 1100px) {
+  :root { --topbar-h: 70px; --secnav-h: 0px; }
 }
