@@ -27,6 +27,11 @@ interface Props {
 
 const { category } = Astro.props;
 
+/** Cards subgrid into shared row tracks (see system.css) so a pick in one
+ * column is exactly as tall as its counterpart in the others — the row
+ * template needs a track for the deepest column. */
+const maxPicks = Math.max(1, ...TIER_ORDER.map((key) => picksFor(category, key).length));
+
 /** The three headline axes, in the order they decide a purchase. */
 const HEADLINE = [
   { key: 'weight', axis: 'Weight' },
@@ -35,7 +40,7 @@ const HEADLINE = [
 ] as const;
 ---
 
-<div class="tierscard">
+<div class="tierscard" style={`--rows: ${maxPicks}`}>
   {
     TIER_ORDER.map((key) => {
       const tier = TIERS[key];

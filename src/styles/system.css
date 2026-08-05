@@ -178,6 +178,11 @@ img, svg, video { max-width: 100%; height: auto; }
 @media (min-width: 700px) { .band { padding: 62px 0; } .band.tight { padding-top: 34px; } }
 .band-head { max-width: 720px; }
 .band-head + * { margin-top: 22px; }
+/* A plain column of running text. The guides get their measure from .railmain
+   inside .withrail, which only exists to sit beside a sticky contents rail —
+   so a page that is nothing but prose (the privacy notice) had no way to
+   constrain its line length without borrowing a layout it does not use. */
+.textcol { max-width: 720px; }
 .kicker { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; letter-spacing: .16em; text-transform: uppercase; color: var(--red-600); }
 .h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 2rem; line-height: .95; color: var(--navy-900); margin: 10px 0 0; }
 @media (min-width: 700px) { .h2 { font-size: 2.75rem; } }
@@ -1055,13 +1060,23 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    badge — every pick cleared the same gate, so a mark that never withholds
    says nothing. The note under the ladder states it once. */
 .tierscard { display: grid; grid-template-columns: 1fr; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
-@media (min-width: 880px) { .tierscard { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 880px) {
+  .tierscard { grid-template-columns: repeat(3, 1fr); }
+  /* Picks subgrid into these row tracks so a card is exactly as tall as its
+     counterparts in the other two columns — text length no longer decides a
+     card's size, its row does. Scoped to ladders that actually hold picks:
+     the tier-explainer reuse of .tierscard/.tiercol on the standard page
+     (fa-approved.astro) has no .tc-body and stays the plain flex column
+     below. --rows comes from TierLadder.astro, the deepest column's count. */
+  .tierscard:has(.tc-body) { grid-template-rows: auto repeat(var(--rows, 1), auto); }
+}
 /* One column, full width — the standard page's jumpseat explainer. */
 .tierscard.solo { grid-template-columns: 1fr; }
 .tiercol { position: relative; display: flex; flex-direction: column; text-align: left; background: var(--cream-100); border: none; font: inherit; color: inherit; }
 @media (min-width: 880px) {
   .tiercol { border-left: 1px solid var(--cream-200); }
   .tiercol:first-child { border-left: none; }
+  .tiercol:has(.tc-body) { display: grid; grid-template-rows: subgrid; grid-row: 1 / -1; }
 }
 
 /* The tier's solid field. A 3px keyline was tried first and you stop seeing
@@ -1092,7 +1107,13 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    No single-side borders: cards are separated by BEING cards on a tinted
    column, and the stats are a tinted panel. */
 .tc-body { flex: 1; padding: 14px; display: grid; gap: 12px; align-content: start; }
-.pcard { display: block; padding: 12px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); text-decoration: none; transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
+@media (min-width: 880px) {
+  .tc-body { grid-row: 2 / -1; grid-template-rows: subgrid; align-content: stretch; }
+}
+/* Flex column so a card stretched taller than its own content (see the
+   subgrid rows above) can pin the CTA to its bottom edge instead of leaving
+   it stranded under the text with a dead gap beneath. */
+.pcard { display: flex; flex-direction: column; padding: 12px; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); text-decoration: none; transition: transform .2s var(--ease-out), box-shadow .2s, border-color .2s; }
 .pcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--navy-700); }
 .pc-top { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; }
 .pc-shot { position: relative; aspect-ratio: 3 / 4; border-radius: var(--radius-sm); background: var(--white); display: grid; place-items: center; overflow: hidden; }
@@ -1101,7 +1122,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .pcard:hover .pc-shot img { transform: scale(1.04); }
 .pc-main { min-width: 0; }
 .pc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.pc-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.875rem; line-height: 1.25; height: 2.5em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--navy-900); margin: 0; text-wrap: pretty; }
+.pc-name { font-family: var(--font-heading); font-weight: 800; font-size: 0.875rem; line-height: 1.25; color: var(--navy-900); margin: 0; text-wrap: pretty; }
 .pcard:hover .pc-name { color: var(--navy-700); }
 .pc-price { flex: none; font-family: var(--font-display); font-size: 1.1875rem; line-height: 1; color: var(--navy-900); }
 .pc-figs { margin: 8px 0 0; padding: 2px 9px; background: var(--cream-100); border-radius: var(--radius-sm); }
@@ -1114,7 +1135,7 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .pc-comp { display: flex; gap: 7px; align-items: flex-start; margin-top: 10px; font-size: 0.78125rem; line-height: 1.45; color: var(--ink-700); }
 .pc-comp i { flex: none; font-size: 0.875rem; color: var(--tc, var(--navy-900)); margin-top: 1px; }
 .pc-comp span { display: block; }
-.pc-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; color: var(--navy-700); }
+.pc-go { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 9px; font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; color: var(--navy-700); }
 .pc-go i { transition: transform .18s; }
 .pcard:hover .pc-go i { transform: translateX(4px); }
 
