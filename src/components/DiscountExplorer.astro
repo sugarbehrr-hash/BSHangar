@@ -85,6 +85,21 @@ const zoneId = (categoryKey: string, zoneName: string) =>
     </div>
   </div>
 
+  {/* What's true about THIS airport, above the list it applies to. Sits below
+      the switcher and above .toolrow so the live count stays attached to the
+      list it counts. */}
+  <ul class="basefacts">
+    {
+      base.facts.map((fact) => (
+        <li class:list={[fact.alert && 'alert']}>
+          {fact.alert && <Icon name="ph-warning" />}
+          {fact.label && <b>{fact.label}</b>}
+          {fact.value}
+        </li>
+      ))
+    }
+  </ul>
+
   <div class="toolrow">
     <div class="count-label" data-count aria-live="polite">
       {venueCount(firstCategory)} spots · {firstCategory.zones.length} areas

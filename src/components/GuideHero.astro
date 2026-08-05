@@ -5,10 +5,13 @@ import type { Guide } from '../data/guides/types';
 /**
  * Masthead for one guide page: the single-column .mh-body pattern used by
  * /tools/, /crew-essentials/ and /crew-discounts/ (no .mh-grid — that's for
- * pages with a second masthead column, which guides don't have). Subtitle and
- * intro both render as .mh-sub, the same way HomePage stacks .mh-sub above
- * .mh-actions — a short tagline, then the fuller line, then the one action
- * this page has.
+ * pages with a second masthead column, which guides don't have).
+ *
+ * Guides are the one page type that keeps a masthead paragraph. Everywhere
+ * else it described the page instead of informing, and was cut; here the
+ * reader has seen nothing yet, so the intro is the article's first content.
+ * The subtitle it used to sit beneath was the same idea said shorter, and
+ * two stacked paragraphs pushed the guide itself off the first screen.
  */
 interface Props {
   guide: Guide;
@@ -24,7 +27,6 @@ const { guide, pdfHref } = Astro.props;
     <div class="mh-body">
       <div class="mh-eyebrow">{guide.eyebrow}</div>
       <h1 class="mh-title">{guide.title}</h1>
-      <p class="mh-sub">{guide.subtitle}</p>
       <p class="mh-sub">{guide.intro}</p>
       <div class="mh-actions">
         <a class="btn gold" href={pdfHref}>

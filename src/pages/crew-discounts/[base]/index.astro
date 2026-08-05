@@ -15,20 +15,28 @@ export const getStaticPaths = (() =>
 
 const { base } = Astro.props;
 const total = base.categories.reduce((n, c) => n + venueCount(c), 0);
+
+/**
+ * The description reads the same facts the page shows rather than a second
+ * prose copy of them — a search result and the page it opens should not be
+ * able to disagree about how the discount works.
+ */
+const factLine = base.facts
+  .map((f) => (f.label ? `${f.label}: ${f.value}` : f.value))
+  .join('. ');
 ---
 
 <BaseLayout
   title={`${base.code} Crew Discounts`}
   description={`${total} crew discounts at ${base.code}, ${base.name}: ${base.categories
     .map((c) => c.label.toLowerCase())
-    .join(' and ')}, listed by terminal. ${base.blurb}`}
+    .join(' and ')}, listed by terminal. ${factLine}.`}
 >
   <div class="masthead">
     <div class="wrap">
       <div class="mh-body">
         <div class="mh-eyebrow">Crew discounts · {base.name}</div>
         <h1 class="mh-title">{base.code}</h1>
-        <p class="mh-sub">{base.blurb}</p>
       </div>
       <BaseTabs current={base.key} />
     </div>

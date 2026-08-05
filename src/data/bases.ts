@@ -42,6 +42,26 @@ export interface Category {
   zones: Zone[];
 }
 
+/**
+ * One thing worth knowing before you walk the terminal.
+ *
+ * These were a paragraph in the masthead, which is where readers have learned
+ * to expect marketing — so the only lines on the page explaining how the
+ * discount actually works were the ones being skipped. As facts they sit
+ * above the venue list instead, and read in a glance rather than a sentence.
+ *
+ * Scope is per-airport ONLY. "Show your badge and ask" is true at every base
+ * and is already stated once, in the notice at the foot of the page; repeating
+ * it four times here would be the same rule maintained in five places.
+ */
+export interface BaseFact {
+  /** Short lead-in, e.g. "Start" or "Best odds". Omit for a plain statement. */
+  label?: string;
+  value: string;
+  /** A rule that costs money when missed, so it reads as a warning. */
+  alert?: boolean;
+}
+
 /** A crew base. `key` is the URL segment: /crew-discounts/<key>/ */
 export interface Base {
   key: string;
@@ -50,7 +70,7 @@ export interface Base {
   sub: string;
   /** Short city label for the masthead base switcher. */
   tabLabel: string;
-  blurb: string;
+  facts: BaseFact[];
   categories: Category[];
 }
 
@@ -61,7 +81,10 @@ export const bases: Base[] = [
     name: "Charlotte Douglas",
     sub: "Charlotte, NC",
     tabLabel: "Charlotte",
-    blurb: "Start in the Atrium — the hub feeding all five concourses — then follow your gate. The Atrium boutiques and the D/E Connector brands are the most reliable for a crew discount.",
+    facts: [
+      { label: "Start", value: "the Atrium — it feeds all five concourses" },
+      { label: "Best odds", value: "Atrium boutiques, D/E Connector" },
+    ],
     categories: [
       {
         key: "eat", label: "Food & Drink", icon: "ph-fork-knife",
@@ -313,7 +336,10 @@ export const bases: Base[] = [
     name: "Reagan National",
     sub: "Washington, DC",
     tabLabel: "Washington",
-    blurb: "Compact and quick — good for a tight turn. Show your AA badge and ask for the crew rate before you order; it varies by spot. National Hall (Terminal 2) has the widest spread.",
+    facts: [
+      { label: "Widest spread", value: "National Hall (T2)" },
+      { label: "The deal", value: "no set rate, varies by spot" },
+    ],
     categories: [
       {
         key: "eat", label: "Food & Drink", icon: "ph-fork-knife",
@@ -511,7 +537,11 @@ export const bases: Base[] = [
     name: "Dallas / Fort Worth",
     sub: "Dallas, TX",
     tabLabel: "Dallas–Ft Worth",
-    blurb: "Big airport, real deals — a set crew price or 10–20% off at many spots. Terminals A & C have printed crew menus; E & B do percentages. Most don't apply if you dine in.",
+    facts: [
+      { label: "The deal", value: "set crew price or 10–20% off" },
+      { label: "Printed menus", value: "A & C — percentages at E & B" },
+      { value: "Most don't apply if you dine in", alert: true },
+    ],
     categories: [
       {
         key: "eat", label: "Meal Deals", icon: "ph-fork-knife",
@@ -625,7 +655,10 @@ export const bases: Base[] = [
     name: "Philadelphia Int'l",
     sub: "Philadelphia, PA",
     tabLabel: "Philadelphia",
-    blurb: "Terminals A–F with a long connector — everything's airside and connected, so walk the B/C connector (the classic crew stop) if your terminal's quiet. Show your AA badge and ask; the rate varies by spot.",
+    facts: [
+      { label: "Classic crew stop", value: "the B/C connector" },
+      { label: "The deal", value: "no set rate, varies by spot" },
+    ],
     categories: [
       {
         key: "eat", label: "Food & Drink", icon: "ph-fork-knife",

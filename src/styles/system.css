@@ -231,6 +231,24 @@ img, svg, video { max-width: 100%; height: auto; }
 .filter input:focus { border-color: var(--sky-500); }
 @media (min-width: 900px) { .filter { flex: 0 0 260px; margin-left: auto; } }
 
+/* Base facts — what's true about THIS airport, as fragments rather than the
+   masthead paragraph they used to be. Cream on the cream page: the card
+   family's shape at a lower weight, so it groups the facts without competing
+   with the venue cards under it. Items wrap from one column to three on their
+   own, so there is no breakpoint to keep in step with the content. */
+.basefacts { list-style: none; margin: 14px 0 0; padding: 9px 14px; background: var(--cream-100); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); font-size: 0.90625rem; line-height: 1.5; color: var(--ink-700); text-wrap: pretty; }
+/* One flowing line, not a row per fact. A row apiece made the strip taller
+   than the paragraph it replaced, which put the venue list further down the
+   page than before — the opposite of the point. Inline, they wrap to two. */
+.basefacts li { display: inline; }
+.basefacts li + li::before { content: "·"; margin: 0 8px; color: var(--ink-300); font-weight: 700; }
+.basefacts b { font-family: var(--font-heading); font-weight: 800; color: var(--navy-900); }
+.basefacts b::after { content: ":"; margin-right: 4px; }
+/* The gotcha reads as a warning through its glyph and its weight — the strip
+   keeps one surface, so there is no stripe or tinted row to carry it. */
+.basefacts .alert { color: var(--navy-900); font-weight: 700; }
+.basefacts .alert i { font-size: 1rem; color: var(--red-600); margin-right: 5px; }
+
 .toolrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 14px 0 12px; }
 .count-label { font-family: var(--font-heading); font-weight: 800; font-size: 0.75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-500); }
 .quietbtns { display: flex; align-items: center; gap: 8px; }
