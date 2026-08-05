@@ -187,7 +187,10 @@ img, svg, video { max-width: 100%; height: auto; }
    4 · VIEW PILLS — switching views WITHIN one page.
    Light surface, so current = navy fill. One row per page, max.
    ============================================================ */
-.pillbar { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+/* position: relative — the filter field overlays this row when it opens
+   (system.css §21). It is not allowed to push the categories down: the row
+   is a tap target people are already aiming at when they reach for search. */
+.pillbar { position: relative; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
 /* Below 700px this becomes the swiping pill rail (system.css §21); on desktop
    it's invisible in the box tree so the pills sit directly in .pillbar. */
 /* ONE horizontal row that swipes, at every width. Wrapping ten pills into a
@@ -1404,13 +1407,21 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 
   /* Category pill rail — the app pattern: ONE horizontal row, full-bleed,
      swipes sideways, never wraps into a pill cloud. The filter is a toggle
-     on that row until it's opened, and then takes its own full-width row
-     above it — the rail stays put, because the filter searches within the
-     selected category and hiding it would hide what's being searched. */
-  .pillbar { flex-wrap: wrap; }
+     on that row until it's opened, and then lies OVER it: the same move the
+     header makes at 559px, and the reason both do it is that nothing on the
+     page is allowed to jump under a thumb that is already reaching for the
+     row. The live match count sits below and stays visible either way. */
   .filtertoggle { display: grid; }
   .pillbar .filter { display: none; }
-  .pillbar[data-filter-open="1"] .filter { display: flex; flex: 1 1 100%; order: -1; }
+  .pillbar[data-filter-open="1"] .filter {
+    display: flex;
+    position: absolute;
+    left: 0;
+    right: 52px; /* the 44px toggle plus the row's 8px gap */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
   /* Bleeds off the left edge only: the right-hand end is where the filter
      toggle sits, and a rail that bled under it would slide pills beneath a
      button. Pills still clip at that edge, which is the "swipe me" cue. */
