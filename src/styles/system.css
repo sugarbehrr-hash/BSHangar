@@ -213,6 +213,52 @@ img, svg, video { max-width: 100%; height: auto; }
 .pill[aria-current="page"] .count, .pill[aria-selected="true"] .count { color: var(--sky-300); }
 .pill .soon { font-family: var(--font-heading); font-size: 0.625rem; letter-spacing: .1em; text-transform: uppercase; background: var(--gold-500); color: var(--navy-900); border-radius: var(--radius-pill); padding: 3px 8px; }
 
+/* ============================================================
+   CATEGORY NAV (dropdown / wide-screen rail) — Crew Essentials only
+   ------------------------------------------------------------
+   Replaces the pillbar for this one page: a dropdown trigger sized to its
+   own content everywhere below 1400px, and a permanent 216px sticky side
+   rail above it — chosen because that's above the ~1140px content column's
+   own max-width, so the rail only appears where the viewport has real
+   margin to spare. .pill/.pillbar/.pillrail above are untouched and still
+   drive Discounts and Tools.
+   ============================================================ */
+.ess-layout { display: block; }
+.catnav { position: relative; margin-bottom: 22px; width: fit-content; max-width: 480px; min-width: 280px; }
+.catpanels { min-width: 0; }
+@media (max-width: 699px) { .catnav { width: 100%; max-width: none; } }
+@media (min-width: 1400px) {
+  .ess-layout { display: flex; gap: 24px; align-items: flex-start; }
+  .catnav { flex: none; width: 216px; max-width: none; position: sticky; top: calc(var(--topbar-h) + var(--sticky-gap)); margin-bottom: 0; }
+  .catpanels { flex: 1; }
+}
+
+.cn-trigger { width: 100%; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 10px 16px; border-radius: var(--radius-md); border: 1.5px solid var(--cream-300); background: var(--white); cursor: pointer; text-align: left; }
+.cn-trigger i { font-size: 1.1875rem; color: var(--sky-700); flex: none; }
+.cn-trigger .cn-chevron { margin-left: auto; font-size: 1rem; color: var(--ink-500); transition: transform .16s; flex: none; }
+.catnav[data-open="1"] .cn-trigger .cn-chevron { transform: rotate(180deg); }
+.cn-trigger-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cn-trigger-text b { font-family: var(--font-heading); font-weight: 700; font-size: 0.90625rem; color: var(--ink-900); }
+.cn-trigger-text span { font-family: var(--font-body); font-size: 0.75rem; color: var(--ink-500); line-height: 1.4; }
+@media (min-width: 1400px) { .cn-trigger { display: none; } }
+
+.cn-list { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 30; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-md); padding: 10px; box-shadow: var(--shadow-md); }
+.catnav[data-open="1"] .cn-list { display: block; }
+@media (min-width: 1400px) { .cn-list { display: block !important; position: static; box-shadow: none; padding: 12px; } }
+
+.cn-group-label { font-family: var(--font-heading); font-weight: 800; font-size: 0.65625rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-500); padding: 8px 10px 6px; }
+.cn-divider { border-top: 1px solid var(--cream-300); margin: 6px 4px; }
+
+.cn-row { width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius-sm); border: none; background: transparent; text-align: left; cursor: pointer; font-family: var(--font-body); }
+.cn-row i { font-size: 1.0625rem; color: var(--sky-700); flex: none; }
+.cn-name { flex: 1; font-family: var(--font-heading); font-weight: 600; font-size: 0.84375rem; color: var(--ink-900); }
+.cn-meta { font-size: 0.71875rem; color: var(--ink-500); font-family: var(--font-body); flex: none; }
+.cn-row:hover { background: var(--cream-100); }
+.cn-row[aria-selected="true"] { background: var(--navy-900); }
+.cn-row[aria-selected="true"] .cn-name { color: #fff; }
+.cn-row[aria-selected="true"] .cn-meta { color: var(--sky-300); }
+.cn-row[aria-selected="true"] i { color: var(--gold-500); }
+
 /* The pill rail's search toggle. Same object as the header's .searchtoggle —
    round, icon-only, swaps to an X when open — in the light-surface colours
    this bar uses. It only exists below 700px; above that the input has room
@@ -1068,6 +1114,39 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 .stampchip.first { background: var(--navy-700); color: var(--gold-500); border: 1.5px solid var(--gold-500); }
 .stampchip.jump { background: var(--red-600); color: #fff; }
 
+/* The jumpseat pick and "Same bar, three prices" side by side — one crew
+   member's own bag next to the standard the ladder below it is built on.
+   Stacked on narrow screens (the jumpseat card reads first), side by side
+   from 900px, where there's room for both without squeezing either. On the
+   two reviewed ladders, the category nav also lands in this row (JS moves
+   the single #catbar node here — see the page's script) rather than sitting
+   above with nothing beside it. */
+.jumprow { display: grid; grid-template-columns: 1fr; grid-template-areas: "nav" "jump" "tier"; gap: 14px; margin-bottom: 18px; align-items: stretch; }
+@media (min-width: 900px) { .jumprow { grid-template-columns: 1.2fr 1fr; grid-template-areas: "nav tier" "jump tier"; } }
+.jumprow .catnav { grid-area: nav; width: 100%; max-width: none; min-width: 0; margin-bottom: 0; }
+.jumprow .jumpwrap { grid-area: jump; }
+.jumprow .tierintro { grid-area: tier; }
+
+/* The chart itself: four bars (three tiers + the jumpseat's dashed ghost
+   bar), heights illustrative rather than plotted from real prices — First
+   Class has no real ceiling to plot, and the point is that the bar heights
+   don't change between categories, only the dollar figures under them. */
+.tierintro { height: 100%; box-sizing: border-box; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.ti-head { font-family: var(--font-heading); font-weight: 800; font-size: 0.90625rem; color: var(--navy-900); }
+.ti-head span { display: block; font-weight: 700; font-size: 0.75rem; line-height: 1.45; color: var(--ink-500); margin-top: 4px; }
+.tichart { flex: 1; min-height: 106px; display: flex; align-items: flex-end; gap: 12px; }
+.tibar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; height: 100%; justify-content: flex-end; }
+.tb-plot { flex: 1; min-height: 0; display: flex; align-items: flex-end; width: 100%; }
+.tb-fill { flex: none; width: 100%; background: var(--tc); border-radius: 6px 6px 0 0; }
+.tb-fill.ghost { background: none; border: 1.5px dashed var(--tc); border-bottom: none; border-radius: 6px 6px 0 0; display: grid; place-items: end center; padding-bottom: 8px; color: var(--tc); font-size: 1.125rem; }
+.tb-label { font-family: var(--font-heading); font-weight: 800; font-size: 0.71875rem; color: var(--navy-900); text-align: center; line-height: 1.1; }
+.tibar.jump .tb-label { color: var(--red-600); }
+.tb-price { font-size: 0.65625rem; color: var(--ink-500); text-align: center; line-height: 1.2; }
+.ti-jump { display: flex; gap: 8px; align-items: flex-start; font-size: 0.78125rem; line-height: 1.42; color: var(--ink-700); background: var(--cream-100); border-radius: var(--radius-sm); padding: 10px 11px; margin: 0; }
+.ti-jump i { color: var(--red-600); flex: none; margin-top: 2px; font-size: 0.9375rem; }
+.ti-jump b { color: var(--navy-900); }
+.tierintro .txtbtn { align-self: flex-start; padding-left: 0; margin-top: auto; }
+
 /* Tier ladder — ONE card, three columns, read left to right as a price
    progression. Each column is a solid tier-coloured header over a stack of
    compact picks. A vertical row-per-pick layout was prototyped against this
@@ -1168,10 +1247,15 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
    same system, while the red (no tier uses it), the label above and the name
    on it make clear it is a different KIND of claim. Cole asked for it above
    the ladder rather than below: it is the most-read thing on the card. */
-.jumpwrap { margin-bottom: 18px; }
+/* No bottom margin of its own — inside .jumprow the row's own gap does the
+   spacing, and outside it .jumprow still wraps every use (see below). Flex
+   column so .jumpseat can stretch to fill the row's full height instead of
+   sitting shorter than .tierintro beside it, while .jump-label still sizes
+   to its own content above it. */
+.jumpwrap { margin-bottom: 0; display: flex; flex-direction: column; }
 .jump-label { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
 .jump-label::after { content: ""; flex: 1; height: 1px; background: var(--cream-300); }
-.jumpseat { background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
+.jumpseat { flex: 1; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
 .js-by { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; }
 .js-by i { font-size: 0.875rem; }
 .js-kicker { flex: 1; min-width: 150px; font-family: var(--font-heading); font-weight: 700; font-size: 0.8125rem; opacity: .8; }

@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+import { TIER_ORDER, TIERS, JUMPSEAT } from '../data/catalog';
+
+/**
+ * "Same bar, three prices" — the small chart that sits beside the jumpseat
+ * pick in .jumprow, explaining the tier ladder the reader is about to scroll
+ * into. Bar heights are illustrative (first has no real ceiling to plot),
+ * not derived from any category's actual prices — the same four bars on
+ * every category, which is the point: the standard doesn't change.
+ */
+const BAR_HEIGHT: Record<(typeof TIER_ORDER)[number], number> = {
+  economy: 40,
+  main: 65,
+  first: 100,
+};
+---
+
+<div class="tierintro">
+  <div class="ti-head">
+    Same bar, three prices
+    <span>Every pick clears the same standard — the tiers are what you pay, not how good it is</span>
+  </div>
+  <div class="tichart">
+    {
+      TIER_ORDER.map((key) => {
+        const tier = TIERS[key];
+        return (
+          <div class="tibar" style={`--tc: ${tier.color};`}>
+            <div class="tb-plot">
+              <div class="tb-fill" style={`height:${BAR_HEIGHT[key]}%;`} />
+            </div>
+            <b class="tb-label">{tier.label}</b>
+            <span class="tb-price">{tier.bracket}</span>
+          </div>
+        );
+      })
+    }
+    <div class="tibar jump" style={`--tc: ${JUMPSEAT.color};`}>
+      <div class="tb-plot">
+        <div class="tb-fill ghost" style="height:78%;">
+          <Icon name={JUMPSEAT.icon} />
+        </div>
+      </div>
+      <b class="tb-label">{JUMPSEAT.label}</b>
+      <span class="tb-price">Not a tier</span>
+    </div>
+  </div>
+  <div class="ti-jump">
+    <Icon name={JUMPSEAT.icon} />
+    <div>
+      <b>The dashed bar isn't a tier.</b> A jumpseat pick is one crew member's own bag — the group's
+      verdict is still pending, so it sits off the ladder.
+    </div>
+  </div>
+  <a class="txtbtn" href="/fa-approved/">Read the full standard →</a>
+</div>

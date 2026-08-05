@@ -14,9 +14,10 @@ interface Props {
   name: string;
   weight?: 'fill' | 'bold' | 'regular';
   class?: string;
+  id?: string;
 }
 
-const { name, weight = 'fill', class: className } = Astro.props;
+const { name, weight = 'fill', class: className, id } = Astro.props;
 ---
 
-<i class:list={[`ph-${weight}`, name, className]} aria-hidden="true"></i>
+<i class:list={[`ph-${weight}`, name, className]} id={id} aria-hidden="true"></i>

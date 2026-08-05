@@ -1,0 +1,84 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * Crew Essentials' category switcher. A dropdown everywhere except very wide
+ * viewports, where CSS turns the same list into a permanent side rail (see
+ * the CATEGORY NAV block in system.css) — one DOM node, no duplication.
+ *
+ * Grouped into the two reviewed ladders (tiered picks + a jumpseat pick) and
+ * the quick picks (one Amazon link each, not yet worked all the way
+ * through) — nothing on this page conflates the two, so the nav doesn't
+ * either. The client script (in the page) relocates this same nav node into
+ * the active ladder's .jumprow, syncs the trigger's icon/name/subtitle, and
+ * owns which .catpanel is visible.
+ */
+interface Tab {
+  key: string;
+  label: string;
+  icon: string;
+  isLadder: boolean;
+  /** Short row subtitle, ladders only — e.g. "7 picks". */
+  rowMeta?: string;
+  /** Trigger / panel subtitle — e.g. "7 picks · $160 – $1,050 · checked 2026/08". */
+  fullMeta: string;
+}
+
+interface Props {
+  tabs: Tab[];
+}
+
+const { tabs } = Astro.props;
+const active = tabs[0];
+const ladderTabs = tabs.filter((tab) => tab.isLadder);
+const quickTabs = tabs.filter((tab) => !tab.isLadder);
+---
+
+<nav class="catnav" id="catbar" aria-label="Gear categories">
+  <button class="cn-trigger" type="button" id="cnTrigger" aria-expanded="false" aria-controls="cnList">
+    <Icon name={active.icon} id="cnTriggerIcon" />
+    <span class="cn-trigger-text">
+      <b id="cnTriggerName">{active.label}</b>
+      <span id="cnTriggerMeta">{active.fullMeta}</span>
+    </span>
+    <Icon name="ph-caret-down" weight="bold" class="cn-chevron" />
+  </button>
+  <div class="cn-list" id="cnList" role="tablist">
+    <div class="cn-group-label">Reviewed ladders</div>
+    {
+      ladderTabs.map((tab) => (
+        <button
+          class="cn-row"
+          type="button"
+          role="tab"
+          id={`tab-${tab.key}`}
+          aria-controls={`panel-${tab.key}`}
+          aria-selected={tab.key === active.key ? 'true' : 'false'}
+          data-tab={tab.key}
+        >
+          <Icon name={tab.icon} />
+          <span class="cn-name">{tab.label}</span>
+          <span class="cn-meta">{tab.rowMeta}</span>
+        </button>
+      ))
+    }
+    <div class="cn-divider" />
+    <div class="cn-group-label">Quick picks — one item each so far</div>
+    {
+      quickTabs.map((tab) => (
+        <button
+          class="cn-row"
+          type="button"
+          role="tab"
+          id={`tab-${tab.key}`}
+          aria-controls={`panel-${tab.key}`}
+          aria-selected={tab.key === active.key ? 'true' : 'false'}
+          data-tab={tab.key}
+        >
+          <Icon name={tab.icon} />
+          <span class="cn-name">{tab.label}</span>
+        </button>
+      ))
+    }
+  </div>
+</nav>

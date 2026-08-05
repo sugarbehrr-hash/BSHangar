@@ -213,6 +213,16 @@ export function checkedLabel(checked: string): string {
   return `${name} ${year}`;
 }
 
+/** "2026-08" -> "2026/08" — the compact form the category nav's subtitle uses. */
+export function checkedCompact(checked: string): string {
+  return checked.replace('-', '/');
+}
+
+/** "7 picks · $160 – $1,050 · checked 2026/08" — the category nav trigger/panel subtitle. */
+export function navMeta(category: TierCategory): string {
+  return `${pickCount(category)} picks · ${priceRange(category)} · checked ${checkedCompact(category.checked)}`;
+}
+
 /** "$160 – $1,050" from the picks themselves, so it cannot contradict them. */
 export function priceRange(category: TierCategory): string {
   const prices = category.picks.map((pick) => pick.price);

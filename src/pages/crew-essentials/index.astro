@@ -1,45 +1,41 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
+import CategoryNav from '../../components/CategoryNav.astro';
+import TierIntro from '../../components/TierIntro.astro';
 import TierLadder from '../../components/TierLadder.astro';
 import JumpseatSlot from '../../components/JumpseatSlot.astro';
 import { FACEBOOK_GROUP } from '../../data/site';
 import { products } from '../../data/essentials';
 import { bagCategories } from '../../data/bags';
-import { pickCount, checkedLabel } from '../../data/catalog';
+import { pickCount, navMeta } from '../../data/catalog';
 
 /**
  * Crew Essentials — ONE page.
  *
- * Every category is a pill. Picking one swaps its whole content into this page
- * in place: a worked category shows its jumpseat and three-tier ladder, one we
- * have not worked through yet shows its single pick. No navigation, no cards
- * that unfold, no route per category.
+ * Every category is a row in the category nav (.catnav — a dropdown up to
+ * 1400px, a permanent side rail above it). Picking one swaps its whole
+ * content into this page in place: a worked category shows its jumpseat and
+ * three-tier ladder, one we have not worked through yet shows its single
+ * pick. No navigation, no cards that unfold, no route per category.
  *
  * Two earlier attempts are worth not repeating. A card that grew into its
  * ladder inside a grid row could not be linked to or found by search. A route
  * per category fixed that and made the reader juggle pages to compare, which
  * is worse — comparing is the whole job of this page.
  *
- * The pill is the site's switcher for views WITHIN a page (.sectiontabs is for
- * sibling pages, on dark). See the note in BaseTabs.astro.
- *
  * Every panel is rendered server-side and hidden; the script only flips which
  * one is visible. That keeps all of it in the HTML for search and for a reader
  * with no JavaScript, who gets the first category rather than a dead page.
  */
-/**
- * Every bag category is checked in one pass, so they share a date and the page
- * can state it once. If they ever diverge this has to move back per-category.
- */
-const CHECKED_LABEL = checkedLabel(bagCategories[0]!.checked);
-
 const tabs = [
   ...bagCategories.map((category) => ({
     key: category.key,
     label: category.label,
     icon: category.icon,
-    count: pickCount(category),
+    isLadder: true,
+    rowMeta: `${pickCount(category)} picks`,
+    fullMeta: navMeta(category),
     category,
     product: null,
   })),
@@ -47,7 +43,9 @@ const tabs = [
     key: product.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     label: product.title,
     icon: product.icon,
-    count: 0,
+    isLadder: false,
+    rowMeta: undefined,
+    fullMeta: 'One pick · not a full ladder yet',
     category: null,
     product,
   })),
@@ -75,90 +73,62 @@ const tabs = [
 
   <section class="band">
     <div class="wrap">
-      <div class="pillbar" id="catbar">
-        <div class="pillrail" role="tablist" aria-label="Gear categories">
+      <div class="ess-layout" id="essLayout">
+        <CategoryNav tabs={tabs} />
+        <div class="catpanels">
           {
             tabs.map((tab, i) => (
-              <button
-                class="pill"
-                type="button"
-                role="tab"
-                id={`tab-${tab.key}`}
-                aria-controls={`panel-${tab.key}`}
-                aria-selected={i === 0 ? 'true' : 'false'}
-                aria-pressed={i === 0}
-                data-tab={tab.key}
+              <div
+                class="catpanel"
+                id={`panel-${tab.key}`}
+                role="tabpanel"
+                aria-labelledby={`tab-${tab.key}`}
+                data-panel={tab.key}
+                data-meta={tab.fullMeta}
+                hidden={i !== 0}
               >
-                <Icon name={tab.icon} />
-                {tab.label}
-                {tab.count > 0 && <span class="count">{tab.count}</span>}
-              </button>
+                {tab.category ? (
+                  <>
+                    <div class="jumprow">
+                      {/* Above the ladder — Cole's call. It is the pick crew ask about most. */}
+                      <JumpseatSlot category={tab.category} />
+                      <TierIntro />
+                    </div>
+                    <TierLadder category={tab.category} />
+                    <p class="ladder-note">{tab.category.note}</p>
+                  </>
+                ) : (
+                  <>
+                    <div class="solopick">
+                      <span class="sp-icon">
+                        <Icon name={tab.product!.icon} />
+                      </span>
+                      <div class="sp-body">
+                        <span class="sp-tag">{tab.product!.tag}</span>
+                        <h2 class="sp-name">{tab.product!.title}</h2>
+                        <p class="sp-blurb">{tab.product!.blurb}</p>
+                        <a
+                          class="btn quiet sm"
+                          href={tab.product!.url}
+                          target="_blank"
+                          rel="noopener sponsored"
+                        >
+                          <Icon name="ph-amazon-logo" /> View on Amazon
+                        </a>
+                      </div>
+                    </div>
+                    <p class="ladder-note">
+                      We haven't worked this category all the way through yet — this is one pick, not a
+                      reviewed ladder. When crew have flown enough of them it gets the same three price
+                      levels and a named jumpseat pick, like Spinners and Rollaboards.
+                    </p>
+                  </>
+                )}
+              </div>
             ))
           }
         </div>
       </div>
-
-      {/* No count line here. "7 picks" was the number on the pill just above,
-          and "$160 – $1,050" summarised a ladder that is already organised into
-          visible price brackets — a stat restating the structure you are about
-          to scroll through. The one fact a reader can't work out for themselves
-          is how stale the prices are, and that now sits with the disclosure at
-          the foot, where someone is actually deciding whether to trust a link. */}
-      <div class="toolrow">
-        <span class="quietbtns">
-          <a class="txtbtn" href="/fa-approved/">How the tiers work</a>
-          <span class="tdot">·</span>
-          <a class="txtbtn" href="#note">How the links work</a>
-        </span>
-      </div>
-
-      {
-        tabs.map((tab, i) => (
-          <div
-            class="catpanel"
-            id={`panel-${tab.key}`}
-            role="tabpanel"
-            aria-labelledby={`tab-${tab.key}`}
-            data-panel={tab.key}
-            hidden={i !== 0}
-          >
-            {tab.category ? (
-              <>
-                {/* Above the ladder — Cole's call. It is the pick crew ask about most. */}
-                <JumpseatSlot category={tab.category} />
-                <TierLadder category={tab.category} />
-                <p class="ladder-note">{tab.category.note}</p>
-              </>
-            ) : (
-              <>
-                <div class="solopick">
-                  <span class="sp-icon">
-                    <Icon name={tab.product!.icon} />
-                  </span>
-                  <div class="sp-body">
-                    <span class="sp-tag">{tab.product!.tag}</span>
-                    <h2 class="sp-name">{tab.product!.title}</h2>
-                    <p class="sp-blurb">{tab.product!.blurb}</p>
-                    <a
-                      class="btn quiet sm"
-                      href={tab.product!.url}
-                      target="_blank"
-                      rel="noopener sponsored"
-                    >
-                      <Icon name="ph-amazon-logo" /> View on Amazon
-                    </a>
-                  </div>
-                </div>
-                <p class="ladder-note">
-                  We haven't worked this category all the way through yet — this is one pick, not a
-                  reviewed ladder. When crew have flown enough of them it gets the same three price
-                  levels and a named jumpseat pick, like Spinners and Rollaboards.
-                </p>
-              </>
-            )}
-          </div>
-        ))
-      }
 
       <div class="notice warn spaced" id="note">
         <Icon name="ph-hand-heart" />
@@ -166,10 +136,6 @@ const tabs = [
           <b>A quick note.</b> As an Amazon Associate, the Hangar earns from qualifying purchases —
           at no extra cost to you. These are genuine crew picks; buying through these links helps
           keep the group's guides free and up to date. Thank you for the support.
-          {/* The one thing a reader can't judge for themselves, next to the links
-              it applies to rather than as a stat at the top of the page. */}
-          <br />
-          Every price here was checked in {CHECKED_LABEL}.
         </div>
       </div>
 
@@ -195,35 +161,82 @@ const tabs = [
      The hash is written so a category can still be linked to and shared. It is
      set with replaceState rather than location.hash: assigning the hash scrolls
      the panel under the sticky header, and it would also stack a history entry
-     per pill, turning the back button into an undo of clicks. */
+     per row, turning the back button into an undo of clicks.
+
+     The nav itself is a dropdown everywhere except very wide viewports, where
+     CSS turns the same list into a permanent side rail (see the CATEGORY NAV
+     block in system.css). On the two reviewed ladders, the nav has a real
+     neighbour — the "Same bar, three prices" card — to sit beside instead of
+     leaving open space, so the same nav DOM node is moved into that panel's
+     own .jumprow while it's active, and returns to its default slot above the
+     panels everywhere else. */
 
   const bar = document.querySelector<HTMLElement>('#catbar');
 
   if (bar) {
-    const pills = [...bar.querySelectorAll<HTMLButtonElement>('.pill')];
+    const trigger = document.querySelector<HTMLButtonElement>('#cnTrigger');
+    const rows = [...bar.querySelectorAll<HTMLButtonElement>('.cn-row')];
     const panels = [...document.querySelectorAll<HTMLElement>('.catpanel')];
+    const triggerIcon = document.querySelector<HTMLElement>('#cnTriggerIcon');
+    const triggerName = document.querySelector<HTMLElement>('#cnTriggerName');
+    const triggerMeta = document.querySelector<HTMLElement>('#cnTriggerMeta');
 
-    const show = (key: string, pushHash = true) => {
-      const pill = pills.find((p) => p.dataset.tab === key);
-      if (!pill) return;
-
-      for (const p of pills) {
-        const on = p === pill;
-        p.setAttribute('aria-pressed', String(on));
-        p.setAttribute('aria-selected', String(on));
-      }
-      for (const panel of panels) panel.hidden = panel.dataset.panel !== key;
-      if (pushHash) history.replaceState(null, '', `#${key}`);
-
-      // Keep the chosen pill in view on a phone, where the rail scrolls.
-      pill.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
+    const closeList = () => {
+      bar.removeAttribute('data-open');
+      trigger?.setAttribute('aria-expanded', 'false');
+    };
+    const openList = () => {
+      bar.setAttribute('data-open', '1');
+      trigger?.setAttribute('aria-expanded', 'true');
     };
 
-    for (const pill of pills) {
-      pill.addEventListener('click', () => show(pill.dataset.tab ?? ''));
+    const homeParent = bar.parentNode!;
+    const homeNext = bar.nextSibling;
+    const jumprowSlots: Record<string, HTMLElement | null> = {};
+    for (const row of rows) {
+      const key = row.dataset.tab ?? '';
+      jumprowSlots[key] = document.querySelector<HTMLElement>(`#panel-${key} .jumprow`);
+    }
+    const placeNav = (key: string) => {
+      const slot = jumprowSlots[key];
+      if (slot) slot.insertBefore(bar, slot.firstChild);
+      else homeParent.insertBefore(bar, homeNext);
+    };
+
+    const show = (key: string, pushHash = true) => {
+      const row = rows.find((r) => r.dataset.tab === key);
+      if (!row) return;
+
+      for (const r of rows) r.setAttribute('aria-selected', String(r === row));
+      for (const panel of panels) panel.hidden = panel.dataset.panel !== key;
+      const panel = panels.find((p) => p.dataset.panel === key);
+
+      const icon = row.querySelector('i');
+      if (triggerIcon && icon) triggerIcon.className = icon.className;
+      const name = row.querySelector('.cn-name');
+      if (triggerName && name) triggerName.textContent = name.textContent;
+      if (triggerMeta) triggerMeta.textContent = panel?.dataset.meta ?? '';
+
+      placeNav(key);
+      closeList();
+      if (pushHash) history.replaceState(null, '', `#${key}`);
+
+      // Keep the chosen row in view when the dropdown is open on a phone.
+      row.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
+    };
+
+    trigger?.addEventListener('click', () => {
+      if (bar.hasAttribute('data-open')) closeList();
+      else openList();
+    });
+    document.addEventListener('click', (e) => {
+      if (!bar.contains(e.target as Node)) closeList();
+    });
+    for (const row of rows) {
+      row.addEventListener('click', () => show(row.dataset.tab ?? ''));
     }
 
     const fromHash = decodeURIComponent(location.hash.slice(1));
-    show(pills.some((p) => p.dataset.tab === fromHash) ? fromHash : (pills[0]?.dataset.tab ?? ''), false);
+    show(rows.some((r) => r.dataset.tab === fromHash) ? fromHash : (rows[0]?.dataset.tab ?? ''), false);
   }
 </script>
