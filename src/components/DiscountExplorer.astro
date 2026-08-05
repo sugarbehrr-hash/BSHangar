@@ -34,7 +34,11 @@ const zoneId = (categoryKey: string, zoneName: string) =>
 
 <div data-explorer>
   <div class="pillbar" data-filterbar>
-    <div class="pillrail">
+    {/* `split` when the categories fit the row as segments — every base has
+        exactly two, and a rail you must swipe to discover a second option is
+        a worse control than one showing both. Derived from the real count, so
+        a base that ever grows past three falls back to the swiping rail. */}
+    <div class:list={['pillrail', base.categories.length <= 3 && 'split']}>
       {
         base.categories.map((c) => (
           <button

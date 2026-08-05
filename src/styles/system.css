@@ -1415,6 +1415,16 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
      toggle sits, and a rail that bled under it would slide pills beneath a
      button. Pills still clip at that edge, which is the "swipe me" cue. */
   .pillrail { flex: 1 1 0; min-width: 0; display: flex; gap: 8px; overflow-x: auto; flex-wrap: nowrap; margin: 0 0 0 -18px; padding: 2px 8px 2px 18px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  /* Segmented: few enough options to show at once, so they share the row as
+     equal halves and nothing scrolls or clips. No bleed — there is nothing
+     off-screen to hint at. The component sets .split from the real count. */
+  .pillrail.split { overflow-x: visible; margin-left: 0; padding-left: 0; padding-right: 0; }
+  .pillrail.split .pill { flex: 1 1 0; min-width: 0; justify-content: center; gap: 6px; padding: 0 12px; white-space: nowrap; }
+  /* The glyph is the one thing here that carries nothing — "Food & Drink"
+     already says fork-and-knife — and it is exactly what pushed the label
+     onto a second line. The count stays; it is the reason to tap the other
+     half. */
+  .pillrail.split .pill i { display: none; }
   .pillrail::-webkit-scrollbar { display: none; }
   .pillrail .pill { flex: none; }
 }
