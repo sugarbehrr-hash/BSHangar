@@ -6,7 +6,7 @@ import JumpseatSlot from '../../components/JumpseatSlot.astro';
 import { FACEBOOK_GROUP } from '../../data/site';
 import { products } from '../../data/essentials';
 import { bagCategories } from '../../data/bags';
-import { pickCount, priceRange } from '../../data/catalog';
+import { pickCount, checkedLabel } from '../../data/catalog';
 
 /**
  * Crew Essentials — ONE page.
@@ -28,6 +28,12 @@ import { pickCount, priceRange } from '../../data/catalog';
  * one is visible. That keeps all of it in the HTML for search and for a reader
  * with no JavaScript, who gets the first category rather than a dead page.
  */
+/**
+ * Every bag category is checked in one pass, so they share a date and the page
+ * can state it once. If they ever diverge this has to move back per-category.
+ */
+const CHECKED_LABEL = checkedLabel(bagCategories[0]!.checked);
+
 const tabs = [
   ...bagCategories.map((category) => ({
     key: category.key,
@@ -92,8 +98,13 @@ const tabs = [
         </div>
       </div>
 
+      {/* No count line here. "7 picks" was the number on the pill just above,
+          and "$160 – $1,050" summarised a ladder that is already organised into
+          visible price brackets — a stat restating the structure you are about
+          to scroll through. The one fact a reader can't work out for themselves
+          is how stale the prices are, and that now sits with the disclosure at
+          the foot, where someone is actually deciding whether to trust a link. */}
       <div class="toolrow">
-        <span class="count-label" id="catmeta" aria-live="polite" />
         <span class="quietbtns">
           <a class="txtbtn" href="/fa-approved/">How the tiers work</a>
           <span class="tdot">·</span>
@@ -109,11 +120,6 @@ const tabs = [
             role="tabpanel"
             aria-labelledby={`tab-${tab.key}`}
             data-panel={tab.key}
-            data-meta={
-              tab.category
-                ? `${pickCount(tab.category)} picks · ${priceRange(tab.category)} · checked ${tab.category.checked.replace('-', '/')}`
-                : 'One pick — this category is not worked through yet'
-            }
             hidden={i !== 0}
           >
             {tab.category ? (
@@ -160,6 +166,10 @@ const tabs = [
           <b>A quick note.</b> As an Amazon Associate, the Hangar earns from qualifying purchases —
           at no extra cost to you. These are genuine crew picks; buying through these links helps
           keep the group's guides free and up to date. Thank you for the support.
+          {/* The one thing a reader can't judge for themselves, next to the links
+              it applies to rather than as a stat at the top of the page. */}
+          <br />
+          Every price here was checked in {CHECKED_LABEL}.
         </div>
       </div>
 
@@ -188,7 +198,6 @@ const tabs = [
      per pill, turning the back button into an undo of clicks. */
 
   const bar = document.querySelector<HTMLElement>('#catbar');
-  const meta = document.querySelector<HTMLElement>('#catmeta');
 
   if (bar) {
     const pills = [...bar.querySelectorAll<HTMLButtonElement>('.pill')];
@@ -204,7 +213,6 @@ const tabs = [
         p.setAttribute('aria-selected', String(on));
       }
       for (const panel of panels) panel.hidden = panel.dataset.panel !== key;
-      if (meta) meta.textContent = panels.find((p) => p.dataset.panel === key)?.dataset.meta ?? '';
       if (pushHash) history.replaceState(null, '', `#${key}`);
 
       // Keep the chosen pill in view on a phone, where the rail scrolls.
