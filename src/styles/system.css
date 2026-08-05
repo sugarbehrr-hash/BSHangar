@@ -1233,20 +1233,15 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 /* ---------- JUMPSEAT ----------
    The crew's own pick, and deliberately NOT a fourth column. Built from the
    ladder's own parts — same solid header, same pick row — so it reads as the
-   same system, while the red (no tier uses it), the label above and the name
-   on it make clear it is a different KIND of claim. Cole asked for it above
-   the ladder rather than below: it is the most-read thing on the card. */
+   same system, while the red (no tier uses it) and the name on it make clear
+   it is a different KIND of claim. Cole asked for it above the ladder rather
+   than below: it is the most-read thing on the card. */
 /* No bottom margin of its own — inside .jumprow the row's own gap does the
    spacing, and outside it .jumprow still wraps every use (see below). Flex
    column so .jumpseat can stretch to fill the row's full height instead of
-   sitting shorter than .tierintro beside it, while .jump-label still sizes
-   to its own content above it. */
+   sitting shorter than .tierintro beside it. */
 .jumpwrap { margin-bottom: 0; display: flex; flex-direction: column; }
-.jump-label { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-500); }
-.jump-label::after { content: ""; flex: 1; height: 1px; background: var(--cream-300); }
 .jumpseat { flex: 1; background: var(--white); border: 1.5px solid var(--cream-300); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
-.js-by { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-heading); font-weight: 800; font-size: 0.8125rem; }
-.js-by i { font-size: 0.875rem; }
 .js-kicker { flex: 1; min-width: 150px; font-family: var(--font-heading); font-weight: 700; font-size: 0.8125rem; opacity: .8; }
 .js-here { font-family: var(--font-heading); font-weight: 800; font-size: 0.625rem; letter-spacing: .12em; text-transform: uppercase; color: var(--navy-900); background: #fff; border-radius: var(--radius-pill); padding: 4px 10px; }
 

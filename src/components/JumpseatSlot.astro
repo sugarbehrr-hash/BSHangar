@@ -51,12 +51,9 @@ const headline = HEADLINE.map((h) => figures.find((f) => f.key === h.key)!);
 ---
 
 <div class="jumpwrap" style={`--tc: ${JUMPSEAT.color}; --tfg: #fff;`}>
-  <p class="jump-label">Not on the ladder</p>
-
   <div class="jumpseat">
     <div class="tc-head">
       <span class="tc-name">{JUMPSEAT.label}</span>
-      <span class="js-by"><Icon name="ph-user" /> {pick.by}</span>
       <span class="js-kicker">{JUMPSEAT.explain.headline}</span>
       {here && <span class="js-here">This page</span>}
     </div>
