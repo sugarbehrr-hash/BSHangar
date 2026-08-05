@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feedback strip — states harness</title>
+<!--
+  Every state of the per-card feedback strip, on a real card shell, side by side.
+
+  WHY THIS EXISTS
+  The strip lives inside a client-rendered card 4,800px down a 40,000px document
+  that re-renders itself on every lens toggle. Getting eyes on all six states in
+  the guide itself means answering six cards in six different ways and scrolling
+  between them, which is slow enough that in practice nobody checks the states
+  that only appear when something has gone wrong — the queued and failed ones.
+
+  The card shell below is copied from card-render.js:399 verbatim (same grid,
+  same padding, same radius, same border) so the strip's negative margins are
+  cancelling REAL numbers. If that card spec ever changes, this harness must be
+  updated with it, or it starts lying.
+
+  Matches the repo's existing _*-lab.html convention. Not linked from anywhere;
+  robots.txt keeps it out of search. Open at /_feedback-lab.html
+-->
+<link rel="stylesheet" href="/contract/_assets/tokens/colors.css">
+<link rel="stylesheet" href="/contract/_assets/tokens/fonts.css">
+<link rel="stylesheet" href="/contract/_assets/tokens/typography.css">
+<link rel="stylesheet" href="/contract/_assets/tokens/spacing.css">
+<link rel="stylesheet" href="/contract/_assets/tokens/effects.css">
+<style>
+  body { margin:0; background:var(--cream-200,#efe9dc); font-family:var(--font-body,system-ui); color:var(--ink-700,#3a4256); }
+  .lab { max-width:1120px; margin:0 auto; padding:28px 20px 80px; }
+  .lab h1 { font-family:var(--font-display,serif); text-transform:uppercase; font-size:1.8rem; color:var(--navy-900,#1f2a44); margin:0 0 4px; }
+  .lab .sub { font-size:13.5px; color:var(--ink-500,#7c8398); margin:0 0 26px; }
+  .case { margin:0 0 30px; }
+  .case > .name { font-family:var(--font-heading,inherit); font-size:11px; font-weight:800; letter-spacing:.1em;
+                  text-transform:uppercase; color:var(--ink-500,#7c8398); margin:0 0 8px; }
+  .case > .note { font-size:12.5px; color:var(--ink-500,#7c8398); margin:0 0 10px; max-width:70ch; }
+  /* Card shell — copied from card-render.js:399. Do not "tidy" these numbers. */
+  .vc-card { background:var(--white,#fff); border:1.5px solid var(--cream-300,#e3dccb); border-radius:16px;
+             padding:20px 16px 20px 22px; margin-bottom:16px; display:grid;
+             grid-template-columns:1fr 224px; gap:14px; }
+  .vc-rail { display:flex; flex-direction:column; gap:10px; align-self:start; }
+  .fake-panel { background:var(--cream-100,#faf6ef); border-radius:11px; padding:12px 13px; font-size:11.5px;
+                color:var(--ink-500,#7c8398); }
+  .fake-panel.navy { background:var(--navy-900,#1f2a44); color:#cdd3e0; }
+  .vc-card h3 { font-family:var(--font-display,serif); font-size:1.25rem; color:var(--navy-900,#1f2a44); margin:0 0 8px; }
+  .vc-card p { font-size:14px; line-height:1.55; margin:0; }
+  @media(max-width:640px){ .vc-card{ grid-template-columns:1fr } }
+</style>
+</head>
+<body>
+<div class="lab">
+  <h1>Feedback strip — every state</h1>
+  <p class="sub">Real card geometry from <code>card-render.js:399</code>. Resize the window to 375px to check the collapsed grid.</p>
+  <div id="cases"></div>
+</div>
+
+<script src="/contract/_assets/guide-feedback.js"></script>
+<script>
+/*
+  The bundle only decorates cards it recognises from window.ASSESSMENT, and only
+  on a URL whose last path segment is a valid document slug — neither is true
+  here. So this harness drives the exported render helpers directly rather than
+  faking a guide, which keeps it honest: it renders the same markup the real
+  strip renders, from the same code, and cannot drift into a pretty lie.
+*/
+const CASES = [
+  ['idle', 'Never answered. The only state most readers ever see.', null, {}],
+  ['note form open', 'After "Not really". Header inverts to navy — the open-header rule.', null, { open: true, editing: true, verdict: 'unclear' }],
+  ['open, mid-note', 'Draft text plus a remembered base. Survives a host re-render.', null, { open: true, editing: true, verdict: 'unclear', draft: 'Says 10 hours but my base tells us 9. Which is it?', base: 'CLT' }],
+  ['answered — clear', 'One tap, delivered.', { verdict: 'clear', status: 'synced', attempts: 0 }, {}],
+  ['answered — unclear', 'Note delivered.', { verdict: 'unclear', status: 'synced', attempts: 0 }, {}],
+  ['queued', 'Send failed at least once. Held in the outbox, retried on reconnect.', { verdict: 'clear', status: 'pending', attempts: 1 }, {}],
+  ['failed', 'Rejected past the retry budget. The only state that asks for anything.', { verdict: 'unclear', status: 'failed', attempts: 3 }, {}],
+  ['withdrawn', 'Undo taken. Reads as unanswered again; the record survives server-side.', { verdict: 'withdrawn', status: 'synced', attempts: 0 }, {}],
+];
+
+const host = document.getElementById('cases');
+
+for (const [name, note, answer, ui] of CASES) {
+  const wrap = document.createElement('div');
+  wrap.className = 'case';
+  wrap.innerHTML =
+    '<p class="name">' + name + '</p>' +
+    '<p class="note">' + note + '</p>' +
+    '<div class="vc-card">' +
+      '<div><h3>Reserve short-call rest</h3>' +
+      '<p>You get 10 hours behind a closed door before a short call can be assigned, measured from release.</p></div>' +
+      '<div class="vc-rail"><div class="fake-panel">What is this? · Who it covers · Starts</div>' +
+      '<div class="fake-panel navy">Worth to each group</div></div>' +
+    '</div>';
+
+  const strip = document.createElement('div');
+  strip.className = 'bsf-strip';
+  strip.setAttribute('data-bsf-for', 'lab-' + name.replace(/[^a-z]+/g, '-'));
+  wrap.querySelector('.vc-card').appendChild(strip);
+  host.appendChild(wrap);
+
+  window.__bsfRenderCase(strip, { answer, ...ui });
+}
+</script>
+</body>
+</html>

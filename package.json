@@ -8,21 +8,30 @@
     "node": ">=22.12.0"
   },
   "scripts": {
+    "predev": "node scripts/build-guide-feedback.mjs",
     "dev": "astro dev",
-    "build": "node scripts/gen-icons.mjs && node scripts/gen-qr.mjs && astro build && node scripts/gen-og.mjs && pagefind --site dist && node scripts/check-links.mjs && node scripts/check-styles.mjs && node scripts/gen-sw.mjs",
+    "build": "node scripts/build-guide-feedback.mjs && node scripts/gen-icons.mjs && node scripts/gen-qr.mjs && astro build && node scripts/gen-og.mjs && pagefind --site dist && node scripts/check-links.mjs && node scripts/check-styles.mjs && node scripts/gen-sw.mjs",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test:unit": "vitest run tests/unit",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-bshangar \"vitest run tests/rules\"",
+    "feedback:report": "node scripts/feedback-report.mjs"
   },
   "dependencies": {
     "astro": "^7.1.1",
+    "firebase": "^12.17.1",
     "pdfjs-dist": "^6.1.200"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@firebase/rules-unit-testing": "^5.0.1",
     "@phosphor-icons/core": "^2.1.1",
+    "esbuild": "^0.28.1",
+    "firebase-admin": "^14.2.0",
     "pagefind": "^1.5.2",
     "qrcode-generator": "^2.0.4",
     "satori": "^0.28.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }

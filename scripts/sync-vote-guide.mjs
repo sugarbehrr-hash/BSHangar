@@ -40,7 +40,17 @@ const ANALYZER_OUT = resolve(ROOT, '../contract-vote-analyzer/PSA/out_v2');
 const ASSETS_URL = '/contract/_assets';
 const ASSETS_DIR = join(ROOT, 'public/contract/_assets');
 
-/** Shared by both documents; copied once. */
+/**
+ * Shared by both documents; copied once.
+ *
+ * `review.js` used to be in this list. It was the beta fact-checking layer —
+ * always-on Confirm/Flag controls plus a fixed bottom bar, persisting to
+ * localStorage and exporting a JSON file the reviewer emailed back. It has been
+ * replaced by the permanent reader-feedback layer, which is site-owned
+ * (src/guide/feedback/) and built straight into the asset directory by
+ * scripts/build-guide-feedback.mjs rather than copied from the repo root. Since
+ * that layer is not a vendored file, it deliberately does not appear here.
+ */
 const SHARED = [
   'support.js',
   '_ds_bundle.js',
@@ -48,15 +58,28 @@ const SHARED = [
   'assessment-charts.js',
   'assessment.data.js',
   'styles.css',
-  'review.js',
 ];
+
+/**
+ * The feedback layer's entry bundle, injected in place of the retired
+ * review.js script tag. Produced by scripts/build-guide-feedback.mjs, which
+ * writes it directly into ASSETS_DIR — so unlike everything in SHARED it is
+ * never copied from the repo root.
+ */
+const FEEDBACK_BUNDLE = 'guide-feedback.js';
 
 const TOKENS = ['colors.css', 'effects.css', 'fonts.css', 'spacing.css', 'typography.css'];
 
-/** source file at repo root -> published directory under public/ */
+/**
+ * source file at repo root -> published directory under public/
+ *
+ * `feedback` marks the documents that carry per-card reader feedback. Only the
+ * guide renders `data-card-id` cards; the report has none, so a prompt there
+ * would have nothing to attach to.
+ */
 const DOCUMENTS = [
-  { src: 'index.html', out: 'public/contract/2026-ta-vote-guide' },
-  { src: 'report.html', out: 'public/contract/2026-ta-report' },
+  { src: 'index.html', out: 'public/contract/2026-ta-vote-guide', feedback: true },
+  { src: 'report.html', out: 'public/contract/2026-ta-report', feedback: false },
 ];
 
 function ensureDir(path) {
@@ -201,17 +224,70 @@ function rewriteAssetPaths(html) {
   return { out, count: assets, links };
 }
 
+/** Matches the retired beta layer's script tag in the vendored export. */
+// Anchored to its own line: the trailing match stops at the newline rather
+// than using \s*, which would swallow the next line's indentation too.
+const REVIEW_TAG = /[ \t]*<script\s+src="\.\/review\.js"[^>]*>[^<]*<\/script>[ \t]*\r?\n?/;
+const FEEDBACK_TAG = `  <script src="${ASSETS_URL}/${FEEDBACK_BUNDLE}"></script>\n`;
+
+/**
+ * Swaps the vendored beta review layer for the permanent feedback layer.
+ *
+ * This runs against the vendored source rather than being committed into it,
+ * because index.html is a design-system export: anything edited there is lost
+ * the next time the document is regenerated. Doing the swap here means a fresh
+ * export drops straight in and still publishes with feedback attached.
+ *
+ * The already-swapped case is a no-op so the script stays re-runnable. The
+ * neither-case throws: if a future export stops emitting the review.js tag,
+ * that is the one signal we get that the injection point moved, and silently
+ * publishing a guide with no feedback layer is exactly the kind of quiet
+ * regression this repo has shipped before.
+ */
+function swapFeedbackLayer(html, doc) {
+  if (!doc.feedback) {
+    if (REVIEW_TAG.test(html)) {
+      throw new Error(
+        `sync-vote-guide: ${doc.src} carries a review.js tag but is not marked feedback:true — ` +
+          'decide whether it should have the feedback layer, then update DOCUMENTS.'
+      );
+    }
+    return { out: html, note: '' };
+  }
+
+  if (html.includes(`${ASSETS_URL}/${FEEDBACK_BUNDLE}`)) {
+    return { out: html, note: ' (feedback layer already present)' };
+  }
+
+  if (!REVIEW_TAG.test(html)) {
+    throw new Error(
+      `sync-vote-guide: ${doc.src} has neither the review.js tag nor the feedback bundle. ` +
+        'The export changed shape — re-point the injection in swapFeedbackLayer().'
+    );
+  }
+
+  return { out: html.replace(REVIEW_TAG, FEEDBACK_TAG), note: ' (feedback layer injected)' };
+}
+
 for (const doc of DOCUMENTS) {
   const source = join(ROOT, doc.src);
   if (!existsSync(source)) throw new Error(`sync-vote-guide: missing document "${doc.src}"`);
 
-  const { out, count, links } = rewriteAssetPaths(readFileSync(source, 'utf8'));
+  if (doc.feedback && !existsSync(join(ASSETS_DIR, FEEDBACK_BUNDLE))) {
+    throw new Error(
+      `sync-vote-guide: ${FEEDBACK_BUNDLE} is missing from ${ASSETS_DIR}. ` +
+        'Run `node scripts/build-guide-feedback.mjs` first.'
+    );
+  }
+
+  const swapped = swapFeedbackLayer(readFileSync(source, 'utf8'), doc);
+  const { out, count, links } = rewriteAssetPaths(swapped.out);
   const dir = join(ROOT, doc.out);
   ensureDir(dir);
   writeFileSync(join(dir, 'index.html'), out);
   log(
     `  doc    ${doc.src.padEnd(24)} -> ${doc.out}/index.html  ` +
-      `(${count} assets, ${links} cross-link${links === 1 ? '' : 's'})`
+      `(${count} assets, ${links} cross-link${links === 1 ? '' : 's'})${swapped.note}`
   );
 }
 

@@ -1,0 +1,158 @@
+rules_version = '2';
+
+// Reader feedback on published documents.
+//
+// THIS FILE IS THE ENTIRE SERVER.
+//
+// bluestreakhangar.com is a static site on GitHub Pages. There is no backend,
+// no API layer, and no place to validate a request before it reaches the
+// database. Everything a normal app would do in a route handler — authorize,
+// validate types, cap lengths, reject fields the client has no business
+// setting — has to happen here or it does not happen at all. Read every rule
+// below as if it were an Express handler, because that is what it is.
+//
+// Threat model: this collection is writable by anyone who loads the guide. The
+// controls, in order of how much weight they actually carry:
+//
+//   1. App Check (reCAPTCHA v3), enforced in the Firebase console, not here.
+//      This is the load-bearing anti-abuse control. Anonymous auth is free to
+//      farm — a script can mint thousands of uids — so auth alone stops nobody.
+//      App Check is what makes each of those uids cost something.
+//   2. The deterministic document id (see ownsPath). One signed-in user gets
+//      exactly ONE record per card, enforced by the path itself. There is no
+//      way to pile duplicates onto a card without minting a new uid for each.
+//   3. Field validation below: closed key set, enum membership, length caps.
+//
+// Reads are denied outright, including to the author. Feedback is a private
+// inbox — it is never rendered back to any reader — and the client has no need
+// to read: it keeps a local echo of its own answers in localStorage, and
+// triage runs through the Admin SDK (scripts/feedback-report.mjs), which
+// bypasses these rules entirely.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // feedback/{documentId}__{blockId}__{uid}
+    //
+    // documentId — the published document ("2026-ta-vote-guide")
+    // blockId    — the card within it ("pay-levelset", "peer_benchmark")
+    // uid        — the anonymous Firebase uid of whoever answered
+    match /feedback/{feedbackId} {
+
+      // Ties the path to the payload in one expression: a caller cannot write
+      // to a path that disagrees with the doc/block/uid it claims. This is
+      // also what enforces one-record-per-card-per-user — a second answer to
+      // the same card resolves to the same path, so it is an update (validated
+      // below) rather than a new row.
+      //
+      // Exact string equality, so the underscores inside some block ids
+      // (peer_benchmark, union_accountability — 8 of the 57 live ids) are not
+      // a parsing hazard: nothing ever splits this key back apart. Triage
+      // reads the doc/block FIELDS, never the key.
+      function ownsPath(data) {
+        return request.auth != null
+            && feedbackId == data.doc + '__' + data.block + '__' + request.auth.uid;
+      }
+
+      // A closed key set, checked in both directions. Anything unlisted is
+      // rejected rather than silently stored — an open map on a public write
+      // endpoint is how a feedback collection becomes someone else's free file
+      // host.
+      function hasExactKeys(data) {
+        return data.keys().hasOnly(
+                 ['doc', 'block', 'verdict', 'note', 'base',
+                  'contentVersion', 'status', 'createdAt', 'updatedAt'])
+            && data.keys().hasAll(
+                 ['doc', 'block', 'verdict', 'note', 'base',
+                  'contentVersion', 'status', 'createdAt', 'updatedAt']);
+      }
+
+      // matches() is a full-string match in Firestore rules, so these are
+      // anchored without needing ^ and $.
+      //
+      // `doc` slugs are ours and stay hyphen-only. `block` has to tolerate the
+      // underscores the analyzer already emits in marketCards[].id — verified
+      // against all 57 live ids in assessment.data.js.
+      function hasValidShape(data) {
+        return data.doc is string
+            && data.doc.matches('[a-z0-9][a-z0-9-]{0,63}')
+
+            && data.block is string
+            && data.block.matches('[a-z0-9][a-z0-9_-]{0,63}')
+
+            // 'withdrawn' is how a reader takes an answer back. Deletes are
+            // denied to the public, so retraction has to be a state on the
+            // record rather than its absence — which also means we can tell
+            // "never answered" apart from "answered, then thought better of
+            // it". The report excludes withdrawn records from its counts.
+            && data.verdict in ['clear', 'unclear', 'withdrawn']
+
+            // Free text. Present but empty when the reader only tapped a
+            // verdict. This cap is the only thing standing between this
+            // collection and an unbounded public write.
+            && data.note is string
+            && data.note.size() <= 1000
+
+            // Optional crew base ("CLT"). Empty string when not given.
+            && data.base is string
+            && data.base.size() <= 8
+
+            // ASSESSMENT.meta.version at the time of writing. Lets the triage
+            // report flag notes written against text that has since been
+            // regenerated, instead of silently misattributing them.
+            && data.contentVersion is string
+            && data.contentVersion.size() <= 24;
+      }
+
+      // Client clocks lie, and on this audience they lie a lot — phones held
+      // in the wrong timezone, tablets left off for a month. Pin every stamp
+      // to server time so the report's --since window means something.
+      //
+      // createdAt is frozen on amend: only updatedAt advances.
+      function hasServerTime(data) {
+        return data.createdAt == request.time
+            && data.updatedAt == request.time;
+      }
+
+      allow create: if ownsPath(request.resource.data)
+                    && hasExactKeys(request.resource.data)
+                    && hasValidShape(request.resource.data)
+                    && request.resource.data.status == 'new'
+                    && hasServerTime(request.resource.data);
+
+      // Amending an existing answer: the reader changed their mind, added a
+      // note after tapping "Yes", or withdrew.
+      //
+      // The identity fields are frozen — you cannot repoint your record at a
+      // different card, or at someone else's — and createdAt cannot move.
+      //
+      // status is deliberately NOT frozen, and is required to be 'new'. Two
+      // reasons. Practically, the client cannot read its own record (reads are
+      // denied), so it has no way to echo back a value triage may have
+      // changed; requiring it to would break every amend made after we
+      // triaged. Substantively, an edited note SHOULD return to the queue —
+      // the content changed, so our previous read of it is stale. The report
+      // orders by updatedAt, which makes re-opened items obvious.
+      allow update: if ownsPath(request.resource.data)
+                    && hasExactKeys(request.resource.data)
+                    && hasValidShape(request.resource.data)
+                    && request.resource.data.doc == resource.data.doc
+                    && request.resource.data.block == resource.data.block
+                    && request.resource.data.createdAt == resource.data.createdAt
+                    && request.resource.data.status == 'new'
+                    && request.resource.data.updatedAt == request.time;
+
+      // Private inbox. Nothing written here is readable by anyone through the
+      // client SDK — not other readers, not the author. Deletes are denied so
+      // a retraction stays an auditable state change (verdict: 'withdrawn')
+      // rather than a hole.
+      allow read, delete: if false;
+    }
+
+    // Everything else is closed. Adding a second document's feedback needs no
+    // rule change: `doc` is just a different slug in the same collection.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
