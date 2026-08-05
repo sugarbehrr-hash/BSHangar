@@ -28,7 +28,7 @@
  * Run: node scripts/sync-vote-guide.mjs
  */
 
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -67,6 +67,12 @@ const SHARED = [
  * never copied from the repo root.
  */
 const FEEDBACK_BUNDLE = 'guide-feedback.js';
+
+/**
+ * Built into ASSETS_DIR by scripts/build-guide-feedback.mjs rather than copied
+ * from the repo root, so the prune below must not treat them as strays.
+ */
+const BUILT_ASSETS = [FEEDBACK_BUNDLE, 'guide-feedback-net.js'];
 
 const TOKENS = ['colors.css', 'effects.css', 'fonts.css', 'spacing.css', 'typography.css'];
 
@@ -156,6 +162,29 @@ for (const token of TOKENS) {
   copyFileSync(source, join(ASSETS_DIR, 'tokens', token));
 }
 log(`  tokens ${TOKENS.length} files`);
+
+// --- 1b. Prune assets nothing publishes any more ----------------------------
+
+/**
+ * Removes files in ASSETS_DIR that this script no longer produces.
+ *
+ * This exists because dropping review.js from SHARED did not unpublish it: the
+ * script only ever wrote files, so the retired 20KB beta layer kept shipping to
+ * production for as long as the stale copy sat in the directory — referenced by
+ * nothing, served with a 200, and invisible in every diff because the file had
+ * not changed. Removing a file from SHARED must actually remove it.
+ *
+ * Deliberately scoped to the flat asset directory: `tokens/` is walked
+ * separately above, and anything the build steps drop here is listed in
+ * BUILT_ASSETS so a prune cannot race them.
+ */
+const EXPECTED = new Set([...SHARED, ...BUILT_ASSETS, 'ds-base.js', 'styles.css']);
+
+for (const entry of readdirSync(ASSETS_DIR, { withFileTypes: true })) {
+  if (entry.isDirectory() || EXPECTED.has(entry.name)) continue;
+  rmSync(join(ASSETS_DIR, entry.name));
+  log(`  prune  ${entry.name.padEnd(24)} -> removed (nothing publishes it)`);
+}
 
 // --- 2. ds-base.js, repointed at the shared asset directory -----------------
 
