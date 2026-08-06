@@ -14,14 +14,20 @@
  * firestore.rules.
  */
 
-/** Replace with the config from Firebase console → Project settings → Your apps. */
+/**
+ * From Firebase console → Project settings → Your apps.
+ *
+ * `measurementId` from that snippet is deliberately omitted: it exists only for
+ * Google Analytics, which this site does not load. Wiring it up would collect
+ * behavioural data on every reader and contradict what /privacy/ tells them.
+ */
 export const FIREBASE_CONFIG = {
-  apiKey: 'REPLACE_ME',
-  authDomain: 'REPLACE_ME.firebaseapp.com',
-  projectId: 'REPLACE_ME',
-  storageBucket: 'REPLACE_ME.firebasestorage.app',
-  messagingSenderId: 'REPLACE_ME',
-  appId: 'REPLACE_ME',
+  apiKey: 'AIzaSyDvTu6kE4cYGLCmAJpvRhRm_XTa2qL08nc',
+  authDomain: 'bluestreakhangar.firebaseapp.com',
+  projectId: 'bluestreakhangar',
+  storageBucket: 'bluestreakhangar.firebasestorage.app',
+  messagingSenderId: '855469999531',
+  appId: '1:855469999531:web:244ed20276332b2ba53eee',
 };
 
 /** Firebase console → App Check → your web app → reCAPTCHA v3. */
@@ -76,8 +82,23 @@ const EMULATOR_CONFIG = {
   appId: '1:000000000000:web:demo',
 };
 
+/**
+ * Localhost ALWAYS uses the emulator config, whether or not the real one is
+ * filled in.
+ *
+ * The earlier `isEmulated() && isUnconfigured()` was only correct while the
+ * placeholders were still in place. net.js calls connectFirestoreEmulator()
+ * whenever isEmulated(), so the moment the real config landed, local dev would
+ * have pointed a `bluestreakhangar` client at an emulator running as
+ * `demo-bshangar` — a project mismatch against firebase.json's
+ * singleProjectMode, and every local write would have failed for a reason that
+ * looks nothing like its cause.
+ *
+ * Keeping the `demo-` project on localhost is also what guarantees a dev run
+ * can never reach the real database.
+ */
 export function effectiveConfig() {
-  return isEmulated() && isUnconfigured() ? EMULATOR_CONFIG : FIREBASE_CONFIG;
+  return isEmulated() ? EMULATOR_CONFIG : FIREBASE_CONFIG;
 }
 
 /**
