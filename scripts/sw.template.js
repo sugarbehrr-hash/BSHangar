@@ -14,29 +14,40 @@
  * page you happened to visit already" is not good enough — the answer they need
  * offline is usually the one they have not read yet.
  *
- * TWO STRATEGIES, SPLIT BY WHAT THE THING IS
+ * TWO STRATEGIES, SPLIT BY WHETHER THE URL CHANGES WHEN THE CONTENT DOES
  *
- * Assets — /_astro/*.css, fonts, images — are cache-first with no
- * revalidation. Their filenames carry a content hash, so a hit is always
- * correct and a changed file is a different URL.
+ * The real boundary is not "pages vs assets" — it is content-addressed vs not.
+ * Astro's own build output — /_astro/*.css, fonts, hashed images — is
+ * cache-first with no revalidation, correctly: the hash lives in the filename,
+ * so a hit can never be stale and a changed file is simply a different URL.
  *
- * Pages are network-first, with the precached copy as the fallback. They were
- * cache-first too, and that stranded people: the installed app kept serving a
- * page from the previous deploy, that page asked for the previous deploy's
- * hashed asset names, and those names no longer exist on the server — so the
- * app came back with no CSS until it was force-quit. A page is the one thing
- * here whose URL does not change when its content does, so it is the one thing
- * that has to be asked about rather than assumed.
+ * EVERYTHING ELSE is network-first, with the precached copy as the fallback:
+ * pages, and also the vote guide's shared files (support.js, guide-feedback.js,
+ * assessment.data.js, card-render.js...), Pagefind's bundle, the manifest, the
+ * icons — anything published at one fixed path for its whole life while its
+ * content changes underneath it.
  *
- * What that costs: a navigation now waits on the network. NAV_TIMEOUT caps
+ * Pages were cache-first once, and that stranded people: the installed app
+ * kept serving a page from the previous deploy, that page asked for the
+ * previous deploy's hashed asset names, and those names no longer existed on
+ * the server — so the app came back with no CSS until it was force-quit. The
+ * fix at the time was scoped to "pages," which was too narrow: the vote
+ * guide's shared files hit the identical failure the same way — a reader's
+ * browser precached guide-feedback.js before Firebase was even configured,
+ * and every visit after kept serving that dormant build indefinitely, because
+ * a cache-first hit never asks the network at all. Same cause, same fix,
+ * generalized to the actual invariant this time: a fixed URL is the one thing
+ * that has to be asked about rather than assumed, whatever kind of file it is.
+ *
+ * What that costs: these requests now wait on the network. NAV_TIMEOUT caps
  * that wait, because "slow" and "offline" look identical to a phone on a
  * hotel wifi that resolves DNS and then stalls — past the cap we serve the
  * downloaded copy rather than spin.
  *
- * What it does NOT do is write pages into the cache as they are fetched. The
- * precache is one deploy's coherent snapshot; dropping a newer page into it
- * would leave that page asking, offline, for assets its own deploy has and
- * this cache does not.
+ * What it does NOT do is write a fresh fetch into the cache as it happens. The
+ * precache is one deploy's coherent snapshot; dropping today's page or asset
+ * into last deploy's cache would leave it asking, offline, for something that
+ * deploy has and this cache does not.
  *
  * A new deploy still ships a new VERSION, which makes a byte-different sw.js,
  * which is what triggers the browser to install the new worker and drop every
@@ -114,16 +125,62 @@ async function respond(request, url) {
   const cache = await caches.open(CACHE);
   if (request.mode === 'navigate') return navigate(request, url, cache);
 
-  // Assets: cache-first. The filename is a content hash, so a hit cannot be
-  // stale — a changed file arrives under a different name.
+  // Astro's own build output is genuinely content-addressed — the hash lives
+  // in the filename (global.CHbUSdCP.css), so a hit can never be stale and a
+  // changed file simply arrives under a different URL. Cache-first, no
+  // revalidation, is correct here, and ONLY here.
+  if (url.pathname.startsWith('/_astro/')) return assetCacheFirst(request, url, cache);
+
+  // Everything else keeps ONE fixed URL for its whole life while its content
+  // changes underneath it: the vote guide's shared files (support.js,
+  // guide-feedback.js, assessment.data.js, card-render.js...), Pagefind's
+  // search bundle, the manifest, the icons. Treating these as cache-first was
+  // an actual bug, not a theoretical one — a reader's browser precached
+  // guide-feedback.js before Firebase was configured, and every one of that
+  // reader's visits kept being served that dormant copy from the very first
+  // version ever downloaded, because a cache hit here never asks the network
+  // at all. Same fix as pages, same reason: ask the network, capped, before
+  // trusting what was fetched on some earlier visit.
+  return assetNetworkFirst(request, url, cache);
+}
+
+/** Cache-first for genuinely content-hashed assets — see respond(). */
+async function assetCacheFirst(request, url, cache) {
   const hit = await cache.match(url.pathname);
   if (hit) return hit;
-
   try {
     return await fetch(request);
   } catch {
     return offline();
   }
+}
+
+/**
+ * Network first, capped by NAV_TIMEOUT, then the downloaded copy, then a
+ * plain offline response. Mirrors navigate() below, minus the page-specific
+ * 404 fallback — an asset that is neither on the network nor in the cache has
+ * nothing sensible to substitute.
+ */
+async function assetNetworkFirst(request, url, cache) {
+  let timer;
+  const timeout = new Promise((resolve) => {
+    timer = setTimeout(() => resolve(null), NAV_TIMEOUT);
+  });
+
+  try {
+    const response = await Promise.race([fetch(request), timeout]);
+    if (response && response.ok) return response;
+    const cached = await cache.match(url.pathname);
+    if (cached) return cached;
+    if (response) return response;
+  } catch {
+    const cached = await cache.match(url.pathname);
+    if (cached) return cached;
+  } finally {
+    clearTimeout(timer);
+  }
+
+  return offline();
 }
 
 /** The precached page for this URL, however the request spelled it. */
