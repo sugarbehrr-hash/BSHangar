@@ -1108,11 +1108,14 @@ a.stamplink:hover .stamp.ink { box-shadow: inset 0 0 0 1.5px rgba(198,32,52,0.32
 /* The jumpseat pick and "Same bar, three prices" side by side — one crew
    member's own bag next to the standard the ladder below it is built on.
    Stacked on narrow screens (the jumpseat card reads first), side by side
-   from 900px, where there's room for both without squeezing either. The
-   category nav is not part of this row — it stays in its own slot above
-   .catpanels at every width; tier's height simply follows jump's. */
-.jumprow { display: grid; grid-template-columns: 1fr; grid-template-areas: "jump" "tier"; gap: 14px; margin-bottom: 18px; align-items: stretch; }
-@media (min-width: 900px) { .jumprow { grid-template-columns: 1.2fr 1fr; grid-template-areas: "jump tier"; } }
+   from 900px, where there's room for both without squeezing either. On the
+   two reviewed ladders, the category nav also lands in this row (JS moves
+   the single #catbar node here — see the page's script), matching the
+   jumpseat card's exact width instead of leaving open space above it; tier
+   stretches to fill the full combined height beside both. */
+.jumprow { display: grid; grid-template-columns: 1fr; grid-template-areas: "nav" "jump" "tier"; gap: 14px; margin-bottom: 18px; align-items: stretch; }
+@media (min-width: 900px) { .jumprow { grid-template-columns: 1.2fr 1fr; grid-template-areas: "nav tier" "jump tier"; } }
+.jumprow .catnav { grid-area: nav; width: 100%; max-width: none; min-width: 0; margin-bottom: 0; }
 .jumprow .jumpwrap { grid-area: jump; }
 .jumprow .tierintro { grid-area: tier; }
 

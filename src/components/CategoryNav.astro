@@ -3,13 +3,15 @@ import Icon from './Icon.astro';
 
 /**
  * Crew Essentials' category switcher — a dropdown, closed by default, sized
- * to its own content, at every viewport width.
+ * to its own content everywhere except the two reviewed ladders, where the
+ * client script relocates this same node into the active panel's .jumprow
+ * to match the jumpseat card's width (one DOM node, no duplication).
  *
  * Grouped into the two reviewed ladders (tiered picks + a jumpseat pick) and
  * the quick picks (one Amazon link each, not yet worked all the way
  * through) — nothing on this page conflates the two, so the nav doesn't
- * either. The client script (in the page) syncs the trigger's
- * icon/name/subtitle to the open row and owns which .catpanel is visible.
+ * either. The client script also syncs the trigger's icon/name/subtitle to
+ * the open row and owns which .catpanel is visible.
  */
 interface Tab {
   key: string;
