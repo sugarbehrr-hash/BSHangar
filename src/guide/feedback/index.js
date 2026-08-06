@@ -26,6 +26,9 @@ import { documentIdFromLocation, isEmulated, isUnconfigured } from './config.js'
 import * as store from './store.js';
 import { STRIP, hydrate, injectCss, paintCount, stripHtml, viewState } from './ui.js';
 
+// Gold when we're asking, calm when we're not — see hydrate()'s is-asking
+// toggle below and .bsf-strip.is-asking in ui.js.
+
 // The lab harness renders strips outside any card, so it needs the stylesheet
 // even though no card ever triggers apply().
 
@@ -110,7 +113,8 @@ function paint(strip, block) {
     block,
   });
 
-  hydrate(strip, { open });
+  const state = viewState(answer);
+  hydrate(strip, { open, asking: state === 'idle' || editing });
 }
 
 function repaintOne(block) {
@@ -345,7 +349,8 @@ function start() {
     window.__bsfRenderCase = (strip, { answer = null, open = false, editing = false, verdict = null, draft = '', base = '' } = {}) => {
       injectCss();
       strip.innerHTML = stripHtml({ answer, open, editing, verdict, draft, base });
-      hydrate(strip, { open });
+      const state = viewState(answer);
+      hydrate(strip, { open, asking: state === 'idle' || editing });
     };
   }
 

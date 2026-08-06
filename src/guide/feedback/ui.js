@@ -51,24 +51,33 @@ export function injectCss() {
     // overflow the card that contains it.
     `.${STRIP},.${STRIP} *{box-sizing:border-box}`,
 
-    // Background is gold-100, not cream-100. Cream-100 (#fbf7ee) sits almost on
-    // top of the page's own cream-200 (#f5efe1) — six points apart per channel,
-    // indistinguishable at a glance against a white card — so the one thing on
-    // this page meant to invite a tap was also the least visible thing on it.
-    // Gold is the site's existing "notice this" color (the NEW badges, the
-    // TODAY/PROPOSED callouts on this same card); reusing it here is applying
-    // the established idiom, not inventing a new one.
+    // Calm default: white, matching the card, a plain divider above it. This is
+    // what an ANSWERED card shows — a quiet confirmation line, nothing left to
+    // ask.
     `.${STRIP}{grid-column:1/-1;margin:14px -16px -20px -22px;`,
-    `border-top:1.5px solid var(--gold-500,#e8a33d);border-radius:0 0 15px 15px;`,
-    `background:var(--gold-100,#fbf0d9);overflow:hidden;`,
+    `border-top:1px solid var(--cream-300,#e3dccb);border-radius:0 0 15px 15px;`,
+    `background:var(--white,#fff);overflow:hidden;`,
     `font-family:var(--font-body,sans-serif)}`,
+
+    // Loud default overridden to loud: solid gold-500 while a card is still
+    // asking (unanswered, or reopened via Change). Gold-100 was tried first and
+    // measured at six points of RGB from the page's own cream-200 — a "gold"
+    // token that was in fact indistinguishable from the background, on a page
+    // where the one thing meant to invite a tap was also the least visible
+    // thing on it. gold-500 is the site's actual CTA color — the "Read the full
+    // technical report" button, every badge — solid-filled, not tinted, which
+    // is the established idiom for "notice this," not a new one. It steps back
+    // to the calm default the moment there is nothing left to ask.
+    `.${STRIP}.is-asking{border-top:1.5px solid var(--gold-600,#d88a1e);`,
+    `background:var(--gold-500,#e8a33d)}`,
 
     // Prompt row.
     `.bsf-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:11px 20px;`,
     `transition:background .15s ease}`,
     // Navy, not the muted ink-500 used for the rail's secondary metadata labels
     // ("WHAT IS THIS?", "WHO IT COVERS"). This is the primary prompt on the
-    // card, not a metadata caption, and needs the contrast to read as one.
+    // card, not a metadata caption, and needs the contrast to read as one — and
+    // navy-on-gold is the exact pairing every badge on this page already uses.
     `.bsf-label{font-family:var(--font-heading,inherit);font-size:10px;font-weight:800;`,
     `letter-spacing:.09em;text-transform:uppercase;color:var(--navy-900,#1f2a44);margin-right:2px}`,
 
@@ -102,9 +111,11 @@ export function injectCss() {
     `.${STRIP}.is-open .bsf-row .bsf-link{color:var(--sky-300,#9db6d4)}`,
     `.${STRIP}.is-open .bsf-row .bsf-link:hover{color:#fff}`,
 
-    // Standing disclosure in the prompt row. Quiet enough not to compete with
-    // the two buttons, present on every path that writes.
-    `.bsf-consent{margin-left:auto;font-size:11px;color:var(--ink-500,#7c8398);`,
+    // Standing disclosure in the prompt row. ink-700, not ink-500 — ink-500 is
+    // calibrated for text on pale backgrounds (cream, white) and reads muddy on
+    // solid gold-500; ink-700 holds up on both, so the same rule works whether
+    // the row is currently gold (asking) or the strip has gone calm (resolved).
+    `.bsf-consent{margin-left:auto;font-size:11px;color:var(--ink-700,#3a4256);`,
     `text-decoration:underline;text-underline-offset:2px;white-space:nowrap}`,
     `.bsf-consent:hover{color:var(--navy-900,#1f2a44)}`,
     `.${STRIP}.is-open .bsf-row .bsf-consent{color:var(--sky-300,#9db6d4)}`,
@@ -132,14 +143,16 @@ export function injectCss() {
     `background:var(--white,#fff)}`,
     `.bsf-form textarea:focus{outline:none;border-color:var(--sky-700,#5b7fa6)}`,
     `.bsf-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:9px}`,
+    // ink-700, matching .bsf-consent above — the form sits on gold-500 while a
+    // card is still asking, and ink-500 is too light to read cleanly there.
     `.bsf-base{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;`,
-    `color:var(--ink-500,#7c8398)}`,
+    `color:var(--ink-700,#3a4256)}`,
     `.bsf-base input{width:72px;font-family:inherit;font-size:13px;padding:6px 9px;`,
     `border:1.5px solid var(--cream-300,#d8cfb8);border-radius:8px;`,
     `background:var(--white,#fff);color:var(--ink-700,#3a4256);text-transform:uppercase}`,
     `.bsf-base input:focus{outline:none;border-color:var(--sky-700,#5b7fa6)}`,
-    `.bsf-fine{font-size:11px;color:var(--ink-500,#7c8398);line-height:1.45;margin:9px 0 0;max-width:60ch}`,
-    `.bsf-fine a{color:var(--sky-700,#5b7fa6)}`,
+    `.bsf-fine{font-size:11px;color:var(--ink-700,#3a4256);line-height:1.45;margin:9px 0 0;max-width:60ch}`,
+    `.bsf-fine a{color:var(--navy-900,#1f2a44);font-weight:700}`,
     `.bsf-send{margin-left:auto;background:var(--gold-500,#e8a33d);`,
     `border-color:var(--gold-500,#e8a33d);color:#3a2a08}`,
     `.bsf-send:hover{background:#f0b256;border-color:#f0b256}`,
@@ -306,8 +319,12 @@ function resolved(answer, state, durable) {
 }
 
 /** Applies the transient bits the HTML string cannot carry safely. */
-export function hydrate(strip, { open }) {
+export function hydrate(strip, { open, asking = true }) {
   strip.classList.toggle('is-open', !!open);
+  // Gold while we're asking a question, calm once it's answered — see the
+  // .bsf-strip.is-asking rule in injectCss(). Default true so the debug lab's
+  // idle/open cases (which never pass `asking`) still show the loud state.
+  strip.classList.toggle('is-asking', asking !== false);
 
   const textarea = strip.querySelector('[data-bsf="note"]');
   const draft = strip.querySelector('[data-bsf="draft"]');
