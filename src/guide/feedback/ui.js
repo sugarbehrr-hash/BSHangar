@@ -59,31 +59,28 @@ export function injectCss() {
     `background:var(--white,#fff);overflow:hidden;`,
     `font-family:var(--font-body,sans-serif)}`,
 
-    // Visible while asking, without shouting on every one of 46 cards at once.
-    // Two wrong turns before this: gold-100 measured six points of RGB from the
-    // page's own cream-200 (invisible); solid gold-500 across the full row is
-    // the site's real CTA color, but a bright block on every unanswered card
-    // simultaneously is the opposite failure — loud enough to fight the actual
-    // contract text for attention.
+    // Three tries at a fill color before this one, all in the same family, all
+    // wrong for the same underlying reason: the page is ALREADY made of cream
+    // and gold — the page background, the card, the badges, the CTA button.
+    // Any tint or fill in that family is competing for attention using the hue
+    // the reader's eye is already saturated with by the time it reaches the
+    // bottom of a card; tuning the shade only ever traded "blends in" for "too
+    // loud," because the axis being tuned was never the fix.
     //
-    // The calibration that already exists on this exact card: the TODAY/
-    // PROPOSED boxes (card-render.js:339-344) are a light tint plus a solid,
-    // real-colored border — sky-100 fill, sky-700 border for PROPOSED — never a
-    // saturated fill. Same formula here, gold family instead of blue: gold-200
-    // is a real hue shift from the page (its blue channel alone sits 37 points
-    // from cream-200's, versus gold-100's 8), and the gold-500 border is the
-    // same solid, undiluted color the CTA button uses, just doing less of the
-    // work by itself.
-    `.${STRIP}.is-asking{border-top:2px solid var(--gold-500,#e8a33d);`,
-    `background:var(--gold-200,#f8e2bc)}`,
+    // Navy is the answer because it is the one color on this card that is
+    // NOT part of the ambient palette — it shows up in headings and the rail's
+    // "Worth to each group" panel, never as a wash across body content — so a
+    // navy line reads as a deliberate mark, not as more of the same warmth.
+    // And it costs nothing: a border, not a fill, per the site's own rule
+    // against decorating things with color for its own sake.
+    `.${STRIP}.is-asking{border-top:2px solid var(--navy-900,#1f2a44)}`,
 
     // Prompt row.
     `.bsf-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:11px 20px;`,
     `transition:background .15s ease}`,
     // Navy, not the muted ink-500 used for the rail's secondary metadata labels
     // ("WHAT IS THIS?", "WHO IT COVERS"). This is the primary prompt on the
-    // card, not a metadata caption, and needs the contrast to read as one — and
-    // navy-on-gold is the exact pairing every badge on this page already uses.
+    // card, not a metadata caption, and needs the contrast to read as one.
     `.bsf-label{font-family:var(--font-heading,inherit);font-size:10px;font-weight:800;`,
     `letter-spacing:.09em;text-transform:uppercase;color:var(--navy-900,#1f2a44);margin-right:2px}`,
 
@@ -100,10 +97,17 @@ export function injectCss() {
     `.${STRIP}.is-open .bsf-row .bsf-label{color:var(--gold-500,#e8a33d)}`,
 
     // One button, two weights. Nothing about the shape changes between states.
+    //
+    // Border is navy-700, not the pale cream-300 every other bordered box on
+    // this card uses. Those boxes (the rail's meta panel, the today/proposed
+    // callouts) are content to read as "there," never as "tap me" — cream-300
+    // is correct for them and was carried over here by default, which is
+    // exactly backwards for the one interactive control on the card. A button
+    // needs to look pressable at a glance, not just present.
     `.bsf-btn{display:inline-flex;align-items:center;gap:6px;`,
     `font-family:var(--font-heading,inherit);font-weight:800;font-size:12px;`,
     `border-radius:8px;padding:6px 12px;cursor:pointer;`,
-    `background:var(--white,#fff);border:1.5px solid var(--cream-300,#d8cfb8);`,
+    `background:var(--white,#fff);border:1.5px solid var(--navy-700,#1b3461);`,
     `color:var(--ink-700,#3a4256);min-height:var(--tap-min,34px)}`,
     `.bsf-btn:hover{border-color:var(--navy-900,#1f2a44)}`,
     `.bsf-btn[aria-pressed="true"]{background:var(--navy-900,#1f2a44);`,
