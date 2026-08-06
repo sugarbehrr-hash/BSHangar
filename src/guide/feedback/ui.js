@@ -78,11 +78,24 @@ export function injectCss() {
     // Prompt row.
     `.bsf-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:11px 20px;`,
     `transition:background .15s ease}`,
-    // Navy, not the muted ink-500 used for the rail's secondary metadata labels
-    // ("WHAT IS THIS?", "WHO IT COVERS"). This is the primary prompt on the
-    // card, not a metadata caption, and needs the contrast to read as one.
+    // The form's own field label ("What tripped you up?") — a secondary
+    // caption next to a textarea, correctly small. This is NOT the element
+    // that needed to grow.
     `.bsf-label{font-family:var(--font-heading,inherit);font-size:10px;font-weight:800;`,
     `letter-spacing:.09em;text-transform:uppercase;color:var(--navy-900,#1f2a44);margin-right:2px}`,
+
+    // The row's actual question — its own class, separate from .bsf-label, so
+    // fixing it does not also blow up the form's field caption above. It was
+    // sharing the eyebrow-tag treatment ("WHAT IS THIS?", "STARTS") this card
+    // uses for genuinely minor metadata, at 10px uppercase. But the buttons
+    // beside it have a 44px min-height (--tap-min, the site's accessibility
+    // floor for a tap target — not negotiable downward), so a 10px caption
+    // next to a 44px control was never going to read as balanced; the button
+    // was never "too big," the question was dressed as a footnote to
+    // something that is actually the whole point of the row. Sentence case,
+    // real reading size.
+    `.bsf-question{font-family:var(--font-heading,inherit);font-size:15px;font-weight:800;`,
+    `color:var(--navy-900,#1f2a44);margin-right:4px}`,
 
     // Open state. Per the site-wide rule, the header of an expanded thing
     // inverts to navy — it never becomes a cream tint.
@@ -94,7 +107,7 @@ export function injectCss() {
     // gold-on-cream. Descendant selectors that cross a background change are
     // exactly where this goes wrong; keep the boundary explicit.
     `.${STRIP}.is-open .bsf-row{background:var(--navy-900,#1f2a44)}`,
-    `.${STRIP}.is-open .bsf-row .bsf-label{color:var(--gold-500,#e8a33d)}`,
+    `.${STRIP}.is-open .bsf-row .bsf-question{color:var(--gold-500,#e8a33d)}`,
 
     // One button, two weights. Nothing about the shape changes between states.
     //
@@ -104,11 +117,17 @@ export function injectCss() {
     // is correct for them and was carried over here by default, which is
     // exactly backwards for the one interactive control on the card. A button
     // needs to look pressable at a glance, not just present.
+    // Height bottoms out at --tap-min (44px, the real value — the 34px written
+    // here before was simply wrong, and happened to go unnoticed because the
+    // real token was always the one actually applying). That floor is an
+    // accessibility minimum, not a style choice, so it is not where a "too
+    // big" button gets smaller — padding is: 10px, not 12px, the one dimension
+    // that is genuinely just aesthetic.
     `.bsf-btn{display:inline-flex;align-items:center;gap:6px;`,
     `font-family:var(--font-heading,inherit);font-weight:800;font-size:12px;`,
-    `border-radius:8px;padding:6px 12px;cursor:pointer;`,
+    `border-radius:8px;padding:6px 10px;cursor:pointer;`,
     `background:var(--white,#fff);border:1.5px solid var(--navy-700,#1b3461);`,
-    `color:var(--ink-700,#3a4256);min-height:var(--tap-min,34px)}`,
+    `color:var(--ink-700,#3a4256);min-height:var(--tap-min,44px)}`,
     `.bsf-btn:hover{border-color:var(--navy-900,#1f2a44)}`,
     `.bsf-btn[aria-pressed="true"]{background:var(--navy-900,#1f2a44);`,
     `border-color:var(--navy-900,#1f2a44);color:#fff}`,
@@ -253,7 +272,7 @@ function chooser({ verdict, draft, base, block, canCancel }) {
 
   return (
     `<div class="bsf-row">` +
-    `<span class="bsf-label" id="${escA(qId)}">Was this clear?</span>` +
+    `<span class="bsf-question" id="${escA(qId)}">Was this clear?</span>` +
     `<button type="button" class="bsf-btn" data-bsf="clear" ` +
     `aria-pressed="${verdict === 'clear'}" aria-describedby="${escA(qId)}">Yes</button>` +
     `<button type="button" class="bsf-btn" data-bsf="unclear" ` +
