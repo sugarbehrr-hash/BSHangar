@@ -12,21 +12,12 @@ import { bagFigures } from '../data/bag-figures';
  *
  * TWO ZONES: .js-shot (the photo) and .js-story (everything that is
  * judgment, not data), in priority order — name/price, the same three
- * figures every ladder card shows (.pc-figs, completely unstyled here
- * beyond a max-width — same box, same size, same shape as every ladder
- * card, just width-capped instead of grid-sized — see system.css), the
- * rating, why there is no stamp (the credibility gate — the one thing that
- * makes a jumpseat pick different from every other pick on the page, so it
- * does not wait behind a story about carbon-fibre trolleys to be seen), the
- * descriptive paragraph, then the CTA.
- *
- * A fixed-width THIRD column, with the figures stretched to fill it, was
- * tried and looked broken: three short rows above a gap of dead space
- * running the rest of the card's height. A shrunk-to-fit chip cluster was
- * tried next and looked like a downgrade — smaller than the ladder cards'
- * own figures for no reason. Figures don't need a new shape at all; they
- * need the shape they already have, just placed inline instead of in a
- * column.
+ * figures every ladder card shows (as three side-by-side chips — see
+ * .js-story .pc-figs in system.css — not the ladder card's single stacked
+ * box, since this card has the width to spread them out), the descriptive
+ * paragraph, why there is no stamp (the credibility gate — the one thing
+ * that makes a jumpseat pick different from every other pick on the page),
+ * then the CTA.
  *
  * Two things are structurally required regardless of layout: the crew
  * member behind it, and the reason the stamp is absent. Without those it is
@@ -91,16 +82,12 @@ const headline = HEADLINE.map((h) => figures.find((f) => f.key === h.key)!);
           }
         </dl>
 
-        {/* The credibility gate — promoted above the paragraph. This is the
-            one thing that makes a jumpseat pick different from every other
-            pick on the page, so it does not wait behind a story about
-            carbon-fibre trolleys to be seen. */}
+        <p class="js-text">{pick.text}</p>
+
         <div class="js-why">
           <Icon name="ph-info" />
           <div><b>Why there's no stamp.</b> {pick.why}</div>
         </div>
-
-        <p class="js-text">{pick.text}</p>
 
         {
           !here && (
