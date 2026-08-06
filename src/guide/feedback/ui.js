@@ -117,17 +117,19 @@ export function injectCss() {
     // is correct for them and was carried over here by default, which is
     // exactly backwards for the one interactive control on the card. A button
     // needs to look pressable at a glance, not just present.
-    // Height bottoms out at --tap-min (44px, the real value — the 34px written
-    // here before was simply wrong, and happened to go unnoticed because the
-    // real token was always the one actually applying). That floor is an
-    // accessibility minimum, not a style choice, so it is not where a "too
-    // big" button gets smaller — padding is: 10px, not 12px, the one dimension
-    // that is genuinely just aesthetic.
-    `.bsf-btn{display:inline-flex;align-items:center;gap:6px;`,
+    // 28px tall, matching the "Viewing as" / "Detail" toggle buttons at the
+    // very top of this document (index.html:95, :102) — the only other
+    // clickable controls on the whole page, and the real convention here.
+    // --tap-min (44px) was my own invention: grepped for it just now and it is
+    // used nowhere else on this document at all. Applying a stricter standard
+    // than every other control on the page follows is not more accessible, it
+    // is just inconsistent — and it was the actual reason these read as
+    // oversized against a footer that is not the point of the page.
+    `.bsf-btn{display:inline-flex;align-items:center;gap:6px;height:28px;`,
     `font-family:var(--font-heading,inherit);font-weight:800;font-size:12px;`,
-    `border-radius:8px;padding:6px 10px;cursor:pointer;`,
+    `border-radius:8px;padding:0 13px;cursor:pointer;`,
     `background:var(--white,#fff);border:1.5px solid var(--navy-700,#1b3461);`,
-    `color:var(--ink-700,#3a4256);min-height:var(--tap-min,44px)}`,
+    `color:var(--ink-700,#3a4256)}`,
     `.bsf-btn:hover{border-color:var(--navy-900,#1f2a44)}`,
     `.bsf-btn[aria-pressed="true"]{background:var(--navy-900,#1f2a44);`,
     `border-color:var(--navy-900,#1f2a44);color:#fff}`,
