@@ -1,0 +1,70 @@
+---
+import { readCards } from '../../inbox/cards.js';
+import '../../styles/global.css';
+import '../../inbox/inbox.css';
+
+/**
+ * The maintainer inbox — reader feedback on the vote guide, ranked worst-first.
+ *
+ * NOT BaseLayout, on purpose. That shell renders the site header, footer and
+ * mobile nav unconditionally and derives a required OG card from the path, none
+ * of which belong on a tool two people sign into. It also keys `noindex` to the
+ * global PRELAUNCH flag, so inheriting it would quietly publish this page at
+ * launch; the tag below is unconditional instead.
+ *
+ * Nothing here is a secret. The page renders empty and every byte of feedback
+ * comes from Firestore, which refuses to hand any of it over to anyone outside
+ * the allowlist in firestore.rules. That file is the access control; this is
+ * just the reading surface.
+ */
+
+/**
+ * Documents with a feedback layer. One today. A second is one line here plus
+ * its data file — the collection keys on `doc`, so nothing else has to change.
+ */
+const DOCS = {
+  '2026-ta-vote-guide': { title: '2026 TA Vote Guide' },
+};
+
+const documentId = '2026-ta-vote-guide';
+const cards = readCards();
+
+const payload = JSON.stringify({
+  doc: documentId,
+  title: DOCS[documentId].title,
+  titles: cards.titles,
+  askable: cards.askable,
+  version: cards.version,
+  // Escaped so a card title containing "</script>" cannot close the tag it is
+  // being written into. Ours today; not necessarily ours after a regeneration.
+}).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reader feedback — Blue Streak Hangar</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0F1E3D" />
+  </head>
+
+  <body>
+    <main class="ib" id="ib-root"></main>
+
+    <noscript>
+      <p class="ib-gate-note">
+        This page needs JavaScript — it reads the feedback database directly from your browser.
+      </p>
+    </noscript>
+
+    <script type="application/json" id="ib-data" set:html={payload}></script>
+
+    <script>
+      import { mountInbox } from '../../inbox/mount.js';
+
+      mountInbox(document.getElementById('ib-root'));
+    </script>
+  </body>
+</html>

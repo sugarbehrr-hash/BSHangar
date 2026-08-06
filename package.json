@@ -15,7 +15,8 @@
     "check": "astro check",
     "test:unit": "vitest run tests/unit",
     "test:rules": "firebase emulators:exec --only firestore --project demo-bshangar \"vitest run tests/rules\"",
-    "feedback:report": "node scripts/feedback-report.mjs"
+    "emulators": "firebase emulators:start --only firestore,auth --project demo-bshangar",
+    "seed": "node scripts/seed-feedback.mjs"
   },
   "dependencies": {
     "astro": "^7.1.1",
@@ -27,7 +28,6 @@
     "@firebase/rules-unit-testing": "^5.0.1",
     "@phosphor-icons/core": "^2.1.1",
     "esbuild": "^0.28.1",
-    "firebase-admin": "^14.2.0",
     "pagefind": "^1.5.2",
     "qrcode-generator": "^2.0.4",
     "satori": "^0.28.0",

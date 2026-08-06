@@ -30,14 +30,13 @@ public/src/
 public/contract/_assets/guide-feedback.js
 public/contract/_assets/guide-feedback-net.js
 
-# Firebase service-account key for scripts/feedback-report.mjs — never commit
+# Firebase service-account keys. Nothing in this repo needs one any more —
+# triage moved to /inbox/, which authenticates as a person against
+# firestore.rules instead of as the Admin SDK. These patterns stay as a guard:
+# this repo is public, and a key downloaded into this folder by habit must not
+# become a commit.
 *firebase-adminsdk*.json
 serviceAccountKey.json
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
-
-# Triage output from scripts/feedback-report.mjs — verbatim reader free text.
-# This repo is public; a generated report must never be committed by accident.
-feedback-report*.md
-feedback-*.md

@@ -19,8 +19,12 @@ Allow: /contract/
 Disallow: /
 `;
 
+// /inbox/ is the maintainer feedback tool. Firestore rules are what actually
+// keep it private, so this line is not a security control — it keeps a
+// permanently empty page out of the index and out of anyone's search results.
 const LAUNCH_BODY = `User-agent: *
 Allow: /
+Disallow: /inbox/
 
 Sitemap: ${SITE.url}/sitemap.xml
 `;

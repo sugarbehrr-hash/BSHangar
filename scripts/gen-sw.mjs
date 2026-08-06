@@ -40,6 +40,12 @@ const EXCLUDE = [
   /^robots\.txt$/,
   /^sitemap\.xml$/,
 
+  // The maintainer inbox. An authenticated tool, not part of reading the site,
+  // and precaching it would hand a stale shell to whoever opened it next on a
+  // shared phone. Excluded here, the worker's network-first navigate() path
+  // fetches it fresh every time and never has a copy to fall back on.
+  /^inbox\//,
+
   // Design scratch: logo labs, plane lab, streak variants, the prototype
   // directory. Not linked from anywhere in the site.
   /^_logo-/,

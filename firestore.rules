@@ -38,14 +38,41 @@ rules_version = '2';
 //   3. Field validation below: closed key set, enum membership, length caps,
 //      and a charset on every field that has a structure worth enforcing.
 //
-// Reads are denied outright, including to the author. Feedback is a private
-// inbox — it is never rendered back to any reader — and the client has no need
-// to read: it keeps a local echo of its own answers in localStorage, and
-// triage runs through the Admin SDK (scripts/feedback-report.mjs), which
-// bypasses these rules entirely.
+// Reads are denied to readers, including to the author of a note. Feedback is
+// a private inbox — it is never rendered back to any reader — and the client
+// has no need to read: it keeps a local echo of its own answers in
+// localStorage.
+//
+// The one exception is the maintainer allowlist in isAdmin(), which is what
+// makes /inbox/ possible. That page is the only reader this collection has, and
+// it can do exactly two things: read, and move `status` between 'new' and
+// 'triaged'. It cannot edit a note, change a verdict, move a timestamp, or
+// delete a record. Triage is not editorial control over what somebody wrote.
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Whoever maintains the guide. A list, not a role system — there are two of
+    // us, and an `admins` collection would be more machinery than people, plus
+    // a document read on every single request.
+    //
+    // Allowlisted by email rather than uid because this repo is public and both
+    // addresses are already in its git history as commit authors, so naming
+    // them here publishes nothing that was private. An address you can read
+    // beats an opaque uid you can't. Adding a maintainer whose address is NOT
+    // already public is a different decision — use their uid for that.
+    //
+    // email_verified is not ceremony. Google sign-in always verifies, so the
+    // check is free today, and it is what keeps this list from being defeated
+    // by an unverified email claim if another provider is ever enabled.
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email_verified == true
+          && request.auth.token.email in [
+               'dimmonk@gmail.com',
+               'sugarbehrr@gmail.com'
+             ];
+    }
 
     // feedback/{documentId}__{blockId}__{uid}
     //
@@ -156,22 +183,51 @@ service cloud.firestore {
       // denied), so it has no way to echo back a value triage may have
       // changed; requiring it to would break every amend made after we
       // triaged. Substantively, an edited note SHOULD return to the queue —
-      // the content changed, so our previous read of it is stale. The report
+      // the content changed, so our previous read of it is stale. The inbox
       // orders by updatedAt, which makes re-opened items obvious.
-      allow update: if ownsPath(request.resource.data)
-                    && hasExactKeys(request.resource.data)
-                    && hasValidShape(request.resource.data)
-                    && request.resource.data.doc == resource.data.doc
-                    && request.resource.data.block == resource.data.block
-                    && request.resource.data.createdAt == resource.data.createdAt
-                    && request.resource.data.status == 'new'
-                    && request.resource.data.updatedAt == request.time;
+      function isReaderAmend() {
+        return ownsPath(request.resource.data)
+            && hasExactKeys(request.resource.data)
+            && hasValidShape(request.resource.data)
+            && request.resource.data.doc == resource.data.doc
+            && request.resource.data.block == resource.data.block
+            && request.resource.data.createdAt == resource.data.createdAt
+            && request.resource.data.status == 'new'
+            && request.resource.data.updatedAt == request.time;
+      }
 
-      // Private inbox. Nothing written here is readable by anyone through the
-      // client SDK — not other readers, not the author. Deletes are denied so
-      // a retraction stays an auditable state change (verdict: 'withdrawn')
-      // rather than a hole.
-      allow read, delete: if false;
+      // Marking a response done in /inbox/, and taking that back.
+      //
+      // Exactly one field may move, and only between two values. Everything a
+      // reader wrote is immutable to us: we can say "handled", we cannot edit
+      // what they said or when they said it.
+      //
+      // updatedAt in particular must NOT move. It means "when the reader last
+      // touched this", and it is what the inbox orders by and what a --since
+      // style window would filter on. If triage bumped it, reading the queue
+      // would reshuffle the queue.
+      //
+      // Because the change is one reversible field, Undo needs no separate
+      // rule: it is this same rule in the other direction.
+      function isTriage() {
+        return isAdmin()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+            && request.resource.data.status in ['new', 'triaged'];
+      }
+
+      allow update: if isReaderAmend() || isTriage();
+
+      // Private inbox. Nothing written here is readable through the client SDK
+      // by any reader, including the author of the note — only by a maintainer
+      // on the allowlist above.
+      //
+      // Deletes stay denied to EVERYONE, maintainers included. A retraction is
+      // already modelled as a state (verdict: 'withdrawn') so that "never
+      // answered" stays distinguishable from "answered, then thought better of
+      // it", and an abusive note is handled by marking it done rather than by
+      // punching a hole in the record.
+      allow read: if isAdmin();
+      allow delete: if false;
     }
 
     // Everything else is closed. Adding a second document's feedback needs no

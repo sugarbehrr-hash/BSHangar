@@ -79,6 +79,23 @@ beforeEach(async () => {
 const asReader = (uid = UID) => testEnv.authenticatedContext(uid).firestore();
 const asStranger = () => testEnv.unauthenticatedContext().firestore();
 
+/**
+ * Firestore handle for a maintainer on the allowlist in firestore.rules — what
+ * /inbox/ runs as.
+ *
+ * The uid is deliberately NOT any reader's uid, so every admin assertion here
+ * also proves the admin path is reached through isAdmin() and not by
+ * accidentally satisfying ownsPath().
+ */
+const asAdmin = (token = {}) =>
+  testEnv
+    .authenticatedContext('maintainer-uid', {
+      email: 'dimmonk@gmail.com',
+      email_verified: true,
+      ...token,
+    })
+    .firestore();
+
 /** Seeds an existing record, bypassing rules, so amend paths have something to hit. */
 async function seed(over = {}) {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
@@ -347,27 +364,134 @@ describe('amend', () => {
   });
 });
 
-describe('read and delete are closed', () => {
-  it('denies reading your own record', async () => {
+describe('reads are maintainer-only', () => {
+  it('denies a reader their own record', async () => {
+    // Feedback is a private inbox. The client keeps a local echo of what it
+    // sent and never needs the server's copy back.
     await seed();
     const db = asReader();
     await assertFails(getDoc(doc(db, 'feedback', key())));
   });
 
-  it('denies listing the collection', async () => {
+  it('denies a reader listing the collection', async () => {
     await seed();
     const db = asReader();
     await assertFails(getDocs(collection(db, 'feedback')));
   });
 
-  it('denies deleting your own record', async () => {
+  it('denies an unauthenticated visitor', async () => {
+    await seed();
+    const db = asStranger();
+    await assertFails(getDocs(collection(db, 'feedback')));
+  });
+
+  it('allows a maintainer to read one record', async () => {
+    await seed();
+    await assertSucceeds(getDoc(doc(asAdmin(), 'feedback', key())));
+  });
+
+  it('allows a maintainer to list the collection', async () => {
+    // This is the query /inbox/ actually runs.
+    await seed();
+    await assertSucceeds(getDocs(collection(asAdmin(), 'feedback')));
+  });
+
+  it('denies a signed-in account that is not on the allowlist', async () => {
+    await seed();
+    const db = asAdmin({ email: 'someone-else@gmail.com' });
+    await assertFails(getDocs(collection(db, 'feedback')));
+  });
+
+  it('denies an allowlisted address whose email is unverified', async () => {
+    // The whole allowlist is defeated if an unverified claim counts. Google
+    // sign-in always verifies, so this can only fire if a second provider is
+    // enabled later — which is exactly when nobody will be looking.
+    await seed();
+    const db = asAdmin({ email_verified: false });
+    await assertFails(getDocs(collection(db, 'feedback')));
+  });
+});
+
+describe('triage', () => {
+  it('lets a maintainer mark a response done', async () => {
+    await seed();
+    await assertSucceeds(updateDoc(doc(asAdmin(), 'feedback', key()), { status: 'triaged' }));
+  });
+
+  it('lets a maintainer undo that', async () => {
+    // Undo needs no rule of its own — it is the same one-field move, reversed.
+    await seed({ status: 'triaged' });
+    await assertSucceeds(updateDoc(doc(asAdmin(), 'feedback', key()), { status: 'new' }));
+  });
+
+  it('rejects an invented status', async () => {
+    await seed();
+    await assertFails(updateDoc(doc(asAdmin(), 'feedback', key()), { status: 'spam' }));
+  });
+
+  it("rejects a maintainer editing somebody's note", async () => {
+    // Triage is not editorial control over what a reader wrote.
+    await seed({ note: 'the retro table is wrong' });
+    await assertFails(updateDoc(doc(asAdmin(), 'feedback', key()), { note: 'nothing to see' }));
+  });
+
+  it('rejects a maintainer changing a verdict', async () => {
+    await seed();
+    await assertFails(updateDoc(doc(asAdmin(), 'feedback', key()), { verdict: 'clear' }));
+  });
+
+  it('rejects a maintainer moving updatedAt', async () => {
+    // updatedAt means "when the reader last touched this" and is what the inbox
+    // orders by. If triage bumped it, reading the queue would reshuffle it.
+    await seed();
+    await assertFails(
+      updateDoc(doc(asAdmin(), 'feedback', key()), { status: 'triaged', updatedAt: serverTimestamp() })
+    );
+  });
+
+  it('rejects a status change smuggled in beside another field', async () => {
+    await seed();
+    await assertFails(
+      updateDoc(doc(asAdmin(), 'feedback', key()), { status: 'triaged', base: 'PHL' })
+    );
+  });
+
+  it('rejects a non-allowlisted account marking anything done', async () => {
+    await seed();
+    const db = asAdmin({ email: 'someone-else@gmail.com' });
+    await assertFails(updateDoc(doc(db, 'feedback', key()), { status: 'triaged' }));
+  });
+
+  it('rejects a reader triaging their own record', async () => {
+    // The reader amend path pins status to 'new' and requires updatedAt to move
+    // to server time, so a status-only write fails both ways. Worth asserting:
+    // self-triage would let anyone quietly clear their own note out of the queue.
+    await seed();
+    await assertFails(updateDoc(doc(asReader(), 'feedback', key()), { status: 'triaged' }));
+  });
+});
+
+describe('deletes are closed to everyone', () => {
+  it('denies a reader deleting their own record', async () => {
     await seed();
     const db = asReader();
     await assertFails(deleteDoc(doc(db, 'feedback', key())));
   });
 
+  it('denies a maintainer deleting a record', async () => {
+    // Deliberate. A retraction is already a state (verdict: 'withdrawn'), which
+    // keeps "never answered" distinguishable from "thought better of it", and an
+    // abusive note is handled by marking it done rather than by leaving a hole.
+    await seed();
+    await assertFails(deleteDoc(doc(asAdmin(), 'feedback', key())));
+  });
+
   it('denies reaching any other collection', async () => {
     const db = asReader();
     await assertFails(setDoc(doc(db, 'anything', 'x'), { a: 1 }));
+  });
+
+  it('denies a maintainer reaching any other collection', async () => {
+    await assertFails(setDoc(doc(asAdmin(), 'anything', 'x'), { a: 1 }));
   });
 });
