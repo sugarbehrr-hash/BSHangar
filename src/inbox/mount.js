@@ -1,10 +1,14 @@
 /**
- * Wiring: auth state in, DOM out, one write in between.
+ * Wiring: auth state and Firestore rows in, DOM out, one write in between.
  *
  * State is replaced, never mutated, and every render is a pure function of it.
- * That is what keeps "mark this done" from drifting out of sync with what is on
- * screen — the thing that made the old parallel-array approaches in this
+ * That is what keeps "mark this done" from drifting out of sync with what is
+ * on screen — the thing that made the old parallel-array approaches in this
  * codebase leak bugs.
+ *
+ * Filter, section and the open card are ALL client-side state, not Firestore
+ * queries — see net.js's fetchResponses for why. One fetch per view (or one
+ * explicit Refresh), everything else is instant.
  *
  * Responses are NOT removed from the list when they are marked done. They go
  * quiet and keep an Undo, and only disappear on the next fetch. A row that
@@ -12,20 +16,34 @@
  */
 
 import { describe, fetchResponses, setStatus, signIn, signOutNow, watchAuth } from './net.js';
-import { groupByBlock, splitByDrift, summarise } from './report.js';
-import { renderDenied, renderError, renderInbox, renderLoading, renderSignedOut } from './render.js';
+import { readCardIndex } from './cardData.js';
+import { renderDenied, renderError, renderLoading, renderShell, renderSignedOut } from './render.js';
 
-/** Nothing here is secret — it is the guide's own card list, baked in at build. */
+/** Nothing here is secret — it is which document this page is for. */
 function readConfig() {
   const tag = document.getElementById('ib-data');
-  if (!tag) throw new Error('inbox: build-time card data is missing from the page');
+  if (!tag) throw new Error('inbox: page config is missing');
   return JSON.parse(tag.textContent);
 }
 
 export function mountInbox(root) {
   const config = readConfig();
 
-  let state = { phase: 'loading', user: null, filter: 'new', rows: [], error: '' };
+  // Loaded once from window.ASSESSMENT — see cardData.js for why this reads
+  // the guide's own data global instead of a build-time extraction. Doesn't
+  // depend on auth, so it's ready before the first real render regardless of
+  // sign-in state.
+  const cardIndex = readCardIndex();
+
+  let state = {
+    phase: 'loading',
+    user: null,
+    rows: [],
+    filter: 'attention',
+    section: 'all',
+    selected: null,
+    error: '',
+  };
 
   const set = (patch) => {
     state = { ...state, ...patch };
@@ -53,25 +71,28 @@ export function mountInbox(root) {
     if (state.phase === 'denied') return renderDenied(state.user);
     if (state.phase === 'error') return renderError(state.error);
 
-    const { live, drift } = splitByDrift(state.rows, new Map(Object.entries(config.titles)));
-    const entries = groupByBlock(live);
+    if (cardIndex.askable === 0) {
+      // The build-time reader failed loudly on this; the runtime one fails
+      // loudly too, rather than showing every card as a bare slug.
+      return renderError('The guide content failed to load. Refresh, or check assessment.data.js.');
+    }
 
-    return renderInbox({
+    return renderShell({
       docTitle: config.title,
-      entries,
-      drift,
-      titles: config.titles,
-      summary: summarise(entries, state.rows.length),
-      askable: config.askable,
-      version: config.version,
+      cardIndex: cardIndex.index,
+      topics: cardIndex.topics,
+      askable: cardIndex.askable,
+      version: cardIndex.version,
+      rows: state.rows,
       filter: state.filter,
-      waiting: state.rows.filter((row) => row.status === 'new').length,
+      section: state.section,
+      selected: state.selected,
     });
   }
 
   /**
-   * A stable name for one control, so a full re-render does not dump a keyboard
-   * user back at the top of the document after every Done.
+   * A stable name for one control, so a full re-render does not dump a
+   * keyboard user back at the top of the document after every Done.
    *
    * Done and Undo on the same response share a key on purpose: they are the
    * same control in two states, and focus should stay on it across the flip.
@@ -86,7 +107,7 @@ export function mountInbox(root) {
 
   async function load() {
     try {
-      const rows = await fetchResponses(config.doc, { unreadOnly: state.filter === 'new' });
+      const rows = await fetchResponses(config.doc);
       set({ phase: 'ready', rows, error: '' });
     } catch (error) {
       // permission-denied here means the signed-in account is not on the
@@ -107,6 +128,12 @@ export function mountInbox(root) {
   }
 
   // -------------------------------------------------------------------- events
+
+  root.addEventListener('change', (event) => {
+    if (event.target.dataset.ib === 'section') {
+      set({ section: event.target.value });
+    }
+  });
 
   root.addEventListener('click', async (event) => {
     const control = event.target.closest('[data-ib]');
@@ -144,8 +171,18 @@ export function mountInbox(root) {
 
     if (action === 'filter') {
       if (state.filter === control.dataset.value) return;
-      set({ filter: control.dataset.value, phase: 'loading' });
-      await load();
+      set({ filter: control.dataset.value });
+      return;
+    }
+
+    if (action === 'select') {
+      document.body.dataset.view = 'detail';
+      set({ selected: control.dataset.block });
+      return;
+    }
+
+    if (action === 'back') {
+      document.body.dataset.view = 'list';
       return;
     }
 

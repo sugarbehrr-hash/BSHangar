@@ -1,24 +1,27 @@
 /**
  * The maintainer inbox.
  *
- * Only the parts the design system does not already have. The card shell, the
- * buttons, the filter pills and the warning notice all come from system.css —
- * this file adds the reading layout on top and nothing else, so the page keeps
- * looking like the rest of the site when either changes.
+ * Only the parts the design system does not already have — buttons, notices,
+ * links and the card shell all come from system.css. This file adds: the
+ * app shell (nav / document / review, left to right), the section picker,
+ * the compact row list, and the stat block. It does NOT style the embedded
+ * card body (.vc-embed's contents) — that HTML is window.VoteCard's own
+ * output, styled by its own inline styles and by /contract/_assets/styles.css,
+ * on purpose, so it never drifts from what the guide itself renders.
  *
- * Not scoped by Astro on purpose: almost everything here is rendered by
- * src/inbox/render.js at runtime, and Astro's scope hashes only reach markup it
- * emits itself.
+ * Not scoped by Astro: almost everything here is rendered by
+ * src/inbox/render.js at runtime, and Astro's scope hashes only reach markup
+ * it emits itself.
  *
- * Written narrow-first. This gets read on a phone in a crew room far more often
- * than at a desk.
+ * Desktop is the primary surface — this page is a working session, not a
+ * quick lookup on a layover. Mobile still works: nav-pane and workspace
+ * become two screens instead of two columns, in the same left-to-right order,
+ * just stacked.
  */
 
-.ib {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 24px 18px 96px;
-}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; }
 
 .ib-kicker {
   font-family: var(--font-heading);
@@ -32,11 +35,10 @@
 
 /* ---------------------------------------------------------------- the gates */
 
-/* Signed out, wrong account, or broken: one column, one decision, nothing else
-   on screen to weigh it against. */
 .ib-gate {
   max-width: 30rem;
   margin: 12vh auto 0;
+  padding: 0 18px;
   text-align: center;
 }
 
@@ -63,7 +65,6 @@
   margin: 18px 0 0;
 }
 
-/* The sign-in id, for allowlisting a maintainer by uid instead of by address. */
 .ib-idbox {
   display: flex;
   flex-wrap: wrap;
@@ -92,140 +93,300 @@
   word-break: break-all;
 }
 
-/* --------------------------------------------------------------- the header */
+/* ------------------------------------------------------------------ the shell */
 
-.ib-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
+.shell { height: 100vh; display: flex; flex-direction: column; }
 
-.ib-title {
-  font-family: var(--font-display);
-  font-size: var(--fs-h1);
-  line-height: var(--lh-tight);
-  color: var(--text-strong);
-  margin: 4px 0 0;
-}
-
-/* The document name is orientation, not the headline — the worklist below it
-   is. Kept on one line so it never crowds Sign out. */
-.ib-top > .btn {
-  white-space: nowrap;
-}
-
-.ib-bar {
-  margin-top: 20px;
-}
-
-/* Two segments splitting the width, so neither filter is ever half off-screen
-   on a phone. system.css sets .pillrail .pill to flex:none for scrolling rails;
-   this is the opposite case — a fixed pair that should fill the row. */
-.ib-bar .pill {
-  flex: 1 1 0;
-  min-width: 0;
-  justify-content: center;
-}
-
-.ib-scope {
+.topbar {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.ib-scope-text {
-  font-size: var(--fs-body-sm);
-  color: var(--text-muted);
-  margin: 0;
-  min-width: 0;
-}
-
-/* ----------------------------------------------------------------- the list */
-
-.ib-list {
-  list-style: none;
-  margin: 20px 0 0;
-  padding: 0;
-  display: grid;
   gap: 16px;
+  padding: 12px 18px;
+  border-bottom: var(--border-hairline);
+  background: var(--bg-page);
 }
 
-.ib-card-title {
+.topbar-title {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: var(--fs-h3);
-  line-height: var(--lh-snug);
+  font-size: var(--fs-lead);
   color: var(--text-strong);
-  margin: 0;
-}
-
-.ib-card-topic {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: var(--fs-caption);
-  letter-spacing: var(--ls-label);
-  color: var(--text-muted);
   margin: 2px 0 0;
 }
 
-/* The headline finding. Deliberately a sentence, sized like one — the number is
-   the emphasis, not a dashboard tile. */
-.ib-verdict {
-  font-size: var(--fs-body);
-  line-height: var(--lh-normal);
-  color: var(--text-body);
-  margin: 12px 0 0;
+.topbar .btn { white-space: nowrap; }
+
+.panes { flex: 1; min-height: 0; display: flex; }
+
+/* --------------------------------------------------------- column 1: navigator */
+
+.nav-pane {
+  width: 330px;
+  flex: none;
+  border-right: var(--border-hairline);
+  background: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.ib-verdict strong {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  color: var(--text-strong);
-}
-
-.ib-quiet {
-  color: var(--text-muted);
-}
-
-.ib-verdict + .notice {
-  margin-top: 14px;
-}
-
-/* ---------------------------------------------------------------- the notes */
-
-.ib-notes {
-  list-style: none;
-  margin: 16px 0 0;
-  padding: 0;
+.nav-head {
+  flex: none;
+  padding: 12px 14px;
+  border-bottom: var(--border-hairline);
   display: grid;
   gap: 10px;
 }
 
-/* A background tint separates a note from the card, so no divider or stripe has
-   to. */
-.ib-note {
-  padding: 14px 16px;
+/* A two-way segmented toggle, not a pill pair — this is a binary state, and
+   the site's .pillbar pattern is for scrolling rails of many options. */
+.seg {
+  display: flex;
+  gap: 6px;
+  background: var(--surface-sunk);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+}
+
+.seg button {
+  flex: 1;
+  border: 0;
+  background: none;
+  border-radius: var(--radius-pill);
+  padding: 7px 10px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.78125rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.seg button[aria-pressed="true"] {
+  background: var(--bg-page);
+  color: var(--text-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+/* The section picker — a single-line dropdown, not a pill row that wraps and
+   eats the header's vertical space. */
+.sectionpick { position: relative; }
+
+.sectionpick select {
+  appearance: none;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 32px 0 12px;
+  border: 1.5px solid var(--border-soft);
   border-radius: var(--radius-sm);
+  background: var(--bg-page);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.84375rem;
+  color: var(--text-strong);
+  cursor: pointer;
+}
+
+.sectionpick select:focus-visible { outline: var(--focus-ring); }
+
+.sectionpick::after {
+  content: '';
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
+}
+
+.nav-scroll { flex: 1; overflow-y: auto; }
+
+.group-head {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.6875rem;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 12px 14px 4px;
+  margin: 0;
+}
+
+.row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg-page);
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.row:hover { background: var(--surface-sunk); }
+.row[aria-current="true"] { background: var(--sky-100); }
+
+.row-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.84375rem;
+  color: var(--text-strong);
+  line-height: 1.3;
+}
+
+.row.settled .row-title { font-weight: 600; color: var(--ink-700); }
+
+.row-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+}
+
+.stat-pill.warn { background: var(--gold-100); color: var(--gold-600); }
+.stat-pill.good { background: var(--success-100); color: var(--success-700); }
+.stat-pill.quiet { background: var(--surface-sunk); color: var(--text-muted); }
+
+.empty-list {
+  padding: 30px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-relaxed);
+}
+
+/* --------------------------------------------------- columns 2+3: the workspace */
+
+.workspace { flex: 1; min-width: 0; display: flex; }
+
+.workspace-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-body);
+  padding: 40px;
+}
+
+/* column 2: the document. Wider than the review column — the real card
+   renders its own internal two-column layout (prose + a 224px meta rail) and
+   needs the room. */
+.doc-pane {
+  flex: 3 1 0;
+  min-width: 360px;
+  overflow-y: auto;
+  border-right: var(--border-hairline);
+}
+
+.doc-inner { max-width: 720px; padding: 24px 28px 60px; }
+
+.d-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: var(--fs-h3);
+  color: var(--text-strong);
+  margin: 0;
+}
+
+.d-topic {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+/* column 3: stats + comments — the review workspace. */
+.review-pane {
+  flex: 2 1 0;
+  min-width: 320px;
+  overflow-y: auto;
   background: var(--surface-sunk);
 }
 
-/* Handled. Still readable, visibly settled, and still holding its Undo. */
-.ib-note.is-done {
-  background: transparent;
-  box-shadow: inset 0 0 0 1.5px var(--border-soft);
+.review-inner { padding: 22px 24px 60px; }
+
+/* the stat block — compact and horizontal, not a tall hero, so it never
+   forces a scroll on its own. */
+.statblock { display: flex; align-items: center; gap: 14px; }
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  line-height: 1;
 }
 
-.ib-note.is-done .ib-note-text {
+.stat-num.warn { color: var(--gold-600); }
+.stat-num.good { color: var(--success-700); }
+
+.stat-label { font-size: var(--fs-body-sm); line-height: 1.35; color: var(--text-body); }
+
+.stat-label strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--text-strong);
+  font-size: 0.8125rem;
+}
+
+.statbar-wrap { margin-top: 12px; }
+
+/* Part-to-whole bar. Rounded ends via overflow:hidden on the wrapper, a 2px
+   surface-color gap between segments (the flex gap) — no stroke drawn to
+   separate them. */
+.statbar {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--surface-sunk);
+}
+
+.seg-warn { background: var(--gold-500); }
+.seg-good { background: var(--success-600); }
+
+.statbar-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 0.6875rem;
   color: var(--text-muted);
 }
 
-/* Exactly as the reader typed it, line breaks included. Safe to do because this
-   goes in through textContent. */
-.ib-note-text {
-  font-size: var(--fs-body);
+.review-pane .notice { margin-top: 16px; }
+
+.d-notes-head {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.6875rem;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 22px 0 8px;
+}
+
+.d-notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+.d-note { padding: 13px 14px; border-radius: var(--radius-sm); background: var(--bg-page); }
+
+.d-note.done { background: transparent; box-shadow: inset 0 0 0 1.5px var(--border-soft); }
+.d-note.done .d-note-text { color: var(--text-muted); }
+
+.d-note-text {
+  font-size: var(--fs-body-sm);
   line-height: var(--lh-relaxed);
   color: var(--text-body);
   margin: 0;
@@ -233,131 +394,55 @@
   overflow-wrap: anywhere;
 }
 
-.ib-note-meta {
+.d-note-meta {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: var(--fs-caption);
   color: var(--text-muted);
-  margin: 8px 0 0;
+  margin: 6px 0 0;
 }
 
-.ib-note-act {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 12px;
-}
+.d-note-act { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
 
-/* The row is its own receipt — this site has no toast, and the guide's feedback
-   strip settles the same way. */
-.ib-said {
+.said {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: var(--fs-caption);
-  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--success-700);
 }
 
-/* A text control that still clears the 44px tap floor. */
-.ib-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap-min);
-  padding: 0 2px;
-  border: 0;
-  background: none;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: var(--fs-body-sm);
-  color: var(--link);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
+.no-notes { margin-top: 20px; color: var(--text-muted); font-size: var(--fs-body-sm); }
 
-.ib-link:hover {
-  color: var(--text-strong);
-}
+/* The card the guide itself renders. No layout rules of ours reach inside —
+   its own inline styles and /contract/_assets/styles.css own it entirely. */
+.vc-embed { margin-top: 4px; }
 
-.ib-alldone {
-  margin-top: 6px;
-}
+.back-btn { display: none; }
 
-/* --------------------------------------------------------- empty and drift */
+/* --------------------------------------------------------------------- mobile */
 
-.ib-empty {
-  margin-top: 20px;
-  padding: 40px 24px;
-  border-radius: var(--radius-md);
-  background: var(--surface-sunk);
-  text-align: center;
-}
+@media (max-width: 1023px) {
+  .nav-pane { width: 100%; border-right: 0; }
+  body[data-view="detail"] .nav-pane { display: none; }
+  body[data-view="list"] .workspace { display: none; }
 
-.ib-empty-title {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: var(--fs-lead);
-  color: var(--text-strong);
-  margin: 0;
-}
-
-.ib-empty-note {
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-relaxed);
-  color: var(--text-muted);
-  margin: 8px auto 0;
-  max-width: 34ch;
-}
-
-.ib-drift {
-  margin-top: 40px;
-  padding-top: 28px;
-  border-top: var(--border-hairline);
-}
-
-.ib-drift-title {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: var(--fs-h3);
-  color: var(--text-strong);
-  margin: 0;
-}
-
-.ib-drift-note {
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-relaxed);
-  color: var(--text-muted);
-  margin: 8px 0 0;
-  text-wrap: pretty;
-}
-
-/* ------------------------------------------------------------------ desktop */
-
-@media (min-width: 700px) {
-  .ib {
-    padding: 40px 24px 96px;
-  }
-
-  .ib-title {
-    font-size: var(--fs-display-md);
-  }
-
-  .ib-gate-title {
-    font-size: var(--fs-display-lg);
-  }
-
-  /* Room to spare — the filters no longer need to fill the row. */
-  .ib-bar .pill {
+  .workspace { flex-direction: column; overflow-y: auto; }
+  .doc-pane, .review-pane {
+    border-right: 0;
+    overflow-y: visible;
     flex: none;
+    min-width: 0;
   }
+  .review-pane { border-top: var(--border-hairline); }
+  .doc-inner, .review-inner { max-width: none; padding: 18px 18px 24px; }
+
+  .back-btn { display: inline-flex; margin-bottom: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ib * {
-    transition: none !important;
-  }
+  * { transition: none !important; }
 }

@@ -105,16 +105,19 @@ export async function signOutNow() {
 /**
  * Every response for one document, newest reader activity first.
  *
- * `unreadOnly` narrows to the untriaged queue. Both shapes are covered by the
- * composite indexes already in firestore.indexes.json.
+ * Always the full set — "Needs attention" vs "Everything" is a client-side
+ * split on the grouped, per-card result (see report.js's outstanding cards),
+ * not a per-row status filter: a card with a 4-of-6 unclear split and zero
+ * notes still needs attention even though no individual row has status
+ * 'new' pending. A server-side status filter can't express that; one fetch
+ * per view, refiltered locally on every click, can. Covered by the
+ * `doc, updatedAt` composite index in firestore.indexes.json.
  */
-export async function fetchResponses(documentId, { unreadOnly }) {
+export async function fetchResponses(documentId) {
   const { db } = connect();
-  const constraints = [where('doc', '==', documentId)];
-  if (unreadOnly) constraints.push(where('status', '==', 'new'));
-  constraints.push(orderBy('updatedAt', 'desc'));
-
-  const snapshot = await getDocs(query(collection(db, COLLECTION), ...constraints));
+  const snapshot = await getDocs(
+    query(collection(db, COLLECTION), where('doc', '==', documentId), orderBy('updatedAt', 'desc'))
+  );
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 

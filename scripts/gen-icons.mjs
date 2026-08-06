@@ -36,6 +36,13 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const SRC = 'src';
+// The vote guide's card renderer is vendored here, not in src/ — see
+// scripts/sync-vote-guide.mjs — but /inbox/ calls window.VoteCard.changeCard()
+// directly (single source of truth with the guide itself, see card-render.js's
+// own header) rather than re-implementing the card's markup. Its icons need to
+// ship in the same self-hosted set as everything else, or they render as blank
+// boxes on the one page that reuses this script.
+const SRC_EXTRA = 'public/contract/_assets';
 const ASSETS = 'node_modules/@phosphor-icons/core/assets';
 const OUT = 'src/styles/tokens/icons.css';
 
@@ -58,7 +65,7 @@ function walk(dir, out = []) {
   return out;
 }
 
-const sources = walk(SRC).map((f) => readFileSync(f, 'utf8'));
+const sources = [...walk(SRC), ...walk(SRC_EXTRA)].map((f) => readFileSync(f, 'utf8'));
 
 /** Every icon name mentioned anywhere in src, including data files. */
 const names = new Set();

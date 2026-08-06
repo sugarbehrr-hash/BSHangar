@@ -1,5 +1,4 @@
 ---
-import { readCards } from '../../inbox/cards.js';
 import '../../styles/global.css';
 import '../../inbox/inbox.css';
 
@@ -16,28 +15,25 @@ import '../../inbox/inbox.css';
  * comes from Firestore, which refuses to hand any of it over to anyone outside
  * the allowlist in firestore.rules. That file is the access control; this is
  * just the reading surface.
+ *
+ * The card itself is not ours to render twice. assessment.data.js,
+ * assessment-charts.js and card-render.js are the SAME vendored files the
+ * guide loads (see public/contract/2026-ta-vote-guide/index.html) — loaded
+ * here the same way, as plain blocking scripts, so window.VoteCard.changeCard()
+ * produces the exact card a reader saw. See src/inbox/cardData.js.
  */
 
 /**
- * Documents with a feedback layer. One today. A second is one line here plus
- * its data file — the collection keys on `doc`, so nothing else has to change.
+ * Documents with a feedback layer. One today. A second is one line here —
+ * the collection keys on `doc`, so nothing else has to change.
  */
 const DOCS = {
   '2026-ta-vote-guide': { title: '2026 TA Vote Guide' },
 };
 
 const documentId = '2026-ta-vote-guide';
-const cards = readCards();
 
-const payload = JSON.stringify({
-  doc: documentId,
-  title: DOCS[documentId].title,
-  titles: cards.titles,
-  askable: cards.askable,
-  version: cards.version,
-  // Escaped so a card title containing "</script>" cannot close the tag it is
-  // being written into. Ours today; not necessarily ours after a regeneration.
-}).replace(/</g, '\\u003c');
+const payload = JSON.stringify({ doc: documentId, title: DOCS[documentId].title }).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -48,10 +44,11 @@ const payload = JSON.stringify({
     <title>Reader feedback — Blue Streak Hangar</title>
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#0F1E3D" />
+    <link rel="stylesheet" href="/contract/_assets/styles.css" />
   </head>
 
   <body>
-    <main class="ib" id="ib-root"></main>
+    <main id="ib-root"></main>
 
     <noscript>
       <p class="ib-gate-note">
@@ -60,6 +57,14 @@ const payload = JSON.stringify({
     </noscript>
 
     <script type="application/json" id="ib-data" set:html={payload}></script>
+
+    <!-- The guide's own data + renderer, loaded the same way the guide loads them —
+         classic blocking scripts, in dependency order, ahead of the module script
+         below so window.ASSESSMENT / AssessmentChart / VoteCard are ready by the
+         time mountInbox() runs. -->
+    <script is:inline src="/contract/_assets/assessment.data.js"></script>
+    <script is:inline src="/contract/_assets/assessment-charts.js"></script>
+    <script is:inline src="/contract/_assets/card-render.js"></script>
 
     <script>
       import { mountInbox } from '../../inbox/mount.js';

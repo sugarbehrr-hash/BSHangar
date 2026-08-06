@@ -22,11 +22,39 @@
 (function () {
   const A = window.ASSESSMENT || {};
 
-  // Mobile (quick fix): stack a card's boxes instead of squishing them.
+  // Stack a card's boxes when THEY are narrow, not when the viewport is.
+  //
+  // The original rule was a @media(max-width:640px) breakpoint — it only ever
+  // looked at the viewport, so a card embedded in a narrow column on an
+  // otherwise-wide screen (a sidebar, a review pane, anything narrower than
+  // the page) stayed jammed into its two-column layout no matter how little
+  // room it actually had. Container queries fix that at the source: each
+  // level responds to the width IT was actually given, which is also why
+  // there are two separate container contexts below rather than one — the
+  // outer card (prose vs. the 224px meta rail) and the Today/Proposed pair
+  // inside the prose column each run out of room at a different width, and
+  // the prose column can regain room the moment the meta rail drops, so its
+  // own stacking decision has to be made independently, not inherited from
+  // the card's.
+  //
+  // container-type/container-name are set inline on the elements themselves
+  // (changeCard, marketDetailCard) rather than here, since this stylesheet
+  // has no selector to hang them on other than the class every card already
+  // carries.
+  //
+  // Container queries need Safari 16+; this guide is read on whatever phone a
+  // crew member happens to have, some of them older. `@supports not` keeps the
+  // original viewport rule as a fallback for anything that can't evaluate
+  // `@container` at all, so an unsupported browser still gets SOME stacking
+  // instead of silently getting none — @container rules a browser can't parse
+  // are ignored outright, not degraded.
   (function(){
     if (typeof document === "undefined" || document.getElementById("vc-mobile-css")) return;
     var st = document.createElement("style"); st.id = "vc-mobile-css";
-    st.textContent = "@media(max-width:640px){.vc-card{grid-template-columns:1fr!important}.vc-tp{grid-template-columns:1fr!important}.vc-tp-arrow{transform:rotate(90deg);margin:2px auto}.vc-rail{position:static!important}}";
+    st.textContent =
+      "@container vc-card (max-width:600px){.vc-card{grid-template-columns:1fr!important}.vc-rail{position:static!important}}" +
+      "@container vc-left (max-width:380px){.vc-tp{grid-template-columns:1fr!important}.vc-tp-arrow{transform:rotate(90deg);margin:2px auto}}" +
+      "@supports not (container-type:inline-size){@media(max-width:640px){.vc-card{grid-template-columns:1fr!important}.vc-tp{grid-template-columns:1fr!important}.vc-tp-arrow{transform:rotate(90deg);margin:2px auto}.vc-rail{position:static!important}}}";
     (document.head || document.documentElement).appendChild(st);
   })();
   const RLABELS = (A.ratingSystem || {}).labels || {};
@@ -329,8 +357,11 @@
     const prose = detail === "long" ? (c.meaning || c.plain || "") : (c.plain || c.meaning || "");
     const showRealterms = detail === "long" && !!c.realterms;
 
-    // left column
-    let left = '<div style="min-width:0;">';
+    // left column. Its own container context, separate from .vc-card's: this
+    // column can regain width the instant the outer card drops its 224px
+    // meta rail, so whether .vc-tp fits two-up has to be decided against
+    // THIS width, not the card's.
+    let left = '<div style="min-width:0; container-type:inline-size; container-name:vc-left;">';
     left += '<h3 style="font-family:var(--font-heading); font-weight:800; font-size:17.5px; color:var(--navy-900); margin:0 0 10px; line-height:1.3;">' + (c.title || "") + '</h3>';
     left += '<p style="font-size:14px; line-height:1.6; margin:0 0 12px;">' + prose + '</p>';
     // today → proposed
@@ -396,8 +427,15 @@
 
     const right = '<div class="vc-rail" style="display:flex; flex-direction:column; gap:10px; position:sticky; top:calc(var(--tb-h, 54px) + 12px); align-self:start;">' + meta + worth + '</div>';
 
-    return '<div data-card-id="' + (c.id || '') + '" class="vc-card" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid;">'
-      + left + right + '</div>';
+    // container-type/name live on this wrapper, not on .vc-card itself: a
+    // container query cannot restyle grid-template-columns on the SAME
+    // element that establishes the containment context (browsers reject that
+    // as a layout cycle — position:static on .vc-rail, a descendant, would
+    // apply fine, but .vc-card's own columns silently wouldn't). One extra
+    // inert div sidesteps the whole class of bug instead of relying on a
+    // specific engine's leniency.
+    return '<div style="container-type:inline-size; container-name:vc-card;"><div data-card-id="' + (c.id || '') + '" class="vc-card" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid;">'
+      + left + right + '</div></div>';
   }
 
   // ── navy topic header band ───────────────────────────────────────────────────
@@ -510,7 +548,7 @@
         + '<div class="ink-onnavy" style="font-family:var(--font-heading); font-weight:800; font-size:15.5px; line-height:1.2; color:#fff;">' + m.callout + '</div></div>';
     }
     const right = '<div style="display:flex; flex-direction:column; gap:10px;">' + mvBlock + calloutBlock + '</div>';
-    return '<div data-card-id="' + (m.id || '') + '" class="vc-card" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid;">'
+    return '<div data-card-id="' + (m.id || '') + '" class="vc-card" style="background:var(--white); border:1.5px solid var(--cream-300); border-radius:16px; padding:20px 16px 20px 22px; margin-bottom:16px; display:grid; grid-template-columns:1fr 224px; gap:14px; break-inside:avoid; container-type:inline-size; container-name:vc-card;">'
       + left + right + '</div>';
   }
 

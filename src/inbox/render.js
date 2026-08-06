@@ -8,12 +8,23 @@
  * Reader text goes in through textContent, never innerHTML. That is not
  * belt-and-braces: every note, base and version string in this file was typed
  * by an anonymous member of the public into a box on a public page. The old
- * Markdown report needed a whole escaping layer for exactly this reason
- * (mdText, mdCode, flatten) — rendering to DOM instead means the escaping layer
- * is the platform's, and notes can finally be shown exactly as written.
+ * Markdown report needed a whole escaping layer for exactly this reason — DOM
+ * text nodes make notes safe to show exactly as written.
+ *
+ * The one exception is the card body itself: it comes from
+ * cardData.renderCardHtml(), which is window.VoteCard.changeCard() /
+ * marketDetailCard() — the guide's OWN renderer, injected verbatim via
+ * innerHTML. That HTML is ours (assessment.data.js), not reader-supplied, and
+ * re-implementing it here would be a second copy that silently drifts from
+ * what the guide actually shows.
+ *
+ * Left to right, matching the workflow: pick a card in the nav (column 1),
+ * read what it actually says (column 2), see how many people struggled and
+ * read why (column 3). Each column scrolls independently.
  */
 
-import { BURST_ALERT, rank, share } from './report.js';
+import { BURST_ALERT, groupByBlock, rank, share, splitByDrift } from './report.js';
+import { renderCardHtml } from './cardData.js';
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -47,6 +58,11 @@ function button(label, action, { className = 'btn quiet sm', data = {} } = {}) {
 }
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+/** A card needs Cole's attention if the ratio says so, even with every note handled. */
+function outstanding(entry) {
+  return entry.unclear > 0 || entry.notes.some((n) => n.status !== 'triaged');
+}
 
 // ----------------------------------------------------------------- the gates
 
@@ -104,41 +120,170 @@ export function renderError(message) {
   return section;
 }
 
-// ------------------------------------------------------------------ the list
+// --------------------------------------------------------------- the navigator
 
-/**
- * The headline number, in words rather than a percentage.
- *
- * "9 of 14 said this wasn't clear" is a fact Cole can act on. "64% unclear" is
- * the same fact wearing a lab coat, and it hides the sample size — which is the
- * part that decides whether it is worth a rewrite.
- */
-function verdictLine(entry) {
-  const answered = entry.clear + entry.unclear;
-  const line = el('p', 'ib-verdict');
+function renderNavHead({ filter, section, sectionCounts, waiting }) {
+  const head = el('div', 'nav-head');
 
-  if (answered === 0) {
-    line.append(el('span', 'ib-quiet', `${plural(entry.withdrawn, 'answer')} withdrawn, nothing kept`));
-    return line;
+  const seg = el('div', 'seg');
+  for (const [value, label] of [['attention', 'Needs attention'], ['all', 'All']]) {
+    const suffix = value === 'attention' ? (waiting ? ` (${waiting})` : '') : '';
+    const b = button(`${label}${suffix}`, 'filter', { className: '', data: { value } });
+    b.setAttribute('aria-pressed', String(filter === value));
+    seg.append(b);
   }
+  head.append(seg);
 
-  if (entry.unclear === 0) {
-    line.append(
-      el('strong', null, answered === 1 ? 'The one person who answered' : `All ${answered}`),
-      document.createTextNode(' said this was clear')
-    );
-    return line;
+  const pick = el('div', 'sectionpick');
+  const select = el('select');
+  select.dataset.ib = 'section';
+  for (const { key, label, count } of sectionCounts) {
+    const opt = el('option', null, count ? `${label} (${count})` : label);
+    opt.value = key;
+    if (section === key) opt.selected = true;
+    select.append(opt);
   }
+  pick.append(select);
+  head.append(pick);
 
-  line.append(
-    el('strong', null, `${entry.unclear} of ${answered}`),
-    document.createTextNode(" said this wasn't clear"),
-    el('span', 'ib-quiet', ` · ${Math.round(share(entry) * 100)}%`)
-  );
-  return line;
+  return head;
 }
 
-function burstWarning(entry) {
+function statPill(text, tone) {
+  return el('span', `stat-pill ${tone}`, text);
+}
+
+function rowBadges(entry) {
+  const badges = [];
+  if (entry.unclear > 0) badges.push(statPill(`${entry.unclear} unclear`, 'warn'));
+  const open = entry.notes.filter((n) => n.status !== 'triaged').length;
+  if (open) badges.push(statPill(plural(open, 'note'), 'warn'));
+  if (entry.clear > 0) badges.push(statPill(`${entry.clear} clear`, entry.unclear === 0 ? 'good' : 'quiet'));
+  return badges;
+}
+
+function navRow(entry, selected) {
+  const settled = !outstanding(entry);
+  const row = button(null, 'select', { className: settled ? 'row settled' : 'row', data: { block: entry.block } });
+  row.setAttribute('aria-current', String(selected === entry.block));
+  row.append(el('div', 'row-title', entry.title));
+  const badges = el('div', 'row-badges');
+  badges.append(...rowBadges(entry));
+  row.append(badges);
+  return row;
+}
+
+function driftRow(driftCount, selected) {
+  const row = button(null, 'select', { className: 'row settled', data: { block: 'drift' } });
+  row.setAttribute('aria-current', String(selected === 'drift'));
+  row.append(
+    el('div', 'row-title', "About text we've since rewritten"),
+    (() => {
+      const badges = el('div', 'row-badges');
+      badges.append(statPill(plural(driftCount, 'response'), 'quiet'));
+      return badges;
+    })()
+  );
+  return row;
+}
+
+/**
+ * Groups already-scoped entries under their real topic headings, in the same
+ * order the guide's own topics appear — "the document," not an arbitrary
+ * sort. Skipped when a single section is already selected: the heading would
+ * just repeat what the dropdown already says.
+ */
+function groupedByTopic(entries, topics) {
+  const buckets = new Map(topics.map((t) => [t, []]));
+  for (const entry of entries) {
+    if (!buckets.has(entry.topic)) buckets.set(entry.topic, []);
+    buckets.get(entry.topic).push(entry);
+  }
+  return [...buckets.entries()].filter(([, list]) => list.length);
+}
+
+function renderList({ entries, topics, section, filter, selected, drift }) {
+  const scroll = el('div', 'nav-scroll');
+  const shown = filter === 'attention' ? entries.filter(outstanding) : entries;
+
+  if (!shown.length && filter === 'attention') {
+    scroll.append(el('div', 'empty-list', 'Nothing needs attention here. Switch to "All" to browse every card.'));
+    return scroll;
+  }
+
+  if (section === 'all') {
+    for (const [topic, list] of groupedByTopic(shown, topics)) {
+      scroll.append(el('p', 'group-head', topic));
+      for (const entry of rank(list)) scroll.append(navRow(entry, selected));
+    }
+  } else {
+    for (const entry of rank(shown)) scroll.append(navRow(entry, selected));
+  }
+
+  if (section === 'all' && filter === 'all' && drift.length) {
+    scroll.append(el('p', 'group-head', 'Older content'));
+    scroll.append(driftRow(drift.length, selected));
+  }
+
+  return scroll;
+}
+
+// ---------------------------------------------------------------- the workspace
+
+/**
+ * The headline, made obvious rather than buried in a sentence: a big colored
+ * number paired with a text label (status color is never used alone), plus a
+ * compact part-to-whole bar. The bar always renders, even at 100% one way, so
+ * a card's shape does not shift depending on which state it happens to be in.
+ */
+function statBlock(entry) {
+  const answered = entry.clear + entry.unclear;
+
+  if (answered === 0) {
+    const p = el('p', 'ib-quiet');
+    p.textContent = entry.withdrawn ? `${plural(entry.withdrawn, 'answer')} withdrawn, nothing kept` : 'No responses yet.';
+    return p;
+  }
+
+  const allClear = entry.unclear === 0;
+  const frag = document.createDocumentFragment();
+
+  const block = el('div', 'statblock');
+  block.append(el('div', `stat-num ${allClear ? 'good' : 'warn'}`, String(allClear ? entry.clear : entry.unclear)));
+  const label = el('div', 'stat-label');
+  label.append(
+    el('strong', null, allClear ? 'said this was clear' : `of ${answered} said this wasn't clear`),
+    document.createTextNode(
+      allClear
+        ? (answered === 1 ? 'the one person who answered' : `all ${answered} responses`)
+        : `${Math.round((entry.unclear / answered) * 100)}% of responses`
+    )
+  );
+  block.append(label);
+  frag.append(block);
+
+  const wrap = el('div', 'statbar-wrap');
+  const bar = el('div', 'statbar');
+  if (entry.unclear > 0) {
+    const seg = el('div', 'seg-warn');
+    seg.style.flex = String(entry.unclear);
+    bar.append(seg);
+  }
+  if (entry.clear > 0) {
+    const seg = el('div', 'seg-good');
+    seg.style.flex = String(entry.clear);
+    bar.append(seg);
+  }
+  wrap.append(bar);
+  const scale = el('div', 'statbar-scale');
+  scale.append(el('span', null, `${entry.unclear} unclear`), el('span', null, `${entry.clear} clear`));
+  wrap.append(scale);
+  frag.append(wrap);
+
+  return frag;
+}
+
+function burstWarning() {
   const box = el('div', 'notice warn');
   box.append(
     icon('ph-fill ph-warning'),
@@ -146,7 +291,7 @@ function burstWarning(entry) {
       'p',
       'nt',
       'These all arrived within ten minutes of each other. That may be one person ' +
-        'answering over and over, so treat the ranking on this card as unverified.'
+        'answering over and over, so treat this ranking as unverified.'
     )
   );
   return box;
@@ -162,20 +307,20 @@ function burstWarning(entry) {
  */
 function noteRow(note, currentVersion) {
   const done = note.status === 'triaged';
-  const row = el('li', done ? 'ib-note is-done' : 'ib-note');
+  const row = el('li', done ? 'd-note done' : 'd-note');
 
-  row.append(el('p', 'ib-note-text', note.note));
+  row.append(el('p', 'd-note-text', note.note));
 
   const tags = [];
   if (note.base) tags.push(note.base);
   if (note.version && note.version !== currentVersion) tags.push('written about an older version of this card');
-  if (tags.length) row.append(el('p', 'ib-note-meta', tags.join(' · ')));
+  if (tags.length) row.append(el('p', 'd-note-meta', tags.join(' · ')));
 
-  const actions = el('div', 'ib-note-act');
+  const actions = el('div', 'd-note-act');
   if (done) {
-    const said = el('span', 'ib-said');
+    const said = el('span', 'said');
     said.append(icon('ph-fill ph-check'), document.createTextNode('Done'));
-    actions.append(said, button('Undo', 'status', { className: 'ib-link', data: { id: note.id, to: 'new' } }));
+    actions.append(said, button('Undo', 'status', { className: 'link', data: { id: note.id, to: 'new' } }));
   } else {
     actions.append(button('Done', 'status', { className: 'btn quiet sm', data: { id: note.id, to: 'triaged' } }));
   }
@@ -184,125 +329,133 @@ function noteRow(note, currentVersion) {
   return row;
 }
 
-function cardItem(entry, titles, currentVersion) {
-  const meta = titles[entry.block];
-  // The site's card shell, not a new one — only the inbox-specific bits are ib-.
-  const item = el('li', 'card ib-card');
+function reviewPane(entry, currentVersion) {
+  const pane = el('div', 'review-pane');
+  const inner = el('div', 'review-inner');
 
-  item.append(el('h2', 'ib-card-title', meta?.title ?? entry.block));
-  if (meta?.topic) item.append(el('p', 'ib-card-topic', meta.topic));
-  item.append(verdictLine(entry));
-
-  if (entry.burst >= BURST_ALERT) item.append(burstWarning(entry));
+  inner.append(statBlock(entry));
+  if (entry.burst >= BURST_ALERT) inner.append(burstWarning());
 
   if (entry.notes.length) {
-    const list = el('ul', 'ib-notes');
+    inner.append(el('p', 'd-notes-head', 'Notes'));
+    const list = el('ul', 'd-notes');
     for (const note of entry.notes) list.append(noteRow(note, currentVersion));
-    item.append(list);
+    inner.append(list);
 
-    const outstanding = entry.notes.filter((n) => n.status !== 'triaged');
-    if (outstanding.length > 1) {
-      item.append(
-        button(`Mark all ${outstanding.length} done`, 'alldone', {
-          className: 'ib-link ib-alldone',
-          data: { block: entry.block },
-        })
-      );
+    const open = entry.notes.filter((n) => n.status !== 'triaged');
+    if (open.length > 1) {
+      inner.append(button(`Mark all ${open.length} done`, 'alldone', { className: 'link', data: { block: entry.block } }));
     }
+  } else {
+    inner.append(el('p', 'no-notes', 'No notes — nothing else to review here.'));
   }
 
-  return item;
+  pane.append(inner);
+  return pane;
+}
+
+function backButton() {
+  return button('← Back', 'back', { className: 'btn quiet sm back-btn' });
+}
+
+function docPane(entry) {
+  const pane = el('div', 'doc-pane');
+  const inner = el('div', 'doc-inner');
+  inner.append(backButton());
+  if (entry.topic) inner.append(el('p', 'd-topic', entry.topic));
+
+  // The guide's own renderer, injected verbatim — see cardData.renderCardHtml.
+  const embed = el('div', 'vc-embed');
+  embed.innerHTML = renderCardHtml(entry);
+  inner.append(embed);
+
+  pane.append(inner);
+  return pane;
 }
 
 /**
  * Feedback about cards the analyzer has since regenerated away.
  *
- * Kept rather than dropped, and kept apart rather than folded in: a note about
- * text that no longer exists may be answering a question that no longer exists,
- * and counting it toward a live card's tally would be a lie.
+ * Kept rather than dropped: a note about text that no longer exists may be
+ * answering a question that no longer exists, and folding it into a live
+ * card's tally would be a lie. Kept apart, in its own workspace view, for the
+ * same reason.
  */
-function driftSection(rows) {
-  const section = el('section', 'ib-drift');
-  section.append(
-    el('h2', 'ib-drift-title', 'About text we have since rewritten'),
-    el(
-      'p',
-      'ib-drift-note',
-      `${plural(rows.length, 'response')} about cards that are no longer in the guide. ` +
-        'Read them against the old wording, not the current one.'
-    )
-  );
-
-  const list = el('ul', 'ib-notes');
-  for (const row of rows) {
-    const item = el('li', 'ib-note');
-    item.append(el('p', 'ib-note-text', row.note || `${row.verdict}, no note`));
-    item.append(el('p', 'ib-note-meta', row.block));
-    list.append(item);
-  }
-  section.append(list);
-  return section;
-}
-
-export function renderInbox({ docTitle, entries, drift, titles, summary, askable, version, filter, waiting }) {
+function driftWorkspace(rows) {
   const frag = document.createDocumentFragment();
 
-  const top = el('header', 'ib-top');
-  const headings = el('div');
-  headings.append(el('p', 'ib-kicker', 'Reader feedback'), el('h1', 'ib-title', docTitle));
-  top.append(headings, button('Sign out', 'signout'));
-  frag.append(top);
-
-  // The two filters get the full width of a phone between them. Refresh is a
-  // secondary action, so it rides on the scope line below rather than competing
-  // for room with the control Cole actually uses.
-  const bar = el('div', 'ib-bar pillbar');
-  for (const [value, label] of [['new', 'Needs attention'], ['all', 'Everything']]) {
-    const pill = button(label, 'filter', { className: 'pill', data: { value } });
-    pill.setAttribute('aria-pressed', String(filter === value));
-    if (value === 'new' && waiting > 0) pill.append(el('span', 'count', String(waiting)));
-    bar.append(pill);
-  }
-  frag.append(bar);
-
-  const scope = el('div', 'ib-scope');
-  scope.append(
-    el(
-      'p',
-      'ib-scope-text',
-      [
-        plural(summary.total, 'response'),
-        `${summary.cards} of ${askable} cards`,
-        plural(summary.notes, 'note'),
-      ].join(' · ')
-    )
+  const doc = el('div', 'doc-pane');
+  const docInner = el('div', 'doc-inner');
+  docInner.append(
+    backButton(),
+    el('h2', 'd-title', "About text we've since rewritten"),
+    el('p', 'd-topic', 'Feedback about cards no longer in the guide'),
+    el('p', 'ib-gate-note', 'Read these against the old wording, not the current one.')
   );
-  const refresh = button('Refresh', 'refresh', { className: 'ib-link' });
-  refresh.prepend(icon('ph-fill ph-arrows-clockwise'));
-  scope.append(refresh);
-  frag.append(scope);
+  doc.append(docInner);
+  frag.append(doc);
 
-  if (entries.length === 0 && drift.length === 0) {
-    const empty = el('div', 'ib-empty');
-    empty.append(
-      el('p', 'ib-empty-title', filter === 'new' ? 'Nothing waiting.' : 'No feedback yet.'),
-      el(
-        'p',
-        'ib-empty-note',
-        filter === 'new'
-          ? 'Everything that has come in has been handled. Switch to Everything to read it again.'
-          : 'Nobody has answered a card on this guide yet.'
-      )
-    );
-    frag.append(empty);
-    return frag;
+  const review = el('div', 'review-pane');
+  const reviewInner = el('div', 'review-inner');
+  reviewInner.append(el('p', 'd-notes-head', 'Notes'));
+  const list = el('ul', 'd-notes');
+  for (const row of rows) {
+    const item = el('li', 'd-note');
+    item.append(el('p', 'd-note-text', row.note || `${row.verdict}, no note`), el('p', 'd-note-meta', row.block));
+    list.append(item);
   }
-
-  const list = el('ol', 'ib-list');
-  for (const entry of rank(entries)) list.append(cardItem(entry, titles, version));
-  frag.append(list);
-
-  if (drift.length) frag.append(driftSection(drift));
+  reviewInner.append(list);
+  review.append(reviewInner);
+  frag.append(review);
 
   return frag;
+}
+
+// -------------------------------------------------------------------- the shell
+
+export function renderShell({ docTitle, cardIndex, topics, askable, version, rows, filter, section, selected }) {
+  const shell = el('div', 'shell');
+
+  const top = el('header', 'topbar');
+  const headings = el('div');
+  headings.append(el('p', 'ib-kicker', 'Reader feedback'), el('h1', 'topbar-title', docTitle));
+  top.append(headings, button('Sign out', 'signout'));
+  shell.append(top);
+
+  const { live, drift } = splitByDrift(rows, cardIndex);
+  const entries = groupByBlock(live).map((entry) => ({ ...entry, ...cardIndex.get(entry.block) }));
+  const waiting = entries.filter(outstanding).length;
+
+  const sectionCounts = [
+    { key: 'all', label: 'All sections', count: waiting },
+    ...topics.map((t) => ({
+      key: t,
+      label: t,
+      count: entries.filter((e) => e.topic === t && outstanding(e)).length,
+    })),
+  ];
+
+  const panes = el('div', 'panes');
+  const nav = el('nav', 'nav-pane');
+  nav.append(renderNavHead({ filter, section, sectionCounts, waiting }));
+
+  const scoped = section === 'all' ? entries : entries.filter((e) => e.topic === section);
+  nav.append(renderList({ entries: scoped, topics, section, filter, selected, drift }));
+  panes.append(nav);
+
+  const workspace = el('div', 'workspace');
+  if (selected === 'drift') {
+    workspace.append(driftWorkspace(drift));
+  } else {
+    const entry = entries.find((e) => e.block === selected);
+    if (entry) {
+      workspace.append(docPane(entry), reviewPane(entry, version));
+    } else {
+      workspace.append(el('div', 'workspace-empty', 'Select a card on the left to read it and see what people said.'));
+    }
+  }
+  panes.append(workspace);
+  shell.append(panes);
+
+  return shell;
 }
