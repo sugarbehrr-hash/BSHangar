@@ -59,17 +59,23 @@ export function injectCss() {
     `background:var(--white,#fff);overflow:hidden;`,
     `font-family:var(--font-body,sans-serif)}`,
 
-    // Loud default overridden to loud: solid gold-500 while a card is still
-    // asking (unanswered, or reopened via Change). Gold-100 was tried first and
-    // measured at six points of RGB from the page's own cream-200 — a "gold"
-    // token that was in fact indistinguishable from the background, on a page
-    // where the one thing meant to invite a tap was also the least visible
-    // thing on it. gold-500 is the site's actual CTA color — the "Read the full
-    // technical report" button, every badge — solid-filled, not tinted, which
-    // is the established idiom for "notice this," not a new one. It steps back
-    // to the calm default the moment there is nothing left to ask.
-    `.${STRIP}.is-asking{border-top:1.5px solid var(--gold-600,#d88a1e);`,
-    `background:var(--gold-500,#e8a33d)}`,
+    // Visible while asking, without shouting on every one of 46 cards at once.
+    // Two wrong turns before this: gold-100 measured six points of RGB from the
+    // page's own cream-200 (invisible); solid gold-500 across the full row is
+    // the site's real CTA color, but a bright block on every unanswered card
+    // simultaneously is the opposite failure — loud enough to fight the actual
+    // contract text for attention.
+    //
+    // The calibration that already exists on this exact card: the TODAY/
+    // PROPOSED boxes (card-render.js:339-344) are a light tint plus a solid,
+    // real-colored border — sky-100 fill, sky-700 border for PROPOSED — never a
+    // saturated fill. Same formula here, gold family instead of blue: gold-200
+    // is a real hue shift from the page (its blue channel alone sits 37 points
+    // from cream-200's, versus gold-100's 8), and the gold-500 border is the
+    // same solid, undiluted color the CTA button uses, just doing less of the
+    // work by itself.
+    `.${STRIP}.is-asking{border-top:2px solid var(--gold-500,#e8a33d);`,
+    `background:var(--gold-200,#f8e2bc)}`,
 
     // Prompt row.
     `.bsf-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:11px 20px;`,
