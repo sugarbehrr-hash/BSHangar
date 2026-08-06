@@ -28,20 +28,49 @@ export function injectCss() {
   const style = document.createElement('style');
   style.id = 'bsf-css';
   style.textContent = [
+    // The right rail (card-render.js:397) is `position:sticky`, meant to track
+    // the scroll while its card's left column scrolls past underneath it. That
+    // is fine against a card with nothing below the rail — it is not fine
+    // against a full-width footer, because the rail keeps floating at its
+    // stuck viewport position while the page scrolls the footer up underneath
+    // it, and for however many pixels the rail is taller than the footer's
+    // vertical position at that moment, the two visibly overlap.
+    //
+    // This is not a new failure — it is the beta layer's own bug, come back.
+    // review.js carried this exact override (`body.rv-on .vc-rail{position:
+    // static!important;...}`) for precisely this reason, active unconditionally
+    // for the whole time review.js was on the page. Deleting review.js deleted
+    // the override with it, and nothing here replaced it — so the rail went
+    // back to being sticky against a footer, which is the one layout this
+    // page's own mobile breakpoint (card-render.js:29) already treats as
+    // requiring `position:static`. This card is at every width now, not only
+    // below 640px.
+    `.vc-rail{position:static!important;max-height:none!important;overflow:visible!important}`,
+
     // Injected UI sets its own box model so a width:100% field can never
     // overflow the card that contains it.
     `.${STRIP},.${STRIP} *{box-sizing:border-box}`,
 
+    // Background is gold-100, not cream-100. Cream-100 (#fbf7ee) sits almost on
+    // top of the page's own cream-200 (#f5efe1) — six points apart per channel,
+    // indistinguishable at a glance against a white card — so the one thing on
+    // this page meant to invite a tap was also the least visible thing on it.
+    // Gold is the site's existing "notice this" color (the NEW badges, the
+    // TODAY/PROPOSED callouts on this same card); reusing it here is applying
+    // the established idiom, not inventing a new one.
     `.${STRIP}{grid-column:1/-1;margin:14px -16px -20px -22px;`,
-    `border-top:1px solid var(--cream-300,#e3dccb);border-radius:0 0 15px 15px;`,
-    `background:var(--cream-100,#faf6ef);overflow:hidden;`,
+    `border-top:1.5px solid var(--gold-500,#e8a33d);border-radius:0 0 15px 15px;`,
+    `background:var(--gold-100,#fbf0d9);overflow:hidden;`,
     `font-family:var(--font-body,sans-serif)}`,
 
     // Prompt row.
     `.bsf-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:11px 20px;`,
     `transition:background .15s ease}`,
+    // Navy, not the muted ink-500 used for the rail's secondary metadata labels
+    // ("WHAT IS THIS?", "WHO IT COVERS"). This is the primary prompt on the
+    // card, not a metadata caption, and needs the contrast to read as one.
     `.bsf-label{font-family:var(--font-heading,inherit);font-size:10px;font-weight:800;`,
-    `letter-spacing:.09em;text-transform:uppercase;color:var(--ink-500,#7c8398);margin-right:2px}`,
+    `letter-spacing:.09em;text-transform:uppercase;color:var(--navy-900,#1f2a44);margin-right:2px}`,
 
     // Open state. Per the site-wide rule, the header of an expanded thing
     // inverts to navy — it never becomes a cream tint.
