@@ -30,8 +30,15 @@ export const FIREBASE_CONFIG = {
   appId: '1:855469999531:web:244ed20276332b2ba53eee',
 };
 
-/** Firebase console → App Check → your web app → reCAPTCHA v3. */
-export const RECAPTCHA_SITE_KEY = 'REPLACE_ME';
+/**
+ * reCAPTCHA ENTERPRISE site key, registered against this project's App Check
+ * config. Enterprise, not v3 — they are different products with different
+ * client providers, and net.js must use ReCaptchaEnterpriseProvider to match.
+ *
+ * Scoped to bluestreakhangar.com and www.bluestreakhangar.com, so it is useless
+ * anywhere else. Public like the rest of this file.
+ */
+export const RECAPTCHA_SITE_KEY = '6LdTrXctAAAAAG-JsAo59pv9omS7HDnoWsFIo5B4';
 
 /** Emulator ports, mirrored from firebase.json. */
 export const EMULATOR = { firestoreHost: '127.0.0.1', firestorePort: 8080, authPort: 9099 };

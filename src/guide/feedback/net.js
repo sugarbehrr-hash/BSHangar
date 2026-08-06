@@ -15,7 +15,7 @@
  */
 
 import { initializeApp } from 'firebase/app';
-import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getAuth, signInAnonymously, connectAuthEmulator } from 'firebase/auth';
 import {
   getFirestore,
@@ -47,8 +47,14 @@ function connect() {
     // App Check cannot run against the emulator without a debug token, and a
     // local dev loop should not depend on reCAPTCHA being reachable.
     if (!isEmulated()) {
+      // Enterprise provider, matching the Enterprise key registered against
+      // this project's App Check config. Pairing an Enterprise key with
+      // ReCaptchaV3Provider (or the reverse) fails at token exchange, and the
+      // failure arrives as a generic permission-denied on the write — which is
+      // indistinguishable from a rules rejection, so it is worth being explicit
+      // about here rather than debugging it from the symptom.
       initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider(RECAPTCHA_SITE_KEY),
+        provider: new ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY),
         isTokenAutoRefreshEnabled: true,
       });
     }
