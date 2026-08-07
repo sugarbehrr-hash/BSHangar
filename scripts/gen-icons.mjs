@@ -34,6 +34,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const SRC = 'src';
 // The vote guide's card renderer is vendored here, not in src/ — see
@@ -43,7 +44,6 @@ const SRC = 'src';
 // ship in the same self-hosted set as everything else, or they render as blank
 // boxes on the one page that reuses this script.
 const SRC_EXTRA = 'public/contract/_assets';
-const ASSETS = 'node_modules/@phosphor-icons/core/assets';
 const OUT = 'src/styles/tokens/icons.css';
 
 /** Phosphor's weight classes — every icon element carries exactly one. */
@@ -97,9 +97,27 @@ for (const src of sources) {
   }
 }
 
-/** Phosphor names the regular weight `check.svg` and the rest `check-fill.svg`. */
+/**
+ * Where one icon's SVG lives, asked of the package rather than assumed.
+ *
+ * `node_modules/@phosphor-icons/core/assets` looks equivalent and is not: it is
+ * a path relative to the process's working directory, so it only finds anything
+ * in a checkout that has its own node_modules. In a git worktree — which shares
+ * the main checkout's install rather than duplicating it — every icon came back
+ * missing and the build died claiming 121 icons had been misspelled.
+ *
+ * import.meta.resolve walks the same way `import` does, from this file outward,
+ * so it finds the package wherever npm actually put it. It resolves through the
+ * package's own `exports` map, which publishes `./assets/<weight>/*.svg` by
+ * pattern — the pattern matches on shape and does not stat, so a name that does
+ * not exist still resolves and is caught by the readFileSync below, exactly as
+ * a bad path was before. Nothing about the missing-icon report changes.
+ *
+ * Phosphor names the regular weight `check.svg` and the rest `check-fill.svg`.
+ */
 function assetPath(weight, name) {
-  return join(ASSETS, weight, weight === 'regular' ? `${name}.svg` : `${name}-${weight}.svg`);
+  const file = weight === 'regular' ? `${name}.svg` : `${name}-${weight}.svg`;
+  return fileURLToPath(import.meta.resolve(`@phosphor-icons/core/assets/${weight}/${file}`));
 }
 
 /**

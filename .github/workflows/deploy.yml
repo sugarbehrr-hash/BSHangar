@@ -1,10 +1,15 @@
 # Build the Astro site and publish it to GitHub Pages.
 #
-# This workflow is inert until the repo's Pages source is switched from
-# "Deploy from a branch" to "GitHub Actions" (Settings -> Pages -> Build and
-# deployment -> Source). That switch needs admin on the repo. Until it happens,
-# Pages keeps serving main's root as a plain static folder, which is what keeps
-# the live TA vote guide up while this rebuild is in progress.
+# This IS the live deploy. The repo's Pages source is set to "GitHub Actions"
+# (`build_type: workflow` on the Pages API), so every push to main runs this and
+# publishes `dist` to bluestreakhangar.com — nothing else serves the site, and
+# main's root is no longer read directly.
+#
+# What that means in practice: anything the build generates rather than commits
+# ships from here and only from here. The vote guide's feedback bundle is the
+# one to remember — public/contract/_assets/guide-feedback*.js is gitignored and
+# rebuilt by `npm run build`, so a change to src/guide/feedback reaches readers
+# through this workflow, not through the file in the tree.
 name: Deploy to GitHub Pages
 
 on:
