@@ -15,10 +15,10 @@
  */
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { join, relative, sep } from 'node:path';
 
 import { DIST, SCRIPTS, forDisplay } from './lib/paths.mjs';
+import { fingerprint } from './lib/precache-fingerprint.mjs';
 
 const TEMPLATE = join(SCRIPTS, 'sw.template.js');
 const OUT = join(DIST, 'sw.js');
@@ -94,14 +94,16 @@ const files = walk(DIST)
 
 if (!files.length) throw new Error('gen-sw: dist/ is empty — run astro build first');
 
-// Hash contents, not paths or mtimes: mtimes move on every build and would
-// churn the version (and so every visitor's whole cache) with nothing changed.
-const hash = createHash('sha256');
-for (const file of files) {
-  hash.update(relative(DIST, file));
-  hash.update(readFileSync(file));
-}
-const version = hash.digest('hex').slice(0, 12);
+// Contents, not paths or mtimes: mtimes move on every build and would churn the
+// version — and so every visitor's whole cache — with nothing changed. Which
+// contents count, and why Pagefind's are handled differently, is the whole
+// subject of scripts/lib/precache-fingerprint.mjs.
+const version = fingerprint(
+  files.map((file) => ({
+    rel: relative(DIST, file).split(sep).join('/'),
+    bytes: readFileSync(file),
+  })),
+);
 
 const urls = files.map(toUrl);
 const bytes = files.reduce((sum, f) => sum + statSync(f).size, 0);
