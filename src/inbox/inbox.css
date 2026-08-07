@@ -280,17 +280,20 @@ body { margin: 0; }
   padding: 40px;
 }
 
-/* column 2: the document. Wider than the review column — the real card
-   renders its own internal two-column layout (prose + a 224px meta rail) and
-   needs the room. */
+/* column 2: the document. flex:1 (not a wider share) because the content is
+   capped and centered below — on a wide screen a bigger flex-basis just grew
+   the empty margin around it, not the reading experience. */
 .doc-pane {
-  flex: 3 1 0;
+  flex: 1 1 0;
   min-width: 360px;
   overflow-y: auto;
   border-right: var(--border-hairline);
 }
 
-.doc-inner { max-width: 720px; padding: 24px 28px 60px; }
+/* Centered, not flush-left: without margin:auto here, a wide monitor left the
+   card pinned to the pane's left edge with a dead gap on the right instead of
+   even breathing room on both sides. */
+.doc-inner { max-width: 720px; margin: 0 auto; padding: 24px 28px 60px; }
 
 .d-title {
   font-family: var(--font-heading);
@@ -308,15 +311,17 @@ body { margin: 0; }
   margin: 0 0 14px;
 }
 
-/* column 3: stats + comments — the review workspace. */
+/* column 3: stats + comments — the review workspace. Tint fills the whole
+   pane so the workspace still reads as two distinct columns on a wide
+   screen; the content inside is capped and centered the same as column 2. */
 .review-pane {
-  flex: 2 1 0;
+  flex: 1 1 0;
   min-width: 320px;
   overflow-y: auto;
   background: var(--surface-sunk);
 }
 
-.review-inner { padding: 22px 24px 60px; }
+.review-inner { max-width: 620px; margin: 0 auto; padding: 22px 24px 60px; }
 
 /* the stat block — compact and horizontal, not a tall hero, so it never
    forces a scroll on its own. */
