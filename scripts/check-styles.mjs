@@ -14,9 +14,9 @@
  */
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
-const DIST = 'dist';
+import { DIST, SRC, forDisplay } from './lib/paths.mjs';
 
 /** Classes that are hooks for script or tooling, never styled. */
 const IGNORE = [
@@ -55,7 +55,7 @@ for (const file of walk(DIST, '.html')) {
       if (!cls || styled.has(cls)) continue;
       if (IGNORE.some((re) => re.test(cls))) continue;
       if (!offenders.has(cls)) offenders.set(cls, new Set());
-      offenders.get(cls).add(file.replace(`${DIST}/`, '').replace('/index.html', '/'));
+      offenders.get(cls).add(relative(DIST, file).split(sep).join('/').replace('/index.html', '/'));
     }
   }
 }
@@ -64,7 +64,7 @@ for (const file of walk(DIST, '.html')) {
 // reconcile table, the answer breakdown, re-rendered form fields. check-styles
 // reads dist/, so these are invisible to it; scan the source scripts too.
 // Every one of these has shipped unstyled at least once.
-for (const file of walk('src', '.astro')) {
+for (const file of walk(SRC, '.astro')) {
   const src = readFileSync(file, 'utf8');
   const script = src.indexOf('<script>');
   if (script < 0) continue;
@@ -81,13 +81,13 @@ for (const file of walk('src', '.astro')) {
       if (!cls || styled.has(cls)) continue;
       if (IGNORE.some((re) => re.test(cls))) continue;
       if (!offenders.has(cls)) offenders.set(cls, new Set());
-      offenders.get(cls).add(`${file} (runtime)`);
+      offenders.get(cls).add(`${forDisplay(file)} (runtime)`);
     }
   }
 }
 
 if (offenders.size === 0) {
-  console.log(`check-styles: every class in ${DIST} and in runtime scripts has a rule`);
+  console.log(`check-styles: every class in ${forDisplay(DIST)} and in runtime scripts has a rule`);
   process.exit(0);
 }
 

@@ -12,12 +12,12 @@
  */
 
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join, relative, sep } from 'node:path';
 import satori from 'satori';
 import sharp from 'sharp';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { ROOT } from './lib/paths.mjs';
+
 const DIST = join(ROOT, 'dist');
 const OUT_DIR = join(DIST, 'og');
 const FONT_DIR = join(ROOT, 'scripts/fonts');

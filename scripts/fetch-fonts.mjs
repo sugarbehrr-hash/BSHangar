@@ -17,13 +17,16 @@
  */
 
 import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
+import { PUBLIC, forDisplay } from './lib/paths.mjs';
 
 // Google serves woff2 + variable fonts only to a UA it recognises as modern.
 // With the default Node UA it falls back to ttf, which is ~3x the bytes.
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
-const OUT = 'public/fonts';
+const OUT = join(PUBLIC, 'fonts');
 
 /** The exact axes the design uses — see src/styles/tokens/fonts.css. */
 const FAMILIES = [
@@ -57,8 +60,8 @@ await mkdir(OUT, { recursive: true });
 for (const { css: spec, file } of FAMILIES) {
   const sheet = await get(`https://fonts.googleapis.com/css2?family=${spec}&display=swap`);
   const woff2 = await get(latinSource(sheet, spec), 'buffer');
-  await writeFile(`${OUT}/${file}.woff2`, woff2);
+  await writeFile(join(OUT, `${file}.woff2`), woff2);
   console.log(`${file}.woff2  ${(woff2.length / 1024).toFixed(1)} KB  ${spec}`);
 }
 
-console.log(`\n${FAMILIES.length} families written to ${OUT}/`);
+console.log(`\n${FAMILIES.length} families written to ${forDisplay(OUT)}/`);

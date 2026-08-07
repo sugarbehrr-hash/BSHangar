@@ -36,15 +36,16 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SRC = 'src';
+import { PUBLIC, SRC, forDisplay, fromRoot } from './lib/paths.mjs';
+
 // The vote guide's card renderer is vendored here, not in src/ — see
 // scripts/sync-vote-guide.mjs — but /inbox/ calls window.VoteCard.changeCard()
 // directly (single source of truth with the guide itself, see card-render.js's
 // own header) rather than re-implementing the card's markup. Its icons need to
 // ship in the same self-hosted set as everything else, or they render as blank
 // boxes on the one page that reuses this script.
-const SRC_EXTRA = 'public/contract/_assets';
-const OUT = 'src/styles/tokens/icons.css';
+const SRC_EXTRA = join(PUBLIC, 'contract/_assets');
+const OUT = fromRoot('src/styles/tokens/icons.css');
 
 /** Phosphor's weight classes — every icon element carries exactly one. */
 const WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'];
@@ -205,5 +206,5 @@ ${rules.join('\n')}
 
 writeFileSync(OUT, css);
 console.log(
-  `gen-icons: ${rules.length} icons (${usedWeights.join(', ')}) → ${OUT}  ${(css.length / 1024).toFixed(1)} KB`,
+  `gen-icons: ${rules.length} icons (${usedWeights.join(', ')}) → ${forDisplay(OUT)}  ${(css.length / 1024).toFixed(1)} KB`,
 );

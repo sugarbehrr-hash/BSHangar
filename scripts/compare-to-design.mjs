@@ -17,6 +17,12 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { argv } from 'node:process';
 
+import { fromRoot } from './lib/paths.mjs';
+
+// Resolved against the caller's working directory on purpose — this one is a
+// path a human typed, pointing outside the repo, and it should mean what it
+// would mean to `ls`. Everything in PAGES below is ours and is anchored to the
+// repo instead.
 const DESIGN = argv[2];
 if (!DESIGN || !existsSync(DESIGN)) {
   console.error('Usage: node scripts/compare-to-design.mjs <design-dir>');
@@ -110,13 +116,16 @@ let totalIssues = 0;
 
 for (const [proto, built] of PAGES) {
   const p = `${DESIGN}/${proto}`;
-  if (!existsSync(p) || !existsSync(built)) {
+  // `built` stays repo-relative in the table above, where it is readable and is
+  // what the report prints; only the lookup is anchored.
+  const builtPath = fromRoot(built);
+  if (!existsSync(p) || !existsSync(builtPath)) {
     console.log(`\n## ${proto}\n  SKIP — ${!existsSync(p) ? 'prototype' : 'build'} not found`);
     continue;
   }
 
   const P = normalise(body(readFileSync(p, 'utf8')));
-  const M = normalise(body(readFileSync(built, 'utf8')));
+  const M = normalise(body(readFileSync(builtPath, 'utf8')));
 
   console.log(`\n${'='.repeat(78)}\n## ${proto}  ->  ${built}\n${'='.repeat(78)}`);
 

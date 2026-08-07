@@ -19,11 +19,13 @@
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 import sharp from 'sharp';
 
-const SOURCE = 'src/assets/brand-mark.svg';
-const ICON_DIR = 'public/icons';
-const PUBLIC = 'public';
+import { PUBLIC, SRC, forDisplay } from './lib/paths.mjs';
+
+const SOURCE = join(SRC, 'assets/brand-mark.svg');
+const ICON_DIR = join(PUBLIC, 'icons');
 
 /** --navy-900 in src/styles/tokens/colors.css. */
 const NAVY = '#0F1E3D';
@@ -56,18 +58,18 @@ async function icon(size, fill = 1) {
 mkdirSync(ICON_DIR, { recursive: true });
 
 const outputs = [
-  { file: `${ICON_DIR}/icon-192.png`, size: 192, fill: 1 },
-  { file: `${ICON_DIR}/icon-512.png`, size: 512, fill: 1 },
-  { file: `${ICON_DIR}/icon-maskable-512.png`, size: 512, fill: MASKABLE_SAFE_ZONE },
+  { file: join(ICON_DIR, 'icon-192.png'), size: 192, fill: 1 },
+  { file: join(ICON_DIR, 'icon-512.png'), size: 512, fill: 1 },
+  { file: join(ICON_DIR, 'icon-maskable-512.png'), size: 512, fill: MASKABLE_SAFE_ZONE },
   // iOS ignores the manifest for the home-screen icon and never applies a mask,
   // so this one is full-bleed and referenced by its own <link> tag.
-  { file: `${PUBLIC}/apple-touch-icon.png`, size: 180, fill: 1 },
-  { file: `${PUBLIC}/favicon-32.png`, size: 32, fill: 1 },
+  { file: join(PUBLIC, 'apple-touch-icon.png'), size: 180, fill: 1 },
+  { file: join(PUBLIC, 'favicon-32.png'), size: 32, fill: 1 },
 ];
 
 for (const { file, size, fill } of outputs) {
   writeFileSync(file, await icon(size, fill));
-  console.log(`  ${String(size).padStart(3)}px  ${file}`);
+  console.log(`  ${String(size).padStart(3)}px  ${forDisplay(file)}`);
 }
 
 /**
@@ -76,12 +78,13 @@ for (const { file, size, fill } of outputs) {
  * is composited onto browser chrome this stylesheet does not control.
  */
 const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1];
-if (!viewBox) throw new Error(`gen-app-icons: no viewBox in ${SOURCE}`);
+if (!viewBox) throw new Error(`gen-app-icons: no viewBox in ${forDisplay(SOURCE)}`);
 const [vx, vy, vw, vh] = viewBox.split(/\s+/).map(Number);
 
 const favicon = svg.replace(
   /(<svg[^>]*>)/,
   `$1\n<rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="${NAVY}"/>`,
 );
-writeFileSync(`${PUBLIC}/favicon.svg`, favicon);
-console.log(`  vector  ${PUBLIC}/favicon.svg`);
+const faviconPath = join(PUBLIC, 'favicon.svg');
+writeFileSync(faviconPath, favicon);
+console.log(`  vector  ${forDisplay(faviconPath)}`);

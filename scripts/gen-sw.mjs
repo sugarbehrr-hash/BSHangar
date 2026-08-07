@@ -18,8 +18,9 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative, sep } from 'node:path';
 
-const DIST = 'dist';
-const TEMPLATE = 'scripts/sw.template.js';
+import { DIST, SCRIPTS, forDisplay } from './lib/paths.mjs';
+
+const TEMPLATE = join(SCRIPTS, 'sw.template.js');
 const OUT = join(DIST, 'sw.js');
 
 /**
@@ -118,5 +119,5 @@ if (leftover) throw new Error(`gen-sw: placeholder ${leftover[0]} was not substi
 writeFileSync(OUT, sw);
 
 console.log(
-  `gen-sw: ${urls.length} files, ${(bytes / 1024 / 1024).toFixed(2)} MB precached  →  ${OUT}  (version ${version})`,
+  `gen-sw: ${urls.length} files, ${(bytes / 1024 / 1024).toFixed(2)} MB precached  →  ${forDisplay(OUT)}  (version ${version})`,
 );

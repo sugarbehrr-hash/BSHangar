@@ -25,10 +25,10 @@
 
 import { build } from 'esbuild';
 import { mkdirSync, statSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { ROOT } from './lib/paths.mjs';
+
 const SRC = join(ROOT, 'src/guide/feedback');
 const OUT = join(ROOT, 'public/contract/_assets');
 

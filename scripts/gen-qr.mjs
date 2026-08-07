@@ -23,15 +23,18 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import qrcode from 'qrcode-generator';
 
-const SITE = 'src/data/site.ts';
-const OUT = 'src/data/qr-site.ts';
+import { SRC, forDisplay } from './lib/paths.mjs';
+
+const SITE = join(SRC, 'data/site.ts');
+const OUT = join(SRC, 'data/qr-site.ts');
 
 /** The URL comes from SITE.url — one definition, so the code can't encode a stale host. */
 const url = readFileSync(SITE, 'utf8').match(/url:\s*'([^']+)'/)?.[1];
 if (!url) {
-  console.error(`\ngen-qr: no \`url: '…'\` found in ${SITE}\n`);
+  console.error(`\ngen-qr: no \`url: '…'\` found in ${forDisplay(SITE)}\n`);
   process.exit(1);
 }
 
@@ -91,4 +94,4 @@ export const SITE_QR = {
 `,
 );
 
-console.log(`gen-qr: ${modules}×${modules} modules, ${path.length} path chars → ${OUT}`);
+console.log(`gen-qr: ${modules}×${modules} modules, ${path.length} path chars → ${forDisplay(OUT)}`);

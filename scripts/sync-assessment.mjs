@@ -35,13 +35,13 @@
  */
 
 import { copyFileSync, existsSync, readFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, resolve } from 'node:path';
 import { createContext, runInContext } from 'node:vm';
 
 import { compareVersions } from '../src/guide/assessment/version.mjs';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { ROOT } from './lib/paths.mjs';
+
 
 /** Where `python scripts/build.py … -o out_v2` publishes the deliverable. */
 const DEFAULT_SOURCE = resolve(ROOT, '../TA-Analyzer/PSA/out_v2');

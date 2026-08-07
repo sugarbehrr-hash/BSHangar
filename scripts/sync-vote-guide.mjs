@@ -29,10 +29,10 @@
  */
 
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, resolve } from 'node:path';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+import { ROOT } from './lib/paths.mjs';
+
 
 /** Where the analyzer publishes fresh assessment data. Optional. */
 const ANALYZER_OUT = resolve(ROOT, '../contract-vote-analyzer/PSA/out_v2');
