@@ -118,7 +118,10 @@ body { margin: 0; }
 
 .topbar .btn { white-space: nowrap; }
 
-.panes { flex: 1; min-height: 0; display: flex; }
+/* Capped and centered as ONE unit, not per-pane — nav + document + review
+   together read as a single workspace with even margins on an ultra-wide
+   monitor, rather than three panes each independently stretching to fill it. */
+.panes { flex: 1; min-height: 0; display: flex; max-width: 1600px; width: 100%; margin: 0 auto; }
 
 /* --------------------------------------------------------- column 1: navigator */
 
