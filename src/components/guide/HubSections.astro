@@ -1,0 +1,235 @@
+---
+import Icon from '../Icon.astro';
+import ChartFigure from './ChartFigure.astro';
+import { getAssessment, sectionCopy } from '../../guide/assessment/index.mjs';
+import { chartsFor } from '../../guide/render/charts.mjs';
+import { sectionCards } from '../../guide/render/content.mjs';
+import { parseIncentives } from '../../guide/render/preface.mjs';
+import { verdictTone, signedScore } from '../../guide/render/verdict.mjs';
+import { pageForTopic } from '../../guide/model/pages.mjs';
+
+/**
+ * The sections that open the guide: what it is, the deal in a paragraph, how to
+ * read it, the cycle every contract runs on, the big-picture chart, the method,
+ * and the scoreboard.
+ *
+ * Together they are the argument a reader needs before any individual change
+ * means anything, which is why they share a page. They render in `page_order`
+ * — the caller passes the keys, this renders each in the order given, and a key
+ * with no case here throws rather than disappearing.
+ */
+
+interface Props {
+  sections: string[];
+}
+
+const { sections } = Astro.props;
+const { assessment } = getAssessment();
+
+const meta = assessment.meta ?? {};
+const howTo = assessment.howToRead ?? {};
+const preface = assessment.preface ?? {};
+const incentives = parseIncentives(preface.incentives);
+const method = meta.methodology ?? {};
+const scoreboard = assessment.scoreboard ?? {};
+const perGroup = assessment.execSummary?.perGroup ?? {};
+
+const groups = assessment.groups ?? [];
+const groupKeys = groups.map((g) => g.key);
+
+const known = new Set([
+  'what_this_is',
+  'deal_in_one_paragraph',
+  'how_to_use',
+  'preface',
+  'outlook',
+  'anchors',
+  'scoreboard',
+]);
+for (const key of sections) {
+  if (!known.has(key)) {
+    throw new Error(
+      `HubSections: page_order key "${key}" has no renderer here. A section the guide does not ` +
+        'render is a section the reader never sees, so this fails the build rather than dropping it.'
+    );
+  }
+}
+---
+
+{
+  sections.map((key) => {
+    const copy = sectionCopy(key);
+
+    if (key === 'what_this_is' || key === 'deal_in_one_paragraph' || key === 'how_to_use') {
+      const inverse = key === 'deal_in_one_paragraph';
+      return (
+        <section class="gsec" id={`sec-${key}`} data-sec={key}>
+          <div class:list={['card', inverse && 'inverse']}>
+            <h2 class="keycol-title" style="border:0;padding:0;margin:0 0 8px">{copy.title}</h2>
+            <p class="card-text">{howTo[key]}</p>
+          </div>
+        </section>
+      );
+    }
+
+    if (key === 'preface') {
+      return (
+        <section class="gsec" id="sec-preface" data-sec="preface">
+          <div class="gsec-head">
+            <h2 class="h2">{copy.title}</h2>
+            {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+          </div>
+
+          <div class="grid">
+            <div class="card inverse">
+              <div class="card-sub" style="color:var(--gold-500)">
+                <Icon name="ph-arrows-clockwise" /> Freeze, catch up, freeze
+              </div>
+              <p class="card-text preline">{preface.cycle}</p>
+            </div>
+
+            <div class="card">
+              <div class="card-sub" style="color:var(--sky-700)">
+                <Icon name="ph-shield-check" /> The idea to watch for
+              </div>
+              <p class="card-text preline">{preface.forward_protection}</p>
+            </div>
+
+            <div class="card">
+              <div class="card-sub" style="color:var(--gold-600)">
+                <Icon name="ph-scales" /> Whose interest is whose
+              </div>
+              {incentives.intro && <p class="card-text">{incentives.intro}</p>}
+              <div>
+                {incentives.rows.map((row) => (
+                  <div class="party" data-who={row.who}>
+                    <span class="party-who">{row.who === 'YOU' ? 'You' : row.who.toLowerCase()}</span>
+                    <span>{row.text}</span>
+                  </div>
+                ))}
+              </div>
+              {incentives.outro && <p class="footnote">{incentives.outro}</p>}
+            </div>
+
+            <div class="card flat" style="background:var(--cream-100)">
+              <p class="card-text preline">{preface.fair_both_ways}</p>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (key === 'outlook') {
+      const charts = chartsFor('outlook');
+      const cards = sectionCards('outlook');
+      return (
+        <section class="gsec" id="sec-outlook" data-sec="outlook">
+          <div class="gsec-head">
+            <h2 class="h2">{copy.title}</h2>
+            {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+          </div>
+          {charts.map((spec) => <ChartFigure spec={spec} />)}
+          {cards.map((entry) => <Fragment set:html={entry.html} />)}
+        </section>
+      );
+    }
+
+    if (key === 'anchors') {
+      const cards = sectionCards('anchors');
+      return (
+        <section class="gsec" id="sec-anchors" data-sec="anchors">
+          <div class="gsec-head">
+            <h2 class="h2">{copy.title}</h2>
+            {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+          </div>
+
+          <div class="card">
+            <div class="card-sub">
+              <Icon name="ph-scales" /> {method.title}
+            </div>
+            <p class="card-text">{method.intro}</p>
+            {method.anchorsIntro && <p class="keycol-title" style="margin-top:16px">{method.anchorsIntro}</p>}
+            <ul class="rows">
+              {(method.anchors ?? []).map((anchor) => (
+                <li>
+                  <b>{anchor.label}:</b> {anchor.text}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {cards.map((entry) => <Fragment set:html={entry.html} />)}
+        </section>
+      );
+    }
+
+    // scoreboard
+    const rows = scoreboard.rows ?? [];
+    return (
+      <section class="gsec" id="sec-scoreboard" data-sec="scoreboard">
+        <div class="gsec-head">
+          <h2 class="h2">{copy.title}</h2>
+          {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+        </div>
+
+        <div class="card">
+          {/* A numeric matrix is the one thing the mobile column rule lets
+              scroll sideways: three groups compared across seven topics IS the
+              section, so collapsing it to one column would delete the
+              comparison rather than adapt it. The category column stays put. */}
+          <div class="sb-scroll">
+            <table class="sb">
+              <thead>
+                <tr>
+                  <th class="sb-cat" scope="col">Topic</th>
+                  {groups.map((group) => (
+                    <th scope="col" data-col={group.key}>{group.label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr>
+                    <th class="sb-cat" scope="row">
+                      <a href={pageForTopic(row.topic)?.href}>{row.topicTitle}</a>
+                    </th>
+                    {groupKeys.map((key) => {
+                      const cell = row[key] ?? {};
+                      const tone = verdictTone(cell.polarity, cell.score);
+                      return (
+                        <td data-col={key}>
+                          <span class="vpill" data-pol={tone.pol} data-strength={tone.strength}>
+                            {cell.verdict}
+                            {cell.bandEdgeNote && (
+                              <Icon name="ph-warning-circle" class="bandedge" title={cell.bandEdgeNote} />
+                            )}
+                          </span>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="sb-swipe">
+            <Icon name="ph-arrows-horizontal" /> Swipe the table to compare all three groups
+          </p>
+          <p class="footnote">
+            {scoreboard.note_on_dep} {assessment.execSummary?.matrixNote} Scores, tallies and add-on
+            detail per topic are on each topic page.
+          </p>
+        </div>
+
+        <div class="grid three" style="margin-top:18px">
+          {groups.map((group) => (
+            <div class="card inverse">
+              <div class="card-sub" style="color:var(--gold-500)">{group.label}</div>
+              <p class="card-text">{perGroup[group.key]}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  })
+}

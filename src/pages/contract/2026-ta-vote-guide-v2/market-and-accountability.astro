@@ -1,0 +1,21 @@
+---
+import GuideLayout from '../../../components/guide/GuideLayout.astro';
+import ClosingSections from '../../../components/guide/ClosingSections.astro';
+import { guidePages } from '../../../guide/model/pages.mjs';
+
+/**
+ * How the deal reads against the rest of the industry, and what the union can
+ * and cannot claim credit for. Two sections that answer the same question from
+ * opposite directions, which is why they share a page.
+ */
+
+const page = guidePages().find((entry) => entry.id === 'market');
+---
+
+<GuideLayout
+  title={page.title}
+  description="How this agreement compares with contracts at other regionals, and which parts of it the union actually won versus what the market was going to force anyway."
+  pageId="market"
+>
+  <ClosingSections sections={page.sections} />
+</GuideLayout>

@@ -1,0 +1,60 @@
+---
+import GuideLayout from '../../../components/guide/GuideLayout.astro';
+import HubSections from '../../../components/guide/HubSections.astro';
+import TopicBody from '../../../components/guide/TopicBody.astro';
+import ClosingSections from '../../../components/guide/ClosingSections.astro';
+import Icon from '../../../components/Icon.astro';
+import { assessmentMeta } from '../../../guide/assessment/index.mjs';
+import { guidePages, GUIDE_BASE } from '../../../guide/model/pages.mjs';
+
+/**
+ * The whole guide as one document.
+ *
+ * Built from the same section components as the paginated pages, so the two
+ * can never say different things — this is a different composition of one set
+ * of parts, not a second copy of the guide.
+ *
+ * It exists for three readers at once: anyone who wants to scroll the argument
+ * end to end, anyone printing it (print takes the Full lens automatically), and
+ * the render contract's own "ONE PAGE, TWO LENSES" reading.
+ */
+
+const meta = assessmentMeta();
+const pages = guidePages();
+---
+
+<GuideLayout
+  title={`${meta.pageTitle} — the whole guide`}
+  description={meta.pageSubtitle}
+>
+  <div class="masthead" slot="hero">
+    <div class="wrap">
+      <div class="mh-body">
+        <div class="mh-eyebrow">{meta.contract} · Guide v{meta.version}</div>
+        <h1 class="mh-title">{meta.pageTitle}</h1>
+        <p class="mh-sub">{meta.pageSubtitle}</p>
+        <p class="mh-meta">Baseline: {meta.baseline}</p>
+        <div class="mh-actions">
+          <a class="btn gold" href="/contract/2026-ta-report/">
+            <Icon name="ph-file-pdf" /> Read the full technical report
+          </a>
+          <a class="btn onnavy" href={`${GUIDE_BASE}/`}>
+            <Icon name="ph-list" /> Read it a section at a time
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {
+    pages.map((page) =>
+      page.kind === 'topic' ? (
+        <TopicBody topic={page.topic} index={page.topicIndex} total={page.topicTotal} />
+      ) : page.kind === 'hub' ? (
+        <HubSections sections={page.sections} />
+      ) : (
+        <ClosingSections sections={page.sections} />
+      )
+    )
+  }
+</GuideLayout>

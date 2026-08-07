@@ -1,0 +1,35 @@
+---
+import GuideLayout from '../../../components/guide/GuideLayout.astro';
+import TopicBody from '../../../components/guide/TopicBody.astro';
+import { guidePages } from '../../../guide/model/pages.mjs';
+import { assessmentMeta } from '../../../guide/assessment/index.mjs';
+
+/**
+ * One page per topic — where the guide's length actually lives.
+ *
+ * The routes come from the page map, which derives them from the topics' own
+ * `cat-<token>` anchors, so adding or renaming a topic upstream changes the
+ * site's URLs without anyone maintaining a list. The topic keeps its anchor as
+ * an id too, so a `#cat-pay` link posted to the group still lands correctly.
+ */
+
+export function getStaticPaths() {
+  return guidePages()
+    .filter((page) => page.kind === 'topic')
+    .map((page) => ({
+      params: { topic: page.slug },
+      props: { page },
+    }));
+}
+
+const { page } = Astro.props;
+const meta = assessmentMeta();
+
+const description = page.topic.topicNote
+  ? `${page.topic.topicNote} What changes for you in ${page.topic.title.toLowerCase()}, from the ${meta.contract}.`
+  : `What changes for you in ${page.topic.title.toLowerCase()}, from the ${meta.contract}.`;
+---
+
+<GuideLayout title={page.topic.title} description={description} pageId={page.id}>
+  <TopicBody topic={page.topic} index={page.topicIndex} total={page.topicTotal} />
+</GuideLayout>

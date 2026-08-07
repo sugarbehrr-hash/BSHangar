@@ -1,0 +1,74 @@
+---
+import Icon from '../Icon.astro';
+import { getAssessment } from '../../guide/assessment/index.mjs';
+
+/**
+ * The guide's two reader controls: which group, and how much depth.
+ *
+ * These are the document's only global controls, and the render contract names
+ * the group selector as one of exactly two things allowed to live outside the
+ * ordered section flow (the other is the page header). The contents nav is a
+ * separate component — it lives in the page's rail, this does not.
+ *
+ * `.segtoggle` is the design system's control for "2-3 mutually exclusive
+ * settings where the pick changes adjacent content", which is precisely what
+ * both of these are — as opposed to `.pillbar`, which filters a view, or
+ * `.sectiontabs`, which navigates between pages.
+ *
+ * Both render every option with a real `aria-pressed` state and work without
+ * JavaScript having run: the boot script has already set the attribute they
+ * key off, so the correct lens is showing before this is interactive.
+ */
+
+const { assessment, cards } = getAssessment();
+
+/**
+ * The toggle uses the SHORT group names.
+ *
+ * `groups[].label` is the full definition-style name ("New Hire (first 3
+ * years)"), which wraps to three lines inside a segmented control on a phone.
+ * The short form comes from the shared card renderer, so the button and the
+ * card chips a reader sees underneath it say the same word — that consistency
+ * is why it is read from there rather than shortened here.
+ */
+const shortNames = cards.GROUP_SHORT ?? {};
+
+const groups = (assessment.groups ?? []).map((group) => ({
+  key: group.key,
+  label: shortNames[group.key] ?? group.label,
+  fullLabel: group.label,
+  definition: group.definition ?? '',
+}));
+---
+
+<div class="lensbar">
+  <div>
+    <div class="lensbar-label" id="lens-group-label">Viewing as</div>
+    <div class="segtoggle" data-lens="group" role="group" aria-labelledby="lens-group-label">
+      {
+        groups.map((group) => (
+          <button type="button" data-value={group.key} aria-pressed="false" title={group.fullLabel}>
+            {group.label}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div>
+    <div class="lensbar-label" id="lens-detail-label">Detail</div>
+    <div class="segtoggle" data-lens="detail" role="group" aria-labelledby="lens-detail-label">
+      <button type="button" data-value="short" aria-pressed="true">Quick read</button>
+      <button type="button" data-value="long" aria-pressed="false">Full detail</button>
+    </div>
+  </div>
+
+  {
+    groups.map((group) => (
+      <p class="lensbar-def forgroup" data-g={group.key}>
+        <Icon name="ph-user-circle" />
+        <span>{group.definition}</span>
+      </p>
+    ))
+  }
+</div>

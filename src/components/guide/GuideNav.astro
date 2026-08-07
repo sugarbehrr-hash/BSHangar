@@ -1,0 +1,88 @@
+---
+import Icon from '../Icon.astro';
+import { jumpIndex } from '../../guide/model/pages.mjs';
+
+/**
+ * The guide's contents, as the site's own section nav.
+ *
+ * Same component language as the field guides: a collapsed sticky bar on a
+ * phone, a static rail beside the content from 1100px. It has to sit inside a
+ * `.withrail` / `.rail` pair for the desktop half of that to work — outside
+ * one, the rail mode expands the whole list inline and pushes the page down.
+ *
+ * The links are cross-page rather than in-page anchors, so there is no active
+ * section to track: the page you are on is the answer.
+ */
+
+const links = jumpIndex();
+const current = Astro.url.pathname;
+---
+
+<nav class="secnav" aria-label="Guide contents">
+  <button class="secnav-toggle" type="button" aria-expanded="false" aria-controls="guide-jump">
+    <Icon name="ph-list-magnifying-glass" />
+    <span class="lbl">Jump to a section</span>
+    <Icon name="ph-caret-down" class="chev" />
+  </button>
+  <div class="secnav-head">On this guide</div>
+  <ul class="secnav-list" id="guide-jump">
+    {
+      links.map((link) =>
+        link.kind === 'header' ? (
+          <li class="secnav-group">{link.label}</li>
+        ) : (
+          <li>
+            <a
+              href={link.href}
+              data-depth={link.kind}
+              aria-current={link.href.split('#')[0] === current ? 'page' : undefined}
+            >
+              <span class="lbl">{link.label}</span>
+            </a>
+          </li>
+        )
+      )
+    }
+  </ul>
+</nav>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('.secnav');
+  const toggle = nav?.querySelector<HTMLButtonElement>('.secnav-toggle');
+
+  if (nav && toggle) {
+    // Label the collapsed bar with where the reader actually is, so the bar
+    // says something even before it is opened.
+    const here = nav.querySelector<HTMLElement>('a[aria-current="page"] .lbl');
+    const label = toggle.querySelector<HTMLElement>('.lbl');
+    if (here && label) label.textContent = here.textContent;
+
+    toggle.addEventListener('click', () => {
+      const open = nav.dataset.open === '1';
+      nav.dataset.open = open ? '' : '1';
+      toggle.setAttribute('aria-expanded', String(!open));
+    });
+    for (const link of nav.querySelectorAll('a')) {
+      link.addEventListener('click', () => {
+        nav.dataset.open = '';
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    }
+  }
+</script>
+
+<style>
+  /* A group label in the list. Not a link, so it must not read as one. */
+  .secnav-group {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.65625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+    padding: 12px 10px 4px;
+  }
+  .secnav-list a[data-depth='sub'] {
+    padding-left: 22px;
+  }
+</style>

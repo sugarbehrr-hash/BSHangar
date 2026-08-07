@@ -118,10 +118,39 @@ export function canDeliver() {
   return !isUnconfigured() || isEmulated();
 }
 
+/** The slug shape firestore.rules enforces on `doc`. */
+const DOC_ID = /^[a-z0-9][a-z0-9-]{0,63}$/;
+
 /**
- * Which published document is being read, derived from the URL rather than
- * hardcoded — so lighting this up on the Field Manual or the Commuting Guide
- * is a routing fact, not a code change.
+ * A document that spans several pages states its own id.
+ *
+ * The URL rule below reads the LAST path segment, which is right for a
+ * document that is one page and wrong the moment it is not: a guide split
+ * across /…/pay/, /…/reserve/ and so on would file each page's feedback under
+ * a different id, none of them the id the inbox queries. Every answer would be
+ * accepted, stored, and never seen again — and a reader's own answers would
+ * stop reappearing when they moved between pages, since the localStorage keys
+ * are namespaced by the same id.
+ *
+ * A page that belongs to a multi-page document therefore declares the whole
+ * document's id in its head:
+ *
+ *   <meta name="bsf-doc" content="2026-ta-vote-guide">
+ *
+ * Pages without the tag are unaffected and keep deriving from the URL.
+ */
+function declaredDocumentId() {
+  if (typeof document === 'undefined') return null;
+  const declared = document.querySelector('meta[name="bsf-doc"]')?.content?.trim();
+  if (!declared) return null;
+  return DOC_ID.test(declared) ? declared : null;
+}
+
+/**
+ * Which published document is being read — declared by the page when it says
+ * so, otherwise derived from the URL rather than hardcoded, so lighting this up
+ * on the Field Manual or the Commuting Guide is a routing fact, not a code
+ * change.
  *
  *   /contract/2026-ta-vote-guide/            ->  "2026-ta-vote-guide"
  *   /contract/2026-ta-vote-guide/index.html  ->  "2026-ta-vote-guide"
@@ -136,12 +165,19 @@ export function canDeliver() {
  * else returns null and the layer stays dormant.
  */
 export function documentIdFromLocation(pathname) {
+  // Only consult the page when no path was passed: callers that supply one are
+  // asking about that path specifically, and the tests depend on it.
+  if (pathname === undefined) {
+    const declared = declaredDocumentId();
+    if (declared) return declared;
+  }
+
   const path = pathname ?? (typeof location === 'undefined' ? '' : location.pathname);
   const segments = path.split('/').filter(Boolean);
   if (segments.length && /\.[a-z0-9]+$/i.test(segments[segments.length - 1])) segments.pop();
   const last = segments[segments.length - 1];
   if (!last) return null;
-  return /^[a-z0-9][a-z0-9-]{0,63}$/.test(last) ? last : null;
+  return DOC_ID.test(last) ? last : null;
 }
 
 /** The content revision a note was written against, so triage can spot drift. */

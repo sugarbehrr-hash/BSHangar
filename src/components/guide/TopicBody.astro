@@ -1,0 +1,83 @@
+---
+import Icon from '../Icon.astro';
+import ChartFigure from './ChartFigure.astro';
+import { getAssessment } from '../../guide/assessment/index.mjs';
+import { chartsFor, IN_CARD_WIDTH } from '../../guide/render/charts.mjs';
+import { topicContent } from '../../guide/render/content.mjs';
+import { verdictTone, signedScore } from '../../guide/render/verdict.mjs';
+
+/**
+ * One topic: its verdict band, its authored bottom line, then its changes.
+ *
+ * The band shows the verdict for the reader's own group, so all three are
+ * rendered and CSS reveals one — they are three short strings, which is far
+ * cheaper than any way of producing them on demand.
+ *
+ * The cards themselves come from the shared renderer and are inserted as-is.
+ * They already carry both registers and all three group views, so nothing here
+ * changes when a reader moves either lens.
+ */
+
+interface Props {
+  topic: Record<string, any>;
+  index: number;
+  total: number;
+}
+
+const { topic, index, total } = Astro.props;
+const { assessment } = getAssessment();
+
+const groups = assessment.groups ?? [];
+const blocks = topicContent(topic);
+
+/** Charts placed on the topic but not already shown inside one of its cards. */
+const usedChartIds = new Set(
+  (topic.changes ?? []).flatMap((change) =>
+    change.chart ? (Array.isArray(change.chart) ? change.chart : [change.chart]) : []
+  )
+);
+const standaloneCharts = chartsFor(topic.anchor).filter((spec) => !usedChartIds.has(spec.id));
+---
+
+<div class="topicband" id={topic.anchor}>
+  <div class="tb-kicker">Topic {index + 1} of {total}</div>
+  <h1>{topic.title}</h1>
+  {topic.topicNote && <p class="tb-note">{topic.topicNote}</p>}
+
+  {
+    groups.map((group) => {
+      const cell = topic.verdictByGroup?.[group.key] ?? {};
+      const tone = verdictTone(cell.polarity, cell.score);
+      return (
+        <div class="forgroup" data-g={group.key}>
+          <div class="tb-verdict">
+            <span class="vpill" data-pol={tone.pol} data-strength={tone.strength}>
+              {cell.verdict}
+              {cell.bandEdgeNote && (
+                <Icon name="ph-warning-circle" class="bandedge" title={cell.bandEdgeNote} />
+              )}
+            </span>
+            <span class="tb-score">
+              For {group.label} · {cell.tally} · score <b>{signedScore(cell.score)}</b>
+            </span>
+          </div>
+          {(cell.addonNotes ?? []).map((note) => (
+            <p class="tb-addon">{note}</p>
+          ))}
+        </div>
+      );
+    })
+  }
+</div>
+
+<section class="gsec" data-sec="topics" aria-label={topic.title}>
+  {topic.netNote && (
+    <p class="bottomline">
+      <b>Bottom line:</b> {topic.netNote}
+    </p>
+  )}
+
+  {blocks.map((block) => <Fragment set:html={block.html} />)}
+
+  {standaloneCharts.map((spec) => <ChartFigure spec={spec} wide={IN_CARD_WIDTH} />)}
+</section>

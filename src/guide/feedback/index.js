@@ -52,6 +52,21 @@ const setUi = (block, patch) => transient.set(block, { ...ui(block), ...patch })
  * about something we are not tracking.
  */
 function knownBlocks() {
+  // A statically rendered page can state the eligible ids directly, which is
+  // the same guarantee for a fraction of the payload: the full assessment is
+  // ~167KB of prose and numbers, and this needs a list of ids. A page that
+  // does not declare them falls back to reading the global, so the documents
+  // that ship the whole object keep working unchanged.
+  const declared = document.getElementById('bsf-blocks');
+  if (declared) {
+    try {
+      const ids = JSON.parse(declared.textContent || '[]');
+      if (Array.isArray(ids)) return new Set(ids.filter((id) => typeof id === 'string' && id));
+    } catch {
+      // Fall through to the global rather than leaving every card unanswerable.
+    }
+  }
+
   const assessment = window.ASSESSMENT;
   if (!assessment) return new Set();
   const ids = [];

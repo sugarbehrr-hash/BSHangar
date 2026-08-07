@@ -1,0 +1,133 @@
+---
+import { chartPair, unitsFor, WIDE_WIDTH } from '../../guide/render/charts.mjs';
+import { verdictTone } from '../../guide/render/verdict.mjs';
+
+/**
+ * One chart, with the frame the contract requires around it.
+ *
+ * "Place every chart in its chart.placement, ALWAYS preceded by its leadIn and
+ * shown with its verdict" — so the lead-in and the verdict are not optional
+ * decoration here, they are part of what a chart IS. A chart rendered without
+ * them is a contract violation, which is why they are read straight from the
+ * spec rather than passed in.
+ *
+ * The drawing itself belongs entirely to the shipped renderer. This component
+ * decides only the frame and which of the two prepared widths to show.
+ */
+
+interface Props {
+  spec: Record<string, any>;
+  /** Width for the desktop render; in-card charts sit in a narrower column. */
+  wide?: number;
+}
+
+const { spec, wide = WIDE_WIDTH } = Astro.props;
+
+const pair = chartPair(spec, { wide });
+const { narrow, narrowMinPx } = pair;
+const wideSvg = pair.wide;
+
+const tone = verdictTone(spec.polarity);
+const units = unitsFor(spec);
+---
+
+<figure class="chartfig">
+  <div class="chart-frame">
+    {spec.leadIn && <p class="chart-lead">{spec.leadIn}</p>}
+
+    <div class="chart-head">
+      <span class="vpill" data-pol={tone.pol} data-strength={tone.strength}>{spec.verdict}</span>
+      {
+        units.length > 0 && (
+          <div class="vc-unit-toggle" data-chart-units={spec.id}>
+            {units.map((unit, i) => (
+              <button
+                type="button"
+                title={unit.label ?? unit.key}
+                data-unit={unit.key}
+                aria-pressed={String(Boolean(unit.default) || (i === 0 && !units.some((u) => u.default)))}
+              >
+                {/\$|dollar/i.test(`${unit.numberFormat ?? ''}${unit.axisLabel ?? ''}`)
+                  ? '$'
+                  : /%|percent/i.test(`${unit.numberFormat ?? ''}${unit.axisLabel ?? ''}`)
+                    ? '%'
+                    : (unit.label ?? unit.key).split(' ')[0]}
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    {/* Both widths are drawn at build time by the same renderer from the same
+        spec. Label text is sized in viewBox units, so the narrow drawing is
+        what makes a chart readable on a phone instead of ~3px tall. */}
+    <div
+      class="chart-narrow"
+      data-chart-id={spec.id}
+      style={`--chart-min:${narrowMinPx}px`}
+      set:html={narrow}
+    />
+    <div class="chart-wide" data-chart-id={spec.id} set:html={wideSvg} />
+
+    {spec.plainCaption && <figcaption class="chart-cap">{spec.plainCaption}</figcaption>}
+    {spec.headline && <p class="chart-cap lens-full">{spec.headline}</p>}
+    {spec.assumptions && <p class="chart-assume">Assumptions: {spec.assumptions}</p>}
+  </div>
+</figure>
+
+<script>
+  // The unit toggle redraws through the shipped renderer — the contract is
+  // explicit that the alternate view must come from re-calling it rather than
+  // being computed here, so the two views cannot disagree.
+  document.querySelectorAll<HTMLElement>('[data-chart-units]').forEach((bar) => {
+    const chartId = bar.dataset.chartUnits!;
+    bar.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-unit]');
+      if (!button) return;
+
+      const render = (window as any).AssessmentChart;
+      const spec = (window as any).__vcCharts?.[chartId];
+      if (typeof render !== 'function' || !spec) return;
+
+      const figure = bar.closest('figure');
+      figure?.querySelectorAll<HTMLElement>(`[data-chart-id="${chartId}"]`).forEach((slot) => {
+        const width = slot.classList.contains('chart-narrow') ? 420 : 1000;
+        slot.innerHTML = render(spec, { thick: true, width, unit: button.dataset.unit });
+      });
+
+      bar.querySelectorAll('button').forEach((other) => {
+        other.setAttribute('aria-pressed', String(other === button));
+      });
+    });
+  });
+</script>
+
+<style>
+  .vc-unit-toggle {
+    display: inline-flex;
+    gap: 2px;
+    flex-shrink: 0;
+    background: var(--cream-200);
+    border: 1.5px solid var(--cream-300);
+    border-radius: var(--radius-pill);
+    padding: 2px;
+  }
+  .vc-unit-toggle button {
+    border: none;
+    cursor: pointer;
+    min-width: 34px;
+    min-height: 32px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ink-700);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.75rem;
+  }
+  .vc-unit-toggle button[aria-pressed='true'] {
+    background: var(--navy-900);
+    color: #fff;
+  }
+</style>

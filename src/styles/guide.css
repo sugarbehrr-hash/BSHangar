@@ -1,0 +1,411 @@
+/* ============================================================
+   TA VOTE GUIDE — the two lenses, and the frame around the cards
+   ------------------------------------------------------------
+   The guide has two reader controls, and both are pure CSS here.
+   Every state is already in the HTML, rendered at build time, so
+   switching costs a class match rather than a re-render — which
+   is what lets the page carry no runtime at all.
+
+     [data-detail]  short | long   — how much depth to show
+     [data-group]   nh | mc | sr   — which group's view to emphasise
+
+   Both live on <html>, set before first paint by the boot script
+   in GuideLayout so a returning reader never sees the default
+   flash past.
+
+   Card, table and chart interiors are NOT styled here: they come
+   from card-render.js and assessment-charts.js, which are the
+   shared design language the guide, the print report and the
+   inbox all render through. This file owns the frame.
+   ============================================================ */
+
+/* ---------- 1 · THE DETAIL LENS ---------- */
+
+/* Blocks the merge tagged as belonging to one register only. Written as a
+   pair of positive rules rather than one "hide unless" so a page that somehow
+   loses its data-detail attribute shows the SHORT reading — the member
+   default — instead of both paragraphs stacked. */
+html[data-detail='short'] .lens-full { display: none; }
+html[data-detail='long'] .lens-short { display: none; }
+html:not([data-detail]) .lens-full { display: none; }
+
+/* REGISTER is a separate axis from depth: an entry's `register` decides
+   whether it appears AT ALL, not how deep it reads. pdf-register cards and
+   tables are detail-only. */
+html[data-detail='short'] .reg-pdf,
+html:not([data-detail]) .reg-pdf { display: none; }
+
+/* ---------- 2 · THE GROUP LENS ---------- */
+
+/* One row per group inside each card's "Worth to each group" panel. The
+   emphasis was inline-styled by card-render.js; group-lens.mjs rewrites it to
+   this data attribute so one rendered card serves all three readers. Values
+   match the renderer's originals exactly — this is the same design, moved. */
+.wg { white-space: nowrap; font-size: 11.5px; color: var(--sky-300); }
+html[data-group='nh'] .wg[data-g='nh'],
+html[data-group='mc'] .wg[data-g='mc'],
+html[data-group='sr'] .wg[data-g='sr'],
+html:not([data-group]) .wg[data-g='nh'] {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 12px;
+  color: #fff;
+}
+
+/* Section content written for one group — the topic verdict band and the
+   group definition render all three and reveal one. They are short strings,
+   so shipping all three costs less than any way of producing one on demand.
+   The rules live at the END of this file (§12) so they win on source order
+   against the components that set their own display. */
+
+/* ---------- 3 · THE LENS BAR ---------- */
+
+/* Two segmented controls, set once at the top of a page — NOT sticky.
+   .secnav below it already sticks, and stacking two sticky bars is what made
+   the old document's controls collide and overlap on a phone. Between them
+   they would also have held about a third of a 375px screen permanently,
+   against a control most readers set once and leave.
+   .segtoggle is the design system's control for "2-3 mutually exclusive
+   settings where the pick changes adjacent content" — exactly these two. */
+.lensbar {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  margin-bottom: 14px;
+  background: var(--white);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+@media (min-width: 700px) {
+  .lensbar { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: end; }
+}
+.lensbar-label {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.65625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  margin-bottom: 5px;
+}
+.lensbar .segtoggle { width: 100%; }
+/* The group definition changes with the lens, so it is the one line of copy
+   that has to answer "am I this?" without the reader opening anything. */
+.lensbar-def {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ink-700);
+  margin: 0;
+}
+.lensbar-def i { flex: none; color: var(--gold-600); font-size: 1rem; margin-top: 1px; }
+
+/* ---------- 4 · THE SCOREBOARD ---------- */
+
+/* A numeric matrix is the one thing the mobile column rule (system.css §21)
+   allows to scroll sideways, and this is that case: three groups compared
+   across seven topics is the section's whole reason to exist, so collapsing
+   it to one column would delete the comparison rather than adapt it.
+   The category column stays pinned so a swiped row never loses its label. */
+.sb-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.sb {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 520px;
+}
+.sb th,
+.sb td { padding: 10px 8px; text-align: center; vertical-align: middle; }
+.sb thead th {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  border-bottom: 2px solid var(--cream-300);
+  white-space: nowrap;
+}
+/* The reader's own column is the one they came for. Navy fill is the site's
+   single "you are here" signal, used here on the header only so the verdict
+   pills below keep their own polarity colours. */
+html[data-group='nh'] .sb [data-col='nh'],
+html[data-group='mc'] .sb [data-col='mc'],
+html[data-group='sr'] .sb [data-col='sr'],
+html:not([data-group]) .sb [data-col='nh'] { background: var(--cream-100); }
+html[data-group='nh'] .sb thead [data-col='nh'],
+html[data-group='mc'] .sb thead [data-col='mc'],
+html[data-group='sr'] .sb thead [data-col='sr'],
+html:not([data-group]) .sb thead [data-col='nh'] {
+  background: var(--navy-900);
+  color: #fff;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.sb tbody tr + tr td { border-top: 1px solid var(--cream-200); }
+.sb .sb-cat {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  text-align: left;
+  min-width: 148px;
+  background: var(--white);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.90625rem;
+  line-height: 1.25;
+}
+.sb .sb-cat a { color: var(--navy-900); }
+.sb .sb-cat a:hover { color: var(--sky-700); text-decoration: underline; }
+/* The edge shadow is the only cue that there is more to the right. */
+.sb .sb-cat::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -10px;
+  width: 10px;
+  height: 100%;
+  background: linear-gradient(to right, rgba(15, 30, 61, 0.07), transparent);
+  pointer-events: none;
+}
+.sb-swipe {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--ink-500);
+}
+@media (min-width: 700px) { .sb-swipe { display: none; } }
+
+/* Verdict pill. Colour comes from the data's `polarity` — never from reading
+   the verdict's words, so renaming a verdict can never repaint a cell. */
+.vpill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid transparent;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.78125rem;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.vpill[data-pol='pos'][data-strength='3'] { background: var(--success-600); color: #fff; }
+.vpill[data-pol='pos'][data-strength='2'] { background: #8ed0ac; color: var(--navy-900); }
+.vpill[data-pol='pos'][data-strength='1'] { background: var(--success-100); color: var(--navy-900); border-color: #a6ddc1; }
+.vpill[data-pol='neu'] { background: var(--cream-300); color: var(--ink-700); }
+.vpill[data-pol='neg'][data-strength='1'] { background: var(--red-100); color: var(--navy-900); border-color: #f4b8c0; }
+.vpill[data-pol='neg'][data-strength='2'] { background: #f09aa4; color: var(--navy-900); }
+.vpill[data-pol='neg'][data-strength='3'] { background: var(--red-600); color: #fff; }
+/* A score sitting within half a point of a verdict boundary is flagged, never
+   dropped to tidy the grid. */
+.bandedge { color: var(--gold-600); font-size: 0.875rem; cursor: help; }
+
+/* ---------- 5 · CHARTS ---------- */
+
+/* The renderer draws label text at a fixed size in viewBox user units, so a
+   chart squeezed into a phone column renders its labels at about three
+   pixels. Rather than making the reader pinch or swipe, each chart is drawn
+   TWICE at build time — once at a narrow viewBox, once wide — and the right
+   one is shown. Same renderer, same data, same directives; only the width
+   handed to it differs. */
+.chartfig { margin: 0 0 18px; }
+.chartfig .chart-narrow { display: block; }
+.chartfig .chart-wide { display: none; }
+@media (min-width: 700px) {
+  .chartfig .chart-narrow { display: none; }
+  .chartfig .chart-wide { display: block; }
+}
+.chartfig svg { width: 100%; height: auto; display: block; }
+/* A chart whose legend forces a wide drawing gets a scroll of its own rather
+   than shrinking its labels below legibility — and one whose drawing fits the
+   column never scrolls at all, because --chart-min is derived per chart from
+   what its own labels actually need. */
+.chart-narrow { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.chart-narrow svg { min-width: var(--chart-min, 0); }
+.chart-frame {
+  background: var(--white);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.chart-lead { font-size: 0.96875rem; line-height: 1.6; color: var(--ink-700); margin: 0 0 10px; }
+.chart-cap { font-size: 0.875rem; line-height: 1.6; color: var(--ink-700); margin: 12px 0 0; }
+.chart-assume { font-size: 0.71875rem; line-height: 1.5; color: var(--ink-500); margin: 6px 0 0; }
+.chart-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+
+/* ---------- 6 · SECTIONS ---------- */
+
+/* Every section carries its page_order key as an id so the jump index and any
+   link posted to the group keeps resolving. Clearance comes from the shared
+   token so it can never drift from the bars above it. */
+.gsec { scroll-margin-top: calc(var(--topbar-h) + var(--secnav-h) + var(--sticky-gap) * 2); }
+.gsec + .gsec { margin-top: 34px; }
+@media (min-width: 700px) { .gsec + .gsec { margin-top: 48px; } }
+
+.gsec-head { border-bottom: 3px solid var(--navy-900); padding-bottom: 10px; margin-bottom: 18px; }
+.gsec-intro { font-size: 0.96875rem; line-height: 1.55; color: var(--ink-500); margin: 10px 0 0; max-width: 68ch; }
+
+/* Prose blocks that arrive as one authored string with newlines in it. */
+.preline { white-space: pre-line; }
+
+/* The "whose interest is whose" rows: a party label and its line. Stacks on a
+   phone rather than squeezing the text into a third of the width. */
+.party { display: grid; gap: 2px 16px; padding: 11px 0; border-top: 1px solid var(--cream-300); }
+@media (min-width: 560px) { .party { grid-template-columns: 84px minmax(0, 1fr); align-items: baseline; } }
+.party-who {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.6875rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.party[data-who='COMPANY'] .party-who { color: var(--ink-500); }
+.party[data-who='UNION'] .party-who { color: var(--sky-700); }
+.party[data-who='YOU'] .party-who { color: var(--gold-600); }
+
+/* ---------- 7 · TOPIC PAGE ---------- */
+
+.topicband { background: var(--navy-900); color: var(--cream-100); border-radius: var(--radius-md); padding: 22px; }
+@media (min-width: 700px) { .topicband { padding: 26px 30px; } }
+.topicband .tb-kicker {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+.topicband h1 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 1.9375rem;
+  line-height: 1;
+  color: #fff;
+  margin: 9px 0 0;
+}
+@media (min-width: 700px) { .topicband h1 { font-size: 2.625rem; } }
+.topicband .tb-note { font-size: 0.8125rem; line-height: 1.5; color: var(--sky-300); margin: 10px 0 0; }
+.tb-verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; }
+.tb-score {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.78125rem;
+  color: var(--sky-300);
+}
+.tb-score b { font-family: var(--font-display); font-size: 1.375rem; color: #fff; font-weight: 400; }
+.tb-addon { font-size: 0.75rem; color: var(--gold-200); margin: 8px 0 0; }
+
+/* The authored bottom line for the topic. A tinted panel, not a stripe. */
+.bottomline {
+  background: var(--cream-100);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  font-size: 0.96875rem;
+  line-height: 1.6;
+  color: var(--ink-700);
+  margin: 20px 0;
+}
+.bottomline b { color: var(--navy-900); font-family: var(--font-heading); }
+
+/* ---------- 8 · PREV / NEXT ---------- */
+
+.stepnav { display: grid; gap: 10px; margin-top: 40px; padding-top: 20px; border-top: 1.5px solid var(--cream-300); }
+@media (min-width: 560px) { .stepnav { grid-template-columns: 1fr 1fr; } }
+.stepnav a {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 16px;
+  min-height: var(--tap-min);
+  background: var(--white);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-md);
+}
+.stepnav a:hover { border-color: var(--navy-700); }
+.stepnav .sn-dir {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.65625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+}
+.stepnav .sn-title { font-family: var(--font-heading); font-weight: 800; font-size: 0.9375rem; color: var(--navy-900); }
+.stepnav .next { text-align: right; }
+.stepnav .next:only-child { grid-column: 2; }
+
+/* ---------- 9 · GLOSSARY ---------- */
+
+/* One column on a phone; the export's two-column layout put four words on a
+   line. Multi-column returns only when there is room for a real measure. */
+.glosslist { columns: 1; column-gap: 34px; }
+@media (min-width: 900px) { .glosslist { columns: 2; } }
+.glosslist p { break-inside: avoid; margin: 0 0 10px; font-size: 0.875rem; line-height: 1.55; }
+.glosslist b { color: var(--navy-900); font-family: var(--font-heading); }
+
+/* ---------- 10 · KEY ---------- */
+
+.keygrid { display: grid; gap: 18px; }
+@media (min-width: 700px) { .keygrid { grid-template-columns: repeat(3, 1fr); } }
+.keycol-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.65625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  margin: 0 0 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--cream-300);
+}
+.keyitems { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+/* Term above its definition, never a fixed label column beside it — at 375px
+   that left the definition a 60px ribbon. */
+.keydefs { display: grid; gap: 4px 14px; }
+.keydefs dt { margin-top: 12px; }
+.keydefs dt:first-child { margin-top: 0; }
+.keydefs dd { margin: 0; font-size: 0.8125rem; line-height: 1.5; color: var(--ink-700); }
+@media (min-width: 700px) {
+  .keydefs { grid-template-columns: minmax(0, 200px) minmax(0, 1fr); align-items: baseline; }
+  .keydefs dt { margin-top: 0; }
+  .keydefs dd { grid-column: 2; }
+}
+
+/* ---------- 12 · GROUP-SCOPED CONTENT ----------
+   Last on purpose. These hide and reveal whole blocks, and a block's own
+   component rule may set any display it likes (.lensbar-def is a flex row,
+   the topic band's is a block). Declaring the toggle after every component
+   means the reveal cannot lose a specificity race to the thing it reveals —
+   which it did, showing all three groups' definitions at once. */
+.forgroup { display: none; }
+html[data-group='nh'] .forgroup[data-g='nh'],
+html[data-group='mc'] .forgroup[data-g='mc'],
+html[data-group='sr'] .forgroup[data-g='sr'],
+html:not([data-group]) .forgroup[data-g='nh'] { display: block; }
+/* Blocks that are flex rows rather than plain blocks say so here. */
+html[data-group='nh'] .lensbar-def[data-g='nh'],
+html[data-group='mc'] .lensbar-def[data-g='mc'],
+html[data-group='sr'] .lensbar-def[data-g='sr'],
+html:not([data-group]) .lensbar-def[data-g='nh'] { display: flex; }
+
+/* ---------- 11 · PRINT ---------- */
+
+/* Print is the Full lens by definition — a printed page has no toggle. */
+@media print {
+  .lensbar, .stepnav, .sb-swipe { display: none !important; }
+  html .lens-full, html .reg-pdf { display: revert !important; }
+  html .lens-short { display: none !important; }
+  .chartfig .chart-narrow { display: none !important; }
+  .chartfig .chart-wide { display: block !important; }
+}

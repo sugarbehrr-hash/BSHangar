@@ -1,0 +1,168 @@
+---
+import ChartFigure from './ChartFigure.astro';
+import { getAssessment, sectionCopy } from '../../guide/assessment/index.mjs';
+import { chartsFor } from '../../guide/render/charts.mjs';
+import { sectionCards } from '../../guide/render/content.mjs';
+import { verdictTone } from '../../guide/render/verdict.mjs';
+
+/**
+ * The sections that close the guide: how this deal reads against the market,
+ * what the union can and cannot claim credit for, the key to every chip on
+ * every card, and the glossary.
+ *
+ * Same contract as HubSections — the caller passes page_order keys, this
+ * renders them in that order, and an unknown key fails the build.
+ */
+
+interface Props {
+  sections: string[];
+}
+
+const { sections } = Astro.props;
+const { assessment } = getAssessment();
+
+const legend = assessment.legend ?? {};
+const ratingLabels = assessment.ratingSystem?.labels ?? {};
+
+/** The rating scale, split into the three columns the key has always used. */
+const ratingColumns = (() => {
+  const pills = (legend.ratingPill ?? []).map((pill) => {
+    const weight = pill.weight;
+    const tone =
+      weight == null ? { pol: 'neu', strength: 1 } : verdictTone(weight > 0 ? 'pos' : weight < 0 ? 'neg' : 'neu', weight * 3);
+    return {
+      label: pill.label,
+      blurb: pill.blurb,
+      weight: weight == null ? 'wildcard' : weight > 0 ? `+${weight}` : `${weight}`,
+      valence: weight == null ? 'neutral' : weight > 0 ? 'gain' : weight < 0 ? 'cost' : 'neutral',
+      tone,
+    };
+  });
+  return [
+    { title: 'Gains', items: pills.filter((p) => p.valence === 'gain') },
+    { title: 'Neutral', items: pills.filter((p) => p.valence === 'neutral') },
+    { title: 'Costs', items: pills.filter((p) => p.valence === 'cost') },
+  ];
+})();
+
+const known = new Set(['market_reality', 'accountability', 'key', 'glossary']);
+for (const key of sections) {
+  if (!known.has(key)) {
+    throw new Error(
+      `ClosingSections: page_order key "${key}" has no renderer here. Failing rather than ` +
+        'silently dropping a section of the guide.'
+    );
+  }
+}
+---
+
+{
+  sections.map((key) => {
+    const copy = sectionCopy(key);
+
+    if (key === 'market_reality') {
+      const cards = sectionCards('market_reality');
+      return (
+        <section class="gsec" id="sec-market_reality" data-sec="market_reality">
+          <div class="gsec-head">
+            <h2 class="h2">{copy.title}</h2>
+            {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+          </div>
+          {cards.map((entry) => <Fragment set:html={entry.html} />)}
+        </section>
+      );
+    }
+
+    if (key === 'accountability') {
+      const charts = chartsFor('accountability');
+      return (
+        <section class="gsec" id="sec-accountability" data-sec="accountability">
+          <div class="gsec-head">
+            <h2 class="h2">{copy.title}</h2>
+            {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+          </div>
+          {charts.map((spec) => <ChartFigure spec={spec} />)}
+        </section>
+      );
+    }
+
+    if (key === 'key') {
+      return (
+        <section class="gsec" id="sec-key" data-sec="key">
+          <div class="gsec-head">
+            <h2 class="h2">{copy.title}</h2>
+            {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+          </div>
+
+          <div class="card">
+            <div class="keycol-title">Rating scale</div>
+            <div class="keygrid">
+              {ratingColumns.map((column) => (
+                <div>
+                  <div class="keycol-title">{column.title}</div>
+                  <div class="keyitems">
+                    {column.items.map((item) => (
+                      <span class="vpill" data-pol={item.tone.pol} data-strength={item.tone.strength} title={item.blurb}>
+                        {item.label} <span style="opacity:.7;font-size:.6875rem">{item.weight}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <div class="keycol-title">Category verdicts</div>
+            <dl class="keydefs">
+              {(legend.verdicts ?? []).map(([term, definition, polarity]) => {
+                const tone = verdictTone(polarity);
+                return (
+                  <>
+                    <dt>
+                      <span class="vpill" data-pol={tone.pol} data-strength={tone.strength}>{term}</span>
+                    </dt>
+                    <dd>{definition}</dd>
+                  </>
+                );
+              })}
+            </dl>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <div class="keycol-title">Tags</div>
+            <dl class="keydefs">
+              {(legend.tags ?? []).map(([term, definition]) => (
+                <>
+                  <dt>
+                    <span class="stampchip">{term}</span>
+                  </dt>
+                  <dd>{definition}</dd>
+                </>
+              ))}
+            </dl>
+          </div>
+        </section>
+      );
+    }
+
+    // glossary
+    return (
+      <section class="gsec" id="sec-glossary" data-sec="glossary">
+        <div class="gsec-head">
+          <h2 class="h2">{copy.title}</h2>
+          {copy.intro && <p class="gsec-intro">{copy.intro}</p>}
+        </div>
+        <div class="card">
+          <div class="glosslist">
+            {(assessment.glossary ?? []).map(([term, definition]) => (
+              <p>
+                <b>{term}</b> — {definition}
+              </p>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  })
+}

@@ -1,0 +1,43 @@
+---
+import Icon from '../Icon.astro';
+
+/**
+ * Previous / next along the guide's spine.
+ *
+ * The document is one argument read in a fixed order — `page_order` — and
+ * splitting it across pages is only safe if that order stays walkable. This is
+ * the walk: it is generated from the same page map the routes come from, so a
+ * reader who follows it end to end sees exactly the sequence the analyzer
+ * authored, in the same order the single-page view presents it.
+ */
+
+interface Props {
+  prev?: { href: string; title: string } | null;
+  next?: { href: string; title: string } | null;
+}
+
+const { prev, next } = Astro.props;
+---
+
+<nav class="stepnav" aria-label="Guide pages">
+  {
+    prev && (
+      <a class="prev" href={prev.href} rel="prev">
+        <span class="sn-dir">
+          <Icon name="ph-arrow-left" /> Previous
+        </span>
+        <span class="sn-title">{prev.title}</span>
+      </a>
+    )
+  }
+  {
+    next && (
+      <a class="next" href={next.href} rel="next">
+        <span class="sn-dir">
+          Next <Icon name="ph-arrow-right" />
+        </span>
+        <span class="sn-title">{next.title}</span>
+      </a>
+    )
+  }
+</nav>

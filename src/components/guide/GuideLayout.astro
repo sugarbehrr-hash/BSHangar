@@ -1,0 +1,193 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LensBar from './LensBar.astro';
+import GuideNav from './GuideNav.astro';
+import StepNav from './StepNav.astro';
+import { assessmentMeta, getAssessment } from '../../guide/assessment/index.mjs';
+import { guidePages } from '../../guide/model/pages.mjs';
+import '../../styles/guide.css';
+
+/**
+ * The shell every guide page shares.
+ *
+ * WHAT THE READER DOWNLOADS
+ * All content — cards, tables, charts, verdicts — is rendered at build time, so
+ * the page is HTML on arrival. The client scripts below exist only for the
+ * three things that genuinely need a browser: the source-and-glossary popovers,
+ * the chart's unit toggle, and reader feedback. Together they are a fraction of
+ * the runtime the document used to assemble itself with.
+ *
+ * SCRIPT RULES, BOTH LOAD-BEARING
+ * 1. `is:inline` on every vendored tag. Astro otherwise hoists and bundles
+ *    them as modules, which nulls `document.currentScript` — the exact
+ *    mechanism the feedback layer uses to resolve its network bundle. Bundled,
+ *    it would resolve wrong and every answer would sit in the outbox behind a
+ *    "Saved — we'll send it when you're back online" that never sends.
+ * 2. Order is dependency order. `card-render.js` reads globals as it evaluates
+ *    and silently produces chart-less output if it runs first.
+ *
+ * Do not add view transitions to this site. The feedback layer guards itself
+ * with a module-scope "already started" flag that survives client-side
+ * navigation, so it would go dead after the first one.
+ */
+
+interface Props {
+  title: string;
+  description: string;
+  /** The page's own id from the page map, for prev/next and the jump index. */
+  pageId?: string;
+}
+
+const { title, description, pageId } = Astro.props;
+
+const meta = assessmentMeta();
+const { assessment } = getAssessment();
+
+/**
+ * The whole guide files feedback under ONE document id even though it spans
+ * ten pages. Without this the layer would derive an id per page from the URL
+ * and the inbox — which queries a single id — would never see any of it.
+ *
+ * While the rebuild is under review it deliberately uses its own id, so review
+ * traffic cannot mix into the notes Cole is triaging from the live guide.
+ */
+const FEEDBACK_DOC = '2026-ta-vote-guide-v2';
+
+/** The ids the feedback layer may attach a prompt to, in place of the full data. */
+const answerableBlocks = [
+  ...(assessment.topics ?? []).flatMap((topic) => (topic.changes ?? []).map((c) => c.id)),
+  ...(assessment.marketCards ?? []).map((card) => card.id),
+].filter(Boolean);
+
+/** Chart specs, so the unit toggle can redraw without shipping the whole dataset. */
+const chartSpecs = Object.fromEntries((assessment.charts ?? []).map((spec) => [spec.id, spec]));
+
+const pages = guidePages();
+const index = pages.findIndex((page) => page.id === pageId);
+const prev = index > 0 ? pages[index - 1] : null;
+const next = index >= 0 && index < pages.length - 1 ? pages[index + 1] : null;
+---
+
+<BaseLayout title={title} description={description}>
+  <Fragment slot="head">
+    <meta name="bsf-doc" content={FEEDBACK_DOC} />
+    {/* Applies the reader's saved lens before first paint, so someone who
+        chose Senior/Full last time never watches the default flash past. */}
+    <script is:inline>
+      (function () {
+        var group = 'nh';
+        var detail = 'short';
+        try {
+          var saved = JSON.parse(localStorage.getItem('rv2-ta-state') || '{}');
+          if (saved.group === 'nh' || saved.group === 'mc' || saved.group === 'sr') group = saved.group;
+          if (saved.detail === 'long') detail = 'long';
+        } catch (e) {}
+        var root = document.documentElement;
+        root.setAttribute('data-group', group);
+        root.setAttribute('data-detail', detail);
+      })();
+    </script>
+  </Fragment>
+
+  {/* The page header is one of exactly two things the render contract allows
+      outside the ordered section flow, so it sits above the band rather than
+      inside it. */}
+  <slot name="hero" />
+
+  <div class="band tight">
+    <div class="wrap">
+      <LensBar />
+
+      {/* The contents nav has to sit inside .rail for the design system's
+          desktop mode to work: from 1100px .rail becomes the sticky sidebar
+          column, and below it the rail is display:contents so the collapsed
+          bar lands directly above the content. Written before .railmain
+          because that source order is what puts it there. */}
+      <div class="withrail">
+        <div class="rail">
+          <GuideNav />
+        </div>
+        <div class="railmain">
+          <slot />
+          {(prev || next) && <StepNav prev={prev} next={next} />}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script id="bsf-blocks" type="application/json" is:inline set:html={JSON.stringify(answerableBlocks)} />
+  <script id="guide-charts" type="application/json" is:inline set:html={JSON.stringify(chartSpecs)} />
+
+  {/* Seeds the chart registry the unit toggle reads, so the redraw works
+      without the full assessment being present. card-render.js keeps an
+      existing registry rather than replacing it, so this must run first. */}
+  <script is:inline>
+    (function () {
+      var el = document.getElementById('guide-charts');
+      if (!el) return;
+      try {
+        window.__vcCharts = JSON.parse(el.textContent || '{}');
+      } catch (e) {
+        window.__vcCharts = {};
+      }
+    })();
+  </script>
+
+  <script is:inline src="/contract/_assets/assessment-charts.js"></script>
+  <script is:inline src="/contract/_assets/card-render.js"></script>
+  <script is:inline src="/contract/_assets/guide-feedback.js"></script>
+
+  {/* Persists the lens and applies it. Everything it switches is already in
+      the page, so this only writes two attributes — no re-render, no fetch. */}
+  <script is:inline>
+    (function () {
+      if (window.__guideLensStarted) return;
+      window.__guideLensStarted = true;
+
+      var root = document.documentElement;
+
+      function persist() {
+        try {
+          localStorage.setItem(
+            'rv2-ta-state',
+            JSON.stringify({
+              group: root.getAttribute('data-group') || 'nh',
+              detail: root.getAttribute('data-detail') || 'short',
+            })
+          );
+        } catch (e) {}
+      }
+
+      function paint(name) {
+        var value = root.getAttribute('data-' + name);
+        document.querySelectorAll('[data-lens="' + name + '"] button').forEach(function (button) {
+          button.setAttribute('aria-pressed', String(button.getAttribute('data-value') === value));
+        });
+      }
+
+      document.querySelectorAll('[data-lens]').forEach(function (control) {
+        var name = control.getAttribute('data-lens');
+        control.addEventListener('click', function (event) {
+          var button = event.target.closest('button[data-value]');
+          if (!button) return;
+
+          // Toggling depth must not move the reader. Everything is already
+          // laid out, so the only shift is content appearing or disappearing
+          // above them — measure one fixed point and put it back.
+          var anchor = document.querySelector('[data-card-id], .gsec');
+          var before = anchor ? anchor.getBoundingClientRect().top : null;
+
+          root.setAttribute('data-' + name, button.getAttribute('data-value'));
+          persist();
+          paint(name);
+
+          if (anchor && before !== null) {
+            var after = anchor.getBoundingClientRect().top;
+            if (after !== before) window.scrollBy({ top: after - before, behavior: 'instant' });
+          }
+        });
+        paint(name);
+      });
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import GuideLayout from '../../../components/guide/GuideLayout.astro';
+import ClosingSections from '../../../components/guide/ClosingSections.astro';
+import { guidePages } from '../../../guide/model/pages.mjs';
+
+/**
+ * The reference pair: what every chip and tag on a card means, and the
+ * plain-language glossary. Both are things a reader comes back to rather than
+ * reads through, so they sit at the end and are reachable from the jump index
+ * on every page.
+ */
+
+const page = guidePages().find((entry) => entry.id === 'reference');
+---
+
+<GuideLayout
+  title={page.title}
+  description="What every rating, tag and verdict in the guide means, plus a plain-language glossary of the contract terms that come up most."
+  pageId="reference"
+>
+  <ClosingSections sections={page.sections} />
+</GuideLayout>

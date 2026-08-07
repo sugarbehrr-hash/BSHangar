@@ -1,0 +1,50 @@
+---
+import GuideLayout from '../../../components/guide/GuideLayout.astro';
+import HubSections from '../../../components/guide/HubSections.astro';
+import Icon from '../../../components/Icon.astro';
+import { assessmentMeta } from '../../../guide/assessment/index.mjs';
+import { assertRenderContract } from '../../../guide/assessment/contract.mjs';
+import { guidePages, SINGLE_PAGE_ROUTE } from '../../../guide/model/pages.mjs';
+
+/**
+ * The guide's opening page: everything a reader needs before the topics.
+ *
+ * This is also where the render-contract gate runs. It checks the data against
+ * the manifest the analyzer ships inside it — every chart, table, placement and
+ * section accounted for — so a data refresh that adds a figure the templates do
+ * not cover fails the build instead of quietly rendering a guide with a missing
+ * chart. Running it here means it runs on every build, since this page always
+ * builds.
+ */
+assertRenderContract();
+
+const meta = assessmentMeta();
+const hub = guidePages().find((page) => page.id === 'hub');
+---
+
+<GuideLayout
+  title={meta.pageTitle}
+  description={meta.pageSubtitle}
+  pageId="hub"
+>
+  <div class="masthead" slot="hero">
+    <div class="wrap">
+      <div class="mh-body">
+        <div class="mh-eyebrow">{meta.contract} · Guide v{meta.version}</div>
+        <h1 class="mh-title">{meta.pageTitle}</h1>
+        <p class="mh-sub">{meta.pageSubtitle}</p>
+        <p class="mh-meta">Baseline: {meta.baseline}</p>
+        <div class="mh-actions">
+          <a class="btn gold" href="/contract/2026-ta-report/">
+            <Icon name="ph-file-pdf" /> Read the full technical report
+          </a>
+          <a class="btn onnavy" href={SINGLE_PAGE_ROUTE}>
+            <Icon name="ph-scroll" /> Read it all on one page
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <HubSections sections={hub.sections} />
+</GuideLayout>
