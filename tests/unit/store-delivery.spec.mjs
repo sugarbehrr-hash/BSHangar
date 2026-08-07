@@ -39,8 +39,22 @@ function makeStorage() {
   };
 }
 
+/** The browser globals store.js reads. Nothing outside this list is touched. */
+const STUBBED = ['__net', 'localStorage', 'location', 'document', 'window'];
+
 let storage;
 let listeners;
+/**
+ * What each stubbed name was before this file ran, so afterEach can put the
+ * realm back rather than leave holes in it.
+ *
+ * `delete globalThis[k]` is not a reset — for any name Node itself defines it is
+ * a permanent removal from the realm, and every later test file in the same
+ * process sees the hole. That is invisible today only because vitest isolates
+ * files by default, which makes it exactly the kind of landmine that surfaces
+ * later as an unexplained order-dependent failure.
+ */
+const original = new Map();
 
 beforeEach(() => {
   vi.resetModules();
@@ -48,16 +62,12 @@ beforeEach(() => {
   storage = makeStorage();
   listeners = new Map();
 
+  for (const k of STUBBED) original.set(k, Object.getOwnPropertyDescriptor(globalThis, k));
+
   globalThis.__net = { sent: [], hold: null, failWith: null };
 
   globalThis.localStorage = storage;
   globalThis.location = { hostname: 'localhost', href: 'http://localhost/contract/x/' };
-  // navigator is an accessor on the Node global; plain assignment throws.
-  Object.defineProperty(globalThis, 'navigator', {
-    value: { onLine: true },
-    configurable: true,
-    writable: true,
-  });
   globalThis.document = {
     // Resolves store.js's dynamic import to tests/unit/_stub/guide-feedback-net.js
     currentScript: { src: pathToFileURL(join(HERE, '_stub', 'entry.js')).href },
@@ -69,12 +79,38 @@ beforeEach(() => {
   };
 });
 
-afterEach(() => {
-  for (const k of ['__net', 'localStorage', 'location', 'navigator', 'document', 'window']) {
-    delete globalThis[k];
+/**
+ * Lets the outgoing test's delivery loop finish before its globals are taken
+ * away.
+ *
+ * submit() starts a flush and deliberately does not await it, so a test that
+ * stops at `await tick()` can end with a chunk import still in the air. The
+ * stub reads globalThis.__net when write() is CALLED, so that straggler resumes
+ * during the NEXT test and files its answer in the next test's inbox — an
+ * order-dependent phantom that only appears when a leaky test happens to run
+ * immediately before one that inspects __net.sent early.
+ *
+ * Draining here rather than making every test remember to settle keeps the
+ * guarantee in one place: whatever a test starts, it also finishes.
+ */
+afterEach(async () => {
+  await settle();
+
+  for (const k of STUBBED) {
+    const before = original.get(k);
+    if (before) Object.defineProperty(globalThis, k, before);
+    else delete globalThis[k];
   }
+  original.clear();
 });
 
+/**
+ * The only way this file reaches store.js.
+ *
+ * Never import it at the top: it reads document.currentScript while it
+ * evaluates, so it can only be loaded once beforeEach has put the browser
+ * globals in place.
+ */
 async function loadStore() {
   const store = await import('../../src/guide/feedback/store.js');
   store.init(DOC);
@@ -165,6 +201,76 @@ describe('lost update — an answer replaced mid-flight', () => {
     expect(three.some((s) => s.note === 'this card is actually wrong')).toBe(true);
     expect(record('a-three').note).toBe('this card is actually wrong');
     expect(record('a-three').status).toBe('synced');
+  });
+});
+
+describe('a delivery that never comes back', () => {
+  /**
+   * Same job as settle(), but drives the fake clock. The real one is frozen
+   * inside this block, so the tick() above would never fire.
+   */
+  async function settleFake(turns = 12) {
+    for (let i = 0; i < turns; i++) {
+      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(0);
+    }
+  }
+
+  const sentBlocks = () => globalThis.__net.sent.map((s) => s.block);
+
+  it('gives up the drain instead of wedging it for the rest of the visit', async () => {
+    const store = await loadStore();
+
+    // One ordinary answer first, under the real clock. The store imports the
+    // network chunk lazily on its first delivery, and a dynamic import cannot
+    // resolve while the clock is frozen. It also puts the hang on a later card,
+    // which is the realistic shape: the reader is partway through the guide
+    // when the wifi goes.
+    store.submit('a-zero', { verdict: 'clear' });
+    await settle();
+    expect(sentBlocks()).toEqual(['a-zero']);
+
+    vi.useFakeTimers();
+
+    try {
+      // Accepted and then silence — a captive portal, or an inflight session
+      // that drops the connection without closing it. Neither fetch nor the
+      // Firestore SDK ever answers, so this promise never settles.
+      globalThis.__net.hold = new Promise(() => {});
+      store.submit('a-one', { verdict: 'clear' });
+      await settleFake();
+      expect(sentBlocks()).toEqual(['a-zero', 'a-one']);
+
+      // The reader carries on through the guide while that hangs. The strip
+      // says "Sent" for both, because a pending record with no failed attempt
+      // is shown optimistically.
+      globalThis.__net.hold = null;
+      store.submit('a-two', { verdict: 'unclear', note: 'this one must not vanish' });
+      await settleFake();
+      expect(sentBlocks()).toEqual(['a-zero', 'a-one']);
+
+      await vi.advanceTimersByTimeAsync(store.ATTEMPT_TIMEOUT_MS + 1);
+      await settleFake();
+
+      // Written off as a retryable failure: the attempt is over, but the answer
+      // is kept and its retry budget is untouched.
+      expect(record('a-one').attempts).toBe(1);
+      expect(record('a-one').error).toBe('deadline-exceeded');
+      expect(record('a-one').status).toBe('pending');
+      expect(record('a-two').status).toBe('pending');
+
+      // And the lock is free, so the retry the store already promises — the
+      // next `online` event — actually drains the backlog.
+      await listeners.get('online')();
+      await settleFake();
+
+      expect(sentBlocks()).toContain('a-two');
+      expect(record('a-two').note).toBe('this one must not vanish');
+      expect(record('a-two').status).toBe('synced');
+      expect(record('a-one').status).toBe('synced');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

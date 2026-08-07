@@ -41,9 +41,38 @@ import {
  */
 const NET_URL = new URL('guide-feedback-net.js', document.currentScript?.src ?? location.href).href;
 
+/**
+ * How long ONE delivery attempt gets before it is written off as failed.
+ *
+ * This is not a nicety. `flushing` below is what keeps the drain serial, and it
+ * is released only when the attempt in front of it settles — so an attempt that
+ * never settles holds it for the rest of the visit. Every answer after that
+ * point is recorded, painted as sent, and never transmitted: viewState() reads a
+ * PENDING record with no failed attempts as "done", which is the correct
+ * optimism for a request that is genuinely in flight and a lie for one that will
+ * never come back.
+ *
+ * A request that is accepted and then goes quiet is the normal shape of a
+ * captive portal or an inflight session that drops the connection without
+ * closing it — the exact conditions this guide is read in. Neither `fetch` nor
+ * the Firestore SDK imposes a deadline of its own, so this is the only one there
+ * is.
+ *
+ * Generous on purpose: the first submission pulls ~70KB of SDK and signs in
+ * before it writes anything, and a slow success is still a success.
+ */
+export const ATTEMPT_TIMEOUT_MS = 30_000;
+
 let documentId = null;
 let state = load();
 let net = null;
+/**
+ * Held for the length of one drain, so answers go out one at a time.
+ *
+ * Only ever set inside flush() and only ever cleared in its `finally`, which is
+ * what makes the deadline above load-bearing rather than defensive: the lock has
+ * no other way out.
+ */
 let flushing = false;
 /**
  * Set when a submission arrives while a flush is already running. Without it,
@@ -191,8 +220,7 @@ export async function flush() {
   try {
     for (const answer of queue) {
       try {
-        net ??= await import(NET_URL);
-        await net.write(answer);
+        await withDeadline(deliver(answer), ATTEMPT_TIMEOUT_MS);
         // answer.rev, not "whatever is at that key now". The reader may have
         // hit Change or Undo while this write was in the air, in which case the
         // record here is a different answer that has NOT been sent — marking it
@@ -232,6 +260,45 @@ export async function flush() {
     flushAgain = false;
     await flush();
   }
+}
+
+/**
+ * One answer's whole round trip.
+ *
+ * The chunk import is inside the deadline rather than in front of it because it
+ * is a network fetch too, and it hangs in exactly the same conditions — a first
+ * submission on dead wifi stalls on the SDK download, not on the write.
+ */
+async function deliver(answer) {
+  net ??= await import(NET_URL);
+  await net.write(answer);
+}
+
+/**
+ * Rejects if `work` has not settled in time.
+ *
+ * The abandoned attempt is left to finish in the background rather than
+ * cancelled — there is nothing to cancel it with, and it does no harm: the
+ * record's key is derived from doc, block and uid, so a late arrival carrying
+ * the same payload is the same write twice, not a second record. If the
+ * straggler does land, the retry's `create` is refused for a document that now
+ * exists and falls back to `amend` — the fallback net.js already carries for
+ * exactly this, a stale `everSynced`.
+ */
+function withDeadline(work, ms) {
+  let timer;
+  const deadline = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      // Given a code so it travels the same path every other failure does.
+      // net.js enumerates the terminal codes and treats everything else as
+      // temporary, which is exactly right here: a timeout says nothing about
+      // whether the answer is acceptable, only that this attempt is over.
+      const error = new Error(`delivery did not complete within ${ms}ms`);
+      error.code = 'deadline-exceeded';
+      reject(error);
+    }, ms);
+  });
+  return Promise.race([work, deadline]).finally(() => clearTimeout(timer));
 }
 
 function emit() {
