@@ -16,6 +16,19 @@ import { jumpIndex } from '../../guide/model/pages.mjs';
 
 const links = jumpIndex();
 const current = Astro.url.pathname;
+
+/**
+ * Exactly one link may be marked current.
+ *
+ * The hub's seven section links all point AT the hub, so a plain "does this
+ * href match the current page" test marks every one of them — the whole rail
+ * lit up navy, which says "you are here" seven times and therefore says
+ * nothing. Only the first link belonging to this page gets the mark; on a page
+ * with in-page anchors the scroll spy below moves it as the reader goes.
+ */
+const activeIndex = links.findIndex(
+  (link) => link.kind !== 'header' && link.href.split('#')[0] === current
+);
 ---
 
 <nav class="secnav" aria-label="Guide contents">
@@ -27,16 +40,12 @@ const current = Astro.url.pathname;
   <div class="secnav-head">On this guide</div>
   <ul class="secnav-list" id="guide-jump">
     {
-      links.map((link) =>
+      links.map((link, i) =>
         link.kind === 'header' ? (
           <li class="secnav-group">{link.label}</li>
         ) : (
           <li>
-            <a
-              href={link.href}
-              data-depth={link.kind}
-              aria-current={link.href.split('#')[0] === current ? 'page' : undefined}
-            >
+            <a href={link.href} data-depth={link.kind} aria-current={i === activeIndex ? 'page' : undefined}>
               <span class="lbl">{link.label}</span>
             </a>
           </li>
@@ -51,22 +60,59 @@ const current = Astro.url.pathname;
   const toggle = nav?.querySelector<HTMLButtonElement>('.secnav-toggle');
 
   if (nav && toggle) {
-    // Label the collapsed bar with where the reader actually is, so the bar
-    // says something even before it is opened.
-    const here = nav.querySelector<HTMLElement>('a[aria-current="page"] .lbl');
-    const label = toggle.querySelector<HTMLElement>('.lbl');
-    if (here && label) label.textContent = here.textContent;
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('.secnav-list a')];
+    const toggleLabel = toggle.querySelector<HTMLElement>('.lbl');
+
+    /** Moves the single current mark, and tells the collapsed bar what it is. */
+    const setActive = (link: HTMLAnchorElement | undefined) => {
+      if (!link) return;
+      for (const other of links) other.removeAttribute('aria-current');
+      link.setAttribute('aria-current', 'page');
+      if (toggleLabel) toggleLabel.textContent = link.querySelector('.lbl')?.textContent ?? '';
+    };
+
+    // Label the collapsed bar with where the reader is, so it says something
+    // useful before it is ever opened.
+    setActive(links.find((link) => link.getAttribute('aria-current') === 'page'));
 
     toggle.addEventListener('click', () => {
       const open = nav.dataset.open === '1';
       nav.dataset.open = open ? '' : '1';
       toggle.setAttribute('aria-expanded', String(!open));
     });
-    for (const link of nav.querySelectorAll('a')) {
+    for (const link of links) {
       link.addEventListener('click', () => {
         nav.dataset.open = '';
         toggle.setAttribute('aria-expanded', 'false');
       });
+    }
+
+    // Follow the reader down a page that holds several sections — the hub and
+    // the two paired pages. A topic page's link carries no hash, so there is
+    // nothing to observe and its static mark simply stays put.
+    const anchored = links
+      .map((link) => ({ link, section: document.getElementById(link.hash.slice(1)) }))
+      .filter((entry): entry is { link: HTMLAnchorElement; section: HTMLElement } => Boolean(entry.section));
+
+    if (anchored.length > 1) {
+      const visible = new Set<string>();
+      // Read the inset from the section's own scroll-margin-top rather than
+      // repeating the number: it is derived from the bar heights and differs by
+      // breakpoint, and a section jumped to has to land exactly where it
+      // becomes current.
+      const inset = parseFloat(getComputedStyle(anchored[0].section).scrollMarginTop) || 140;
+      const spy = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) visible.add(entry.target.id);
+            else visible.delete(entry.target.id);
+          }
+          const current = anchored.find((entry) => visible.has(entry.section.id));
+          if (current) setActive(current.link);
+        },
+        { rootMargin: `-${inset}px 0px -55% 0px` }
+      );
+      for (const entry of anchored) spy.observe(entry.section);
     }
   }
 </script>
