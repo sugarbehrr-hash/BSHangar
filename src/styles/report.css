@@ -1,0 +1,188 @@
+/* ============================================================
+   TA TECHNICAL REPORT — the same document, in the other register
+   ------------------------------------------------------------
+   The analyzer is explicit that the website and the report are two
+   RENDERS OF ONE OBJECT, differing on exactly one axis: reading
+   register. Same spine, same page order, same legend, same topic
+   openers and chart lead-ins, same verdicts and tags. The report
+   may add depth; it may not reorder, drop or skip anything.
+
+   So this file adds no content and changes no wording. It does
+   three things to the guide's own components:
+
+     1. Pins the FULL register on, since a printed page has no
+        toggle to offer.
+     2. Shows every group at once — a rep reading this needs all
+        three verdicts side by side, not the one they picked.
+     3. Steps the type and spacing down to Letter-sheet density,
+        the same way print.css already does for the field guides.
+   ============================================================ */
+
+/* ---------- 1 · THE FULL REGISTER, PINNED ----------
+   Beats the guide's own `html:not([data-detail])` defaults on specificity
+   (an extra element in the selector) rather than on source order, so it
+   cannot break if the stylesheets are ever emitted in a different sequence. */
+html body .report .lens-full { display: revert; }
+html body .report .lens-short { display: none; }
+html body .report .reg-pdf { display: revert; }
+
+/* ---------- 2 · EVERY GROUP AT ONCE ----------
+   On the website one group's verdict shows at a time, because a reader is
+   one of the three. The report is read by people comparing them. */
+html body .report .forgroup { display: block; }
+html body .report .lensbar-def { display: flex; }
+/* With every row shown, nothing should be singled out. */
+html body .report .wg {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 12px;
+  color: #fff;
+}
+
+/* ---------- 3 · SHEET DENSITY ----------
+   Screen sizes assume a 1140px page; a Letter sheet's text column is 728px.
+   These are the same step-downs print.css already applies to the guide
+   blocks, extended to the vote guide's own components. */
+.fm-page .gsec + .gsec { margin-top: 22px; }
+.fm-page .gsec-head { padding-bottom: 7px; margin-bottom: 12px; }
+.fm-page .h2 { font-size: 1.5rem; }
+.fm-page .gsec-intro { font-size: 0.78125rem; margin-top: 7px; }
+.fm-page .lead { font-size: 0.84375rem; }
+.fm-page .card { padding: 15px 17px; box-shadow: none; }
+.fm-page .card-text { font-size: 0.84375rem; line-height: 1.5; }
+.fm-page .grid { gap: 12px; }
+.fm-page .bottomline { padding: 12px 14px; font-size: 0.84375rem; margin: 14px 0; }
+.fm-page .footnote { font-size: 0.71875rem; }
+
+/* The topic band opens a sheet, so it needs no rounded floating-card look. */
+.fm-page .topicband { border-radius: var(--radius-sm); padding: 18px 20px; }
+.fm-page .topicband h1 { font-size: 1.6875rem; }
+.fm-page .topicband .tb-note { font-size: 0.75rem; }
+
+/* Nothing may be split across a paper boundary mid-thought. */
+.fm-page .vc-card,
+.fm-page .chartfig,
+.fm-page .card,
+.fm-page .bottomline,
+.fm-page .topicband { break-inside: avoid; }
+.fm-page .gsec-head { break-after: avoid; }
+
+/* The report is a fixed 816px sheet, so the chart always has room for the
+   wide drawing — the narrow one exists for phone columns and would only
+   waste half the page here. */
+.fm-page .chartfig .chart-narrow { display: none; }
+.fm-page .chartfig .chart-wide { display: block; }
+
+/* The card's own layout is left alone on purpose. A sheet's text column is
+   728px, which is the width the previous report measured its cards at, so the
+   renderer's two-column form (prose + a 224px meta rail) is what this document
+   has always printed. Its container query handles the phone reflow by itself.
+   Note that both the columns and the rail's stickiness are inline styles on
+   the card, so a rule here could not change them without !important anyway. */
+
+/* ---------- 4 · PRINTER-FRIENDLY ----------
+   Toggled on the page rather than by @media: the choice is "am I printing
+   this on a shared office printer" and only the reader knows.
+
+   card-render.js emits .ink-navy / .ink-gold / .ink-onnavy precisely so a
+   consumer can do this. Reversing to a bordered white card rather than the
+   original's gold top strip, per the house rule against single-side colour
+   accents — the whole border does the same job without the stripe. */
+body.ink-saver .report .ink-navy,
+body.ink-saver .report .topicband,
+body.ink-saver .report .card.inverse {
+  background: var(--white) !important;
+  border: 1.5px solid var(--cream-300) !important;
+  color: var(--ink-700) !important;
+}
+body.ink-saver .report .ink-gold { color: var(--gold-600) !important; }
+body.ink-saver .report .ink-onnavy,
+body.ink-saver .report .topicband h1,
+body.ink-saver .report .topicband .tb-note,
+body.ink-saver .report .card.inverse .card-text,
+body.ink-saver .report .card.inverse .card-title { color: var(--ink-700) !important; }
+body.ink-saver .report .topicband .tb-kicker,
+body.ink-saver .report .card.inverse .card-sub { color: var(--gold-600) !important; }
+body.ink-saver .report .wg { color: var(--ink-700) !important; }
+/* Hairlines drawn as translucent white vanish on a white card. */
+body.ink-saver .report .ink-navy [style*='rgba(255,255,255'] { border-color: var(--cream-300) !important; }
+
+/* ---------- 5 · COVER ----------
+   Full bleed, the way the report's cover has always been — the field guides
+   inset their masthead inside the sheet's own padding, so this zeroes it for
+   this document only rather than changing the shared sheet. */
+.report .fm-page.cover .fm-body { padding: 0; display: flex; }
+
+.rp-cover {
+  background: var(--navy-900);
+  color: var(--cream-100);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 62px 48px;
+}
+.rp-cover .eyebrow {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+  margin-bottom: 16px;
+}
+.rp-cover h1 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 2.75rem;
+  line-height: 1.02;
+  color: #fff;
+  margin: 0 0 18px;
+}
+.rp-cover .sub { font-size: 0.90625rem; line-height: 1.65; color: var(--sky-100); max-width: 600px; margin: 0 0 18px; }
+.rp-cover dl { margin: 0; font-size: 0.75rem; line-height: 1.6; color: var(--sky-300); }
+.rp-cover dt { font-family: var(--font-heading); font-weight: 800; color: #fff; }
+.rp-cover dd { margin: 0 0 10px; }
+.rp-cover .colophon {
+  margin-top: auto;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+body.ink-saver .rp-cover { background: var(--white); color: var(--ink-700); }
+body.ink-saver .rp-cover h1,
+body.ink-saver .rp-cover dt { color: var(--navy-900); }
+body.ink-saver .rp-cover .sub,
+body.ink-saver .rp-cover dl { color: var(--ink-700); }
+
+/* ---------- 6 · CONTENTS ---------- */
+.rp-toc { list-style: none; margin: 0; padding: 0; }
+.rp-toc li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cream-200);
+  font-size: 0.875rem;
+}
+.rp-toc .n {
+  flex: none;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.71875rem;
+  color: var(--ink-500);
+  min-width: 22px;
+}
+.rp-toc .t { flex: 1; font-family: var(--font-heading); font-weight: 700; color: var(--navy-900); }
+.rp-toc .p { flex: none; font-family: var(--font-heading); font-weight: 800; color: var(--ink-500); }
+
+/* ---------- 7 · SCREEN REFLOW ----------
+   Below the sheet width the Letter metaphor stops meaning anything — print.css
+   already dissolves the sheet into a fluid page there — so the chart goes back
+   to the drawing sized for a phone column. Screen only; print is untouched. */
+@media screen and (max-width: 859px) {
+  .fm-page .chartfig .chart-narrow { display: block; }
+  .fm-page .chartfig .chart-wide { display: none; }
+}

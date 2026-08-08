@@ -34,7 +34,12 @@ const year = new Date().getFullYear();
     )
   }
 
-  <div class:list={['fm-body', cover && 'fm-body-cover']}>
+  {/* `fm-body-cover` used to be added here and has never had a rule, in this
+      stylesheet or any other — GuideSheets styles its own `.fm-cover-body`
+      div nested inside instead. Removing a class nothing styles changes
+      nothing; a document that needs its cover to bleed edge to edge targets
+      `.fm-page.cover .fm-body` (see report.css). */}
+  <div class="fm-body">
     <slot />
   </div>
 

@@ -1,0 +1,116 @@
+---
+import PrintLayout from '../../layouts/PrintLayout.astro';
+import PrintSheet from '../../components/PrintSheet.astro';
+import HubSections from '../../components/guide/HubSections.astro';
+import TopicBody from '../../components/guide/TopicBody.astro';
+import ClosingSections from '../../components/guide/ClosingSections.astro';
+import Icon from '../../components/Icon.astro';
+import GuideRuntime from '../../components/guide/GuideRuntime.astro';
+import { assessmentMeta } from '../../guide/assessment/index.mjs';
+import { assertRenderContract } from '../../guide/assessment/contract.mjs';
+import { reportContents } from '../../guide/model/report.mjs';
+import { GUIDE_BASE } from '../../guide/model/pages.mjs';
+import '../../styles/guide.css';
+import '../../styles/report.css';
+
+/**
+ * The technical report: the same assessment, in the detail register.
+ *
+ * NOT a second document. Every sheet below renders through the SAME components
+ * the website uses, in the same `page_order`, with the same verdicts, tags and
+ * chart lead-ins — the analyzer's contract calls these two renders of one
+ * object, differing on exactly one axis, and building them from one set of
+ * components is what makes that true rather than aspirational. The register
+ * difference is CSS: the Full layer is pinned on, and every group's verdict
+ * shows at once instead of the one a website reader picked.
+ *
+ * Built beside the existing report at /contract/2026-ta-report/, which is
+ * untouched until this replaces it.
+ */
+assertRenderContract();
+
+const meta = assessmentMeta();
+const sheets = reportContents();
+const RUNNING_HEAD = 'TA Assessment — Technical Report';
+
+// Cover, contents, then one sheet per section.
+const total = sheets.length + 2;
+---
+
+<PrintLayout title={meta.pdfCoverTitle} description={meta.pageSubtitle}>
+  <div class="report">
+    <PrintSheet cover runningHead={RUNNING_HEAD} page={1} total={total}>
+      <div class="rp-cover">
+        <div class="eyebrow">{meta.contract} · Report v{meta.version}</div>
+        <h1>{meta.pdfCoverTitle}</h1>
+        <p class="sub">{meta.pageSubtitle}</p>
+        <dl>
+          <dt>Baseline</dt>
+          <dd>{meta.baseline}</dd>
+          <dt>Standpoint</dt>
+          <dd>{meta.standpoint}</dd>
+        </dl>
+        <div class="colophon">{meta.generator}</div>
+      </div>
+    </PrintSheet>
+
+    <PrintSheet runningHead={RUNNING_HEAD} page={2} total={total}>
+      <div class="gsec-head">
+        <h2 class="h2">Contents</h2>
+        <p class="gsec-intro">
+          Every section of the assessment, in the order it was written. The
+          plain-language version of the same material is the
+          <a class="inline" href={`${GUIDE_BASE}/`}>website guide</a>.
+        </p>
+      </div>
+      <ol class="rp-toc">
+        {
+          sheets.map((sheet) => (
+            <li>
+              <span class="n">{sheet.kind === 'topic' ? `${sheet.topicIndex + 1}.` : '·'}</span>
+              <span class="t">{sheet.title}</span>
+              <span class="p">{sheet.page}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </PrintSheet>
+
+    {
+      sheets.map((sheet) => (
+        <PrintSheet runningHead={RUNNING_HEAD} page={sheet.page} total={total}>
+          {sheet.kind === 'topic' ? (
+            <TopicBody topic={sheet.topic} index={sheet.topicIndex} total={sheet.topicTotal} />
+          ) : sheet.kind === 'hub' ? (
+            <HubSections sections={sheet.sections} />
+          ) : (
+            <ClosingSections sections={sheet.sections} />
+          )}
+        </PrintSheet>
+      ))
+    }
+  </div>
+
+  <Fragment slot="tools">
+    <button class="btn quiet sm" type="button" data-ink>
+      <Icon name="ph-drop-half" /> <span data-ink-label>Printer-friendly</span>
+    </button>
+  </Fragment>
+
+  <GuideRuntime />
+</PrintLayout>
+
+<script>
+  // Printer-friendly is a page choice, not a media query: only the reader
+  // knows whether this is going to a shared office printer or to a PDF. The
+  // card renderer emits .ink-navy / .ink-gold / .ink-onnavy hooks for exactly
+  // this, so the toggle is one class on <body>.
+  const button = document.querySelector<HTMLButtonElement>('[data-ink]');
+  const label = document.querySelector<HTMLElement>('[data-ink-label]');
+
+  button?.addEventListener('click', () => {
+    const on = document.body.classList.toggle('ink-saver');
+    button.setAttribute('aria-pressed', String(on));
+    if (label) label.textContent = on ? 'Full colour' : 'Printer-friendly';
+  });
+</script>

@@ -1,0 +1,54 @@
+---
+import { getAssessment } from '../../guide/assessment/index.mjs';
+
+/**
+ * The only scripts a rendered guide or report still needs in the browser.
+ *
+ * Everything a reader READS is already HTML by the time this loads — cards,
+ * tables, charts and verdicts are rendered at build time. What remains are the
+ * three things that genuinely cannot be static:
+ *
+ *   - the card stylesheet. `card-render.js` injects the container queries that
+ *     collapse a card to one column on a narrow screen. Without it, cards keep
+ *     the two-column desktop layout they were rendered with at EVERY width —
+ *     on a phone that leaves the prose column about 57px wide.
+ *   - the source and glossary popovers. Cards carry
+ *     `onclick="window.__vcRefOpen(this)"` for their citations; the handler
+ *     lives in the same file, and without it those buttons throw.
+ *   - the chart unit toggle, which re-calls the renderer so the alternate view
+ *     comes from the shipped chart code rather than being computed here.
+ *
+ * `assessment.data.js` is deliberately NOT among them: at ~167KB it is the
+ * single largest file in the deliverable, and nothing left on the client reads
+ * it. The chart registry below carries just the chart specs the toggle needs.
+ *
+ * `is:inline` on every tag is load-bearing. Astro otherwise bundles these as
+ * modules, and `card-render.js` resolves globals as it evaluates — hoisted and
+ * reordered, it produces cards with no charts and no error. Order is dependency
+ * order for the same reason.
+ */
+
+const { assessment } = getAssessment();
+
+/** Just the chart specs, so the unit toggle can redraw without the full data. */
+const chartSpecs = Object.fromEntries((assessment.charts ?? []).map((spec) => [spec.id, spec]));
+---
+
+<script id="guide-charts" type="application/json" is:inline set:html={JSON.stringify(chartSpecs)} />
+
+{/* Seeds the registry the unit toggle reads. card-render.js keeps an existing
+    registry rather than replacing it, so this has to run first. */}
+<script is:inline>
+  (function () {
+    var el = document.getElementById('guide-charts');
+    if (!el) return;
+    try {
+      window.__vcCharts = JSON.parse(el.textContent || '{}');
+    } catch (e) {
+      window.__vcCharts = {};
+    }
+  })();
+</script>
+
+<script is:inline src="/contract/_assets/assessment-charts.js"></script>
+<script is:inline src="/contract/_assets/card-render.js"></script>

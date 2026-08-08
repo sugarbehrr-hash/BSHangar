@@ -4,7 +4,7 @@ import HubSections from '../../../components/guide/HubSections.astro';
 import Icon from '../../../components/Icon.astro';
 import { assessmentMeta } from '../../../guide/assessment/index.mjs';
 import { assertRenderContract } from '../../../guide/assessment/contract.mjs';
-import { guidePages, SINGLE_PAGE_ROUTE } from '../../../guide/model/pages.mjs';
+import { guidePages, SINGLE_PAGE_ROUTE, REPORT_ROUTE } from '../../../guide/model/pages.mjs';
 
 /**
  * The guide's opening page: everything a reader needs before the topics.
@@ -35,7 +35,7 @@ const hub = guidePages().find((page) => page.id === 'hub');
         <p class="mh-sub">{meta.pageSubtitle}</p>
         <p class="mh-meta">Baseline: {meta.baseline}</p>
         <div class="mh-actions">
-          <a class="btn gold" href="/contract/2026-ta-report/">
+          <a class="btn gold" href={REPORT_ROUTE}>
             <Icon name="ph-file-pdf" /> Read the full technical report
           </a>
           <a class="btn onnavy" href={SINGLE_PAGE_ROUTE}>

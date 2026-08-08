@@ -56,7 +56,7 @@ export function marketCardHtml(card) {
   const short = cards.marketDetailCard(card, { detail: 'short' });
   const full = cards.marketDetailCard(card, { detail: 'long' });
 
-  if (short === full) return wrapForRegister(full, card.register);
+  if (short === full) return wrapForRegister(withContainment(full), card.register);
 
   // The prose is appended at the end of the card's text column, so the added
   // region is the tail of the Full render that Short does not contain.
@@ -74,7 +74,27 @@ export function marketCardHtml(card) {
     full.slice(0, addedOpensAtTag) +
     `<div class="lens-full">${full.slice(addedOpensAtTag)}`.replace(/(<\/div>)$/, '</div>$1');
 
-  return wrapForRegister(merged, card.register);
+  return wrapForRegister(withContainment(merged), card.register);
+}
+
+/**
+ * Gives a market card the containment wrapper it is missing.
+ *
+ * `changeCard` renders its card INSIDE a bare container div, and says why in
+ * its own source: a container query cannot restyle `grid-template-columns` on
+ * the same element that establishes the containment context — browsers reject
+ * that as a layout cycle. `marketDetailCard` puts both on one element, so the
+ * query that collapses a card to one column is structurally inert for these
+ * cards and they keep a 224px side rail at every width. On a phone that leaves
+ * the text about 57px wide.
+ *
+ * Adding the wrapper here fixes it with the renderer's own mechanism rather
+ * than a viewport media query second-guessing it, and leaves the shared file —
+ * which the live guide, the report and the inbox all render through — alone
+ * while the rebuild is still being reviewed beside it.
+ */
+function withContainment(html) {
+  return `<div style="container-type:inline-size; container-name:vc-card;">${html}</div>`;
 }
 
 /** Wraps an entry that only belongs to the detail register. */

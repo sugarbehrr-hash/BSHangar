@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LensBar from './LensBar.astro';
 import GuideNav from './GuideNav.astro';
+import GuideRuntime from './GuideRuntime.astro';
 import StepNav from './StepNav.astro';
 import { assessmentMeta, getAssessment } from '../../guide/assessment/index.mjs';
 import { guidePages } from '../../guide/model/pages.mjs';
@@ -59,8 +60,6 @@ const answerableBlocks = [
   ...(assessment.marketCards ?? []).map((card) => card.id),
 ].filter(Boolean);
 
-/** Chart specs, so the unit toggle can redraw without shipping the whole dataset. */
-const chartSpecs = Object.fromEntries((assessment.charts ?? []).map((spec) => [spec.id, spec]));
 
 const pages = guidePages();
 const index = pages.findIndex((page) => page.id === pageId);
@@ -116,25 +115,10 @@ const next = index >= 0 && index < pages.length - 1 ? pages[index + 1] : null;
   </div>
 
   <script id="bsf-blocks" type="application/json" is:inline set:html={JSON.stringify(answerableBlocks)} />
-  <script id="guide-charts" type="application/json" is:inline set:html={JSON.stringify(chartSpecs)} />
 
-  {/* Seeds the chart registry the unit toggle reads, so the redraw works
-      without the full assessment being present. card-render.js keeps an
-      existing registry rather than replacing it, so this must run first. */}
-  <script is:inline>
-    (function () {
-      var el = document.getElementById('guide-charts');
-      if (!el) return;
-      try {
-        window.__vcCharts = JSON.parse(el.textContent || '{}');
-      } catch (e) {
-        window.__vcCharts = {};
-      }
-    })();
-  </script>
+  <GuideRuntime />
 
-  <script is:inline src="/contract/_assets/assessment-charts.js"></script>
-  <script is:inline src="/contract/_assets/card-render.js"></script>
+  {/* Reader feedback is the website's alone — the report is a document. */}
   <script is:inline src="/contract/_assets/guide-feedback.js"></script>
 
   {/* Persists the lens and applies it. Everything it switches is already in

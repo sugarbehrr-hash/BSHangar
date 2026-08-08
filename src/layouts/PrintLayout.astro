@@ -39,6 +39,9 @@ const { title, description } = Astro.props;
     <div class="fm-tools">
       <span class="lbl">Printable</span>
       <button class="btn gold sm" type="button" data-print>Print / Save as PDF</button>
+      {/* Document-specific controls — the TA report's printer-friendly toggle.
+          Empty for every other document, which keeps their toolbar as it was. */}
+      <slot name="tools" />
       <a class="btn onnavy sm" href="/">Back to the site</a>
     </div>
 

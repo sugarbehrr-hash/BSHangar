@@ -29,6 +29,17 @@ export const GUIDE_BASE = '/contract/2026-ta-vote-guide-v2';
 export const SINGLE_PAGE_ROUTE = `${GUIDE_BASE}/all/`;
 
 /**
+ * The technical report — the same assessment in the detail register.
+ *
+ * Named here rather than read from `meta.reportUrl`, which the contract would
+ * normally make authoritative: this build emits `./CbaVoteReportV2.dc.html`,
+ * a filename that has never existed at any published path. The live guide has
+ * always hardcoded a working link for the same reason. Worth reporting
+ * upstream, but a dead link is not the honest alternative.
+ */
+export const REPORT_ROUTE = '/contract/2026-ta-report-v2/';
+
+/**
  * Which page each page_order key belongs to.
  *
  * The grouping is a reading decision, not a data one: the three intro cards

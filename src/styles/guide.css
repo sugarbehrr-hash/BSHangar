@@ -342,6 +342,7 @@ html:not([data-group]) .sb thead [data-col='nh'] {
   color: var(--ink-500);
 }
 .stepnav .sn-title { font-family: var(--font-heading); font-weight: 800; font-size: 0.9375rem; color: var(--navy-900); }
+.stepnav .prev { text-align: left; }
 .stepnav .next { text-align: right; }
 .stepnav .next:only-child { grid-column: 2; }
 

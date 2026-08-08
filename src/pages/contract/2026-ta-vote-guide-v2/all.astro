@@ -5,7 +5,7 @@ import TopicBody from '../../../components/guide/TopicBody.astro';
 import ClosingSections from '../../../components/guide/ClosingSections.astro';
 import Icon from '../../../components/Icon.astro';
 import { assessmentMeta } from '../../../guide/assessment/index.mjs';
-import { guidePages, GUIDE_BASE } from '../../../guide/model/pages.mjs';
+import { guidePages, GUIDE_BASE, REPORT_ROUTE } from '../../../guide/model/pages.mjs';
 
 /**
  * The whole guide as one document.
@@ -35,7 +35,7 @@ const pages = guidePages();
         <p class="mh-sub">{meta.pageSubtitle}</p>
         <p class="mh-meta">Baseline: {meta.baseline}</p>
         <div class="mh-actions">
-          <a class="btn gold" href="/contract/2026-ta-report/">
+          <a class="btn gold" href={REPORT_ROUTE}>
             <Icon name="ph-file-pdf" /> Read the full technical report
           </a>
           <a class="btn onnavy" href={`${GUIDE_BASE}/`}>
