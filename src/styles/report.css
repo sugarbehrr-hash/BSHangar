@@ -80,7 +80,48 @@ html body .report .wg {
    Note that both the columns and the rail's stickiness are inline styles on
    the card, so a rule here could not change them without !important anyway. */
 
-/* ---------- 4 · PRINTER-FRIENDLY ----------
+/* ---------- 4 · SHEETS THAT ARE MANY PHYSICAL PAGES LONG ----------
+   Every OTHER printable document in this codebase hand-fits its content to
+   roughly one physical page per .fm-page — Reserve is 3 sheets, Commuting 7,
+   the Field Manual 11, each authored short enough to fit. A report topic is
+   not: "Your Paycheck" alone is ~12 Letter pages of cards. That is the first
+   content here to genuinely need to fragment ACROSS physical pages within a
+   single .fm-page, and it exposed a bug that never had a reason to surface
+   before.
+
+   print.css's @media print block resets .fm-page's width/min-height/margin/
+   shadow, but never its `display`, so the base rule's `display:flex;
+   flex-direction:column` survives into print. Flex (and grid) formatting
+   contexts are the one part of CSS printed pagination browsers have never
+   fragmented reliably — content that should flow across several physical
+   pages inside a flex column instead gets clipped to whatever fits, or
+   paginates in the wrong place. It stayed invisible here because every
+   existing document's content already fit inside one page, so there was
+   nothing to fragment.
+
+   The fix is `display: block` for print, scoped to the report so the field
+   guides keep the flex layout their sticky-footer trick depends on (real
+   below). Block-level fragmentation across pages is the oldest, most reliable
+   part of CSS print support — this removes the dependency on browser flex-
+   fragmentation entirely rather than hoping a given engine has finally
+   caught up.
+
+   ONE KNOWN, ACCEPTED TRADE-OFF: .fm-run and .fm-foot are ordinary DOM
+   elements, first and last child of .fm-page — with block layout they render
+   once at the very top and very bottom of that flow, same as before. On a
+   sheet spanning several physical pages, that means the running head and the
+   "Page N of 18" footer land on the FIRST and LAST physical page of that
+   topic only; the pages between carry no header or footer at all. Fixing
+   that needs either the browser's own print dialog "headers and footers"
+   option (present in every mainstream browser, off by default) or a
+   measurement-based JS paginator like the one the old React-runtime report
+   used — a materially bigger piece of work than a formatting fix, and a
+   separate decision. */
+@media print {
+  .report .fm-page { display: block; }
+}
+
+/* ---------- 5 · PRINTER-FRIENDLY ----------
    Toggled on the page rather than by @media: the choice is "am I printing
    this on a shared office printer" and only the reader knows.
 
@@ -107,7 +148,7 @@ body.ink-saver .report .wg { color: var(--ink-700) !important; }
 /* Hairlines drawn as translucent white vanish on a white card. */
 body.ink-saver .report .ink-navy [style*='rgba(255,255,255'] { border-color: var(--cream-300) !important; }
 
-/* ---------- 5 · COVER ----------
+/* ---------- 6 · COVER ----------
    Full bleed, the way the report's cover has always been — the field guides
    inset their masthead inside the sheet's own padding, so this zeroes it for
    this document only rather than changing the shared sheet. */
@@ -157,7 +198,7 @@ body.ink-saver .rp-cover dt { color: var(--navy-900); }
 body.ink-saver .rp-cover .sub,
 body.ink-saver .rp-cover dl { color: var(--ink-700); }
 
-/* ---------- 6 · CONTENTS ---------- */
+/* ---------- 7 · CONTENTS ---------- */
 .rp-toc { list-style: none; margin: 0; padding: 0; }
 .rp-toc li {
   display: flex;
@@ -178,7 +219,7 @@ body.ink-saver .rp-cover dl { color: var(--ink-700); }
 .rp-toc .t { flex: 1; font-family: var(--font-heading); font-weight: 700; color: var(--navy-900); }
 .rp-toc .p { flex: none; font-family: var(--font-heading); font-weight: 800; color: var(--ink-500); }
 
-/* ---------- 7 · SCREEN REFLOW ----------
+/* ---------- 8 · SCREEN REFLOW ----------
    Below the sheet width the Letter metaphor stops meaning anything — print.css
    already dissolves the sheet into a fluid page there — so the chart goes back
    to the drawing sized for a phone column. Screen only; print is untouched. */
