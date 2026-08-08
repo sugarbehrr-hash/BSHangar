@@ -122,12 +122,45 @@ async function loadStore() {
 const tick = () => new Promise((r) => setTimeout(r, 0));
 
 /**
- * Drains the delivery loop. A single tick is not enough: a flush that finds work
- * queued mid-pass re-enters itself, and each pass awaits a dynamic import plus a
- * write, so the chain is several turns deep.
+ * Drains the delivery loop to a quiet baseline. A single tick is not enough: a
+ * flush that finds work queued mid-pass re-enters itself, and each pass awaits
+ * a dynamic import plus a write, so the chain is several turns deep.
+ *
+ * Used only where nothing afterward asserts on the OUTCOME of that drain — the
+ * "let the store go quiet before the test really starts" spots. Anywhere a
+ * test's assertions depend on delivery having actually finished, use waitFor()
+ * below instead: a fixed tick count is a guess about how long delivery takes,
+ * and a guess that happens to be generous enough on this machine today is not
+ * the same thing as a guarantee.
  */
 async function settle(turns = 12) {
   for (let i = 0; i < turns; i++) await tick();
+}
+
+/**
+ * Polls a real condition until it's true, rather than a fixed number of ticks.
+ *
+ * settle()'s "12 ticks is enough" is exactly the kind of assumption that
+ * degrades quietly: fine on a fast, idle machine, and a source of exactly the
+ * order-dependent phantom this file was built to catch if a slower CI box, a
+ * heavier neighbor process, or a busier module graph ever pushes the real
+ * delivery chain past whatever budget a fixed guess set — silently, since nothing
+ * would fail LOUDLY at the moment the budget stopped being enough. A caller
+ * asserting the OUTCOME of delivery (a record reaching `synced`, `sent`
+ * gaining an entry) should wait for that outcome directly instead of a proxy
+ * for it. Bounded by wall-clock time, not tick count, so it self-adjusts to
+ * whatever this machine actually needs and fails with a clear timeout — not a
+ * confusing wrong-value assertion — if delivery genuinely never completes.
+ */
+async function waitFor(predicate, { timeoutMs = 2000, label = 'condition' } = {}) {
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    if (predicate()) return;
+    if (Date.now() >= deadline) {
+      throw new Error(`waitFor: "${label}" was not true within ${timeoutMs}ms`);
+    }
+    await tick();
+  }
 }
 const stored = () => JSON.parse(storage.getItem('bsh-feedback-v1') ?? '{"answers":{}}');
 const record = (block) => stored().answers[`${DOC}::${block}`];
@@ -148,7 +181,7 @@ describe('lost update — an answer replaced mid-flight', () => {
     await tick();
 
     release();
-    await settle();
+    await waitFor(() => record('pay-levelset')?.status === 'synced', { label: 'pay-levelset synced' });
 
     const sent = globalThis.__net.sent.map((s) => s.verdict);
     expect(sent).toContain('withdrawn');
@@ -170,7 +203,7 @@ describe('lost update — an answer replaced mid-flight', () => {
     await tick();
 
     release();
-    await settle();
+    await waitFor(() => record('pay-levelset')?.status === 'synced', { label: 'pay-levelset synced' });
 
     const notes = globalThis.__net.sent.map((s) => s.note);
     expect(notes).toContain('contradicts the chart above it');
@@ -195,7 +228,7 @@ describe('lost update — an answer replaced mid-flight', () => {
 
     globalThis.__net.hold = null;
     release();
-    await settle();
+    await waitFor(() => record('a-three')?.status === 'synced', { label: 'a-three synced' });
 
     const three = globalThis.__net.sent.filter((s) => s.block === 'a-three');
     expect(three.some((s) => s.note === 'this card is actually wrong')).toBe(true);
@@ -305,7 +338,7 @@ describe('recovering a given-up answer', () => {
     const before = globalThis.__net.sent.length;
     globalThis.__net.failWith = null;
     store.retry('pay-floor');
-    await settle();
+    await waitFor(() => record('pay-floor')?.status === 'synced', { label: 'pay-floor synced after retry' });
 
     expect(globalThis.__net.sent.length).toBeGreaterThan(before);
     expect(record('pay-floor').status).toBe('synced');
@@ -322,7 +355,7 @@ describe('recovering a given-up answer', () => {
     globalThis.__net = { sent: [], hold: null, failWith: null };
     const reloaded = await import('../../src/guide/feedback/store.js');
     reloaded.init(DOC);
-    await settle();
+    await waitFor(() => record('pay-floor')?.status === 'synced', { label: 'pay-floor synced after revival' });
 
     expect(globalThis.__net.sent.map((s) => s.block)).toContain('pay-floor');
     expect(record('pay-floor').status).toBe('synced');
@@ -372,7 +405,9 @@ describe('storage that refuses to store', () => {
     storage.refuse = true;
 
     store.submit('pay-retro', { verdict: 'clear', note: 'still gets through' });
-    await settle();
+    await waitFor(() => globalThis.__net.sent.some((s) => s.note === 'still gets through'), {
+      label: 'pay-retro delivered despite refused storage',
+    });
 
     expect(globalThis.__net.sent.map((s) => s.note)).toContain('still gets through');
   });
